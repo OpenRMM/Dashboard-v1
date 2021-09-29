@@ -2,9 +2,9 @@
 $siteSettingsJson = '
 {
     "MySQL": {
-        "host": "localhost",
-        "username": "openrmm",
-        "password": "*****",
+        "host": "127.0.0.1:3307",
+        "username": "root",
+        "password": "Nikeswoosh.17",
         "database": "rmm"
     },
     "theme": {

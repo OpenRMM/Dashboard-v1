@@ -162,12 +162,6 @@
 							   </tbody>
 							</table>
 						</div>			
-						<button data-toggle="modal" type="button" data-target="#companyComputersModal2" style="background:#404E67;;color:#fff" class="btn btn-sm">
-							<i class="fas fa-plus"></i> Add Selected To..
-						</button>
-						<button onclick="printData();" title="Export As CSV File" class="btn btn-sm" style="float:left;color:#fff;background:#404E67;;margin-right:5px;">
-							<i class="fas fa-file-csv"></i>  Export Table
-						</button>
 						<!------------- Add Company Computers ------------------->
 						<div id="companyComputersModal2" class="modal fade" role="dialog">
 						  <div class="modal-dialog modal-sm">
@@ -238,7 +232,7 @@
 										</div>
 									</div>
 								</div>
-								<button class="btn btn-warning btn-block p-t-15 p-b-15">Download Overall Report</button>		
+								<button onclick="printData();" title="Export As CSV File" class="btn btn-warning btn-block p-t-15 p-b-15">Export Table</button>		
 							</div>			
 							<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
 								<div class="panel-heading">

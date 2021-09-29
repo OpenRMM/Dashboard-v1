@@ -164,7 +164,7 @@
 					<button class="btn btn-danger btn-sm" onclick='sendCommand("shutdown", "-s -t 30", "Shutdown Computer");' style="width:30%;margin:3px;">
 						<i class="fas fa-power-off"></i> Shutdown
 					</button>
-					<button class="btn btn-warning btn-sm" onclick='sendCommand("shutdown", "-r -t 30", "Reboot Computer");' style="width:30%;margin:3px;color:#fff;background:#ffa500;">
+					<button class="btn btn-warning btn-sm" onclick='sendCommand("shutdown", "-r -t 30", "Reboot Computer");' style="width:30%;margin:3px;color:#000;background:#ffa500;">
 						<i class="fas fa-redo"></i> Reboot
 					</button>
 				</div>
@@ -270,15 +270,15 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
 	<ul class="navbar-nav mr-auto nav nav-tabs" id="myTabMD" role="tablist">
 	  <li style="margin-right:10px" class="nav-item">
-	    <a class="btn btn-success text-white nav-link active" style="padding:5px;width:100px" id="contact-tab-md" data-toggle="tab" href="#contact-md" role="tab" aria-controls="contact-md"
+	    <a class="btn text-white nav-link active" style="background:#2d364b;padding:5px;width:100px" id="contact-tab-md" data-toggle="tab" href="#contact-md" role="tab" aria-controls="contact-md"
 	      aria-selected="false">Commands</a>
 	  </li>
 	  <li style="margin-right:10px" class="nav-item">
-	    <a class="btn btn-success text-white nav-link" style="padding:5px;width:100px" id="home-tab-md" data-toggle="tab" href="#home-md" role="tab" aria-controls="home-md"
+	    <a class="btn text-white nav-link" style="background:#2d364b;padding:5px;width:100px" id="home-tab-md" data-toggle="tab" href="#home-md" role="tab" aria-controls="home-md"
 	      aria-selected="true">Logs</a>
 	  </li>
 	  <li style="margin-right:10px" class="nav-item">
-	    <a class="btn btn-success text-white nav-link" style="padding:5px;width:100px" id="profile-tab-md" data-toggle="tab" href="#profile-md" role="tab" aria-controls="profile-md"
+	    <a class="btn text-white nav-link" style="background:#2d364b;padding:5px;width:100px" id="profile-tab-md" data-toggle="tab" href="#profile-md" role="tab" aria-controls="profile-md"
 	      aria-selected="false">Monitor</a>
 	  </li>	
 	</ul>

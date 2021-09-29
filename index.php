@@ -519,10 +519,7 @@
 					</div>				
 					<div class="recents" id="recents" style="margin-top:20px;"></div>	
 					
-					<div style="height:100px">&nbsp;</div>
-					<p style="bottom:0;text-align:center;color:#d3d3d3;position: absolute;">© <?php echo date('Y');?> Copyright
-						<a style="color:#d3d3d3;" target="_blank" href="http://smgunlimited.com"> SMG Unlimited</a><br>
-					</p>
+					<div style="height:100px">&nbsp;</div>		
 				</ul>
 			</nav>
 			<!-- Page Content -->
@@ -530,73 +527,55 @@
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
 						<div style="width:100%;background: -webkit-gradient(linear, left top, right top, from(#fe9365), to(#feb798));box-shadow: 0 0 11px rgba(0,0,0,0.13);
-						background: linear-gradient(to right, #fe9365, #feb798);height:140px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
+						background:#fe9365;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
 							<a style="color:#fff;cursor:pointer;" onclick="loadSection('Assets');">
 								<div style="padding:10px 10px 0px 20px;">
 									<i class="fas fa-desktop" style="font-size:28px;float:right;"></i>
 									<span style="font-size:20px;" ><?php echo $resultCount; ?></span><br>
 									<span style="font-size:20px;">Assets</span>
 								</div>
-								<hr style="border-color:#fff;"/>
-								<div style="padding-left:20px;font-size:15px;">
-									<i class="far fa-clock"></i>
-									update: 12:42 pm
-								</div>
+															
 							</a>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
 						<div style="width:100%;background: -webkit-gradient(linear, left top, right top, from(#0ac282), to(#0df3a3));box-shadow: 0 0 11px rgba(0,0,0,0.13);
-						background: linear-gradient(to right, #0ac282, #0df3a3);height:140px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
+						background:#0ac282;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
 							<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllCompanies');">
 								<div style="padding:10px 10px 0px 20px;">
 									<i class="fas fa-building" style="font-size:28px;float:right;"></i>
 									<span style="font-size:20px;"><?php echo $companyCount;?></span><br>
 									<span style="font-size:20px;">Customers</span>
 								</div>
-								<hr style="border-color:#fff;"/>
-								<div style="padding-left:20px;font-size:15px;">
-									<i class="far fa-clock"></i>
-									update: 12:42 pm
-								</div>
 							</a>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
 						<div style="width:100%;background: -webkit-gradient(linear, left top, right top, from(#eb3422), to(#ef5f51));box-shadow: 0 0 11px rgba(0,0,0,0.13);
-						background: linear-gradient(to right, #eb3422, #ef5f51);height:140px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
+						background:#eb3422;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
 							<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllUsers');">
 								<div style="padding:10px 10px 0px 20px;">
 									<i class="fas fa-user" style="font-size:28px;float:right;"></i>
 									<span style="font-size:20px;"><?php echo $userCount;?></span><br>
 									<span style="font-size:20px;">Technicians</span>
 								</div>
-								<hr style="border-color:#fff;"/>
-								<div style="padding-left:20px;font-size:15px;">
-									<i class="far fa-clock"></i>
-									update: 12:42 pm
-								</div>
 							</a>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
 						<div style="width:100%;background: -webkit-gradient(linear, left top, right top, from(#01a9ac), to(#01dbdf));box-shadow: 0 0 11px rgba(0,0,0,0.13);
-						background: linear-gradient(to right, #01a9ac, #01dbdf);height:140px;color:#fff;font-size:20px;text-align:left;border-radius:6px;">
+						background:#01a9ac;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;">
 							<a style="color:#fff;cursor:pointer;" onclick="loadSection('Tickets');">
 								<div style="padding:10px 10px 0px;">
 									<i class="fas fa-ticket-alt" style="font-size:28px;float:right;"></i>
 									<span style="font-size:20px;"><?php echo $userCount;?></span><br>
 									<span style="font-size:20px;">Tickets</span>
 								</div>
-								<hr style="border-color:#fff;"/>
-								<div style="padding-left:20px;font-size:15px;">
-									<i class="far fa-clock"></i>
-									update: 12:42 pm
-								</div>
 							</a>
 						</div>
 					</div>
 				</div>
+				<hr>
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top:20px;">
 						<div class="loadSection">
@@ -611,7 +590,7 @@
 					</div>
 					<footer style="display:none;" class="page-footer font-small black">
 						<div class="footer-copyright text-center">© <?php echo date('Y');?> Copyright
-							<a style="color:#fff;" target="_blank" href="http://smgunlimited.com"> SMG Unlimited</a>
+							<a style="color:#fff;" target="_blank" href="https://github.com/OpenRMM"> OpenRMM</a>
 							<a style="font-size:12px;cursor:pointer;float:left;padding-right:10px;color:#fff" onclick="loadSection('Versions');"><u>Previous Agent Versions</u></a>
 						</div>
 					</footer>
