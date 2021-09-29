@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openrmm>
+  <config>
+    <company>9</company>
+    <sqlserver>***</sqlserver>
+	<sqlusername>OpenRMM</sqlusername>
+	<sqlpassword></sqlpassword>
+	<sqldatabase>rmm</sqldatabase>
+	<allowHistory>true</allowHistory>
+  </config>
+</openrmm>

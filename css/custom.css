@@ -1,0 +1,148 @@
+.wrapper {
+    display: flex;
+    align-items: stretch;
+	margin-top:30px;
+}
+#sidebar {
+    min-width: 250px;
+    max-width: 300px;
+	min-height: 100%;
+	overflow:auto;
+	width:200px;
+	background-color: #404E67;
+	box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;
+}
+#sidebar ul li {
+	text-align:left;
+	padding:10px;
+	margin-bottom:2px;
+	cursor:pointer;
+}
+#sidebar ul li{
+	color: #dcdcdc;
+	font-size:14px;
+}
+#sidebar h5, h6 {color:#999;}
+#sidebar ul li a{color: #dcdcdc;}
+#sidebar.active {
+    margin-left: -300px;
+	position:fixed;
+	z-index:98;
+	margin-top:55px;
+    width: auto;
+    overflow-y: scroll;
+    top: 0;
+    bottom: 0;
+	z-index:9999;
+	padding-bottom:100px;
+}
+a[data-toggle="collapse"] {
+    position: relative;
+}
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -300px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+	.search-field-dashboard { /* Search and filter on dashboard */
+		width:100%;
+		margin-top:5px;
+	}
+
+}
+
+.bg-dark {
+	background-color: #343a40 !important;
+	color:#fff !important;
+}
+a { color:#696969; }
+
+
+body {
+    font-family: "Lato", sans-serif;
+}
+
+.main-head{
+    height: 150px;
+    background: #FFF;
+   
+}
+
+.sidenav {
+    height: 100%;
+    background-color: #000;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+
+.main {
+    padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+}
+
+@media screen and (max-width: 450px) {
+    .login-form{
+        margin-top: 10%;
+    }
+
+    .register-form{
+        margin-top: 10%;
+    }
+
+}
+@media screen and (max-width: 550px) {
+	.calert { height: 120px; }
+	.headall { display: block; }
+}
+@media screen and (min-width: 768px){
+    .main{
+        margin-left: 40%; 
+    }
+
+    .sidenav{
+        width: 30%;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+    }
+
+    .login-form{
+        margin-top: 80%;
+    }
+
+    .register-form{
+        margin-top: 20%;
+    }
+
+}
+
+
+.login-main-text{
+    margin-top: 20%;
+    padding: 60px;
+    color: #fff;
+}
+
+.login-main-text h2{
+    font-weight: 300;
+}
+
+.btn-black{
+    background-color: #000 !important;
+    color: #fff;
+}
