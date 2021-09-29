@@ -3,8 +3,8 @@ $siteSettingsJson = '
 {
     "MySQL": {
         "host": "127.0.0.1:3307",
-        "username": "root",
-        "password": "Nikeswoosh.17",
+        "username": "admin",
+        "password": "tU7_L-mXJP",
         "database": "rmm"
     },
     "theme": {

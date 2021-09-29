@@ -471,9 +471,9 @@
 							<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Agent
 						</li>
 					<?php if($_SESSION['accountType']=="Admin"){ ?>
-						<li onclick="loadSection('SiteSettings');" id="secbtnSiteSettings" style="width:100%" class="secbtn">
+						<!--li onclick="loadSection('SiteSettings');" id="secbtnSiteSettings" style="width:100%" class="secbtn">
 							<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Settings
-						</li>
+						</li-->
 					<?php } ?>
 					</ul>
 					<hr>
