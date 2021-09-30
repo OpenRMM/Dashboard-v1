@@ -235,8 +235,8 @@
 								<button onclick="printData();" title="Export As CSV File" class="btn btn-warning btn-block p-t-15 p-b-15">Export Table</button>		
 							</div>			
 							<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
-								<div class="panel-heading">
-								  <span class="panel-title">Notes</span>
+								<div style="height:45px" class="panel-heading">
+								  <h5 class="panel-title">Notes</h5>
 								</div>
 								<div class="card-block texst-center">
 								<?php

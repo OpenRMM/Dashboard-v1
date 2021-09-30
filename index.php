@@ -1,29 +1,17 @@
 <?php
 	require("Includes/db.php");
-	require('Includes/phpMQTT.php');
+	
 
 	$search = strip_tags(urldecode($_GET['search']));
 	
-	$messageTitle = "New Ideas/Bug Fixes";
-	$messageText .= "Add Site Alert For Conflicting Hostnames. <br><br> Version 1.0.1.6, updates are broke";
+	//$messageTitle = "New Ideas/Bug Fixes";
+	//$messageText .= "Add Site Alert For Conflicting Hostnames. <br><br> Version 1.0.1.6, updates are broke";
 	
 	$query = "SELECT username,nicename FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
 	
-	$MQTTclient_id = $username; // make sure this is unique for connecting to sever - you could use uniqid()
-
-	function mQTTpublish($topic,$message){
-		global $MQTTserver, $MQTTport, $MQTTclient_id, $MQTTusername, $MQTTpassword;
-		$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $MQTTclient_id);
-		if ($mqtt->connect(true, NULL, $MQTTusername, $MQTTpassword)) {
-			$mqtt->publish($topic, $message, 0, false);
-			$mqtt->close();
-		} else {
-			return "Time out!\n";
-		}
-	}
 
 	if(isset($_POST)){
 		$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -231,7 +219,6 @@
 		if($_POST['type'] == "SendCommand"){
 			$ID = (int)$_POST['ID'];
 			$commands = $_POST['command'];
-			$args = $_POST['args'];
 			$expire_after = (int)$_POST['expire_after'];
 			$exists = 0;
 			if(trim($commands)!=""){
@@ -249,12 +236,13 @@
 				if($exists == 0){
 					//Generate expire time
 					$expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
-					$query = "INSERT INTO commands (ComputerID, userid, command, arg, expire_after, expire_time, status)
-							  VALUES ('".$computer['hostname']."', '".$_SESSION['userid']."', '".$commands."', '".$args."', '".$expire_after."', '".$expire_time."', 'Sent')";
+					MQTTpublish($computer['hostname']."/Commands/CMD",$commands,$computer['hostname']);
+					$query = "INSERT INTO commands (ComputerID, userid, command, expire_after, expire_time, status)
+							  VALUES ('".$computer['hostname']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 					$results = mysqli_query($db, $query);
 				}
 			}
-			$activity = "Technician Sent ".$commands." ".$args." Command To: ".$ID;
+			$activity = "Technician Sent ".$commands." Command To: ".$ID;
 			userActivity($activity,$_SESSION['userid']);
 			header("location: index.php?page=General");
 		}
@@ -490,12 +478,26 @@
 						</li-->
 					<?php } ?>
 					</ul>
-					<hr>
+					<hr style="background:#dedede" >
 					<div id="sectionList" style="display:none;">
 						<h5 class="sidebarComputerName"></h5>
+						<hr>
 						<li onclick="loadSection('General');" id="secbtnGeneral" class="secbtn">
 							<i class="fas fa-stream"></i>&nbsp;&nbsp;&nbsp; Overview
 						</li>
+						<hr>
+						<h6 class="">Tools</h6>
+						<li onclick="loadSection('Commands');" id="secbtnCommandsk" class="secbtn">
+							<i class="fas fa-terminal"></i>&nbsp;&nbsp;&nbsp; Commands
+						</li>
+						<li onclick="loadSection('Alerts');" id="secbtnAlerts" class="secbtn">
+							<i class="fas fa-bell"></i>&nbsp;&nbsp;&nbsp; Alerts
+						</li>
+						<li onclick="loadSection('EventLogs');" id="secbtnEventLogs" class="secbtn">
+							<i class="fas fa-file-code"></i>&nbsp;&nbsp;&nbsp; Event Logs
+						</li>
+						<hr>
+						<h6 class="">Asset Details</h6>
 						<li onclick="loadSection('Network');" id="secbtnNetwork" class="secbtn">
 							<i class="fas fa-network-wired"></i>&nbsp;&nbsp;&nbsp; Network
 						</li>
@@ -939,12 +941,12 @@
 			document.cookie = "section=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 			document.cookie = "ID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 			setCookie("section", section, 365);
+	
 			setCookie("ID", ID, 365);
 			computerID = ID;
 			currentSection = section;
 			$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow text-primary'></div><div class='spinner-grow text-success'></div><div class='spinner-grow text-info'></div><div class='spinner-grow text-warning'></div><div class='spinner-grow text-danger'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
 			$(".loadSection").load("ajax/"+section+".php?ID="+ID+"&Date="+date);
-
 			$(".recents").load("ajax/recent.php?ID="+ID);
 			if(section == "Profile" || section == "Assets" || section == "Dashboard" || section == "AllUsers" || section == "AllCompanies" || section == "NewComputers" || section == "Versions" || section == "SiteSettings"){
 				$('#sectionList').slideUp(400);
@@ -1056,13 +1058,12 @@
 			  $("#historicalData").html(data);
 			});
 		}
-		function sendCommand(command, args, prompt, expire_after=5){
+		function sendCommand(command, prompt, expire_after=5){
 			if(confirm("Are you sure you would like to "+prompt+"?")){
 				$.post("index.php", {
 				  type: "SendCommand",
 				  ID: computerID,
 				  command: command,
-				  args: args,
 				  expire_after: expire_after
 				},
 				function(data, status){

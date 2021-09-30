@@ -16,7 +16,6 @@
 	
 	$userActivity2 = explode("|",$user['userActivity']);
 	$userActivity = array_reverse($userActivity2,true);
-	
 	if($userID!=$_SESSION['userid']){
 		$activity="Technician Viewed The Profile Of ".ucwords($user['nicename'])."'";
 		userActivity($activity, $_SESSION['userid']);
@@ -175,7 +174,7 @@
       </div>
   </section>
 </div>
-s<script>
+<script>
 	$(document).ready(function() {
 		 var table = $('#dataTable').DataTable();
  

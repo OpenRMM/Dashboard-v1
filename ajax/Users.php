@@ -75,10 +75,10 @@
 					  <td title="<?php echo $user['Description']; ?>"><?php echo textOnNull(strlen($user['Description']) > 20 ? substr($user['Description'],0,20)."..." : $user['Description'], "Not Set");?></td>
 					  <td>
 						<?php if($user['Disabled']=="True"){ ?>
-							<button onclick='sendCommand("net", "user <?php echo $user['Name']; ?> /active:yes", "Enable The Account For <?php echo $user['Name']; ?>");' style="float:right" title="Enable User?" class="btn btn-sm btn-success"><i class="fas fa-toggle-on"></i></button>
+							<button onclick='sendCommand("net user <?php echo $user["Name"]; ?> /active:yes", "Enable The Account For <?php echo $user["Name"]; ?>");' style="float:right" title="Enable User?" class="btn btn-sm btn-success"><i class="fas fa-toggle-on"></i></button>
 						<?php }else{ ?>
-							<button onclick='sendCommand("net", "user <?php echo $user['Name']; ?> Passw0rd!", "Reset Password For <?php echo $user['Name']; ?>");' style="float:right;margin-left:5px;" title="Reset To Simple Password?" class="btn btn-sm btn-primary"><i class="fas fa-star-of-life"></i></button>&nbsp;
-							<button onclick='sendCommand("net", "user <?php echo $user['Name']; ?> /active:no", "Disable The Account For <?php echo $user['Name']; ?>");' style="float:right" title="Disable User?" class="btn btn-sm btn-danger"><i class="fas fa-toggle-off"></i></button>
+							<button onclick='sendCommand("net user <?php echo $user["Name"]; ?> passsword123", "Reset Password For <?php echo $user["Name"]; ?> To: passsword123");' style="float:right;margin-left:5px;" title="Resets Password To: passsword123" class="btn btn-sm btn-primary"><i class="fas fa-star-of-life"></i></button>&nbsp;
+							<button onclick='sendCommand("net user <?php echo $user["Name"]; ?> /active:no", "Disable The Account For <?php echo $user["Name"]; ?>");' style="float:right" title="Disable User?" class="btn btn-sm btn-danger"><i class="fas fa-toggle-off"></i></button>
 						<?php } ?>
 					  </td>	
 					</tr>			

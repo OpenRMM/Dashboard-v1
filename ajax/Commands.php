@@ -1,0 +1,143 @@
+<?php
+	include("../Includes/db.php");
+	$computerID = (int)$_GET['ID'];
+	$search = $_GET['search'];
+	$showDate = $_GET['Date'];
+
+	//if(!$exists){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='index.php'><u>Dashboard</u></a></p></center><hr>"); }
+	$json = getComputerData($computerID, array("*"), $showDate);
+	$online = $json['Online'];
+	$lastPing = $json['Ping'];
+
+	$json = getComputerData($computerID, array("WMI_Product"), $showDate);
+
+	$programs = $json['WMI_Product'];
+	$error = $json['WMI_Product_error'];
+	
+?>
+<div class="row"  style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
+	<div style="padding:20px" class="col-md-12">
+		<h5>Commands</h5>
+		<p>View & Execute Commands On This Asset.</p>
+		<hr>
+		<div class="row">
+			<div style="" class="col-md-5">
+			<h5>Execute A Command</h5>
+			<?php if($online){ ?>
+				<div style="height:200px">		
+					<br>			
+					<button class="btn btn-sm btn-warning" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:none" data-toggle="modal" data-target="#terminalModal">
+						<i class="fas fa-terminal" style="margin-top:3px;float:left"></i> Terminal
+					</button>
+					<button data-dismiss="modal" class="btn btn-success btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
+						<i class="fas fa-desktop" style="float:left;margin-top:3px"></i> Enable Remote Desktop
+					</button>
+					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
+						<i class="fas fa-desktop" style="float:left;margin-top:3px"></i> Disable Remote Desktop
+					</button>
+					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick="sendCommand('Netsh Advfirewall set allprofiles state on', 'Enable Firewall');">
+						<i class="fas fa-fire-alt" style="float:left;margin-top:3px"></i> Enable Firewall
+					</button>
+					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;display:inline;margin:5px;color:#fff;width:45%;border:none" onclick="sendCommand('Netsh Advfirewall set allprofiles state off', 'Disable Firewall');">
+						<i class="fas fa-fire-alt" style="float:left;margin-top:3px"></i> Disable Firewall
+					</button>
+				</div>
+				<br>
+			</div>
+			<div style="" class="col-md-5">
+				<h5>Run A Custom Script</h5><br>
+					<div>
+						<div class="form-group">
+							<label for="langscript">Script Language</label>
+							<select required name="scriptType" class="form-control" id="langscript">
+							<option value="0">Batch</option>
+							<option disabled value="1">VB Script</option>
+							</select>
+						</div>	
+						<textarea required name="customScript" id="scriptForm" class="form-control" style="width:100%;height:210px">
+:: This batch file checks for network connection problems.
+ECHO OFF
+:: View network connection details
+ipconfig /all
+:: Check if google.com is reachable
+ping google.com
+:: Run a traceroute to check the route to google.com
+tracert google.com
+PAUSE
+						</textarea>
+						<br>
+						<button onclick=" var text = $('#scriptForm').val();sendCommand(text , 'Run Custom Script');" class="btn btn-success btn-sm" style="float:right">Run Script &nbsp;&nbsp;<i class="fas fa-play"></i></button>
+			</div>
+				<?php }else{ ?>
+					<br><br>
+					<h6 style="text-align:center">Computer Must Be Online To Execute Commands</h6>
+				<?php } ?>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	<div  style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;" class="row">
+		<div class="col-md-12">
+			<?php 
+				$query = "SELECT ID, time_received,command, arg, expire_after,status,time_sent FROM commands WHERE status='Sent' or status='Received' AND ComputerID='".$result['hostname']."' ORDER BY ID DESC LIMIT 100";
+				$results = mysqli_query($db, $query);
+				$commandCount = mysqli_num_rows($results);
+			?>
+			<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">				
+			  <thead>
+				<tr style="border-bottom:2px solid #d3d3d3;">
+				  <th scope="col">Command</th>
+				  <th scope="col">Argument</th>
+				  <!--<th scope="col">Expire Time</th>-->
+				  <th scope="col">Time Sent</th>
+				  <th scope="col">Status</th>
+				  <th scope="col"></th>
+				</tr>
+			  </thead>
+			  <tbody>
+				<?php
+					//Fetch Results
+					while($command = mysqli_fetch_assoc($results)){
+						$count++;
+					?>
+					<tr>
+					  <td><b><?php echo $command['command'];?></b></td>
+					  <td><?php echo textOnNull($command['arg'],"None");?></td>
+					  <!--<td><?php echo strtolower($command['expire_after']);?> Minutes</td>-->
+					  <td><?php echo $command['time_sent'];?></td>
+					 
+						  <?php if($command['time_received']!=""){
+									$timer = $command['time_received'];
+							   }else{
+								  $timer = "Not Received";
+							   } ?>
+					 
+					  <td title="<?php echo $timer; ?>" ><b><?php echo $command['status'];?></b></td>
+					   <td>
+						   <form action="index.php" method="POST">
+								<input type="hidden" name="type" value="DeleteCommand"/>
+								<input type="hidden" name="ID" value="<?php echo $command['ID']; ?>"/>
+									<button type="submit" title="Delete Command" style="border:none;" class="btn btn-danger btn-sm">
+										<i class="fas fa-trash" ></i>
+									</button>
+							</form>
+						</td>
+					</tr>
+				<?php }?>
+				<?php if($count==0){ ?>
+					<tr>
+						<td colspan=30><center><h5>No Commands Found.</h5></center></td>
+					</tr>
+				<?php } ?>
+			   </tbody>
+			</table>
+		</div>
+	</div>
+  </div>
+</div>
+<script>
+	$(document).ready(function() {
+		  $('#dataTable').DataTable();
+	});
+</script>

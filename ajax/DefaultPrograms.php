@@ -67,8 +67,10 @@
 			  <td><?php echo textOnNull($program["Program"],"N/A");?></td>
 			  <td><?php echo textOnNull($program["Ext"],"N/A");?></td>
 			  <td>
-				<button onclick='sendCommand("cmd", "assoc <?php echo $program['Ext']; ?>=", "Clear default for <?php echo $program['Ext']; ?> filetype");' class="btn btn-danger btn-sm" style="margin-top:-2px;" title="May Require A Reboot">
-					<i class="fas fa-eraser"></i>
+				<button onclick='sendCommand("cmd assoc <?php echo $program["Ext"]; ?>=", "Clear default for <?php echo $program["Ext"]; ?> filetype");' class="btn btn-danger btn-sm" style="margin-top:-2px;" title="May Require A Reboot">
+
+					<i class="fas fa-eraser"></i>
+
 				</button>
 			  </td>
 			</tr>

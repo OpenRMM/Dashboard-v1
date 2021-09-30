@@ -6,6 +6,12 @@
 
 	//if(!$exists){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='index.php'><u>Dashboard</u></a></p></center><hr>"); }
 
+	//get update
+	$query = "SELECT hostname FROM computerdata WHERE ID='".$computerID."'";
+	$results = mysqli_query($db, $query);
+	$computer = mysqli_fetch_assoc($results);
+	MQTTpublish($computer['hostname']."/Commands/getServices","true",$computer['hostname']);
+
 	$json = getComputerData($computerID, array("WMI_Services"), $showDate);
 
 	$services = $json['WMI_Services'];
@@ -66,11 +72,11 @@
 			  <td><?php echo textOnNull(strlen($service['Description']) > 70 ? substr($service['Description'],0,70)."..." : $service['Description'], "Not Set");?></td>
 			  <td>
 				  <?php if($state=="Stopped"){ ?>
-					<button title="Start Sevice" class="btn btn-sm btn-success" style="margin-top:-2px;padding:5px;padding-top:2px;padding-bottom:2px;border:none;" onclick='sendCommand("cmd", "net start <?php echo $name[1]; ?>", "Kill <?php echo $proc['Name']; ?> service");'>
+					<button title="Start Sevice" class="btn btn-sm btn-success" style="margin-top:-2px;padding:5px;padding-top:2px;padding-bottom:2px;border:none;" onclick='sendCommand("net start <?php echo $name[1]; ?>", "Kill <?php echo $proc['Name']; ?> service");'>
 						<i style="font-size:12px;" class="fas fa-play"></i> Start
 					</button>
 				  <?php }elseif($state="Running"){ ?>
-					<button title="Stop Service" class="btn btn-sm btn-danger" style="margin-top:-2px;padding:5px;padding-top:2px;padding-bottom:2px;background:maroon;border:none;" onclick='sendCommand("net", "stop <?php echo $name[1]; ?> /y", "Kill <?php echo $proc['Name']; ?> service");'>
+					<button title="Stop Service" class="btn btn-sm btn-danger" style="margin-top:-2px;padding:5px;padding-top:2px;padding-bottom:2px;background:maroon;border:none;" onclick='sendCommand("net stop <?php echo $name[1]; ?> /y", "Kill <?php echo $proc['Name']; ?> service");'>
 						<i style="font-size:12px;" class="fas fa-times"></i> Stop
 					</button>
 				  <?php } ?>

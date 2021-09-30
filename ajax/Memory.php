@@ -5,6 +5,13 @@
 	
 	//if(!$exists){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='index.php'><u>Dashboard</u></a></p></center><hr>"); }
 	
+	//get update
+	$query = "SELECT hostname FROM computerdata WHERE ID='".$computerID."'";
+	$results = mysqli_query($db, $query);
+	$computer = mysqli_fetch_assoc($results);
+	MQTTpublish($computer['hostname']."/Commands/getPhysicalMemory","true",$computer['hostname']);
+
+
 	$json = getComputerData($computerID, array("WMI_ComputerSystem", "WMI_PhysicalMemory"), $showDate);
 
 ?>

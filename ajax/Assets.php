@@ -26,9 +26,7 @@
 					  </div>
 					</div>
 									
-				</div>
-				 
-			
+				</div>	 
 			   <form method="post" action="index.php">
 				   <div class="card table-card" id="printTable" style="margin-top:15px;padding:10px">  
 				   <div class="card-header">
@@ -41,14 +39,12 @@
 							</ul>
 						</div>
 					</div>
-					<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
-				
+					<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">				
 					  <thead>
 						<tr style="border-bottom:2px solid #d3d3d3;">
 						  <th scope="col">
 							<input onclick="toggle(this);" id="allcomputers" value="<?php echo $result['ID']; ?>" style="display:inline;appearance:none;" type="checkbox"/>
-						  </th>
-						  
+						  </th>		  
 						  <th scope="col">Hostname</th>
 						  <th scope="col">Logged In</th>
 						  <th scope="col">Version</th>
@@ -109,7 +105,7 @@
 								}else{ $pbColor = $siteSettings['theme']['Color 4']; }
 								$count++;
 						?>
-						<tr >
+						<tr>
 							  <td>
 								<input class="computerChkBox" name="computers[]" value="<?php echo $result['ID']; ?>" style="display:inline;appearance:none;" type="checkbox" oncheck>
 							  &nbsp;
@@ -208,26 +204,7 @@
 				  </div>
 				</div>
 			</form>
-			<!--<hr>
-			<?php if($resultCount >$count and $search==""){ ?>
-				<center>
-					<button  onclick="search($('#searchInput').val(),'Dashboard','','','<?php echo $limit + $add; ?>');" style="width:200px;background:<?php echo $siteSettings['theme']['Color 3'];?>;color:#fff" class="btn">
-						Load More
-					</button>
-					<button  data-toggle="modal" data-target="#confirmModal" style="background:<?php echo $siteSettings['theme']['Color 2'];?>;color:#fff;" class="btn btn-sm">
-						Load All
-					</button>
-				</center>
-			<?php } ?>
-			<?php if($resultCount <= $count and $search==""){ ?>
-				<div>
-					<center>
-						<a style="width:200px;background:<?php echo $siteSettings['theme']['Color 3'];?>;color:#fff;" class="btn">No More Results</a>
-					</center>
-				</div>
-			<?php } ?>-->
-		</div>
-		
+		</div>		
 		<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="padding-left:20px;">
 			<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">			
 				<div class="card-block text-center">
@@ -251,8 +228,8 @@
 				<button onclick="printData();" title="Export As CSV File" class="btn btn-warning btn-block p-t-15 p-b-15">Export Table</button>		
 			</div>
 			<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
-				<div class="panel-heading">
-				  <span class="panel-title">Notes</span>
+				<div style="height:45px" class="panel-heading">
+					<h5 class="panel-title">Notes</h5>
 				</div>
 				<div class="card-block texst-center">
 				<?php

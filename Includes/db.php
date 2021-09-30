@@ -1,5 +1,6 @@
 <?php
 	include("config.php");
+	require('phpMQTT.php');
 	$siteSettings = json_decode($siteSettingsJson, true);
 	
 	//The max amount of entries for user activity, lowering the number deletes the old entries
@@ -37,7 +38,17 @@
 	$MQTTport = $siteSettings['MQTT']['port'];
 	$MQTTusername = $siteSettings['MQTT']['username']; 
 	$MQTTpassword = $siteSettings['MQTT']['password']; 
-
+	//MQTT Subscribe
+	function MQTTpublish($topic,$message,$computerID){
+		global $MQTTserver, $MQTTport, $MQTTusername, $MQTTpassword;
+		$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $computerID);
+		if ($mqtt->connect(true, NULL, $MQTTusername, $MQTTpassword)) {
+			$mqtt->publish($topic, $message, 0, false);
+			$mqtt->close();
+		} else {
+			return "Time out!\n";
+		}
+	}
 	//Connect to DB
 	$db = mysqli_connect($siteSettings['MySQL']['host'], $siteSettings['MySQL']['username'], $siteSettings['MySQL']['password'], $siteSettings['MySQL']['database']);
 	if(!$db){
