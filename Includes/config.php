@@ -7,6 +7,12 @@ $siteSettingsJson = '
         "password": "tU7_L-mXJP",
         "database": "rmm"
     },
+    "MQTT": {
+        "host": "localhost",
+        "username": "webadmin",
+        "password": "Passw0rd!",
+        "port": "1884"
+    },
     "theme": {
         "Color 1": "#2d364b",
         "Color 2": "#01452c",

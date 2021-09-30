@@ -32,7 +32,12 @@
 		session_name($session_name);
 		session_start(); 
 	}
-	
+	//Connect to MQTT
+	$MQTTserver = $siteSettings['MQTT']['host'];
+	$MQTTport = $siteSettings['MQTT']['port'];
+	$MQTTusername = $siteSettings['MQTT']['username']; 
+	$MQTTpassword = $siteSettings['MQTT']['password']; 
+
 	//Connect to DB
 	$db = mysqli_connect($siteSettings['MySQL']['host'], $siteSettings['MySQL']['username'], $siteSettings['MySQL']['password'], $siteSettings['MySQL']['database']);
 	if(!$db){

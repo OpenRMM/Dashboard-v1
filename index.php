@@ -1,16 +1,30 @@
 <?php
 	require("Includes/db.php");
+	require('Includes/phpMQTT.php');
+
 	$search = strip_tags(urldecode($_GET['search']));
-	
 	
 	$messageTitle = "New Ideas/Bug Fixes";
 	$messageText .= "Add Site Alert For Conflicting Hostnames. <br><br> Version 1.0.1.6, updates are broke";
-	
 	
 	$query = "SELECT username,nicename FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
+	
+	$MQTTclient_id = $username; // make sure this is unique for connecting to sever - you could use uniqid()
+
+	function mQTTpublish($topic,$message){
+		global $MQTTserver, $MQTTport, $MQTTclient_id, $MQTTusername, $MQTTpassword;
+		$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $MQTTclient_id);
+		if ($mqtt->connect(true, NULL, $MQTTusername, $MQTTpassword)) {
+			$mqtt->publish($topic, $message, 0, false);
+			$mqtt->close();
+		} else {
+			return "Time out!\n";
+		}
+	}
+
 	if(isset($_POST)){
 		$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 		//Edit Computer (Edit.php)
