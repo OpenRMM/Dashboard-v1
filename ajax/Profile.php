@@ -1,13 +1,13 @@
 <?php
-	include("../Includes/db.php");
 	$userID = (int)$_GET['ID'];
-	if($userID==""){
+	if($userID==0 or $userID==""){
 			$userID=$_SESSION['userid'];
 	}
 	$query = "SELECT * FROM users WHERE ID='".$userID."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	
+	if($user['ID']==""){ echo "No user found";  exit;}
 	if($_SESSION['accountType']=="Standard" & $userID!=$_SESSION['userid']){
 		$activity="Technician Attempted Access To: ".basename($_SERVER['SCRIPT_NAME'])." ID: ".$userID;
 		userActivity($activity,$_SESSION['userid']);
@@ -137,13 +137,17 @@
             </div>
           </div>
 		  	<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
-			  	<form action="index.php" method="post">
-					 <div class="panel-heading">
-		              <span class="panel-title">Notes</span> 
-		              <input type="hidden" name="delNote" value="<?php echo $userID; ?>">
-		              <button style="float:right;margin-top:10px" class="btn  btn-sm" type="submit">Clear All</button>
-		            </div>
-			  	</form>
+			 
+				  <div style="height:45px" class="panel-heading">
+					<h5 class="panel-title">Notes
+					<?php if($userID==$_SESSION['userid']){ ?>
+						<form style="display:inline" method="post">
+							<input type="hidden" name="delNote" value="true"/>
+							<button type="submit" class="btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
+						</form>
+					<?php } ?>
+					</h5>
+				</div>
 				<div class="card-block texst-center">
 				<?php
 				$count = 0;
@@ -156,18 +160,23 @@
 					foreach(array_reverse($allnotes) as $note) {
 						if($note==""){ continue; }
 						if($count>=5){ break; }
+						$note = explode("^",$note);
 						$count++;
 				?>
-					<li  style="font-size:14px;cursor:default;color:#333;background:#fff;" class="list-group-item">
-						<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
-						<?php echo ucwords($note);?>
-					</li>
+					<a href="#" title="View Note" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+						<li  style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="list-group-item">
+							<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
+							<?php echo ucwords($note[0]);?>
+						</li>
+					</a>
 				<?php } } ?>
 				<?php if($count==0){ ?>
 					<li>No Notes</li>
 				<?php } ?>
 			</div>
-			<button data-toggle="modal" data-target="#adminNoteModal" style="background:#fe9365;color:#fff" title="Create New Note" class="btn btn-block p-t-15 p-b-15">Create New Note</button>
+			<?php if($userID==$_SESSION['userid']){ ?>
+			<button data-toggle="modal" data-target="#noteModal" style="background:#fe9365;color:#fff" title="Create New Note" class="btn btn-block p-t-15 p-b-15">Create New Note</button>
+			<?php } ?>
 		</div>
         </div>
  
@@ -199,3 +208,7 @@ table
 		$("#editUserModal_password2").prop('type', 'password').val("");
 	}
 </script>
+<?php 
+$userID = "";
+$_GET['ID'] ="";
+?>

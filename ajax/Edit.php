@@ -1,5 +1,4 @@
 <?php
-	include("../Includes/db.php");
 	$computerID = (int)clean($_GET['ID']);
 	
 	$query = "SELECT ID, show_alerts, teamviewer,hostname, CompanyID, phone, email, name, comment,computerType FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
@@ -22,7 +21,7 @@
 	</center>
 	<hr>
 <?php exit; }?>
-<h4 style="color:<?php echo $siteSettings['theme']['Color 1'];?>">Edit Asset
+<h4 style="color:<?php echo $siteSettings['theme']['Color 1'];?>">Editing Asset: <?php echo $data['hostname']; ?>
 	<a href="#" title="Refresh" onclick="loadSection('Edit');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
 		<i class="fas fa-sync"></i>
 	</a>

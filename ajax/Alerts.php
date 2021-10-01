@@ -1,6 +1,4 @@
 <?php
-	include("../Includes/db.php");
-
 	//$sort = (trim($_GET['sort'])!="" ? $_GET['sort'] : "ID");
 	$filters = clean($_GET['filters']);
 	$query = "SELECT username,nicename FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
@@ -90,4 +88,7 @@
 		<button type="submit" style="float:right" class="btn btn-warning btn-sm">Save</button>
   </form>
   </div>
+<script>
+    $(".sidebarComputerName").text("<?php echo strtoupper($_SESSION['ComputerHostname']);?>");
+</script>
   

@@ -1,8 +1,20 @@
 <?php
-	include("../Includes/db.php");
-	
 	$computerID = (int)$_GET['ID'];
-	$showDate = $_GET['Date'];
+	$showDate = $_SESSION['date'];
+	if($computerID<0){ 
+		?>
+		<br>
+		<center>
+			<h4>No Computer Selected</h4>
+			<p>
+				To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+			</p>
+		</center>
+		<hr>
+		<?php
+		exit;
+	}
+	
 	$query = "SELECT teamviewer, ID, hostname, CompanyID, name, phone, email, computerType FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$result = mysqli_fetch_assoc($results);
@@ -40,26 +52,27 @@
 		$alert = "This Computer Is Currently Offline";
 		$alertType = "danger";
 	}
-	$hostname = textOnNull(strtoupper($result['hostname']),"No Device Selected");
-	
+
+	//$hostname = textOnNull(strtoupper($result['hostname']),"No Device Selected");
 	//realtimedatamode
-	$exists = 0;
-	$query = "SELECT ID, expire_time FROM commands WHERE ComputerID='".$result['hostname']."' AND status='Sent' AND command='realtimedatamode' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
-	$results = mysqli_query($db, $query);
-	$existing = mysqli_fetch_assoc($results);
-	if($existing['ID'] != ""){
-		if(strtotime(date("m/d/Y H:i:s")) <= strtotime($existing['expire_time'])){
-			$exists = 1;
-		}
-	}
-	if($exists == 0){
-		//Generate expire time
-		$expire_after = 2;
-		$expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
-		$query = "INSERT INTO commands (ComputerID, userid, command, arg, expire_after, expire_time, status)
-				  VALUES ('".$result['hostname']."', '".$_SESSION['userid']."', 'realtimedatamode', '', '".$expire_after."', '".$expire_time."', 'Sent')";
-		$results = mysqli_query($db, $query);
-	}
+	//$exists = 0;
+	//$query = "SELECT ID, expire_time FROM commands WHERE ComputerID='".$result['hostname']."' AND status='Sent' AND command='realtimedatamode' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
+	//$results = mysqli_query($db, $query);
+	//$existing = mysqli_fetch_assoc($results);
+	//if($existing['ID'] != ""){
+	//	if(strtotime(date("m/d/Y H:i:s")) <= strtotime($existing['expire_time'])){
+	//		$exists = 1;
+	//	}
+	//}
+	//if($exists == 0){
+	//	Generate expire time
+	//	$expire_after = 2;
+	//	$expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
+	//	$query = "INSERT INTO commands (ComputerID, userid, command, arg, expire_after, expire_time, status)
+	//			  VALUES ('".$result['hostname']."', '".$_SESSION['userid']."', 'realtimedatamode', '', '".$expire_after."', '".$expire_time."', 'Sent')";
+	//	$results = mysqli_query($db, $query);
+	//}
+
 	//log user activity
 	$activity = "Technician Viewed Asset: ".$result['hostname'];
 	userActivity($activity,$_SESSION['userid']);

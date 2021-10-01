@@ -1,11 +1,20 @@
 <?php
-	include("../Includes/db.php");
-	$computerID = (int)$_GET['ID'];
 	$search = $_GET['search'];
-	$showDate = $_GET['Date'];
-	
-	//if(!$exists){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='index.php'><u>Dashboard</u></a></p></center><hr>"); }
-	
+	$computerID = (int)$_GET['ID'];
+	$showDate = $_SESSION['date'];
+	if($computerID<0){ 
+		?>
+		<br>
+		<center>
+			<h4>No Computer Selected</h4>
+			<p>
+				To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+			</p>
+		</center>
+		<hr>
+		<?php
+		exit;
+	}
 	//get update
 	$query = "SELECT hostname FROM computerdata WHERE ID='".$computerID."'";
 	$results = mysqli_query($db, $query);
@@ -103,4 +112,7 @@
 	$(document).ready(function() {
 		  $('#dataTable').DataTable();
 	});
+</script>
+<script>
+    $(".sidebarComputerName").text("<?php echo strtoupper($_SESSION['ComputerHostname']);?>");
 </script>

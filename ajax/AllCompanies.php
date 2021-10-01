@@ -1,6 +1,4 @@
 <?php
-	include("../Includes/db.php");
-	
 	$query = "SELECT CompanyID,name,phone,email,address,comments,active FROM companies where CompanyID<>'1' ORDER BY active,name ASC";
 	$results = mysqli_query($db, $query);
 	$companyCount = mysqli_num_rows($results);

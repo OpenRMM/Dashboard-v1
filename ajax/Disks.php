@@ -1,14 +1,23 @@
 <?php
-	include("../Includes/db.php");
 	$computerID = (int)$_GET['ID'];
-	$showDate = $_GET['Date'];
+	$showDate = $_SESSION['date'];
+	if($computerID<0){ 
+		?>
+		<br>
+		<center>
+			<h4>No Computer Selected</h4>
+			<p>
+				To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+			</p>
+		</center>
+		<hr>
+		<?php
+		exit;
+	}
 	
 	$query = "SELECT ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$result = mysqli_fetch_assoc($results);
-	$exists = (bool)mysqli_num_rows($results);
-	
-	if(!$exists){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='index.php'><u>Dashboard</u></a></p></center><hr>"); }
 	
 	//get update
 	MQTTpublish($result['hostname']."/Commands/getLogicalDisk","true",$result['hostname']);
@@ -179,3 +188,6 @@
 	<?php } ?>
 
 </div>
+<script>
+    $(".sidebarComputerName").text("<?php echo strtoupper($_SESSION['ComputerHostname']);?>");
+</script>

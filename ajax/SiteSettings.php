@@ -1,6 +1,4 @@
 <?php
-	include("../Includes/db.php");
-
 	$settings = new RecursiveIteratorIterator(
 	new RecursiveArrayIterator($siteSettings),
 	RecursiveIteratorIterator::SELF_FIRST);

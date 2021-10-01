@@ -1,5 +1,4 @@
 <?php
-	include("../Includes/db.php");
 	$limit = intval($_GET['limit']);
 	if($limit == 0){
 		$limit = 20;
@@ -236,7 +235,12 @@
 							</div>			
 							<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
 								<div style="height:45px" class="panel-heading">
-								  <h5 class="panel-title">Notes</h5>
+								  <h5 class="panel-title">Notes
+								  	<form style="display:inline" method="post">
+										<input type="hidden" name="delNote" value="true"/>
+										<button type="submit" class="btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
+									</form>
+								  </h5>
 								</div>
 								<div class="card-block texst-center">
 								<?php
@@ -250,12 +254,15 @@
 									foreach(array_reverse($allnotes) as $note) {
 										if($note==""){ continue; }
 										if($count>=5){ break; }
+										$note = explode("^",$note);
 										$count++;
 								?>
-									<li  style="font-size:14px;cursor:default;color:#999;background:#fff;" class="list-group-item">
-										<i style="float:left;font-size:26px;padding-right:7px" class="far fa-sticky-note"></i>
-										<?php echo ucwords($note);?>
-									</li>
+									<a href="#" title="View Note" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+										<li  style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="list-group-item">
+											<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
+											<?php echo ucwords($note[0]);?>
+										</li>
+									</a>
 								<?php } } ?>
 								<?php if($count==0){ ?>
 									<li>No Notes</li>

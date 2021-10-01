@@ -1,6 +1,4 @@
 <?php
-	include("../Includes/db.php");
-
 	$query = "SELECT ID,username,last_login,active,email,nicename,hex,phone,accountType FROM users ORDER BY nicename ASC";
 	$results = mysqli_query($db, $query);
 	$userCount = mysqli_num_rows($results);

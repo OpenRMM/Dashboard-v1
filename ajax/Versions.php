@@ -1,6 +1,5 @@
 <?php
 $nologin=true;
-	include("../Includes/db.php");
 	if($_SERVER['HTTP_REFERER']==""){
 		$user = true;
 		echo "<title>Agent Download</title>";
@@ -13,7 +12,10 @@ $nologin=true;
 			<i class="fas fa-sync"></i>
 		</a>
 	</h4>
-	<p>Downloading Older Agent Versions May Expose The Client To Bugs Or Have Less Features Available. However, Older Versions May Help With Compatibility.</p>
+	<p>Downloading Older Agent Versions May Expose The Client To Bugs Or Have Less Features Available. However, Older Versions May Help With Compatibility.
+	<br><br>
+	<span style="color:red">Note: This will download a generic agent. It will not be asigned to a company.</span>
+	</p>
 	<hr>
 	<h6 style="font-size:16px;">
 		Latest Version:
@@ -79,7 +81,7 @@ $nologin=true;
 			}
 			if($key == 0){ ?>
 				<tr>
-					<td colspan=3><center><h5>No Files Found</h5></center></td>
+					<td colspan=4><center><h6>No Files Found</h6></center></td>
 				</tr>
 			<?php }?>
 		   </tbody>

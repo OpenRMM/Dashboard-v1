@@ -1,11 +1,16 @@
 <?php
 	require("Includes/db.php");
 	
-
 	$search = strip_tags(urldecode($_GET['search']));
-	
-	//$messageTitle = "New Ideas/Bug Fixes";
-	//$messageText .= "Add Site Alert For Conflicting Hostnames. <br><br> Version 1.0.1.6, updates are broke";
+
+	$_SESSION['updateIgnore'] = $_POST['ignore'];
+	$_SESSION['excludedPages'] = array("Dashboard","SiteSettings","Users","Profile","Edit","AllUsers","AllCompanies","Assets","NewComputers","Versions");
+	if($_SESSION['updateIgnore']=="true"){
+    	array_push($_SESSION['excludedPages'],$_POST['page']);
+	}
+
+	$messageTitle = "New Ideas/Bug Fixes";
+	$messageText .= "Add Site Alert For Conflicting Hostnames. <br><br> Version 1.0.1.6, updates are broke";
 	
 	$query = "SELECT username,nicename FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
@@ -115,15 +120,10 @@
 		//delete note
 		if(isset($_POST['delNote'])){
 			$delnote=(int)$_POST['delNote'];
-			$query = "UPDATE users SET notes='' WHERE ID='".$delnote."';";
-			$results = mysqli_query($db, $query);
-			
-			$activity="Technician Deleted User: ".$delnote." Notes";		
+			$query = "UPDATE users SET notes='' WHERE ID='".$_SESSION['userid']."';";
+			$results = mysqli_query($db, $query);			
+			$activity="Technician Deleted All Notes";		
 			userActivity($activity,$_SESSION['userid']);
-			
-			$activity="Admin Deleted All Notes";		
-			userActivity($activity,$delnote);
-			
 			header("location: index.php");
 		}
 		//delete user activity
@@ -194,22 +194,15 @@
 			header("location: index.php?page=AllCompanies");
 		}
 		//Create Note
-		if(isset($_POST['note'])){
-			$adminnote=(int)$_POST['adminnote'];
-			if($adminnote==""){
-				$ID=$_SESSION['userid'];
-				$activity = "Technician Created A Note";
-			}else{
-				$ID=$adminnote;
-				$activity = "Technician Created A Note For Technician: ".$adminnote;
-				$activity2 = "Admin Created A Note For Technician";;
-				userActivity($activity2,$adminnote);
-			}
+		if(isset($_POST['note'])){			
+			$ID=$_SESSION['userid'];
+			$activity = "Technician Created A Note";
 			$newnote = clean($_POST['note']);
+			$noteTitle = clean($_POST['noteTitle']);
 			$query = "SELECT notes FROM users WHERE ID='".$ID."'";
 			$results = mysqli_query($db, $query);
 			$oldnote = mysqli_fetch_assoc($results);
-			$note = $oldnote['notes'].$newnote."|";
+			$note = $oldnote['notes'].$noteTitle."^".$newnote."|";
 			$query = "UPDATE users SET notes='".$note."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);		
 			userActivity($activity,$_SESSION['userid']);
@@ -446,7 +439,7 @@
 							<i style="font-size:88px;text-align:center" class="fa fa-user" ></i>
 							<h6 style="color:#fff;margin-top:10px"><?php echo ucwords($user['nicename']); ?></h6>
 						</a>
-						<a onclick="loadSection('Profile');"  style="cursor:pointer;color:#d3d3d3">Profile</a>
+						<a onclick="loadSection('Profile','<?php echo $_SESSION['userid']; ?>');"  style="cursor:pointer;color:#d3d3d3">Profile</a>
 						<span style="color:#fff"> &#8226; </span> 					
 						<a href="logout.php" style="color:#fd7e14">Logout</a>
 						<hr>
@@ -470,7 +463,7 @@
 						</li>
 					<?php } ?>
 						<li onclick="loadSection('Versions');" id="secbtnVersions" class="secbtn" style="width:100%">
-							<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Agent
+							<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Downloads
 						</li>
 					<?php if($_SESSION['accountType']=="Admin"){ ?>
 						<!--li onclick="loadSection('SiteSettings');" id="secbtnSiteSettings" style="width:100%" class="secbtn">
@@ -504,9 +497,9 @@
 						<li onclick="loadSection('Programs');" id="secbtnPrograms" class="secbtn">
 							<i class="fab fa-app-store-ios"></i>&nbsp;&nbsp;&nbsp; Programs
 						</li>
-						<li onclick="loadSection('DefaultPrograms');" id="secbtnDefaultPrograms" class="secbtn">
+						<!--li onclick="loadSection('DefaultPrograms');" id="secbtnDefaultPrograms" class="secbtn">
 							<i class="fab fa-app-store-ios"></i>&nbsp;&nbsp;&nbsp; Default Programs
-						</li>
+						</li-->
 						<li onclick="loadSection('Services');" id="secbtnServices" class="secbtn">
 							<i class="fas fa-cogs"></i>&nbsp;&nbsp;&nbsp; Services
 						</li>
@@ -535,7 +528,7 @@
 					</div>				
 					<div class="recents" id="recents" style="margin-top:20px;"></div>	
 					
-					<div style="height:100px">&nbsp;</div>		
+					<div style="height:500px">&nbsp;</div>		
 				</ul>
 			</nav>
 			<!-- Page Content -->
@@ -715,8 +708,15 @@
 			  </div>
 			  <form id="note" method="POST">
 				  <div class="modal-body">
-					<p>This Will Create A New Note That Only You Can See.</p>
-					<textarea required maxlength="300" name="note" class="form-control"></textarea>
+					<p>This Will Create A New Note That Only You And Other Administrators Can See.</p>
+					<div class="form-group">
+    					<label for="noteTitle">Title</label>
+						<input type="text" class="form-control" placeholder="" name="noteTitle">
+					</div>
+					<div class="form-group">
+    					<label for="note">Note</label>
+						<textarea rows="6" required maxlength="300" name="note" class="form-control"></textarea>
+					</div>
 				  </div>
 				  <div class="modal-footer">
 					<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
@@ -725,6 +725,22 @@
 					</button>
 				  </div>
 			  </form>
+			</div>
+		  </div>
+		</div>
+			<!--------------- View note Modal ------------->
+		<div id="viewNoteModal" class="modal fade" role="dialog">
+		  <div class="modal-dialog">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h4 id="notetitle"><b>View Note</b></h4>
+			  </div>
+				  <div class="modal-body">					
+						<h6 style="margin-top:20px"><span id="notedesc"></span></h6>
+				  </div>
+				  <div class="modal-footer">
+					<button type="button" class="btn btn-sm btn-primary" data-dismiss="modal">Close</button>
+				  </div>
 			</div>
 		  </div>
 		</div>
@@ -946,13 +962,9 @@
 			computerID = ID;
 			currentSection = section;
 			$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow text-primary'></div><div class='spinner-grow text-success'></div><div class='spinner-grow text-info'></div><div class='spinner-grow text-warning'></div><div class='spinner-grow text-danger'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
-			$(".loadSection").load("ajax/"+section+".php?ID="+ID+"&Date="+date);
+			$(".loadSection").load("ajax/RealtimeUpdate.php?ID="+ID+"&Date="+date+"&page="+section);
 			$(".recents").load("ajax/recent.php?ID="+ID);
-			if(section == "Profile" || section == "Assets" || section == "Dashboard" || section == "AllUsers" || section == "AllCompanies" || section == "NewComputers" || section == "Versions" || section == "SiteSettings"){
-				$('#sectionList').slideUp(400);
-			}else if($('#sectionList').css("display")=="none"){
-				$('#sectionList').slideDown(400);
-			}
+			
 			if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 				$('#sidebar').removeClass('active');
 			}
@@ -961,7 +973,7 @@
 		function loadSectionHistory(date="latest"){
 			sectionHistoryDate = date;
 			$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow text-primary'></div><div class='spinner-grow text-success'></div><div class='spinner-grow text-info'></div><div class='spinner-grow text-warning'></div><div class='spinner-grow text-danger'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
-			$(".loadSection").load("ajax/"+currentSection+".php?ID="+computerID+"&Date="+date);
+			$(".loadSection").load("ajax/RealtimeUpdate.php?page="+currentSection+"&ID="+computerID+"&Date="+date);
 			$("#historicalDateSelection_modal").modal("hide");
 		}
 		

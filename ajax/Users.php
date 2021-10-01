@@ -1,12 +1,21 @@
 <?php
-	include("../Includes/db.php");
 	$computerID = (int)$_GET['ID'];
-	$showDate = $_GET['Date'];
-
-	//if(!$exists){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='index.php'><u>Dashboard</u></a></p></center><hr>"); }
-
+	$showDate = $_SESSION['date'];
+	if($computerID<0){ 
+		?>
+		<br>
+		<center>
+			<h4>No Computer Selected</h4>
+			<p>
+				To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+			</p>
+		</center>
+		<hr>
+		<?php
+		exit;
+	}
+	
 	$json = getComputerData($computerID, array("WMI_UserAccount","WMI_NetworkLoginProfile"), $showDate);
-
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">

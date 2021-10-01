@@ -1,10 +1,22 @@
 <?php
-	include("../Includes/db.php");
 	$computerID = (int)$_GET['ID'];
-	$showDate = $_GET['Date'];
+	$showDate = $_SESSION['date'];
+	if($computerID<0){ 
+		?>
+		<br>
+		<center>
+			<h4>No Computer Selected</h4>
+			<p>
+				To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+			</p>
+		</center>
+		<hr>
+		<?php
+		exit;
+	}
 	
-	//if(!$exists){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='index.php'><u>Dashboard</u></a></p></center><hr>"); }
-	
+	MQTTpublish($_SESSION['computerHostname']."/Commands/getPrinters","true",$_SESSION['computerHostname']);
+
 	$json = getComputerData($computerID, array("WMI_Printers"), $showDate);
 	
 	$printers = $json['WMI_Printers'];
@@ -70,8 +82,11 @@
 	   </tbody>
 	</table>
 </div>
-	<script>
-		$(document).ready(function() {
-			  $('#dataTable').DataTable();
-		});
-	</script>
+<script>
+	$(document).ready(function() {
+			$('#dataTable').DataTable();
+	});
+</script>
+<script>
+    $(".sidebarComputerName").text("<?php echo strtoupper($_SESSION['ComputerHostname']);?>");
+</script>

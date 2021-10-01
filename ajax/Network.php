@@ -1,21 +1,26 @@
 <?php
-	include("../Includes/db.php");
 	$computerID = (int)$_GET['ID'];
-	$showDate = $_GET['Date'];
-
+	$showDate = $_SESSION['date'];
+	if($computerID<0){ 
+		?>
+		<br>
+		<center>
+			<h4>No Computer Selected</h4>
+			<p>
+				To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+			</p>
+		</center>
+		<hr>
+		<?php
+		exit;
+	}
 	//get update
-	$query = "SELECT hostname FROM computerdata WHERE ID='".$computerID."'";
-	$results = mysqli_query($db, $query);
-	$computer = mysqli_fetch_assoc($results);
-	MQTTpublish($computer['hostname']."/Commands/getNetwork","true",$computer['hostname']);
-
-	//if(!$exists){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='index.php'><u>Dashboard</u></a></p></center><hr>"); }
+	MQTTpublish($_SESSION['computerHostname']."/Commands/getNetwork","true",$_SESSION['computerHostname']);
 
 	$json = getComputerData($computerID, array("WMI_NetworkAdapters"), $showDate);
 
 	$adapters = $json['WMI_NetworkAdapters'];
 	$error = $json['WMI_NetworkAdapters_error'];
-
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<h4 style="color:<?php echo $siteSettings['theme']['Color 1'];?>" class="col-md-10">
@@ -40,7 +45,6 @@
 		</a>
 	</div>
 </div>
-
 <div class="col-md-12" style="padding:5px;">
 	<div class="card" style="height:95%;background:#fff;padding:10px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;">
 	  <div>
@@ -54,28 +58,34 @@
 				</tr>
 			</thead>
 			<tbody>
-	<?php
-		foreach($adapters as $key=>$adapter){
-	?>
+			<?php
+				foreach($adapters as $key=>$adapter){
+			?>
 				<tr>
 					<td><?php echo textOnNull($adapter['Description'],"None");?></td>	
 					<td><?php echo textOnNull($adapter['DHCPEnabled'],"None");?></td>				
 					<td><?php echo textOnNull($adapter['MACAddress'],"None"); ?></td>
 					<td><?php echo textOnNull($adapter['DHCPServer'],"None"); ?></td>
 				</tr>			
-	<?php }
-		if(count($adapters) == 0){ ?>
-			<div class="col-md-12" style="padding:5px;">
-				<center><h5>No Network Adapters found.</h5></center>
-			</div>
-	<?php }?>
+			<?php }
+				if(count($adapters) == 0){ ?>
+					<tr>
+						<td><h6>No Network Adapters found.</h6></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+			<?php }?>
 			</tbody>
 		</table>
 	  </div>
 	</div>
 </div>
-	<script>
-		$(document).ready(function() {
-			  $('#dataTable').DataTable();
-		});
-	</script>
+<script>
+	$(document).ready(function() {
+			$('#dataTable').DataTable();
+	});
+</script>
+<script>
+    $(".sidebarComputerName").text("<?php echo strtoupper($_SESSION['ComputerHostname']);?>");
+</script>

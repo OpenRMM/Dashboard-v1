@@ -1,5 +1,5 @@
 <?php
-	include("../Includes/db.php");
+	
 ?>
 <div style="margin-top:20px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 <h4 style="color:<?php echo $siteSettings['theme']['Color 1'];?>">New Computers

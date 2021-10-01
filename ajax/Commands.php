@@ -1,10 +1,21 @@
 <?php
-	include("../Includes/db.php");
-	$computerID = (int)$_GET['ID'];
 	$search = $_GET['search'];
-	$showDate = $_GET['Date'];
+	$computerID = (int)$_GET['ID'];
+	$showDate = $_SESSION['date'];
+	if($computerID<0){ 
+		?>
+		<br>
+		<center>
+			<h4>No Computer Selected</h4>
+			<p>
+				To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+			</p>
+		</center>
+		<hr>
+		<?php
+		exit;
+	}
 
-	//if(!$exists){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='index.php'><u>Dashboard</u></a></p></center><hr>"); }
 	$json = getComputerData($computerID, array("*"), $showDate);
 	$online = $json['Online'];
 	$lastPing = $json['Ping'];
@@ -16,7 +27,7 @@
 	
 ?>
 <div class="row"  style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
-	<div style="padding:20px" class="col-md-12">
+	<div style="padding:20px" class="col-md-10">
 		<h5>Commands</h5>
 		<p>View & Execute Commands On This Asset.</p>
 		<hr>
@@ -102,7 +113,7 @@ PAUSE
 						$count++;
 					?>
 					<tr>
-					  <td><b><?php echo $command['command'];?></b></td>
+					  <td title="<?php echo substr($command['command'], 0, 400) . '...'; ?>"><b><?php echo substr($command['command'], 0, 40) . '...'; ?></b></td>
 					  <td><?php echo textOnNull($command['arg'],"None");?></td>
 					  <!--<td><?php echo strtolower($command['expire_after']);?> Minutes</td>-->
 					  <td><?php echo $command['time_sent'];?></td>
@@ -140,4 +151,7 @@ PAUSE
 	$(document).ready(function() {
 		  $('#dataTable').DataTable();
 	});
+</script>
+<script>
+    $(".sidebarComputerName").text("<?php echo strtoupper($_SESSION['ComputerHostname']);?>");
 </script>
