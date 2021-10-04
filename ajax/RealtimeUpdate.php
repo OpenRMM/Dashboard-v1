@@ -51,7 +51,7 @@ if (in_array($_SESSION['page'], $_SESSION['excludedPages']))
                     $("html, body").animate({ scrollTop: 0 }, "slow"); 
                 </script> 
                     <center>
-                        <h5>This asset could not be contacted.</h5>
+                        <h5>Asset: <?php echo $_SESSION['ComputerHostname']; ?> could not be contacted.</h5>
                         <br>
                         <h6>Would you like to display the outdated assset data?</h6>
                         <br>

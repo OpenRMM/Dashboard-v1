@@ -38,7 +38,7 @@ if($_SESSION['userid']!=""){
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>SMG RMM | Login</title>
+		<title>Open RMM | Login</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" >
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="css/all.min.css"/>
@@ -74,7 +74,7 @@ if($_SESSION['userid']!=""){
 			 <div >
 				<div class=" col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
 				<div style="margin-top:-100px;padding-bottom:50px">
-					<h2>SMG Unlimited LLC</h2>
+					<h2>Open RMM</h2>
 					<p>Login From Here To Access Our Remote Monitoring & Management Platform. <?php echo $message; ?></p>
 				</div>
 				   <form method="post" class="form-signin">
@@ -96,7 +96,7 @@ if($_SESSION['userid']!=""){
 		 </div>
 		  <footer style="z-index:999;padding:5px;height:30px;position: fixed;left: 0;bottom: 0;width: 100%;color:#fff;text-align: center;background:<?php echo $siteSettings['theme']['Color 1'];?>" class="page-footer font-small black">
 				<div class="footer-copyright text-center ">© <?php echo date('Y');?> Copyright
-					<a style="color:#fff" href="http://smgunlimited.com"> SMG Unlimited</a>
+					<a style="color:#fff" href="https://github.com/OpenRMM"> Open RMM</a>
 				</div>
 		  </footer>
 	</body>

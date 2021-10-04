@@ -14,7 +14,7 @@ $nologin=true;
 	</h4>
 	<p>Downloading Older Agent Versions May Expose The Client To Bugs Or Have Less Features Available. However, Older Versions May Help With Compatibility.
 	<br><br>
-	<span style="color:red">Note: This will download a generic agent. It will not be asigned to a company.</span>
+	<span style="color:red">Note: This will download a generic agent. It will not be assigned to a company.</span>
 	</p>
 	<hr>
 	<h6 style="font-size:16px;">

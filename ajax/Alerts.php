@@ -12,7 +12,7 @@
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-12">
-		<h5>Monitor</h5><hr>
+		<h5>Monitor ** This page is ugly</h5><hr>
 		<p>Configure Notifications For This Asset.</p>	
 		<form action="index.php" method="post">
 		<div class="row">			

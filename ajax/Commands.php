@@ -27,7 +27,7 @@
 	
 ?>
 <div class="row"  style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
-	<div style="padding:20px" class="col-md-10">
+	<div style="padding:20px" class="col-md-12">
 		<h5>Commands</h5>
 		<p>View & Execute Commands On This Asset.</p>
 		<hr>
@@ -37,8 +37,11 @@
 			<?php if($online){ ?>
 				<div style="height:200px">		
 					<br>			
-					<button class="btn btn-sm btn-warning" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:none" data-toggle="modal" data-target="#terminalModal">
+					<button class="btn btn-sm btn-default" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:1px solid #000" data-toggle="modal" data-target="#terminalModal">
 						<i class="fas fa-terminal" style="margin-top:3px;float:left"></i> Terminal
+					</button>
+					<button class="btn btn-sm btn-warning" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:none" data-toggle="modal" data-target="#agentAlertModal">
+						<i class="fas fa-comment" style="margin-top:3px;float:left"></i> One-way Message
 					</button>
 					<button data-dismiss="modal" class="btn btn-success btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
 						<i class="fas fa-desktop" style="float:left;margin-top:3px"></i> Enable Remote Desktop
@@ -55,7 +58,7 @@
 				</div>
 				<br>
 			</div>
-			<div style="" class="col-md-5">
+			<div style="" class="col-md-7">
 				<h5>Run A Custom Script</h5><br>
 					<div>
 						<div class="form-group">
@@ -146,6 +149,29 @@ PAUSE
 		</div>
 	</div>
   </div>
+</div>
+<!-------modal----->
+<div id="agentAlertModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">One-way Message to Agent: <?php echo $_SESSION['ComputerHostname']; ?></h5>
+			</div>
+			<form method="post" action="index.php">
+				<div class="modal-body">
+					<input type="hidden" name="type" value="assetOneWayMessage"/>
+					<input type="hidden" name="ID" value="<?php echo $_SESSION['ComputerHostname']; ?>">
+					<textarea placeholder="Your message here..." name="assetMessage" class="form-control"></textarea>
+				</div>
+				<div class="modal-footer">
+					<button type="submit"  class="btn btn-primary btn-sm">
+						Send <i class="fas fa-paper-plane" ></i>
+					</button>
+					<button type="button" class="btn btn-sm btn-default"  data-dismiss="modal">Close</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 <script>
 	$(document).ready(function() {

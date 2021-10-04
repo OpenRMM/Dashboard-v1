@@ -257,7 +257,7 @@
 										$note = explode("^",$note);
 										$count++;
 								?>
-									<a href="#" title="View Note" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+									<a title="View Note" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
 										<li  style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="list-group-item">
 											<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 											<?php echo ucwords($note[0]);?>

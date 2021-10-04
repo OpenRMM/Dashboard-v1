@@ -43,7 +43,7 @@
 			<span style="float:right;font-size:12px">User ID: <?php echo $user['ID']; ?></span>
             <span style="font-size:14px" ><small>last seen: <?php echo gmdate("m/d/y h:i", $user['last_login']); ?></small></span>
             </h4>
-            <p style="color:#fff">View All Assets Added By This User. You Can Also Access Contact Information And Recent Activity. </p>
+            <p style="color:#dedede">View All Assets Added By This User. You Can Also Access Contact Information And Recent Activity. </p>
             <hr>
             <form action="index.php" method="POST">
 				<input type="hidden" name="type" value="DeleteUser"/>
@@ -163,7 +163,7 @@
 						$note = explode("^",$note);
 						$count++;
 				?>
-					<a href="#" title="View Note" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+					<a title="View Note" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
 						<li  style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="list-group-item">
 							<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 							<?php echo ucwords($note[0]);?>

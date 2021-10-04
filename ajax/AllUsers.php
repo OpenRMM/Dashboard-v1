@@ -71,12 +71,12 @@
 							<input type="hidden" name="type" value="DeleteUser"/>
 							<input type="hidden" name="ID" value="<?php echo $user['ID']; ?>"/>
 							<?php if($user['active']=="1"){ ?>
-								<input type="hidden" value="0" name="active"/>
+								<input type="hidden" value="0" name="useractive"/>
 								<button <?php if($user['ID']=="1") echo "disabled"; ?> type="submit" title="Deactivate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
 									<i class="fas fa-trash" ></i>				
 								</button>
 							<?php }else{ ?>
-								<input type="hidden" value="1" name="active"/>
+								<input type="hidden" value="1" name="useractive"/>
 								<button type="submit" title="Activate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-success btn-sm">
 									<i class="fas fa-plus" ></i>
 								</button>

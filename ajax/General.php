@@ -127,7 +127,7 @@
         <div class="card">
             <div class="card-body">
                 <canvas data-centerval="37.2%" id="chDonut2"></canvas>
-                <h6 style="text-align:center">CPU2 Usage</h6>
+                <h6 style="text-align:center">CPU Usage</h6>
             </div>
         </div>
     </div>

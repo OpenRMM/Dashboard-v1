@@ -139,6 +139,15 @@
 			userActivity($activity,$delActivity);
 			header("location: index.php");
 		}
+		//Oneway asset message
+		if($_POST['type'] == "assetOneWayMessage"){
+			$ID=clean($_POST['ID']);
+			$message=clean($_POST['assetMessage']);
+			MQTTpublish($ID."/Commands/showAlert",$message,$ID);	
+			$activity="Technician Sent Asset: ".$ID." A One-way Message";		
+			userActivity($activity,$_SESSION['userid']);
+			header("location: index.php");
+		}
 		//Add Edit/Company
 		if($_POST['type'] == "AddEditCompany"){
 			if(isset($_POST['name'], $_POST['phone'], $_POST['address'], $_POST['email'])){
@@ -166,7 +175,7 @@
 		//Delete Company
 		if($_POST['type'] == "DeleteCompany"){
 			$ID = (int)$_POST['ID'];
-			$active = (int)$_POST['active'];
+			$active = (int)$_POST['companyactive'];
 			$query = "UPDATE companies SET active='".$active."' WHERE CompanyID='".$ID."';";
 			$results = mysqli_query($db, $query);
 			$activity = "Technician Deleted A Company: ".$ID;
@@ -176,7 +185,7 @@
 		//Delete User
 		if($_POST['type'] == "DeleteUser"){
 			$ID = (int)$_POST['ID'];
-			$active = (int)$_POST['active'];
+			$active = (int)$_POST['useractive'];
 			$query = "UPDATE users SET active='".$active."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
 			$activity = "Technician Deleted A Technician: ".$ID;
@@ -184,14 +193,14 @@
 			header("location: index.php?page=AllUsers");
 		}
 		//Delete Command
-		if($_POST['type'] == "CompanyUpdateAll"){
+		if($_POST['type'] == "DeleteCommand"){
 			$ID = $_POST['ID'];
-			$active = (int)$_POST['active'];
+			$active = (int)$_POST['commandactive'];
 			$activity = "Technician Deleted A Command: ".$ID;
 			userActivity($activity,$_SESSION['userid']);
-			$query = "UPDATE commands SET command='Deleted' WHERE ComputerID='".$ID."';";
+			$query = "UPDATE commands SET command='Deleted' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
-			header("location: index.php?page=AllCompanies");
+			header("location: index.php?page=Commands");
 		}
 		//Create Note
 		if(isset($_POST['note'])){			
@@ -303,7 +312,7 @@
 			exit(file_get_contents("Includes/config.php"));
 		}
 		if($_POST['type'] == "saveSiteSettings"){
-			$settings = "$siteSettingsJson = '".trim($_POST['settings'])."';";
+			$settings = "<?php \$siteSettingsJson = '".$siteSettingsJson."';";
 			$configFile = "Includes/config.php";
 			file_put_contents($configFile, $settings);
 			exit();
@@ -476,7 +485,7 @@
 						<h5 class="sidebarComputerName"></h5>
 						<hr>
 						<li onclick="loadSection('General');" id="secbtnGeneral" class="secbtn">
-							<i class="fas fa-stream"></i>&nbsp;&nbsp;&nbsp; Overview
+							<i class="fas fa-stream"></i>&nbsp;&nbsp;&nbsp; Asset Overview
 						</li>
 						<hr>
 						<h6 class="">Tools</h6>
