@@ -1,5 +1,5 @@
 <?php
-	include("config.php");
+	require("config.php");
 	require('phpMQTT.php');
 	$siteSettings = json_decode($siteSettingsJson, true);
 	
@@ -71,7 +71,6 @@
 		return $general;
 	}
 	$siteSettings['general'] = loadGeneralFromDB();
-	
 	//Function to aggrigate data from pc
 	function getComputerData($ID, $fields = array("*"), $date = "latest"){
 		global $db, $siteSettings;
@@ -106,13 +105,6 @@
 				$retResult[$row['WMI_Name']] = $row['WMI_Data'];
 			}
 			$retResult[$row['WMI_Name']."_lastUpdate"] = $row['last_update'];
-		}
-		
-		//Online/Offline
-		if(strtotime($retResult['Ping']) < strtotime("-".$siteSettings['Online Threshold'])) {
-			$retResult["Online"] = false;
-		}else{
-			$retResult["Online"] = true;
 		}
 		$getAlerts = getComputerAlerts($hostname, $retResult);
 		$retResult["Alerts"] = $getAlerts[0];
@@ -287,20 +279,6 @@
 		}
 		if (!$full) $string = array_slice($string, 0, 1);
 		return $string ? implode(', ', $string) . ' ago' : 'just now';
-	}
-	
-	//If Not logged in
-	if($nologin==false){
-		if($_SESSION['userid']=="" && basename($_SERVER['REQUEST_URI']) != "login.php" && !in_array(basename($_SERVER['SCRIPT_NAME']), $serverPages)){
-			if(strpos(strtolower($_SERVER['SCRIPT_NAME']),"/ajax/")!==false){ //fix for ajax pages
-				echo ("<center><h3>Error loading page, please make you are loged in.</h3></center>");
-				exit("<script>location.href='index.php';</script>");
-			}else{
-				echo "Redirecting You To The Login Page...";
-				header("location: login.php");
-				exit;
-			}
-		}
 	}
 	
 	//Encrypt And Decrypt With Salt
