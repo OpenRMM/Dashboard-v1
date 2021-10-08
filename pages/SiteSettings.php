@@ -57,7 +57,6 @@
 			<form method="POST" action="index.php" style="padding:10px">
 				<input type="hidden" name="type" value="saveSiteSettings"/>
 				<div contenteditable="true"><?php echo $text;  ?></div>	
-
 				<div style="margin-top:30px;" class="form-group float-label-control">                 
 					<input style="float:right;border:none;width:200px;background:<?php echo $siteSettings['theme']['Color 4']; ?>;color:#fff;" type="submit" class="btn btn-sm" value="Save Details"/>
 				</div>
@@ -66,16 +65,17 @@
 	</div>
 	<div class="col-md-3">  
 		<div class="card table-card panel">
-		<form method="POST" action="index.php">
-	        <div class="panel-heading">
-              <span class="panel-title">Sitewide Alert</span>
-			
-            </div>
-			<div style="padding:10px;" class="form-group float-label-control">  
-				<textarea placeholder="What Is The Alert For Every Technician" rows=5 class="form-control"></textarea>			
-				<center><input style="margin-top:20px" type="submit" class="btn btn-warning btn-sm" value="Save Details"/></center>
-			</div>
-		</form>
+			<form method="POST" action="index.php">
+				<div class="panel-heading">
+					<span class="panel-title">Sitewide Alert</span>
+				</div>
+				<div style="padding:10px;" class="form-group float-label-control">  
+					<textarea placeholder="What Is The Alert For Every Technician" rows=5 class="form-control"></textarea>			
+					<center>
+						<input style="margin-top:20px" type="submit" class="btn btn-warning btn-sm" value="Save Details"/>
+					</center>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>
@@ -89,14 +89,12 @@
 		  $("#siteSettingsTextArea").val(prettyJson(data));
 		});	
 		return retdata;
-	}
-	
+	}	
 	function prettyJson(json) {
 		var ugly = json
 		var obj = JSON.parse(ugly);
 		var pretty = JSON.stringify(obj, undefined, 4);
 		return pretty;
 	}
-
 	getSiteSettings();
 </script>

@@ -1,5 +1,5 @@
 <?php 
-	if($_SESSION['userid']==""){ 
+if($_SESSION['userid']==""){ 
 ?>
 	<script>		
 		toastr.error('Session timed out.');
@@ -9,15 +9,15 @@
 		}, 3000);		
 	</script>
 <?php 
-		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-	}
-	$query = "SELECT ID,username,last_login,active,email,nicename,hex,phone,accountType FROM users ORDER BY nicename ASC";
-	$results = mysqli_query($db, $query);
-	$userCount = mysqli_num_rows($results);
+	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
+}
+$query = "SELECT ID,username,last_login,active,email,nicename,hex,phone,accountType FROM users ORDER BY nicename ASC";
+$results = mysqli_query($db, $query);
+$userCount = mysqli_num_rows($results);
 ?>
 <div style="margin-top:20px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
-	<h4 style="color:<?php echo $siteSettings['theme']['Color 1'];?>">All Technicians (<?php echo $userCount;?>)
-		<a href="#" title="Refresh" onclick="loadSection('AllUsers');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
+	<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">All Technicians (<?php echo $userCount;?>)
+		<a href="#" title="Refresh" onclick="loadSection('AllUsers');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
 		<button type="button" style="margin:5px;background:#0ac282;;float:right;color:#fff" data-toggle="modal" data-target="#userModal" class="btn-sm btn btn-light" title="Add User">
@@ -38,25 +38,25 @@
 		</div>
 	<div style="padding:10px;">	
 		<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:14px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
-		 <col width="50">
-		 <col width="200">
-		 <col width="250">
-		 <col width="100">
-		 <col width="200">
-		 <col width="80">
-		 <col width="100">
-		 <thead>
-			<tr style="border-bottom:2px solid #d3d3d3;">
-			  <th scope="col">User ID</th>
-			  <th scope="col">Name</th>
-			  <th scope="col">Email</th>
-			  <th scope="col">Phone</th>
-			  <th scope="col">Username</th>
-			  <th scope="col">Last Login</th>
-			  <th scope="col">Account Type</th>
-			  <th scope="col">Status</th>
-			  <th scope="col"></th>
-			</tr>
+			<col width="50">
+			<col width="200">
+			<col width="250">
+			<col width="100">
+			<col width="200">
+			<col width="80">
+			<col width="100">
+			<thead>
+				<tr style="border-bottom:2px solid #d3d3d3;">
+					<th scope="col">User ID</th>
+					<th scope="col">Name</th>
+					<th scope="col">Email</th>
+					<th scope="col">Phone</th>
+					<th scope="col">Username</th>
+					<th scope="col">Last Login</th>
+					<th scope="col">Account Type</th>
+					<th scope="col">Status</th>
+					<th scope="col"></th>
+				</tr>
 		  </thead>
 		  <tbody>
 			<?php
@@ -73,7 +73,7 @@
 					<td><?php echo $user['ID'];?></td>
 					<td><a href="#" onclick="loadSection('Profile','<?php echo $user['ID']; ?>');"><?php echo ucwords($user['nicename']);?></a></td>
 					<td><a href="mailto:<?php echo strtolower(crypto('decrypt', $user['email'], $user['hex']));?>"><?php echo textOnNull(strtolower(crypto('decrypt', $user['email'], $user['hex'])),"No Email");?></a></td>
-					  <td><a href="tel:<?php echo strtolower(crypto('decrypt', $user['phone'], $user['hex']));?>"><?php echo textOnNull(phone(crypto('decrypt', $user['phone'], $user['hex'])),"No Phone");?></a></td>
+					<td><a href="tel:<?php echo strtolower(crypto('decrypt', $user['phone'], $user['hex']));?>"><?php echo textOnNull(phone(crypto('decrypt', $user['phone'], $user['hex'])),"No Phone");?></a></td>
 					<td><?php echo strtolower($user['username']);?></td>
 					<td><?php echo textOnNull(gmdate("m/d/Y\ h:i A", $user['last_login']),"Never");?></td>
 					<td><?php echo ucwords($user['accountType']);?></td>
@@ -100,7 +100,7 @@
 					</td>
 				</tr>
 			<?php }?>
-		   </tbody>
+		    </tbody>
 		</table>
 	</div>	
 </div>
@@ -120,6 +120,6 @@
 </script>
 <script>
 $(document).ready(function() {
-      $('#dataTable').DataTable();
+    $('#dataTable').DataTable();
 });
 </script>

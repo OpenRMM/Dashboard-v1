@@ -37,7 +37,7 @@
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
-		<h4 style="color:<?php echo $siteSettings['theme']['Color 1'];?>">
+		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
 			User Accounts (<?php echo count($json['WMI_UserAccount']);?>)
 		</h4>
 		<?php if($showDate == "latest"){?>
@@ -51,10 +51,10 @@
 		<?php }?>
 	</div>
 	<div class="col-md-2" style="text-align:right;">
-		<a href="#" title="Refresh" onclick="loadSection('Users');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
+		<a href="#" title="Refresh" onclick="loadSection('Users');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
-		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
+		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
 			<i class="far fa-calendar-alt"></i>
 		</a>
 	</div>

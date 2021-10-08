@@ -1,19 +1,21 @@
 <?php
-	require("config.php");
-	require('phpMQTT.php');
+	include("config.php");
 	$siteSettings = json_decode($siteSettingsJson, true);
-	
+	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	
+	$excludedPages = "Init,Login,Logout,EventLogs,Alerts,Commands,Dashboard,SiteSettings,Profile,Edit,AllUsers,AllCompanies,Assets,NewComputers,Versions"; 
+	$allPages = "Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,DefaultPrograms,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,NewComputers,OptionalFeatures,Printers,Proccesses,Profile,Programs,Services,Users,Versions";
+	$adminPages = "AllUsers.php,AllCompanies.php,SiteSettings.php";
 ###########################################################################################################################################
 ######################################################## DEV ONLY DO NOT PASS #############################################################
 ###########################################################################################################################################
 	//Set Timezone
 	date_default_timezone_set("America/Chicago");
 	$serverPages = array("cron.php", "LoadHistorical.php");
-	$adminPages = array("AllUsers.php", "AllCompanies.php","SiteSettings.php");
-	
+	$_SESSION['excludedPages'] = explode(",", $excludedPages);
+	$allPages = explode(",", $allPages);
+	$adminPages = explode(",", $allAdminPages);
 	if(!in_array(basename($_SERVER['SCRIPT_NAME']), $serverPages)){
 		ini_set('session.gc_maxlifetime', 3600);
 		ini_set('display_errors', 0);
@@ -33,6 +35,7 @@
 		session_name($session_name);
 		session_start(); 
 	}
+
 	//Connect to MQTT
 	$MQTTserver = $siteSettings['MQTT']['host'];
 	$MQTTport = $siteSettings['MQTT']['port'];
@@ -40,23 +43,30 @@
 	$MQTTpassword = $siteSettings['MQTT']['password']; 
 	//MQTT Subscribe
 	function MQTTpublish($topic,$message,$computerID){
-		global $MQTTserver, $MQTTport, $MQTTusername, $MQTTpassword;
+		global $MQTTserver, $MQTTport, $MQTTusername, $MQTTpassword, $mqttConnect;;
 		$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $computerID);
 		if ($mqtt->connect(true, NULL, $MQTTusername, $MQTTpassword)) {
 			$mqtt->publish($topic, $message, 0, false);
 			$mqtt->close();
 		} else {
+			$mqttConnect="timeout";
 			return "Time out!\n";
 		}
 	}
+	$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $computerID);
+	if ($mqtt->connect(true, NULL, $MQTTusername, $MQTTpassword)) { }else{
+		$mqttConnect="timeout";
+	}
+
 	//Connect to DB
+
 	$db = mysqli_connect($siteSettings['MySQL']['host'], $siteSettings['MySQL']['username'], $siteSettings['MySQL']['password'], $siteSettings['MySQL']['database']);
-	if(!$db){
-		exit("<center><h1 style='color:red;'>Error Connecting To Database</h1></center>");
+	if(!$db and file_exists("config.php")){
+		//exit("<center><h3 style='color:maroon;'>An error has occured. Please try again in a few moments.</h3><a href='#' onclick='location.reload();'>Retry</a><hr></center>");
 	}
 	//redirect standard users
 	if($_SESSION['accountType']=="Standard"){
-		if(in_array(basename($_SERVER['SCRIPT_NAME']), $adminPages)){
+		if(in_array(basename($_SERVER['SCRIPT_NAME']), $allAdminPages)){
 			$activity="Technician Attempted Access To: ".basename($_SERVER['SCRIPT_NAME']);
 			userActivity($activity);
 			exit("<center><br><br><h4>Sorry, You Do Not Have Permission To Access This Page!</h4><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' class='btn btn-warning btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");	

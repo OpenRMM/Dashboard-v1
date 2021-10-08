@@ -87,13 +87,12 @@
 
 	//log user activity
 	$activity = "Technician Viewed Asset: ".$result['hostname'];
-	userActivity($activity,$_SESSION['userid']);
-		
+	userActivity($activity,$_SESSION['userid']);		
 ?>
 <style>
 	.dataTables_info {margin-top:40px; }
 </style>
-<h4 style="color:<?php echo $siteSettings['theme']['Color 1'];?>">
+<h4 style="color:#333">
 	Overview of <?php echo $result['hostname']; ?> 
 	<br>
 	<span style="font-size:12px;color:#333"> Last Updated: <?php echo ago($lastPing);?></span>
@@ -112,7 +111,7 @@
 			<?php
 				$agentVersion = $json['AgentVersion']['Value'];
 				if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
-					<button onclick='sendCommand("C:\\\\OpenRMM\\\\Update.bat", "Update Agent", 2);' title="Agent Update Available" style="margin-left:10px;" class="btn btn-sm btn-warning">
+					<button onclick='sendCommand("C:\\\\OpenRMM\\\\Update.bat", "Update Agent", 2);' title="Agent Update Available" style="margin-left:10px;" class="btn btn-sm btn-danger">
 						<i style="color:#fff;" class="fas fa-cloud-upload-alt"></i>		
 					</button>			
 			<?php }?>
@@ -122,13 +121,13 @@
 				</span>
 			<?php }?>
 			<div style="float:right;">	
-				<a href="#" title="Refresh" onclick="loadSection('General');" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
+				<a href="#" title="Refresh" onclick="loadSection('General');" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-sync"></i>
 				</a>
-				<a href="#" title="Edit" onclick="loadSection('Edit');" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
+				<a href="#" title="Edit" onclick="loadSection('Edit');" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-pencil-alt"></i>
 				</a>
-				<a href="#" title="Select Date" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
+				<a href="#" title="Select Date" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
 					<i class="far fa-calendar-alt"></i>
 				</a>
 			</div>
@@ -194,7 +193,7 @@
 						$pbColor = "red";
 					}elseif($usedPct > $siteSettings['Alert Settings']['Disk']['Warning']){
 						$pbColor = "#ffa500";
-					}else{ $pbColor = $siteSettings['theme']['Color 4']; }
+					}else{ $pbColor = "#03925e"; }
 					$left = 100 - $usedPct;
 				?>
                 <canvas data-centerval="<?php echo $usedPct;?>%" id="chDonut3"></canvas>
@@ -234,7 +233,7 @@
 				</div>
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;">
 					<?php if($online=="1"){ ?>
-						<button class="btn btn-sm" type="button" style="width:30%;margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;" data-dismiss="modal" data-toggle="modal" data-target="#terminalModal">
+						<button class="btn btn-sm" type="button" style="width:30%;margin:3px;color:#fff;background:#333;" data-dismiss="modal" data-toggle="modal" data-target="#terminalModal">
 							<i class="fas fa-terminal"></i> Terminal
 						</button>
 					<?php }
@@ -325,13 +324,12 @@
 		</div>
 	</div>
 </div>
-</div>
 <!-------------------------------MODALS------------------------------------>
 <div id="companyMoreInfo" class="modal fade" role="dialog">
   <div class="modal-dialog">
 	<div class="modal-content">
 	  <div class="modal-header">
-		<h4 class="modal-title"><?php echo textOnNull($company['name'], "No Company Info"); ?></h4>
+		<h4 class="modal-title"><?php if($company['name']!="N/A"){ echo textOnNull($company['name'], "No Company Info"); }else{ echo "Company Information";} ?></h4>
 	  </div>
 	  <div class="modal-body">
 		<ul class="list-group">
@@ -376,10 +374,10 @@
 	    {
 	      data: [20,80],
 	      backgroundColor: [
-	        "#fd7e14"
+	        "<?php echo $siteSettings['theme']['Color 2']; ?>"
 	      ],
 	      hoverBackgroundColor: [
-	        "#FF6384"
+	        "#696969"
 	      ]
 	    }]
 	};
@@ -391,10 +389,10 @@
 	    {
 	      data: [72,38],
 	      backgroundColor: [
-	        "#007bff"
+	        "<?php echo $siteSettings['theme']['Color 3']; ?>"
 	      ],
 	      hoverBackgroundColor: [
-	        "#FF6384"
+	        "#696969"
 	      ]
 	    }]
 	};
@@ -406,10 +404,10 @@
 	    {
 	      data: [<?php echo $usedPct.",".$left; ?>],
 	      backgroundColor: [
-	        "#20c997"
+	        "<?php echo $siteSettings['theme']['Color 5']; ?>"
 	      ],
 	      hoverBackgroundColor: [
-	        "#FF6384"
+	        "#696969"
 	      ]
 	    }]
 	};

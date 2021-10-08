@@ -1,5 +1,5 @@
 <?php 
-	if($_SESSION['userid']==""){ 
+if($_SESSION['userid']==""){ 
 ?>
 	<script>		
 		toastr.error('Session timed out.');
@@ -9,37 +9,37 @@
 		}, 3000);		
 	</script>
 <?php 
-		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-	}
-	$search = $_GET['search'];
-	$computerID = (int)$_GET['ID'];
-	$showDate = $_SESSION['date'];
-	if($computerID<0){ 
-		?>
-		<br>
-		<center>
-			<h4>No Computer Selected</h4>
-			<p>
-				To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
-			</p>
-		</center>
-		<hr>
-		<?php
-		exit;
-	}
-	
-	$json = getComputerData($computerID , array("DefaultPrograms"), $showDate);
+	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
+}
+$search = $_GET['search'];
+$computerID = (int)$_GET['ID'];
+$showDate = $_SESSION['date'];
+if($computerID<0){ 
+	?>
+	<br>
+	<center>
+		<h4>No Computer Selected</h4>
+		<p>
+			To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+		</p>
+	</center>
+	<hr>
+	<?php
+	exit;
+}
 
-	$programs = $json['DefaultPrograms'];
-	$error = $json['DefaultPrograms_error'];
+$json = getComputerData($computerID , array("DefaultPrograms"), $showDate);
 
-	$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
-	$results = mysqli_fetch_assoc(mysqli_query($db, $query));
-	$online = $results['online'];
+$programs = $json['DefaultPrograms'];
+$error = $json['DefaultPrograms_error'];
+
+$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$results = mysqli_fetch_assoc(mysqli_query($db, $query));
+$online = $results['online'];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
-		<h4 style="color:<?php echo $siteSettings['theme']['Color 1'];?>">
+		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
 			Default Programs (<?php echo count($programs);?>)
 		</h4>
 		<?php if($showDate == "latest"){?>
@@ -53,10 +53,10 @@
 		<?php }?>
 	</div>
 	<div style="text-align:right;" class="col-md-2">
-		<a href="#" title="Refresh" onclick="loadSection('DefaultPrograms');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
+		<a href="#" title="Refresh" onclick="loadSection('DefaultPrograms');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
-		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
+		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
 			<i class="far fa-calendar-alt"></i>
 		</a>
 	</div>
@@ -74,14 +74,11 @@
 	  <tbody>
 		<?php
 			$count = 0;
-
 			//Sort The array by Name ASC
 			usort($programs, function($a, $b) {
 				return $a['Program'] <=> $b['Program'];
 			});
-
 			foreach($programs as $key=>$program){
-
 				if($search!=""){
 					if(stripos($program['Ext'], $search) !== false){ }else{ continue; }
 				}
@@ -93,9 +90,7 @@
 			  <td><?php echo textOnNull($program["Ext"],"N/A");?></td>
 			  <td>
 				<button onclick='sendCommand("cmd assoc <?php echo $program["Ext"]; ?>=", "Clear default for <?php echo $program["Ext"]; ?> filetype");' class="btn btn-danger btn-sm" style="margin-top:-2px;" title="May Require A Reboot">
-
 					<i class="fas fa-eraser"></i>
-
 				</button>
 			  </td>
 			</tr>
@@ -118,7 +113,7 @@
 </script>
 <script>
 	$(document).ready(function() {
-			$('#dataTable').DataTable();
+		$('#dataTable').DataTable();
 	});
 </script>
 <script>

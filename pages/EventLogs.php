@@ -1,32 +1,31 @@
 <?php 
-	if($_SESSION['userid']==""){ 
+if($_SESSION['userid']==""){ 
 ?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
-		}, 3000);		
-	</script>
+<script>		
+	toastr.error('Session timed out.');
+	setTimeout(function(){
+		setCookie("section", "Login", 365);	
+		window.location.replace("../index.php");
+	}, 3000);		
+</script>
 <?php 
-		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-	}
-	$computerID = (int)$_GET['ID'];
-	$showDate = $_SESSION['date'];
+	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
+}
+$computerID = (int)$_GET['ID'];
+$showDate = $_SESSION['date'];
 
-	$json = getComputerData($computerID, array("*"), $showDate);
-	$lastPing = $json['Ping'];
-	
-	$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
-	$results = mysqli_fetch_assoc(mysqli_query($db, $query));
-	$online = $results['online'];
+$json = getComputerData($computerID, array("*"), $showDate);
+$lastPing = $json['Ping'];
 
+$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$results = mysqli_fetch_assoc(mysqli_query($db, $query));
+$online = $results['online'];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div style="padding:20px" class="col-md-12">
 		<h5>Logs
 			<div style="float:right;">
-				<a href="#" title="Refresh" onclick="loadSection('EventLogs');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
+				<a href="#" title="Refresh" onclick="loadSection('EventLogs');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-sync"></i>
 				</a>
 			</div>
@@ -57,11 +56,11 @@
 				</tbody>
 			</table>
 		</div>
-  </div>
+	</div>
 </div>
 <script>
 	$(document).ready(function() {
-		  $('#dataTable').DataTable();
+		$('#dataTable').DataTable();
 	});
 </script>
 <script>

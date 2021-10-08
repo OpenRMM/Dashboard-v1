@@ -41,7 +41,7 @@
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
-		<h4 style="color:<?php echo $siteSettings['theme']['Color 1'];?>">
+		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
 			Processes (<?php echo count($procs);?>)
 		</h4>
 		<?php if($showDate == "latest"){?>
@@ -55,33 +55,31 @@
 		<?php }?>
 	</div>
 	<div style="text-align:right;" class="col-md-2">
-		<a href="#" title="Refresh" onclick="loadSection('Proccesses');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
+		<a href="#" title="Refresh" onclick="loadSection('Proccesses');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
-		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
+		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
 			<i class="far fa-calendar-alt"></i>
 		</a>
 	</div>
 </div>
 <div style="padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;">
 	<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
-	  <thead>
+		<thead>
 		<tr style="border-bottom:2px solid #d3d3d3;">
-		  <th scope="col">#</th>
-		  <th scope="col">Name</th>
-		  <th scope="col">PID</th>
-		  <th scope="col">Actions</th>
+			<th scope="col">#</th>
+			<th scope="col">Name</th>
+			<th scope="col">PID</th>
+			<th scope="col">Actions</th>
 		</tr>
-	  </thead>
-	  <tbody>
+		</thead>
+		<tbody>
 		<?php
 			$count = 0;
-
 			//Sort The array by Name ASC
 			usort($procs, function($a, $b) {
 				return $a['Name'] <=> $b['Name'];
 			});
-
 			foreach($procs as $key=>$proc){
 				if($search!=""){
 					if(stripos($proc['Name'], $search) !== false){ }else{ continue; }
@@ -89,14 +87,14 @@
 				$count++;
 		?>
 			<tr>
-			  <th scope="row"><?php echo $count;?></th>
-			  <td><?php echo textOnNull($proc['Name'], "N/A");?></td>
-			  <td><?php echo textOnNull($proc['PID'], "N/A");?></td>
-			  <td>
+				<th scope="row"><?php echo $count;?></th>
+				<td><?php echo textOnNull($proc['Name'], "N/A");?></td>
+				<td><?php echo textOnNull($proc['PID'], "N/A");?></td>
+				<td>
 				<button style="margin-top:-2px;" onclick='sendCommand("taskkill /F /<?php echo $proc["PID"]; ?>", "Kill <?php echo $proc["Name"]; ?> Proccess");' title="End <?php echo $proc['Name']; ?> process?" class="btn btn-danger btn-sm">
 					<i style="font-size:12px;" class="fa fa-times"></i>
 				</button>
-			  </td>
+				</td>
 			</tr>
 		<?php }
 			if($count == 0){ ?>
@@ -104,7 +102,7 @@
 					<td colspan=4><center><h5>No Processes Found.</h5></center></td>
 				</tr>
 		<?php }?>
-	   </tbody>
+		</tbody>
 	</table>
 </div>
 <script>
@@ -117,7 +115,7 @@
 </script>
 <script>
 	$(document).ready(function() {
-			$('#dataTable').DataTable();
+		$('#dataTable').DataTable();
 	});
 </script>
 <script>

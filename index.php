@@ -1,18 +1,17 @@
 <?php
 	require("includes/db.php");
 
-	$_SESSION['updateIgnore'] = $_POST['ignore'];
-	$_SESSION['excludedPages'] = array("Login","Logout","EventLogs","Alerts","Commands","Dashboard","SiteSettings","Profile","Edit","AllUsers","AllCompanies","Assets","NewComputers","Versions"); 
-	if($_SESSION['updateIgnore']=="true"){
-    	array_push($_SESSION['excludedPages'],$_POST['page']);
-	}
-
 	//$messageTitle = "New Ideas/Bug Fixes";
 	//$messageText .= "Add Site Alert For Conflicting Hostnames. <br><br> Version 1.0.1.6, updates are broke";
-	
+
 	if(isset($_POST)){
 		$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-		require("includes/post.php");	
+		$_SESSION['updateIgnore'] = $_POST['ignore'];
+		if($_SESSION['updateIgnore']=="true"){
+			array_push($_SESSION['excludedPages'],$_POST['page']);	
+		}
+
+		include("includes/post.php");	
 	}
 
 	//Get user data
@@ -68,7 +67,7 @@
 		
 		<link rel="stylesheet" href="assets/css/toastr.css"/>
 		<link rel="stylesheet" href="assets/css/custom.css"/>
-		<link rel="stylesheet" href="assets/css/style2.css"/>
+		<link rel="stylesheet" href="assets/css/style.css"/>
 	</head>
 	<style>
 		a { color:#003366; }
@@ -78,7 +77,7 @@
 			.headall { display: none; }
 		}
 		.secActive {
-			background:#fe9365!important;
+			background:<?php echo $siteSettings['theme']['Color 2']; ?>!important;
 			color:#fff!important;
 			border-radius:3px;
 		}
@@ -87,7 +86,7 @@
 			color:#fff!important;  
 		}
 	</style>
-	<body style="background-color:#f3f3f3;height:100%; position: relative;min-height: 100vh;">
+	<body style="background-color:<?php echo $siteSettings['theme']['Color 1']; ?>;height:100%; position: relative;min-height: 100vh;">
 		<div style="background-color:#fff;color:#fff;text-align:center;padding-top:4px;padding-left:20px;position:fixed;top:0px;width:100%;z-index:99;box-shadow: 0 0 11px rgba(0,0,0,0.13);">
 			<h5>
 				<div style="float:left;">
@@ -95,7 +94,7 @@
 						<i style="font-size:16px" class="fas fa-align-left"></i>
 					</button>		
 					<div style="display:inline-block;">
-						<a style="color:#333;font-size:22px;cursor:pointer" onclick="loadSection('<?php if($_SESSION['userid']!=""){ echo "Dashboard"; }else{ echo "Login"; } ?>');" >Open<span style="color:#fd7e14">RMM</span></a>
+						<a style="color:#333;font-size:22px;cursor:pointer" onclick="loadSection('<?php if($_SESSION['userid']!=""){ echo "Dashboard"; }else{ echo "Login"; } ?>');" >Open<span style="color:<?php echo $siteSettings['theme']['Color 2']; ?>">RMM</span></a>
 					</div>
 				</div>
 				<?php if($_SESSION['userid']!=""){ ?>
@@ -122,7 +121,7 @@
 							</a>
 							<a onclick="loadSection('Profile','<?php echo $_SESSION['userid']; ?>');"  style="cursor:pointer;color:#d3d3d3">Profile</a>
 							<span style="color:#fff"> &#8226; </span> 					
-							<a onclick="loadSection('Logout');" style="color:#fd7e14;cursor:pointer">Logout</a>
+							<a onclick="loadSection('Logout');" style="color:<?php echo $siteSettings['theme']['Color 2']; ?>;cursor:pointer">Logout</a>
 							<hr>
 						</div>					
 						<li onclick="loadSection('Dashboard');" id="secbtnDashboard" class="secbtn">
@@ -135,22 +134,22 @@
 							<h6 style="color:#d3d3d3" data-toggle="collapse" data-target="#navConfig"><i class="fa fa-cog" aria-hidden="true"></i>&nbsp;&nbsp;Configuration <i class="fa fa-angle-down" aria-hidden="true"></i></h6>
 						</li>
 						<ul style="margin-left:20px" class="nav nav-list collapse" id="navConfig">
-						<?php if($_SESSION['accountType']=="Admin"){ ?>
-							<li onclick="loadSection('AllCompanies');" id="secbtnAllCompanies" style="width:100%" class="secbtn">
-								<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Customers
-							</li>
-							<li onclick="loadSection('AllUsers');" id="secbtnAllUsers" style="width:100%" class="secbtn">
-								<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Technicians
-							</li>
-						<?php } ?>
-							<li onclick="loadSection('Versions');" id="secbtnVersions" class="secbtn" style="width:100%">
-								<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Downloads
-							</li>
-						<?php if($_SESSION['accountType']=="Admin"){ ?>
-							<!--li onclick="loadSection('SiteSettings');" id="secbtnSiteSettings" style="width:100%" class="secbtn">
-								<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Settings
-							</li-->
-						<?php } ?>
+							<?php if($_SESSION['accountType']=="Admin"){ ?>
+								<li onclick="loadSection('AllCompanies');" id="secbtnAllCompanies" style="width:100%" class="secbtn">
+									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Customers
+								</li>
+								<li onclick="loadSection('AllUsers');" id="secbtnAllUsers" style="width:100%" class="secbtn">
+									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Technicians
+								</li>
+							<?php } ?>
+								<li onclick="loadSection('Versions');" id="secbtnVersions" class="secbtn" style="width:100%">
+									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Downloads
+								</li>
+							<?php if($_SESSION['accountType']=="Admin"){ ?>
+								<!--li onclick="loadSection('SiteSettings');" id="secbtnSiteSettings" style="width:100%" class="secbtn">
+									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Settings
+								</li-->
+							<?php } ?>
 						</ul>
 						<hr style="background:#dedede" >
 						<div id="sectionList" style="display:none;">
@@ -207,19 +206,17 @@
 							</li>
 							<li></li>
 						</div>				
-						<div class="recents" id="recents" style="margin-top:20px;"></div>	
-						
+						<div class="recents" id="recents" style="margin-top:20px;"></div>							
 						<div style="height:500px">&nbsp;</div>		
 					</ul>
 				</nav>
 			<?php } ?>
 			<!-- Page Content -->
 			<div id="content" style="margin-top:15px;padding:30px;width:100%;">
-			<?php if($_SESSION['userid']!=""){ ?>
+				<?php if($_SESSION['userid']!="" and file_exists("includes/config.php")){ ?>
 					<div class="row">
 						<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-							<div style="width:100%;background: -webkit-gradient(linear, left top, right top, from(#fe9365), to(#feb798));box-shadow: 0 0 11px rgba(0,0,0,0.13);
-							background:#fe9365;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
+							<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 2']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
 								<a style="color:#fff;cursor:pointer;" onclick="loadSection('Assets');">
 									<div style="padding:10px 10px 0px 20px;">
 										<i class="fas fa-desktop" style="font-size:28px;float:right;"></i>
@@ -231,8 +228,7 @@
 							</div>
 						</div>
 						<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-							<div style="width:100%;background: -webkit-gradient(linear, left top, right top, from(#0ac282), to(#0df3a3));box-shadow: 0 0 11px rgba(0,0,0,0.13);
-							background:#0ac282;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
+							<div style="width:100%; background:<?php echo $siteSettings['theme']['Color 3']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
 								<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllCompanies');">
 									<div style="padding:10px 10px 0px 20px;">
 										<i class="fas fa-building" style="font-size:28px;float:right;"></i>
@@ -243,8 +239,7 @@
 							</div>
 						</div>
 						<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-							<div style="width:100%;background: -webkit-gradient(linear, left top, right top, from(#eb3422), to(#ef5f51));box-shadow: 0 0 11px rgba(0,0,0,0.13);
-							background:#eb3422;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
+							<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 4']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
 								<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllUsers');">
 									<div style="padding:10px 10px 0px 20px;">
 										<i class="fas fa-user" style="font-size:28px;float:right;"></i>
@@ -255,8 +250,7 @@
 							</div>
 						</div>
 						<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-							<div style="width:100%;background: -webkit-gradient(linear, left top, right top, from(#01a9ac), to(#01dbdf));box-shadow: 0 0 11px rgba(0,0,0,0.13);
-							background:#01a9ac;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;">
+							<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 5']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;">
 								<a style="color:#fff;cursor:pointer;" onclick="loadSection('Tickets');">
 									<div style="padding:10px 10px 0px;">
 										<i class="fas fa-ticket-alt" style="font-size:28px;float:right;"></i>
@@ -305,7 +299,7 @@
 							</ul>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-warning btn-sm" data-dismiss="modal">Close</button>
+							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-warning btn-sm" data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
@@ -315,7 +309,11 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h6><b>Add/Edit User</b></h6>
+							<h6>
+								<b>
+									Add/Edit User
+								</b>
+							</h6>
 						</div>
 						<form id="userform" method="POST">
 							<input type="hidden" name="type" value="AddEditUser"/>
@@ -337,24 +335,25 @@
 								<div class="form-group">
 									<label for="editUserModal_type">Access Type</label>
 									<select required name="accountType" class="form-control">
-									<option id="editUserModal_type" value="">Select Option</option>
-									<option value="Standard">Standard</option>
-									<option value="Admin">Admin</option>
+										<option id="editUserModal_type" value="">Select Option</option>
+										<option value="Standard">Standard</option>
+										<option value="Admin">Admin</option>
 									</select>
 								</div>
 								<div class="input-group">
 									<input placeholder="Password" style="display:inline" type="password" id="editUserModal_password" name="password" class="form-control"/>
 									<span class="input-group-btn">
 										<a style="border-radius:0px;padding:6px;pointer:cursor;color:#fff;" class="btn btn-md btn-success" onclick="generate();" >Generate</a>
-								</span>
-								</div>		<br>
+									</span>
+								</div>
+								<br>
 								<div class="form-group">
 									<input placeholder="Confirm Password" type="password" id="editUserModal_password2" name="password2" class="form-control"/>
 								</div>
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-								<button type="submit" class="btn btn-sm btn-warning">
+								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning">
 									<i class="fas fa-check"></i> Save
 								</button>
 							</div>
@@ -367,7 +366,11 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h6><b>Delete Version</b></h6>
+							<h6>
+								<b>
+									Delete Version
+								</b>
+							</h6>
 						</div>
 						<form id="user" method="POST">
 							<input type="hidden" name="version" value="" id="delVersion_ID"/>
@@ -389,7 +392,11 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h6><b>Create A New Note</b></h6>
+							<h6>
+								<b>
+									Create A New Note
+								</b>
+							</h6>
 						</div>
 						<form id="note" method="POST">
 							<div class="modal-body">
@@ -405,7 +412,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
-								<button type="submit"  class="btn btn-sm btn-warning">
+								<button type="submit"  style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning">
 									<i class="fas fa-save"></i> Save
 								</button>
 							</div>
@@ -418,7 +425,11 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h4 id="notetitle"><b>View Note</b></h4>
+							<h4 id="notetitle">
+								<b>
+									View Note
+								</b>
+							</h4>
 						</div>
 						<div class="modal-body">					
 								<h6 style="margin-top:20px"><span id="notedesc"></span></h6>
@@ -434,7 +445,11 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h6><b>Add/Edit Company</b></h6>
+							<h6>
+								<b>
+									Add/Edit Company
+								</b>
+							</h6>
 						</div>
 						<form method="POST">
 							<input type="hidden" name="type" value="AddEditCompany"/>
@@ -459,7 +474,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-								<button type="submit" class="btn btn-sm btn-warning">
+								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning">
 									<i class="fas fa-check"></i> Save
 								</button>
 							</div>
@@ -472,7 +487,11 @@
 				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h6><b>Terminal</b></h6>
+							<h6>
+								<b>
+									Terminal
+								</b>
+							</h6>
 						</div>
 						<div class="modal-body" style="background-color:#000;color:#fff;font-family: 'Courier New', Courier, monospacepadding:20px;">
 							<div style="max-height:400px;margin-bottom:10px;min-height:100px;overflow:auto;">
@@ -489,19 +508,23 @@
 					</div>
 				</div>
 			</div>
-				<!------------- Alerts ------------------->
+				<!------------- Alerts (not sure if used)------------------->
 			<div id="confirm" class="modal fade" role="dialog">
 				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h6 id="computerAlertsHostname"><b>Confirm Action</b></h6>
+							<h6 id="computerAlertsHostname">
+								<b>
+									Confirm Action
+								</b>
+							</h6>
 						</div>
 						<div class="modal-body">
 							<p>Are You Sure You Would Like To Complete This Action></p>
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 4']; ?>;color:#fff;" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-sm btn-warning"  data-dismiss="modal">Confirm</button>
+							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning"  data-dismiss="modal">Confirm</button>
 						</div>
 					</div>
 				</div>
@@ -511,30 +534,18 @@
 				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h6 id="computerAlertsHostname"><b>Alerts</b></h6>
+							<h6 id="computerAlertsHostname">
+								<b>
+									Alerts
+								</b>
+							</h6>
 						</div>
 						<div class="modal-body">
 							<div  id="computerAlertsModalList"></div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Close</button>
+							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning" data-dismiss="modal">Close</button>
 						</div>
-					</div>
-				</div>
-			</div>
-			<!------------- Page Errors ------------------->
-			<div id="pageAlert" class="modal fade" role="dialog">
-				<div class="modal-dialog modal-md">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h6 class="modal-title" id="pageAlert_title">Message From Webpage</h6>
-						</div>			 
-						<div class="modal-body">			
-							<div id="pageAlert_message" class="alert">No Message</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
-						</div>	
 					</div>
 				</div>
 			</div>
@@ -543,13 +554,15 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title">Historical Data</h5>
+							<h5 class="modal-title">
+								Historical Data
+							</h5>
 						</div>
 						<div class="modal-body">
 							<div id="historicalData" style="overflow:auto;max-height:400px;"></div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
+							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
@@ -559,7 +572,9 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title">Historical Data</h5>
+							<h5 class="modal-title">
+								Historical Data
+							</h5>
 						</div>
 						<div class="modal-body" style="overflow:auto;max-height:400px;">
 							<table class="table table-striped">
@@ -581,14 +596,14 @@
 								<tr>
 									<td><?php echo $niceDate; ?></td>
 									<td>
-										<button type="button" onclick="loadSectionHistory('<?php echo $formatedDate;?>');" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 1']; ?>;color:#fff;">Select</button>
+										<button type="button" onclick="loadSectionHistory('<?php echo $formatedDate;?>');" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#fff;">Select</button>
 									</td>
 								</tr>
 								<?php }?>
 							</table>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
+							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
@@ -620,7 +635,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-sm"  data-dismiss="modal">Close</button>
-								<button type="submit" class="btn btn-sm btn-warning" >Upload</button>
+								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning" >Upload</button>
 							</div>
 						</form>
 					</div>
@@ -649,6 +664,7 @@
 			computerID = ID;
 			currentSection = section;
 			if(section=="Logout"){
+				toastr.options.progressBar = true;
 				toastr.warning('Securely Logging You Out.');
 				$(".loadSection").load("includes/loader.php?page="+section);
 				setCookie("section", "Login", 365);
@@ -656,7 +672,7 @@
 					location.reload(true);
 				}, 3000);
 			}else{
-				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow text-primary'></div><div class='spinner-grow text-success'></div><div class='spinner-grow text-info'></div><div class='spinner-grow text-warning'></div><div class='spinner-grow text-danger'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
+				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
 				$(".recents").load("pages/recent.php?ID="+ID);
 				$(".loadSection").load("includes/loader.php?ID="+ID+"&Date="+date+"&page="+section);
 				var item = '#secbtn'+section;
@@ -741,16 +757,14 @@
 			$('#editUserModal_password2').prop('type', 'text').val(pass);
 		}
 		//Page Alerts, replaces alert()
-		function pageAlert(title, message, type="Default"){
-			var types = {Default:"alert-primary", Success:"alert-success", Warning:"alert-warning", Danger:"alert-danger"};
+		function pageAlert(title, message, type="default"){
 			if(title.trim() == ""){
 				title = "Message From Webpage";
 			}
 			if(message.trim() != "") {
-				$("#pageAlert_message").removeClass().addClass("alert").addClass(types[type]);
-				$("#pageAlert").modal("show");
-				$("#pageAlert_title").text(title);
-				$("#pageAlert_message").html(message);
+				type = type.toLowerCase();
+				toastr.options.progressBar = true;
+				toastr[type](message,title);
 			}
 		}
 		//Load Historical Data
@@ -774,9 +788,7 @@
 				  expire_after: expire_after
 				},
 				function(data, status){
-					//$("#pageAlert").modal("show");
-					//$("#pageAlert_title").text("Request Action");
-					//	$("#pageAlert_message").html("Your Request Has Been Sent.");
+					toastr.options.progressBar = true;
 					toastr.success('Your Request Has Been Sent.');
 				});
 			}

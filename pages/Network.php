@@ -1,5 +1,5 @@
 <?php 
-	if($_SESSION['userid']==""){ 
+if($_SESSION['userid']==""){ 
 ?>
 	<script>		
 		toastr.error('Session timed out.');
@@ -9,37 +9,37 @@
 		}, 3000);		
 	</script>
 <?php 
-		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-	}
-	$computerID = (int)$_GET['ID'];
-	$showDate = $_SESSION['date'];
-	if($computerID<0){ 
-		?>
-		<br>
-		<center>
-			<h4>No Computer Selected</h4>
-			<p>
-				To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
-			</p>
-		</center>
-		<hr>
-		<?php
-		exit;
-	}
-	//get update
-	MQTTpublish($computerID."/Commands/getNetwork","true",$computerID);
+	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
+}
+$computerID = (int)$_GET['ID'];
+$showDate = $_SESSION['date'];
+if($computerID<0){ 
+	?>
+	<br>
+	<center>
+		<h4>No Computer Selected</h4>
+		<p>
+			To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+		</p>
+	</center>
+	<hr>
+	<?php
+	exit;
+}
+//get update
+MQTTpublish($computerID."/Commands/getNetwork","true",$computerID);
 
-	$json = getComputerData($computerID, array("WMI_NetworkAdapters"), $showDate);
+$json = getComputerData($computerID, array("WMI_NetworkAdapters"), $showDate);
 
-	$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
-	$results = mysqli_fetch_assoc(mysqli_query($db, $query));
-	$online = $results['online'];
+$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$results = mysqli_fetch_assoc(mysqli_query($db, $query));
+$online = $results['online'];
 
-	$adapters = $json['WMI_NetworkAdapters'];
-	$error = $json['WMI_NetworkAdapters_error'];
+$adapters = $json['WMI_NetworkAdapters'];
+$error = $json['WMI_NetworkAdapters_error'];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
-	<h4 style="color:<?php echo $siteSettings['theme']['Color 1'];?>" class="col-md-10">
+	<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>" class="col-md-10">
 		Network Adapters (<?php echo count($adapters);?>)<br/>
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;">
@@ -50,13 +50,12 @@
 				History: <?php echo date("l, F jS g:i A", strtotime($json['WMI_NetworkAdapters_lastUpdate']));?>
 			</span>
 		<?php }?>
-	</h4>
-	
+	</h4>	
 	<div style="text-align:right" class="col-md-2">
-		<a href="#" title="Refresh" onclick="loadSection('Network');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
+		<a href="#" title="Refresh" onclick="loadSection('Network');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
-		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
+		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
 			<i class="far fa-calendar-alt"></i>
 		</a>
 	</div>
@@ -99,7 +98,7 @@
 </div>
 <script>
 	$(document).ready(function() {
-			$('#dataTable').DataTable();
+		$('#dataTable').DataTable();
 	});
 </script>
 <script>

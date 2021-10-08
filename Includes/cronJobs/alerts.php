@@ -9,9 +9,7 @@
 	
 
 	if(php_sapi_name() != 'cli' && $debug == false){
-
 		exit("<center><h2>This script cannot be ran via the browser, if you wish to test this, please change the debug variable in cron.php</h2></center>");
-
 	}
 
 	

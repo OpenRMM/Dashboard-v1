@@ -1,5 +1,5 @@
 <?php 
-	if($_SESSION['userid']==""){ 
+if($_SESSION['userid']==""){ 
 ?>
 	<script>		
 		toastr.error('Session timed out.');
@@ -9,73 +9,70 @@
 		}, 3000);		
 	</script>
 <?php 
-		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-	}
-	$computerID = (int)$_GET['ID'];
-	$showDate = $_SESSION['date'];
+	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
+}
+$computerID = (int)$_GET['ID'];
+$showDate = $_SESSION['date'];
 
-	if($computerID<0){ 
-		?>
-		<br>
-		<center>
-			<h4>No Computer Selected</h4>
-			<p>
-				To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
-			</p>
-		</center>
-		<hr>
-		<?php
-		exit;
-	}
-	$query = "SELECT online, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
-	$results = mysqli_query($db, $query);
-	$computer = mysqli_fetch_assoc($results);
+if($computerID<0){ 
+	?>
+	<br>
+	<center>
+		<h4>No Computer Selected</h4>
+		<p>
+			To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+		</p>
+	</center>
+	<hr>
+	<?php
+	exit;
+}
+$query = "SELECT online, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$results = mysqli_query($db, $query);
+$computer = mysqli_fetch_assoc($results);
 
-	$json = getComputerData($computerID, array("*"), $showDate);
-	$online = $computer['online'];
-	$lastPing = $json['Ping'];
+$json = getComputerData($computerID, array("*"), $showDate);
+$online = $computer['online'];
+$lastPing = $json['Ping'];
 
-	$json = getComputerData($computerID, array("WMI_Product"), $showDate);
+$json = getComputerData($computerID, array("WMI_Product"), $showDate);
 
-	$programs = $json['WMI_Product'];
-	$error = $json['WMI_Product_error'];
-	
+$programs = $json['WMI_Product'];
+$error = $json['WMI_Product_error'];	
 ?>
 <div class="row"  style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div style="padding:20px" class="col-md-12">
 		<h5>Commands
 			<div style="float:right;">
-				<a href="#" title="Refresh" onclick="loadSection('Commands');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
+				<a href="#" title="Refresh" onclick="loadSection('Commands');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-sync"></i>
 				</a>
 			</div>
 		</h5>
-		
 		<p>View & Execute Commands On This Asset.</p>
 		<hr>
 		<div class="row">
 			<div style="" class="col-md-5">
 			<h5>Execute A Command</h5>
-			
 			<?php if($online=="1"){ ?>
 				<div style="height:200px">		
 					<br>			
 					<button class="btn btn-sm btn-default" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:1px solid #000" data-toggle="modal" data-target="#terminalModal">
 						<i class="fas fa-terminal" style="margin-top:3px;float:left"></i> Terminal
 					</button>
-					<button class="btn btn-sm btn-warning" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:none" data-toggle="modal" data-target="#agentAlertModal">
+					<button class="btn btn-sm btn-warning" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:none;" data-toggle="modal" data-target="#agentAlertModal">
 						<i class="fas fa-comment" style="margin-top:3px;float:left"></i> One-way Message
 					</button>
 					<button data-dismiss="modal" class="btn btn-success btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
 						<i class="fas fa-desktop" style="float:left;margin-top:3px"></i> Enable Remote Desktop
 					</button>
-					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
+					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;color:#fff;background:#333;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
 						<i class="fas fa-desktop" style="float:left;margin-top:3px"></i> Disable Remote Desktop
 					</button>
 					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick="sendCommand('Netsh Advfirewall set allprofiles state on', 'Enable Firewall');">
 						<i class="fas fa-fire-alt" style="float:left;margin-top:3px"></i> Enable Firewall
 					</button>
-					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;display:inline;margin:5px;color:#fff;width:45%;border:none" onclick="sendCommand('Netsh Advfirewall set allprofiles state off', 'Disable Firewall');">
+					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="color:#fff;background:#333;display:inline;margin:5px;color:#fff;width:45%;border:none" onclick="sendCommand('Netsh Advfirewall set allprofiles state off', 'Disable Firewall');">
 						<i class="fas fa-fire-alt" style="float:left;margin-top:3px"></i> Disable Firewall
 					</button>
 				</div>
@@ -104,8 +101,8 @@ PAUSE
 						</textarea>
 						<br>
 						<button onclick=" var text = $('#scriptForm').val();sendCommand(text , 'Run Custom Script');" class="btn btn-success btn-sm" style="float:right">Run Script &nbsp;&nbsp;<i class="fas fa-play"></i></button>
-			</div>
-				<?php }else{ ?>
+					</div>
+					<?php }else{ ?>
 					<br>
 					<h6 style="text-align:left;color:red"><b>Asset Must Be Online To Execute Commands</b></h6>
 				<?php } ?>
@@ -114,7 +111,7 @@ PAUSE
 		</div>
 	</div>
 </div>
-	<div  style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;" class="row">
+	<div style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;" class="row">
 		<div class="col-md-12">
 			<?php 
 				$query = "SELECT ID, time_received,command, arg, expire_after,status,time_sent FROM commands WHERE status='Sent' or status='Received' AND ComputerID='".$result['hostname']."' ORDER BY ID DESC LIMIT 100";
@@ -195,7 +192,7 @@ PAUSE
 </div>
 <script>
 	$(document).ready(function() {
-		  $('#dataTable').DataTable();
+		$('#dataTable').DataTable();
 	});
 </script>
 <script>

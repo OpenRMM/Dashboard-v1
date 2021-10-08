@@ -40,7 +40,7 @@
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
-		<h4 style="color:<?php echo $siteSettings['theme']['Color 1'];?>">
+		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
 			Printers (<?php echo count($printers);?>)
 		</h4>
 		<?php if($showDate == "latest"){?>
@@ -54,15 +54,14 @@
 		<?php }?>
 	</div>
 	<div class="col-md-2" style="text-align:center;">
-		<a href="#" title="Refresh" onclick="loadSection('Printers');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
+		<a href="#" title="Refresh" onclick="loadSection('Printers');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
-		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
+		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
 			<i class="far fa-calendar-alt"></i>
 		</a>
 	</div>
 </div>
-
 <div style="padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;">
 	<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 	  <thead>
@@ -100,7 +99,7 @@
 </div>
 <script>
 	$(document).ready(function() {
-			$('#dataTable').DataTable();
+		$('#dataTable').DataTable();
 	});
 </script>
 <script>

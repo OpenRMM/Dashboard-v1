@@ -1,23 +1,44 @@
 <?php
 include("db.php");
 
-$_SESSION['page'] = strip_tags(ucwords($_GET['page']));
+//$_SESSION['excludedPages'] = explode(",",$excludedPages); //use this to clear pages if an error occurs
+$_SESSION['page'] = clean(preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['page']));
+
+if(!in_array($_SESSION['page'], $allPages) || $_SESSION['page']==""){ 
+    exit("<center><h5>This page could not be found.</h5></center>");
+}
+
+$query = "SELECT * FROM users";
+$result = mysqli_num_rows(mysqli_query($db, $query));
+if(!file_exists("config.php") or !$db or $mqttConnect=="timeout" or $result==0){
+    $_SESSION['excludedPages'] = explode(",",$excludedPages);
+    $_SESSION['userid']="";
+    session_unset();
+    session_destroy();
+    $_SESSION['excludedPages'] = explode(",",$excludedPages);
+    include("../pages/Init.php");
+?>
+    <script> 
+        setCookie("section", "Init", 365);	
+    </script>
+<?php 
+    exit;
+}
+
 $_SESSION['computerID'] = (int)$_GET['ID'];
-$_SESSION['date']=$_GET['Date'];
+$_SESSION['date']=preg_replace("([^0-9/])", "", $_GET['Date']);
 if($_SESSION['date']==""){ 
     $_SESSION['date']="latest"; 
 }
-if($_SESSION['page']==""){
-    echo "<center><h5>This page could not be loaded.</h5></center>";
-    exit;
-}
+
 if($_SESSION['date']!="latest"){
-    array_push($_SESSION['excludedPages'],$_GET['page']);
+    array_push($_SESSION['excludedPages'],$_SESSION['page']); 
 }
-if (in_array($_SESSION['page'], $_SESSION['excludedPages']))
+
+if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
     {
        include("../pages/".$_SESSION['page'].".php");  
-       $_SESSION['excludedPages'] = array("Login","Logout","EventLogs","Alerts","Commands","Dashboard","SiteSettings","Profile","Edit","AllUsers","AllCompanies","Assets","NewComputers","Versions"); 
+       $_SESSION['excludedPages'] = explode(",",$excludedPages);
     }else{
         $query = "SELECT ID, hostname, online, last_update FROM computerdata WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
         $results = mysqli_query($db, $query);
@@ -28,15 +49,12 @@ if (in_array($_SESSION['page'], $_SESSION['excludedPages']))
             $(".sidebarComputerName").text("<?php echo strtoupper($_SESSION['ComputerHostname']);?>");
         </script>
         <?php
-        //$query = "SELECT last_update FROM computerdata WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
         $results = mysqli_fetch_assoc(mysqli_query($db, $query));
         $lastUpdate=$results['last_update'];
         MQTTpublish($_SESSION['computerID']."/Commands/get".$_SESSION['page'],"true",$_SESSION['computerID']);
         sleep(1);
-        //$query = "SELECT last_update FROM computerdata WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
         $results = mysqli_fetch_assoc(mysqli_query($db, $query));
         $lastUpdate_new=$results['last_update'];
-        
         if($lastUpdate!=$lastUpdate_new or $computer['online']=="0"){
             include("../pages/".$_SESSION['page'].".php");  
         ?>
@@ -49,30 +67,29 @@ if (in_array($_SESSION['page'], $_SESSION['excludedPages']))
                 $query2 = "SELECT last_update FROM computerdata WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
                 $results2 = mysqli_fetch_assoc(mysqli_query($db, $query2));
                 $lastUpdate2_new=$results2['last_update'];
-        
                 if($lastUpdate!=$lastUpdate2_new){ 
                     include("../pages/".$_SESSION['page'].".php");
                     break;
                 }
-                if($x==15){  //use 15 or 2 for testing
+                if($x==1){  //use 15 or 2 for testing
                 ?>
-                <div style="margin-top:100px"> 
-                <script> 
-                    $("html, body").animate({ scrollTop: 0 }, "slow"); 
-                </script> 
-                    <center>
-                        <h5>Asset: <?php echo $_SESSION['ComputerHostname']; echo $onlineText; ?> is online but did not respond to a request for <?php echo $_SESSION['page']; ?>.</h5>
-                        <br>
-                        <h6>Would you like to display the outdated assset data?</h6>
-                        <br>
-                        <form method="post">
-                            <input value="true" type="hidden" name="ignore">
-                            <input value="<?php echo $_SESSION['page']; ?>" type="hidden" name="page">
-                            <button onclick="location.reload();" class='btn btn-sm btn-primary' type="button" >Retry <i class="fas fa-sync"></i></button>&nbsp;
-                            <button class='btn btn-sm btn-warning' type="submit" >View Older Asset Information <i class="fas fa-arrow-right"></i></button>  
-                        </form>
-                    <center>
-                </div>
+                    <div style="margin-top:100px"> 
+                        <script> 
+                            $("html, body").animate({ scrollTop: 0 }, "slow"); 
+                        </script> 
+                        <center>
+                            <h5>Asset: <?php echo $_SESSION['ComputerHostname']; ?> is online but did not respond to a request for <?php echo $_SESSION['page']; ?>.</h5>
+                            <br>
+                            <h6>Would you like to display the outdated assset data?</h6>
+                            <br>
+                            <form method="post">
+                                <input value="true" type="hidden" name="ignore">
+                                <input value="<?php echo $_SESSION['page']; ?>" type="hidden" name="page">
+                                <button onclick="location.reload();" class='btn btn-sm btn-primary' type="button" >Retry <i class="fas fa-sync"></i></button>&nbsp;
+                                <button class='btn btn-sm btn-warning' style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;" type="submit" >View Older Asset Information <i class="fas fa-arrow-right"></i></button>  
+                            </form>
+                        <center>
+                    </div> 
                 <?php
                 break;
                 }
