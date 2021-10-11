@@ -3,7 +3,9 @@
 
 	//$messageTitle = "New Ideas/Bug Fixes";
 	//$messageText .= "Add Site Alert For Conflicting Hostnames. <br><br> Version 1.0.1.6, updates are broke";
-
+	if($_SESSION['excludedPages']==""){
+		$_SESSION['excludedPages'] = explode(",",$excludedPages); //use this to clear pages if an error occurs
+	}
 	if(isset($_POST)){
 		$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 		$_SESSION['updateIgnore'] = $_POST['ignore'];
@@ -15,7 +17,7 @@
 	}
 
 	//Get user data
-	$query = "SELECT username,nicename FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+	$query = "SELECT username,nicename,accountType FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
@@ -82,7 +84,7 @@
 			border-radius:3px;
 		}
 		.secbtn:hover{
-			background:#2d3542!important;
+			background:#282828!important;
 			color:#fff!important;  
 		}
 	</style>
@@ -104,6 +106,11 @@
 								<i style="font-size:16px" class="fas fa-bell"></i>
 								<span style="margin-top" class="text-white badge bg-c-pink"><?php if($messageText==""){ echo "0"; }else{ echo "1"; } ?></span>
 							</button>
+							<?php if($user['accountType']=="Admin"){ ?>
+								<button type="button" onclick="loadSection('Init','true');" class="btn-md btn" title="Configure OpenRMM">
+									<i style="font-size:16px" class="fas fa-cog"></i>
+								</button>
+							<?php } ?>
 						</div>
 					</div>
 				<?php } ?>
@@ -112,11 +119,11 @@
 		<div class="wrapper">
 			<!-- Sidebar -->
 			<?php if($_SESSION['userid']!=""){ ?>
-				<nav id="sidebar">
+				<nav style="background:#35384e" id="sidebar">
 					<ul class="list-unstyled components" style="padding:20px;margin-top:25px;">
 						<div style="text-align:center;width:100%">
 							<a style="cursor:pointer" onclick="loadSection('Profile','<?php echo $_SESSION['userid']; ?>');">
-								<i style="font-size:88px;text-align:center" class="fa fa-user" ></i>
+								<i style="color:#282828;font-size:68px;text-align:center" class="fa fa-user" ></i>
 								<h6 style="color:#fff;margin-top:10px"><?php echo ucwords($user['nicename']); ?></h6>
 							</a>
 							<a onclick="loadSection('Profile','<?php echo $_SESSION['userid']; ?>');"  style="cursor:pointer;color:#d3d3d3">Profile</a>
@@ -261,7 +268,7 @@
 							</div>
 						</div>
 					</div>
-					<hr>
+					
 				<?php } ?>
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top:20px;">
@@ -670,7 +677,7 @@
 				setCookie("section", "Login", 365);
 				setTimeout(function() { 
 					location.reload(true);
-				}, 3000);
+				}, 5000);
 			}else{
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
 				$(".recents").load("pages/recent.php?ID="+ID);

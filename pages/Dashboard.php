@@ -158,7 +158,7 @@ $resultCount = mysqli_num_rows($results);
 									  </td>
 									  <td>
 										<a style="color:#000;" href="#" onclick="$('input[type=search]').val('<?php echo textOnNull($result['name'], "N/A");?>');$('input[type=search]').trigger('keyup'); $('html, body, table').animate({ scrollTop: 0 }, 'slow');">
-											<u><?php echo textOnNull($result['name'], "Not Assigned");?></u>
+											<?php echo textOnNull($result['name'], "Not Assigned");?>
 										</a>
 									  </td>
 									  <td><?php echo gmdate("m/d/y\ h:i",$result['date_added']); ?></td>
@@ -252,7 +252,7 @@ $resultCount = mysqli_num_rows($results);
 								</a>
 							<?php } } ?>
 							<?php if($count==0){ ?>
-								<li>No Notes</li>
+								<li class="list-group-item">No Notes</li>
 							<?php } ?>
 						</div>
 						<button style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" data-toggle="modal" data-target="#noteModal" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>

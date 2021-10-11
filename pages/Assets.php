@@ -225,7 +225,7 @@
 							</a>
 						<?php } } ?>
 						<?php if($count==0){ ?>
-							<li>No Notes</li>
+							<li  class="list-group-item">No Notes</li>
 						<?php } ?>
 					</div>
 					<button data-toggle="modal" data-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>

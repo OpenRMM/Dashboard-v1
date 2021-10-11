@@ -292,11 +292,12 @@
 	}
 	
 	//Encrypt And Decrypt With Salt
-	$salt = base64_decode("R1pxNEU1aXBBc21rWW5GQ3dWVjdrQ1F4cUVabGppTk9aWXEzdE1ZRQ==");
+	$salt = base64_decode($siteSettings['Encryption']['salt']);
+	$secret_key = base64_decode($siteSettings['Encryption']['secret']);
 	function crypto($action, $string, $salt) {
+		global $secret_key;
 		$output = false;
-		$encrypt_method = "AES-256-CBC";
-		$secret_key = base64_decode('JE1HX1VuMWltSXQzZCE=');
+		$encrypt_method = "AES-256-CBC";	
 		$key = hash('sha256', $secret_key);
 		$iv = substr(hash('sha256', $salt), 0, 16);
 		if ( $action == 'encrypt' ) {
@@ -310,7 +311,7 @@
 	
 	//Get Random Salt
 	function getSalt($n=40) {
-		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%&*()';
 		$randomString = '';
 		for ($i = 0; $i < $n; $i++) {
 			$index = rand(0, strlen($characters) - 1);

@@ -19,7 +19,7 @@ if($_SESSION['userid']!=""){ ?>
 }	
 ?>
 <div class="row" style="text-align:center;margin-bottom:10px;margin-top:10px;border-radius:3px;overflow:hidden;padding:5px;">
-	<div style="background:#404E67;margin-bottom:100px" class="sidenav col-xs-3 col-sm-3 col-md-3 col-lg-3">
+	<div style="background:#35384e;margin-bottom:100px" class="sidenav col-xs-3 col-sm-3 col-md-3 col-lg-3">
 		<div class="login-main-text">
 			<h2>Remote Monitoring & Management Platform</h2>
 			<br>
@@ -46,7 +46,7 @@ if($_SESSION['userid']!=""){ ?>
 				</div>					
 				<br>
 				<button style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#fff" class="btn btn-lg btn-block text-uppercase" type="submit">
-					<i class="fas fa-sign-in-alt"></i> Sign in
+				 Sign in &nbsp;<i class="fas fa-sign-in-alt"></i>
 				</button>
 			</form>
 		</div>

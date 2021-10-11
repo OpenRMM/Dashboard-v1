@@ -53,7 +53,6 @@ $error = $json['WMI_Product_error'];
 		<hr>
 		<div class="row">
 			<div style="" class="col-md-5">
-			<h5>Execute A Command</h5>
 			<?php if($online=="1"){ ?>
 				<div style="height:200px">		
 					<br>			

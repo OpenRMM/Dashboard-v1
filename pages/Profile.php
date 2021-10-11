@@ -42,7 +42,7 @@ if($userID!=$_SESSION['userid']){
 </div>
 <div id="printTable"style="padding:15px" >
 	<section id="content">
-		<div style="margin-top:-20px;background:#404E67;padding:20px;color:#fff;border-radius:6px;margin-bottom:30px" class="page-heading">
+		<div style="margin-top:-20px;background:#35384e;padding:20px;color:#fff;border-radius:6px;margin-bottom:30px" class="page-heading">
 			<div class="media clearfix">
 				<div class="media-left pr30">
 					<a style="color:#fff" href="#">
@@ -179,7 +179,7 @@ if($userID!=$_SESSION['userid']){
 						</a>
 					<?php } } ?>
 					<?php if($count==0){ ?>
-						<li>No Notes</li>
+						<li class="list-group-item">No Notes</li>
 					<?php } ?>
 				</div>
 				<?php if($userID==$_SESSION['userid']){ ?>

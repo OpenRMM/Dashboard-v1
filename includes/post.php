@@ -20,8 +20,8 @@
             $mysqlDatabase = clean($_POST['mysqlDatabase']);
             $theme = clean($_POST['theme']);
             if($theme=="theme1"){
-                    $color1="#f3f3f3";
-                    $color2="#fe9365";
+                    $color1="#f0f0f0";
+                    $color2="#fe6f33";
                     $color3="#0ac282";
                     $color4="#eb3422";
                     $color5="#01a9ac";
@@ -45,6 +45,9 @@
             $mqttPort = clean($_POST['mqttPort']);
             $mqttUsername = clean($_POST['mqttUsername']);
             $mqttPassword = clean($_POST['mqttPassword']);
+
+			$encryptionSecret = base64_encode(getSalt(40));
+            $encryptionSalt = base64_encode(getSalt(40));
            
             include("includes/config_init.php");
            
@@ -66,6 +69,9 @@
             $data = str_replace("[color4]",$color4,$data);
             $data = str_replace("[color5]",$color5,$data);
 
+			$data = str_replace("[secret]",$encryptionSecret,$data);
+			$data = str_replace("[salt]",$encryptionSalt,$data);
+
             unlink("includes/config.php");
             $_SESSION['excludedPages'] = explode(",",$excludedPages);
             file_put_contents("includes/config.php","<?php \$siteSettingsJson = '".$data."';");
@@ -80,7 +86,7 @@
 			$company = clean($_POST['company']);
 			$type = clean($_POST['pctype']);
 			$email = strip_tags($_POST['email']);
-			$TeamID = (int)$_POST['TeamID'];
+			$TeamID = clean($_POST['TeamID']);
 			$show_alerts = (int)$_POST['show_alerts'];
 			//Edit Recents
 			$activity = "Technician Edited Asset: ".$ID;
@@ -99,9 +105,9 @@
 				}
 			}
 			//Update Computer Data
-			$query = "UPDATE computerdata SET show_alerts='".$show_alerts."', teamviewer='".$TeamID."', computerType='".$type."', comment='".$comment."', name='".$name."', phone='".$phone."', CompanyID='".$company."', email='".$email."' WHERE ID='".$ID."';";
+			$query = "UPDATE computerdata SET show_alerts='".$show_alerts."', teamviewer='".$TeamID."', computer_type='".$type."', comment='".$comment."', name='".$name."', phone='".$phone."', CompanyID='".$company."', email='".$email."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
-			//header("location: index.php?page=General&ID=".$ID);
+			header("location: index.php");
 		}
 		//Delete computer on edit.php
 		if($_POST['type'] == "DeleteComputer"){
@@ -221,7 +227,8 @@
 					userActivity($activity,$_SESSION['userid']);
 				}
 				$results = mysqli_query($db, $query);
-				header("location: index.php?page=AllCompanies");
+				
+				header("location: index.php");
 			}
 		}
 		//Delete Company
@@ -232,7 +239,7 @@
 			$results = mysqli_query($db, $query);
 			$activity = "Technician Deleted A Company: ".$ID;
 			userActivity($activity,$_SESSION['userid']);
-			header("location: index.php?page=AllCompanies");
+			header("location: index.php");
 		}
 		//Delete User
 		if($_POST['type'] == "DeleteUser"){
@@ -242,7 +249,7 @@
 			$results = mysqli_query($db, $query);
 			$activity = "Technician Deleted A Technician: ".$ID;
 			userActivity($activity,$_SESSION['userid']);			
-			header("location: index.php?page=AllUsers");
+			header("location: index.php");
 		}
 		//Delete Command
 		if($_POST['type'] == "DeleteCommand"){
@@ -252,7 +259,7 @@
 			userActivity($activity,$_SESSION['userid']);
 			$query = "UPDATE commands SET command='Deleted' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
-			header("location: index.php?page=Commands");
+			header("location: index.php");
 		}
 		//Create Note
 		if(isset($_POST['note'])){			
@@ -298,12 +305,12 @@
 			}
 			$activity = "Technician Sent ".$commands." Command To: ".$ID;
 			userActivity($activity,$_SESSION['userid']);
-			header("location: index.php?page=General");
+			header("location: index.php");
 		}
 		//Update Company Agents
 		if($_POST['type'] == "CompanyUpdateAll"){
 			$ID = (int)$_POST['CompanyID'];
-			$commands = "C:\\\\SMG_RMM\\\\Update.bat";
+			$commands = "C:\\\\Open_RMM\\\\Update.bat";
 			$expire_after = 5;
 			$exists = 0;
 			$query = "SELECT ID, hostname FROM computerdata WHERE CompanyID='".$ID."' AND active='1'";
@@ -356,7 +363,7 @@
 			unlink("downloads/".$version);
 			$activity = "Technician Deleted An Agent Version: ".$version;
 			userActivity($activity,$_SESSION['userid']);
-			header("location: index.php?page=Versions");
+			header("location: index.php");
 		}
 		//Get Site Settings
 		if($_POST['type'] == "getSiteSettings"){
@@ -414,21 +421,21 @@
 				userActivity($activity,$_SESSION['userid']);	
 			}
 			$company = $_POST['companyAgent'];
-			$uploaddir = 'Includes/agentFiles/bin/';
-			$uploaddir2 = 'Includes/update/SMG_RMM.exe';
+			$uploaddir = 'includes/agentFiles/bin/';
+			$uploaddir2 = 'includes/update/Open_RMM.exe';
 			$uploadfile = $uploaddir.$_FILES['agentUpload']['name'];
-			$uploadfile2 = "Includes/agentFiles/bin/SMG_RMM.exe";
+			$uploadfile2 = "includes/agentFiles/bin/Open_RMM.exe";
 			if($company==""){
 				move_uploaded_file($_FILES['agentUpload']['tmp_name'], $uploadfile);
 				copy($uploadfile2, $uploaddir2);
 			}
 			ini_set('max_execution_time', 600);
 			ini_set('memory_limit','1024M');
-			$myfile = fopen("Includes/agentFiles/company.txt", "w") or die("Unable to open file!");
+			$myfile = fopen("includes/agentFiles/company.txt", "w") or die("Unable to open file!");
 			fwrite($myfile, $company);
-			echo $rootPath = realpath('Includes/agentFiles/');
+			echo $rootPath = realpath('includes/agentFiles/');
 			$zip = new ZipArchive();
-			$zip->open('SMG_RMM('.$agentVersion.').zip', ZipArchive::CREATE | ZipArchive::OVERWRITE );
+			$zip->open('Open_RMM('.$agentVersion.').zip', ZipArchive::CREATE | ZipArchive::OVERWRITE );
 			$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath), RecursiveIteratorIterator::LEAVES_ONLY);
 			foreach ($files as $name => $file){
 				if (!$file->isDir()){
@@ -438,8 +445,8 @@
 				}
 			}
 			$zip->close();
-			copy("SMG_RMM(".$agentVersion.").zip", "downloads/SMG_RMM(".$agentVersion.").zip");
-			unlink("SMG_RMM(".$agentVersion.").zip");
+			copy("Open_RMM(".$agentVersion.").zip", "downloads/Open_RMM(".$agentVersion.").zip");
+			unlink("Open_RMM(".$agentVersion.").zip");
 			$activity = "Technician Downloaded Agent: ".$agentVersion;
 			userActivity($activity,$_SESSION['userid']);
 			if($company==""){

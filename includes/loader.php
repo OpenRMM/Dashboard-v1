@@ -1,7 +1,8 @@
 <?php
 include("db.php");
-
-//$_SESSION['excludedPages'] = explode(",",$excludedPages); //use this to clear pages if an error occurs
+if($_SESSION['excludedPages']==""){
+    $_SESSION['excludedPages'] = explode(",",$excludedPages); //use this to clear pages if an error occurs
+}
 $_SESSION['page'] = clean(preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['page']));
 
 if(!in_array($_SESSION['page'], $allPages) || $_SESSION['page']==""){ 
@@ -71,7 +72,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                     include("../pages/".$_SESSION['page'].".php");
                     break;
                 }
-                if($x==1){  //use 15 or 2 for testing
+                if($x==15){  //use 15 or 2 for testing
                 ?>
                     <div style="margin-top:100px"> 
                         <script> 

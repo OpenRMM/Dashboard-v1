@@ -5327,13 +5327,13 @@ span.badge {
     padding: 0.3rem 0.75rem;
     width: 0;
     border: none;
-    color: #353c4e;
+    color: #35384e;
     background-color: transparent;
 }
 .header-navbar .navbar-wrapper .header-search .main-search .input-group .input-group-addon {
     padding: 0.45rem 0.75rem 0.3rem 0;
     background-color: transparent;
-    color: #353c4e;
+    color: #35384e;
     border: none;
 }
 .header-navbar .navbar-wrapper .header-search .main-search .input-group .input-group-addon.search-close {
@@ -5341,7 +5341,7 @@ span.badge {
     display: none;
 }
 .header-navbar .navbar-wrapper .header-search .main-search.open {
-    color: #353c4e;
+    color: #35384e;
 }
 .header-navbar .navbar-wrapper .header-search .main-search.open .input-group {
     background-color: #dcdcdc;
@@ -5350,7 +5350,7 @@ span.badge {
     display: block;
 }
 .header-navbar .navbar-wrapper .header-search .main-search.open .input-group .input-group-addon {
-    color: #353c4e;
+    color: #35384e;
 }
 .header-navbar .navbar-wrapper .header-search .main-search.open .input-group .input-group-addon.search-close {
     display: block;
@@ -8603,7 +8603,7 @@ body {
     background-color: #f3f3f3;
     font-size: 0.875em;
     overflow-x: hidden;
-    color: #353c4e;
+    color: #35384e;
     font-family: "Open Sans", sans-serif;
     background-attachment: fixed;
 }

@@ -1,15 +1,19 @@
 <?php
+$computerID = $_GET['ID'];
 $query = "SELECT * FROM users";
 $results = mysqli_num_rows(mysqli_query($db, $query));
-if($db and $mqttConnect!="timeout" and $results!="0"){ 
-    $_SESSION['excludedPages'] = explode(",",$excludedPages);
-    ?>
-	<script> 
-		//loadSection('Login');
-	    //setCookie("section", "Login", 365);	
-	</script>
-<?php 
-//exit;
+
+if($_SESSION['accountType']!="Admin"){
+    if($db and $mqttConnect!="timeout" and $results!="0"){ 
+        $_SESSION['excludedPages'] = explode(",",$excludedPages);
+        ?>
+        <script> 
+            loadSection('Login');
+            setCookie("section", "Login", 365);	
+        </script>
+    <?php 
+    exit;
+    }
 }
 ?>
 <h4 style="color:#333;?>">OpenRMM Initialization
@@ -103,8 +107,8 @@ if($db and $mqttConnect!="timeout" and $results!="0"){
                             <label class="list-group-item" for="Radio1">
                                 <span style="text-align:left">Default</span>
                                 <center>
-                                    <p style="background:#f3f3f3;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#fe9365;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                    <p style="background:#f0f0f0;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                    <p style="background:#fe6f33;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
                                     <p style="background:#0ac282;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
                                     <p style="background:#eb3422;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
                                     <p style="background:#01a9ac;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
