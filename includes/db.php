@@ -76,7 +76,7 @@
             // If it has a semicolon at the end, it's the end of the query
             if (substr(trim($line), -1, 1) == ';')
             {
-                mysql_query($db, $templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysql_error($db) . '<br /><br />');y
+                mysql_query($db, $templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysql_error($db) . '<br /><br />');
                 $templine = '';
             }
         }
