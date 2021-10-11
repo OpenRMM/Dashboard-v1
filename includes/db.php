@@ -59,11 +59,28 @@
 	}
 
 	//Connect to DB
-
 	$db = mysqli_connect($siteSettings['MySQL']['host'], $siteSettings['MySQL']['username'], $siteSettings['MySQL']['password'], $siteSettings['MySQL']['database']);
 	if(!$db and file_exists("config.php")){
 		//exit("<center><h3 style='color:maroon;'>An error has occured. Please try again in a few moments.</h3><a href='#' onclick='location.reload();'>Retry</a><hr></center>");
 	}
+    if($createDatabase=="true"){
+        //create db strucrure
+        $templine = '';
+        $lines = file("databaseStructure.sql");
+        foreach ($lines as $line)
+        {
+            // Skip it if it's a comment
+            if (substr($line, 0, 2) == '--' || $line == '')
+                continue;
+            $templine .= $line;
+            // If it has a semicolon at the end, it's the end of the query
+            if (substr(trim($line), -1, 1) == ';')
+            {
+                mysql_query($db, $templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysql_error($db) . '<br /><br />');y
+                $templine = '';
+            }
+        }
+    }
 	//redirect standard users
 	if($_SESSION['accountType']=="Standard"){
 		if(in_array(basename($_SERVER['SCRIPT_NAME']), $allAdminPages)){
@@ -116,15 +133,22 @@
 			}
 			$retResult[$row['WMI_Name']."_lastUpdate"] = $row['last_update'];
 		}
-		$getAlerts = getComputerAlerts($hostname, $retResult);
+   
+		$getAlerts = getComputerAlerts($ID, $retResult);
 		$retResult["Alerts"] = $getAlerts[0];
 		$retResult["Alerts_raw"] = $getAlerts[1];
 		return $retResult;
 	}
 	
 	//Alerts
-	function getComputerAlerts($hostname, $json){
-		global $siteSettings;
+	function getComputerAlerts($ID, $json){
+        global $db, $siteSettings;
+
+        $query = "SELECT * FROM computerdata WHERE ID='".$ID."'";
+        $result = mysqli_query($db, $query);
+        $computer = mysqli_fetch_assoc($result);
+        $hostname = $computer['hostname'].": ";
+
 		$alertArray = array();
 		$alertDelimited = "";
 		//Memory

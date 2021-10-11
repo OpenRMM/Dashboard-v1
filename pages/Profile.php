@@ -89,7 +89,7 @@ if($userID!=$_SESSION['userid']){
 							</li>
 							<li>            
 								<input type="hidden" name="delActivity" value="<?php echo $userID; ?>">
-								<button style="display:inline;margin-top:-10px" class="btn btn-sm" type="submit" >Clear Activity</button>
+								<button style="display:inline;margin-top:-10px;border:none;box-shadow:none" class="btn btn-sm" type="submit" >Clear Activity</button>
 							</li>
 						</ul>
 					</form>
@@ -183,7 +183,7 @@ if($userID!=$_SESSION['userid']){
 					<?php } ?>
 				</div>
 				<?php if($userID==$_SESSION['userid']){ ?>
-				<button style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#fff" data-toggle="modal" data-target="#noteModal"  title="Create New Note" class="btn btn-block p-t-15 p-b-15">Create New Note</button>
+				<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" data-toggle="modal" data-target="#noteModal"  title="Create New Note" class="btn btn-block p-t-15 p-b-15">Create New Note</button>
 				<?php } ?>
 			</div>
 		</div>	

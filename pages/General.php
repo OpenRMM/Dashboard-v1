@@ -255,7 +255,7 @@
 				<ul style="margin-left:30px">
 					<li>Computer Type: <?php echo textOnNull($result['computer_type'], "Not Set");?></li>
 					<li>Processor: <?php echo textOnNull(str_replace("(R)","",str_replace("(TM)","",$json['WMI_Processor'][0]['Name'])), "N/A");?></li>
-					<li>Operating System: <?php echo textOnNull(str_replace("Microsoft", "", $json['WMI_OS'][0]['Caption']), "N/A");?></li>
+					<li>Operating System: <?php echo textOnNull(str_replace("Microsoft", "", $json['WMI_ComputerSystem'][0]['Caption']), "N/A");?></li>
 					<li>Architecture: <?php echo textOnNull($json['WMI_ComputerSystem'][0]['SystemType'], "N/A");?></li>
 					<li>Asset Model: <?php echo textOnNull($json['WMI_ComputerSystem'][0]['Manufacturer']." ".$json['WMI_ComputerSystem'][0]['Model'], "N/A");?></li>
 					<li>BIOS Version: <?php echo textOnNull($json['WMI_BIOS'][0]['Version'], "N/A");?></li>

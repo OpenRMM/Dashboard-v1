@@ -62,13 +62,13 @@ $companyCount = mysqli_num_rows($results);
 						$computersWithAlerts = 0;
 						$aggrigateAlerts = "";
 						
-						$query = "SELECT hostname FROM computerdata WHERE CompanyID='".$company['CompanyID']."'";
+						$query = "SELECT ID FROM computerdata WHERE CompanyID='".$company['CompanyID']."'";
 						$computerResults = mysqli_query($db, $query);
 						$computerCount = mysqli_num_rows($computerResults);
 						
 						while($computerData = mysqli_fetch_assoc($computerResults)){
 							$getWMI = array("WMI_LogicalDisk", "WMI_OS", "WMI_ComputerSystem");
-							$data = getComputerData($computerData['hostname'], $getWMI);
+							$data = getComputerData($computerData['ID'], $getWMI);
 							if(count($data['Alerts'])>0){
 								$computersWithAlerts++;
 								$aggrigateAlerts .= $data['Alerts_raw'].",";

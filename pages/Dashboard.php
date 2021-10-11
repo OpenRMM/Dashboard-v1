@@ -37,9 +37,9 @@ $query = "SELECT ID,teamviewer FROM computerdata where active='1'";
 $results = mysqli_query($db, $query);
 $resultCount = mysqli_num_rows($results);
 ?>
-	<div class="row" style="margin-bottom:10px;margin-top:20px;border-radius:3px;overflow:hidden;padding:0px">
+	<div class="row" id="sortable" style="margin-bottom:10px;margin-top:20px;border-radius:3px;overflow:hidden;padding:0px">
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding:5px;padding-bottom:20px;padding-top:1px;border-radius:6px;">
-				<div class="card">
+				<div style="padding:15px" class="card">
 					<canvas data-centerval="" id="line-chart" height="300"></canvas>
 					<script>
 						new Chart(document.getElementById("line-chart"), {
@@ -80,7 +80,7 @@ $resultCount = mysqli_num_rows($results);
 					</script>						
 				</div>
 				<form method="post" action="index.php">				
-				   <div class="card table-card" id="printTable" style="margin-top:15px;padding:10px">
+				   <div class="card table-card" id="sortable printTable" style="margin-top:15px;padding:10px">
 						   <div class="card-header">
 								<h5>Recently Added Assets</h5>
 								<div class="card-header-right">
@@ -207,7 +207,7 @@ $resultCount = mysqli_num_rows($results);
 							</div>
 							<h6 class="m-b-10 m-t-10">&nbsp;</h6>
 							<a onclick="loadSection('Assets');" style="cursor:pointer;color:<?php echo $siteSettings['theme']['Color 2']; ?>" class="text-c-yellow b-b-warning">View All Assets</a>
-							<div class="row justify-content-center m-t-10 b-t-default m-l-0 m-r-0">
+							<div style="margin-top:10px;" class="row justify-content-center m-t-10 b-t-default m-l-0 m-r-0">
 								<div class="col m-t-15 b-r-default">
 									<h6 class="text-muted">Online</h6>
 									<h6>13</h6>
@@ -255,7 +255,7 @@ $resultCount = mysqli_num_rows($results);
 								<li class="list-group-item">No Notes</li>
 							<?php } ?>
 						</div>
-						<button style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" data-toggle="modal" data-target="#noteModal" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
+						<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" data-toggle="modal" data-target="#noteModal" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
 					</div>
 				</div>
 			</div>
