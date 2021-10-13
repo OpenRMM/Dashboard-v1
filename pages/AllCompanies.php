@@ -15,7 +15,7 @@ $query = "SELECT CompanyID,name,phone,email,address,comments,active FROM compani
 $results = mysqli_query($db, $query);
 $companyCount = mysqli_num_rows($results);
 ?>
-<div style="margin-top:20px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
+<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 	<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">All Customers (<?php echo $companyCount;?>)	
 		<a href="#" title="Refresh" onclick="loadSection('AllCompanies');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>

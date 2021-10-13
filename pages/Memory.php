@@ -60,23 +60,6 @@ $online = $results['online'];
 	</div>
 </div>
 <div class="row">
-	<div class="col-md-3" style="padding:5px;">
-		<div class="card" style="height:100%;text-align:center;">
-			<div class="card-body">				
-				<h6 style="color:#333;">
-					Total Installed
-				</h6>
-				<div style="width:100%;border-radius:8px;background-color:#333;padding:10px;font-size:16px;color:#fff;">
-					<b><?php echo round((int)$json['WMI_ComputerSystem'][0]['TotalPhysicalMemory'] / 1024 /1024 /1024,1);?> GB</b> 
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<br>
-<hr>
-<br>
-<div class="row">
 <?php
 	$slots = $json['WMI_PhysicalMemory'];
 	$error = $json['WMI_PhysicalMemory_error'];

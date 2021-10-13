@@ -33,7 +33,9 @@
 
 	//get update
 	MQTTpublish($computerID."/Commands/getGeneral","true",$computerID);
-	
+	MQTTpublish($computerID."/Commands/getScreenshot","true",$computerID);
+
+
 	$query = "SELECT name, phone, email,address,comments,date_added FROM companies WHERE CompanyID='".$result['CompanyID']."' LIMIT 1";
 	$companies = mysqli_query($db, $query);
 	$company = mysqli_fetch_assoc($companies);
@@ -96,6 +98,11 @@
 	Overview of <?php echo $result['hostname']; ?> 
 	<br>
 	<span style="font-size:12px;color:#333"> Last Updated: <?php echo ago($lastPing);?></span>
+	<?php if($showDate != "latest"){?>
+		<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
+			History: <?php echo date("l, F jS", strtotime($showDate));?>
+		</span>
+	<?php }?>
 	<div class="" style="margin-top:-45px">
 		<center>
 			<?php $alertCount = count($json['Alerts']);?>
@@ -115,11 +122,7 @@
 						<i style="color:#fff;" class="fas fa-cloud-upload-alt"></i>		
 					</button>			
 			<?php }?>
-			<?php if($showDate != "latest"){?>
-				<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-					History: <?php echo date("l, F jS", strtotime($showDate));?>
-				</span>
-			<?php }?>
+			
 			<div style="float:right;">	
 				<a href="#" title="Refresh" onclick="loadSection('General');" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-sync"></i>
@@ -152,15 +155,20 @@
 	?>
 <style>
 	.zoom:hover {
-		transform: scale(2.5);
+		overflow:auto;
 		z-index:9999; 
+		background-size: cover;		
+	}
+	.zoom2:hover {
+		transform: scale(2.5);
+		z-index:9999; 	
 	}
 </style>
 <div class="row py-2">
 	<?php if($size=="3"){ ?>
 	<div class="col-md-3 py-1">
-        <div style="padding:0px;cursor:zoom-in"class="zoom card">
-            <img style="background-position: 100% 100%; background-size: cover" src="data:image/jpeg;base64,<?php echo base64_encode($computer['image']);?>"/>              
+        <div style="padding:0px;cursor:zoom-in;overflow:hidden;height:58%" class="zoom2 card shadow-md">
+            <img class="zoom" style="background-position: 50% 50%; background-size: 100vw" src="data:image/jpeg;base64,<?php echo base64_encode($computer['image']);?>"/>              
         </div>
     </div>
 	<?php } ?>
@@ -186,9 +194,9 @@
 				<?php
 				//Determine Warning Level
 					$freeSpace = $json['WMI_LogicalDisk'][0]['FreeSpace'];
-					$size = $json['WMI_LogicalDisk'][0]['Size'];
-					$used = $size - $freeSpace;
-					$usedPct = round(($used/$size) * 100);
+					$size2 = $json['WMI_LogicalDisk'][0]['Size'];
+					$used = $size2 - $freeSpace;
+					$usedPct = round(($used/$size2) * 100);
 					if($usedPct > $siteSettings['Alert Settings']['Disk']['Danger'] ){
 						$pbColor = "red";
 					}elseif($usedPct > $siteSettings['Alert Settings']['Disk']['Warning']){
@@ -203,123 +211,140 @@
     </div>
  <?php } ?>
 </div>
-<div class="row">
+<div <?php if($size=="3"){ echo 'style="margin-top:-10%"'; } ?> class="row">
 	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:5px;">
-		<div class="card" style="height:85%;">
-		  <div class="card-body" style="padding:15px;">
-			<div class="row">
-				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-					<h4>
-						<?php echo ($result['name']!="" ? ucwords($result['name'])."<span style='font-size:14px;color:#696969'> with</span>" : ""); ?>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h5  style="padding:7px" class="panel-title">
+					Asset Overview
+				</h5>
+			</div>
+			<div class="panel-body" style="height:285px;">
+				<div class="rsow">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 						<a href="#" style="color:<?php echo $siteSettings['theme']['Color 5']; ?>" data-toggle="modal" data-target="#companyMoreInfo">
-							<?php echo textOnNull(($company['name']!="N/A" ? $company['name'] : ""), "No Company Name"); ?>
+							<h5>
+								<?php echo ($result['name']!="" ? ucwords($result['name'])." at" : ""); ?>
+								<?php echo textOnNull(($company['name']!="N/A" ? $company['name'] : ""), "No Company Name"); ?>
+							</h5>
 						</a>
-					</h4>
-					<span style="color:#666;font-size:14px;"><?php echo textOnNull(phone($result['phone']), "No Company Phone"); ?> &bull;
-						<a href="mailto:<?php echo $result['email']; ?>">
-							<?php echo textOnNull(phone($result['email']), "No Company Email"); ?>
-						</a>
-					</span>
+						<span style="color:#666;font-size:14px;"><?php echo textOnNull(phone($result['phone']), "No Company Phone"); ?> &bull;
+							<a href="mailto:<?php echo $result['email']; ?>">
+								<?php echo textOnNull(phone($result['email']), "No Company Email"); ?>
+							</a>
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;"><hr>
+						<?php if($online=="1"){ ?>
+							<button class="btn btn-danger btn-sm" onclick='sendCommand("shutdown -s -t 0", "Shutdown Computer");' style="width:40%;margin:3px;">
+								<i class="fas fa-power-off"></i> Shutdown
+							</button>
+							<button class="btn btn-warning btn-sm" onclick='sendCommand("shutdown -r -t 0", "Reboot Computer");' style="width:40%;margin:3px;color:#000;background:#ffa500;border:#ffa500">
+								<i class="fas fa-redo"></i> Reboot
+							</button><br>
+						
+						<?php } ?>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;">
+						<?php if($online=="1"){ 
+								if(trim($result['teamviewer']) != ""){ ?>
+									<a target="_BLANK" href="https://start.teamviewer.com/device/<?php echo $result['teamviewer'];?>/authorization/password/mode/control" class="btn btn-sm" style="width:40%;margin:3px;color:#fff;background:#dedede;" title="<?php echo $result['teamviewer'];?>">
+										<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/TeamViewer_logo.svg/800px-TeamViewer_logo.svg.png" height="16px;"/>
+									</a>
+								<?php }else{ ?>
+									<button class="btn btn-sm btn-warning" data-dismiss="modal" type="button" style="background:#0ac282;border:#0ac282;margin:3px;width:50%;" data-toggle="modal" data-target="#agentMessageModal">
+										<i class="fas fa-comment" style=""></i> One-way Message
+									</button>
+								<?php } ?>
+								<button class="btn btn-sm" type="button" style="width:30%;margin:3px;color:#fff;background:#333;" data-dismiss="modal" data-toggle="modal" data-target="#terminalModal">
+									<i class="fas fa-terminal"></i> Terminal
+								</button>
+						<?php } ?>
+					</div>
 				</div>
-				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;"><hr>
-					<?php if($online=="1"){ ?>
-						<button class="btn btn-danger btn-sm" onclick='sendCommand("shutdown -s -t 0", "Shutdown Computer");' style="width:30%;margin:3px;">
-							<i class="fas fa-power-off"></i> Shutdown
-						</button>
-						<button class="btn btn-warning btn-sm" onclick='sendCommand("shutdown -r -t 0", "Reboot Computer");' style="width:30%;margin:3px;color:#000;background:#ffa500;">
-							<i class="fas fa-redo"></i> Reboot
-						</button>
-					<?php } ?>
-				</div>
-				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;">
-					<?php if($online=="1"){ ?>
-						<button class="btn btn-sm" type="button" style="width:30%;margin:3px;color:#fff;background:#333;" data-dismiss="modal" data-toggle="modal" data-target="#terminalModal">
-							<i class="fas fa-terminal"></i> Terminal
-						</button>
-					<?php }
-					 if(trim($result['teamviewer']) != ""){ ?>
-						<a target="_BLANK" href="https://start.teamviewer.com/device/<?php echo $result['teamviewer'];?>/authorization/password/mode/control" class="btn btn-sm" style="width:30%;margin:3px;color:#fff;background:#dedede;" title="<?php echo $result['teamviewer'];?>">
-							<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/TeamViewer_logo.svg/800px-TeamViewer_logo.svg.png" height="16px;"/>
-						</a>
-					<?php } ?>
-				</div>
-			</div>
 		  </div>
 		</div>
 	</div>
 	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
-		<div class="card" style="height:85%;">
-		  <div class="card-body" style="padding:15px 5px 5px 15px;">
-			<h5>Hardware Information</h5>
-			<div class="row">
-				<ul style="margin-left:30px">
-					<li>Computer Type: <?php echo textOnNull($result['computer_type'], "Not Set");?></li>
-					<li>Processor: <?php echo textOnNull(str_replace("(R)","",str_replace("(TM)","",$json['WMI_Processor'][0]['Name'])), "N/A");?></li>
-					<li>Operating System: <?php echo textOnNull(str_replace("Microsoft", "", $json['WMI_ComputerSystem'][0]['Caption']), "N/A");?></li>
-					<li>Architecture: <?php echo textOnNull($json['WMI_ComputerSystem'][0]['SystemType'], "N/A");?></li>
-					<li>Asset Model: <?php echo textOnNull($json['WMI_ComputerSystem'][0]['Manufacturer']." ".$json['WMI_ComputerSystem'][0]['Model'], "N/A");?></li>
-					<li>BIOS Version: <?php echo textOnNull($json['WMI_BIOS'][0]['Version'], "N/A");?></li>
-					<li>Local IP Address: <?php echo textOnNull($json['IPAddress']['Value'], "N/A");?></li>
-					<li></li>
-					<?php if((int)$json['WMI_Battery'][0]['BatteryStatus']>0){ ?>
-					<li>Battery Status: <?php 								
-						$statusArray = [
-						"1" => ["Text" => "Discharging", "Color" => "red"],
-						"2" => ["Text" => "Unknown", "Color" => "red"],
-						"3" => ["Text" => "Fully Charged", "Color" => "green"],
-						"4" => ["Text" => "Low", "Color" => "red"],
-						"5" => ["Text" => "Critical", "Color" => "red"],
-						"6" => ["Text" => "Charging", "Color" => "green"],
-						"7" => ["Text" => "Charging And High", "Color" => "green"],
-						"8" => ["Text" => "Charging And Low", "Color" => "green"],
-						"9" => ["Text" => "Charging And Critical", "Color" => "yellow"],
-						"10" =>["Text" => "Undefined", "Color" => "red"],
-						"11" =>["Text" => "Partially Charged", "Color"=>"yellow"]];
-						$statusInt = $json['WMI_Battery'][0]['BatteryStatus'];						
-					?>
-					<?php echo textOnNull($json['WMI_Battery'][0]['EstimatedChargeRemaining'], "Unknown");?>%
-					(<span style="color:<?php echo $statusArray[$statusInt]['Color']; ?>"><?php echo $statusArray[$statusInt]['Text']; ?></span>)	
-					</li>
-					<?php } ?>
-				</ul>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h5  style="padding:7px" class="panel-title">
+					Hardware Details
+				</h5>
 			</div>
+			<div class="panel-body" style="height:285px;">	
+				<div class="roaw">
+					<ul class="list-group" style="margin-left:20px">
+						<li class="list-group-item" style="padding:6px"><b>Processor: </b><?php echo textOnNull(str_replace("(R)","",str_replace("(TM)","",$json['WMI_Processor'][0]['Name'])), "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['WMI_ComputerSystem'][0]['Caption']), "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['SystemType'], "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Asset Model: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['Manufacturer']." ".$json['WMI_ComputerSystem'][0]['Model'], "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>External IP Address: </b><?php echo textOnNull($json['WMI_BIOS'][0]['Version'], "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['ExternalIP'], "N/A");?><span style="margin-left:20px"><b>Local IP Address: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['InternalIP'], "N/A");?></span></li>
+						<?php if((int)$json['WMI_Battery'][0]['BatteryStatus']>0){ ?>
+						<li class="list-group-item" style="padding:6px"><b>Battery Status: </b><?php 								
+							$statusArray = [
+							"1" => ["Text" => "Discharging", "Color" => "red"],
+							"2" => ["Text" => "Unknown", "Color" => "red"],
+							"3" => ["Text" => "Fully Charged", "Color" => "green"],
+							"4" => ["Text" => "Low", "Color" => "red"],
+							"5" => ["Text" => "Critical", "Color" => "red"],
+							"6" => ["Text" => "Charging", "Color" => "green"],
+							"7" => ["Text" => "Charging And High", "Color" => "green"],
+							"8" => ["Text" => "Charging And Low", "Color" => "green"],
+							"9" => ["Text" => "Charging And Critical", "Color" => "yellow"],
+							"10" =>["Text" => "Undefined", "Color" => "red"],
+							"11" =>["Text" => "Partially Charged", "Color"=>"yellow"]];
+							$statusInt = $json['WMI_Battery'][0]['BatteryStatus'];						
+						?>
+						<?php echo textOnNull($json['WMI_Battery'][0]['EstimatedChargeRemaining'], "Unknown");?>%
+						(<span style="color:<?php echo $statusArray[$statusInt]['Color']; ?>"><?php echo $statusArray[$statusInt]['Text']; ?></span>)	
+						</li>
+						<?php } ?>
+					</ul>
+				</div>
 		  </div>
 		</div>
 	</div>
 	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
-		<div class="card" style="height:85%;">
-		  <div class="card-body" style="padding:15px 5px 5px 15px;">
-			<h5>Asset Details</h5>
-			<div class="row">
-				<ul style="margin-left:30px">
-					<li>Current User: <?php echo textOnNull(basename($json['WMI_ComputerSystem'][0]['UserName']), "Unknown");?></li>
-					<li>Domain: <?php echo textOnNull($json['WMI_ComputerSystem'][0]['Domain'], "N/A");?></li>
-					<?php
-						$lastBoot = explode(".", $json['WMI_OS'][0]['LastBootUpTime'])[0];
-						$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
-					?>
-					<li>Asset Uptime: <?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
-					<?php if(count($json['Firewall']) > 0) {
-						$status = $json['Firewall']['Status'];
-						$color = (($status == "True" || $status == "Enabled") ? "text-success" : "text-danger");
-					?>
-						<li>Firewall Status: <span class="<?php echo $color; ?>"><?php echo $status; ?></span></li>
-					<?php } 
-					if(count($json['WindowsActivation']) > 0) {
-						$status = $json['WindowsActivation']['Value'];
-						$color = ($status == "Activated" ? "text-success" : "text-danger");
-					?>
-						<li>Windows Activation: <span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
-					<?php } 
-					if(count($json['Antivirus']) > 0) {
-						$status = $json['Antivirus']['Value'];
-						$color = ($status == "No Antivirus" ? "text-danger" : "text-success");
-					?>
-						<li>Antivirus: <span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
-					<?php } ?>
-					<li>Agent Version: <?php echo $agentVersion; ?></li>
-				</ul>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h5 style="padding:7px" class="panel-title">
+					Asset Details
+				</h5>
 			</div>
+			<div class="panel-body" style="height:285px;">
+				<div class="rsow">
+					<ul class="list-group" style="margin-left:20px">
+						<li class="list-group-item" style="padding:6px"><b>Current User: </b><?php echo textOnNull(basename($json['WMI_ComputerSystem'][0]['UserName']), "Unknown");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Domain: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['Domain'], "N/A");?></li>
+						<?php
+							$lastBoot = explode(".", $json['WMI_ComputerSystem'][0]['LastBootUpTime'])[0];
+							$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
+						?>
+						<li class="list-group-item" style="padding:6px"><b>Asset Uptime: </b><?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
+						<?php if(count($json['WMI_Firewall']) > 0) {
+							$status = $json['WMI_Firewall'][0]['currentProfile'];
+							if($status=="OFF"){ $status="Disabled"; }else{ $status="Enabled"; }
+							$color = (($status == "Enabled") ? "text-success" : "text-danger");
+						?>
+							<li class="list-group-item" style="padding:6px"><b>Firewall Status: </b><span class="<?php echo $color; ?>"><?php echo $status; ?></span></li>
+						<?php } 
+						if(count($json['WindowsActivation']) > 0) {
+							$status = $json['WindowsActivation']['Value'];
+							$color = ($status == "Activated" ? "text-success" : "text-danger");
+						?>
+							<li class="list-group-item" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
+						<?php } 
+						if(count($json['Antivirus']) > 0) {
+							$status = $json['Antivirus']['Value'];
+							$color = ($status == "No Antivirus" ? "text-danger" : "text-success");
+						?>
+							<li class="list-group-item" style="padding:6px"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
+						<?php } ?>
+						<li class="list-group-item" style="padding:6px"><b>Agent Version: </b><?php echo $agentVersion; ?></li>
+					</ul>
+				</div>
 		  </div>
 		</div>
 	</div>
@@ -359,10 +384,33 @@
 		</span>
 	  </div>
 	  <div class="modal-footer">
-		<button type="button" class="btn" style="background:<?php echo $siteSettings['theme']['Color 4']; ?>;color:#fff;" data-dismiss="modal">Close</button>
+		<button type="button" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#fff;" data-dismiss="modal">Close</button>
 	  </div>
 	</div>
   </div>
+</div>
+<!-- onne way message -->
+<div id="agentMessageModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">One-way Message to Agent: <?php echo $_SESSION['ComputerHostname']; ?></h5>
+			</div>
+			<form method="post" action="index.php">
+				<div class="modal-body">
+					<input type="hidden" name="type" value="assetOneWayMessage"/>
+					<input type="hidden" name="ID" value="<?php echo $computerID; ?>">
+					<textarea placeholder="Your message here..." name="assetMessage" class="form-control"></textarea>
+				</div>
+				<div class="modal-footer">
+					<button type="submit"  class="btn btn-primary btn-sm">
+						Send <i class="fas fa-paper-plane" ></i>
+					</button>
+					<button type="button" class="btn btn-sm btn-default"  data-dismiss="modal">Close</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 <script>
 	$(".sidebarComputerName").text("<?php echo strtoupper($result['hostname']);?>");

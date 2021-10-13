@@ -36,7 +36,67 @@ function welcome(){
 $query = "SELECT ID,teamviewer FROM computerdata where active='1'";
 $results = mysqli_query($db, $query);
 $resultCount = mysqli_num_rows($results);
-?>
+
+//Get stats
+$query = "SELECT CompanyID FROM companies where active='1'";
+$results = mysqli_query($db, $query);
+$companyCount = mysqli_num_rows($results);
+$query = "SELECT ID FROM users where active='1'";
+$results = mysqli_query($db, $query);
+$userCount = mysqli_num_rows($results);
+$query = "SELECT ID,teamviewer FROM computerdata where active='1'";
+$results = mysqli_query($db, $query);
+$resultCount = mysqli_num_rows($results);
+?>	
+	<?php if($_SESSION['userid']!="" ){ ?>
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+				<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 2']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
+					<a style="color:#fff;cursor:pointer;" onclick="loadSection('Assets');">
+						<div style="padding:10px 10px 0px 20px;">
+							<i class="fas fa-desktop" style="font-size:28px;float:right;"></i>
+							<span style="font-size:20px;" ><?php echo $resultCount; ?></span><br>
+							<span style="font-size:20px;">Assets</span>
+						</div>
+													
+					</a>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+				<div style="width:100%; background:<?php echo $siteSettings['theme']['Color 3']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
+					<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllCompanies');">
+						<div style="padding:10px 10px 0px 20px;">
+							<i class="fas fa-building" style="font-size:28px;float:right;"></i>
+							<span style="font-size:20px;"><?php echo $companyCount;?></span><br>
+							<span style="font-size:20px;">Customers</span>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+				<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 4']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
+					<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllUsers');">
+						<div style="padding:10px 10px 0px 20px;">
+							<i class="fas fa-user" style="font-size:28px;float:right;"></i>
+							<span style="font-size:20px;"><?php echo $userCount;?></span><br>
+							<span style="font-size:20px;">Technicians</span>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+				<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 5']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;">
+					<a style="color:#fff;cursor:pointer;" onclick="loadSection('Tickets');">
+						<div style="padding:10px 10px 0px;">
+							<i class="fas fa-ticket-alt" style="font-size:28px;float:right;"></i>
+							<span style="font-size:20px;"><?php echo $userCount;?></span><br>
+							<span style="font-size:20px;">Tickets</span>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	<?php } ?>
 	<div class="row" id="sortable" style="margin-bottom:10px;margin-top:20px;border-radius:3px;overflow:hidden;padding:0px">
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding:5px;padding-bottom:20px;padding-top:1px;border-radius:6px;">
 				<div style="padding:15px" class="card">
@@ -94,7 +154,7 @@ $resultCount = mysqli_num_rows($results);
 							<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:14px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 								<thead>
 									<tr style="border-bottom:2px solid #d3d3d3;">
-									  <th scope="col"><input onClick="toggle(this)" id="allcomputers"  value="<?php echo $result['ID']; ?>" style="display:inline;appearance:none" type="checkbox"></th>
+									  <th scope="col">#</th>
 									  <th scope="col">Hostname</th>
 									  <th scope="col"></th>
 									  <th scope="col">Logged In</th>
@@ -289,7 +349,8 @@ $resultCount = mysqli_num_rows($results);
 <script>
 	$(document).ready(function() {
 		$('#dataTable').dataTable( {
-			"paging": false
+			"paging": false,
+			"order": []
 		} );
 	});
 </script>

@@ -32,7 +32,7 @@
 
 	$json = getComputerData($computerID, array("WMI_Services"), $showDate);
 
-	$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+	$query = "SELECT online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_fetch_assoc(mysqli_query($db, $query));
 	$online = $results['online'];
 
@@ -77,28 +77,25 @@
 	  <tbody>
 		<?php
 			foreach($services as $key=>$service){
-				$name= explode("|",$service['Name']);
-				$state = $name[0];
-				if($state=="Running")$color=$siteSettings['theme']['Color 4'];
-				if($state=="Stopped")$color="maroon";
-				if($search!=""){
-					if(stripos($name[1], $search) !== false){ }else{ continue; }
-				}
+				$state = $service['State'];
+				if($state=="Running"){$color=$siteSettings['theme']['Color 4'];}
+				if($state=="Stopped"){$color="maroon";}
+
 				$count++;
 		?>
 			<tr>
 			  <th scope="row"><?php echo $count;?></th>
-			  <td><?php echo textOnNull($name[1], "[No Name]");?></td>
+			  <td><?php echo textOnNull($service['Caption'], "[No Name]");?></td>
 			  <td><?php echo textOnNull(substr($service['DisplayName'],0,35), "Not Set");?></td>
 			  <td><?php echo textOnNull(strlen($service['Description']) > 70 ? substr($service['Description'],0,70)."..." : $service['Description'], "Not Set");?></td>
 			  <td>
 				  <?php if($state=="Stopped"){ ?>
-					<button title="Start Sevice" class="btn btn-sm btn-success" style="margin-top:-2px;padding:5px;padding-top:2px;padding-bottom:2px;border:none;" onclick='sendCommand("net start <?php echo $name[1]; ?>", "Kill <?php echo $proc['Name']; ?> service");'>
-						<i style="font-size:12px;" class="fas fa-play"></i> Start
+					<button title="Start Sevice" class="btn btn-sm btn-success" style="margin-top:-2px;" onclick='sendCommand("net start <?php echo $name[1]; ?>", "Kill <?php echo $proc['Name']; ?> service");'>
+						<i style="font-size:12px;" class="fas fa-play"></i>
 					</button>
 				  <?php }elseif($state="Running"){ ?>
-					<button title="Stop Service" class="btn btn-sm btn-danger" style="margin-top:-2px;padding:5px;padding-top:2px;padding-bottom:2px;background:maroon;border:none;" onclick='sendCommand("net stop <?php echo $name[1]; ?> /y", "Kill <?php echo $proc['Name']; ?> service");'>
-						<i style="font-size:12px;" class="fas fa-times"></i> Stop
+					<button title="Stop Service" class="btn btn-sm btn-danger" style="margin-top:-2px;" onclick='sendCommand("net stop <?php echo $name[1]; ?> /y", "Kill <?php echo $proc['Name']; ?> service");'>
+						<i style="font-size:12px;" class="fas fa-times"></i>
 					</button>
 				  <?php } ?>
 			  </td>

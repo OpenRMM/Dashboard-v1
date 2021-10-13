@@ -4,8 +4,8 @@
 	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "Init,Login,Logout,EventLogs,Alerts,Commands,Dashboard,SiteSettings,Profile,Edit,AllUsers,AllCompanies,Assets,NewComputers,Versions"; 
-	$allPages = "Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,DefaultPrograms,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,NewComputers,OptionalFeatures,Printers,Proccesses,Profile,Programs,Services,Users,Versions";
+	$excludedPages = "FileManager,Init,Login,Logout,EventLogs,Alerts,Commands,Dashboard,SiteSettings,Profile,Edit,AllUsers,AllCompanies,Assets,NewComputers,Versions"; 
+	$allPages = "FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,DefaultPrograms,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,NewComputers,OptionalFeatures,Printers,Proccesses,Profile,Programs,Services,Users,Versions";
 	$adminPages = "AllUsers.php,AllCompanies.php,SiteSettings.php";
 ###########################################################################################################################################
 ######################################################## DEV ONLY DO NOT PASS #############################################################
@@ -344,7 +344,16 @@
 	}
 	//Custom JsonDecode with error handling
 	function jsonDecode($json, $assoc = false) {
+		for ($i = 0; $i <= 31; ++$i) { 
+			$json = str_replace(chr($i), "", $json); 
+		}
+		$json = str_replace(chr(127), "", $json);
+		if (0 === strpos(bin2hex($json), 'efbbbf')) {
+		   $json = substr($json, 3);
+		}
 		$json = str_replace("\\", "\\\\", $json);
+		$json = stripslashes($json);
+
 		$ret = json_decode(utf8_encode($json), $assoc);
 		if ($error = json_last_error()){
 			$errorReference = [

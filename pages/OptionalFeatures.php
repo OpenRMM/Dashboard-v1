@@ -77,10 +77,10 @@
 		<tbody>
 		<?php
 			$installState = array(
-				"1"=>array("state"=>"Enabled", "color"=>$siteSettings['theme']['Color 4']), 
-				"2"=>array("state"=>"Disabled", "color"=>$siteSettings['theme']['Color 3']), 
-				"3"=>array("state"=>"Absent", "color"=>"maroon"),
-				"4"=>array("state"=>"Unknown", "color"=>"maroon")
+				"1"=>array("state"=>"Enabled", "color"=>"green"), 
+				"2"=>array("state"=>"Disabled", "color"=>"red"), 
+				"3"=>array("state"=>"Absent", "color"=>"gray"),
+				"4"=>array("state"=>"Unknown", "color"=>"gray")
 			);
 			$OptionalFeatures = $json['WMI_OptionalFeatures'];
 			$error = $json['WMI_OptionalFeatures_error'];

@@ -140,6 +140,7 @@ $error2 = $json['WMI_LogicalDisk_error'];
 </div>
 <div class="row" style="margin-bottom:20px;">
 <?php
+	$count = 0;
 	foreach($disks as $disk){
 		$freeSpace = $disk['FreeSpace'];
 		$size = $disk['Size'];
@@ -163,6 +164,7 @@ $error2 = $json['WMI_LogicalDisk_error'];
 			}
 		}
 		if(strpos($disk["ProviderName"], ".") !== false){
+			$count++;
 	?>
 	<div class="col-md-2" style="padding:5px;">
 		<div class="card" style="height:80%;padding:5px;">
@@ -182,7 +184,7 @@ $error2 = $json['WMI_LogicalDisk_error'];
 		</div>
 	</div>
 <?php } } ?>
-<?php if(count($disks) == 0){ ?>
+<?php if($count == 0){ ?>
 	<div class="col-md-12" style="padding:5px;margin-left:30px;">
 		<h6>No network drives found.</h6>
 	</div>

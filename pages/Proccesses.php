@@ -26,6 +26,7 @@
 		<?php
 		exit;
 	}
+
 	//get update
 	MQTTpublish($computerID."/Commands/getProcesses","true",$computerID);
 
@@ -37,7 +38,6 @@
 
 	$procs = $json['WMI_Processes'];
 	$error = $json['WMI_Processes_error'];
-
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
@@ -81,9 +81,7 @@
 				return $a['Name'] <=> $b['Name'];
 			});
 			foreach($procs as $key=>$proc){
-				if($search!=""){
-					if(stripos($proc['Name'], $search) !== false){ }else{ continue; }
-				}
+
 				$count++;
 		?>
 			<tr>
@@ -91,7 +89,7 @@
 				<td><?php echo textOnNull($proc['Name'], "N/A");?></td>
 				<td><?php echo textOnNull($proc['PID'], "N/A");?></td>
 				<td>
-				<button style="margin-top:-2px;" onclick='sendCommand("taskkill /F /<?php echo $proc["PID"]; ?>", "Kill <?php echo $proc["Name"]; ?> Proccess");' title="End <?php echo $proc['Name']; ?> process?" class="btn btn-danger btn-sm">
+				<button style="margin-top:-2px;" onclick='sendCommand("taskkill /F /PID <?php echo $proc["PID"]; ?>", "Kill <?php echo $proc["Name"]; ?> Proccess");' title="End <?php echo $proc['Name']; ?> process?" class="btn btn-danger btn-sm">
 					<i style="font-size:12px;" class="fa fa-times"></i>
 				</button>
 				</td>

@@ -27,7 +27,7 @@ if($computerID<0){
 	<?php
 	exit;
 }
-$query = "SELECT online, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT online, hostname, ID FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $computer = mysqli_fetch_assoc($results);
 
@@ -56,22 +56,22 @@ $error = $json['WMI_Product_error'];
 			<?php if($online=="1"){ ?>
 				<div style="height:200px">		
 					<br>			
-					<button class="btn btn-sm btn-default" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:1px solid #000" data-toggle="modal" data-target="#terminalModal">
+					<button class="btn btn-sm btn-default" data-dismiss="modal" type="button" style="color:#fff;background:#333;margin:5px;width:45%;border:1px solid #333" data-toggle="modal" data-target="#terminalModal">
 						<i class="fas fa-terminal" style="margin-top:3px;float:left"></i> Terminal
 					</button>
-					<button class="btn btn-sm btn-warning" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:none;" data-toggle="modal" data-target="#agentAlertModal">
+					<button class="btn btn-sm btn-success" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:none;" data-toggle="modal" data-target="#agentAlertModal">
 						<i class="fas fa-comment" style="margin-top:3px;float:left"></i> One-way Message
 					</button>
-					<button data-dismiss="modal" class="btn btn-success btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
+					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \\"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
 						<i class="fas fa-desktop" style="float:left;margin-top:3px"></i> Enable Remote Desktop
 					</button>
-					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;color:#fff;background:#333;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
+					<button data-dismiss="modal" class="btn btn-warning btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \\"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
 						<i class="fas fa-desktop" style="float:left;margin-top:3px"></i> Disable Remote Desktop
 					</button>
 					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick="sendCommand('Netsh Advfirewall set allprofiles state on', 'Enable Firewall');">
 						<i class="fas fa-fire-alt" style="float:left;margin-top:3px"></i> Enable Firewall
 					</button>
-					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="color:#fff;background:#333;display:inline;margin:5px;color:#fff;width:45%;border:none" onclick="sendCommand('Netsh Advfirewall set allprofiles state off', 'Disable Firewall');">
+					<button data-dismiss="modal" class="btn btn-warning btn-sm" type="button" style="display:inline;margin:5px;color:#fff;width:45%;border:none" onclick="sendCommand('Netsh Advfirewall set allprofiles state off', 'Disable Firewall');">
 						<i class="fas fa-fire-alt" style="float:left;margin-top:3px"></i> Disable Firewall
 					</button>
 				</div>
@@ -113,7 +113,7 @@ PAUSE
 	<div style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;" class="row">
 		<div class="col-md-12">
 			<?php 
-				$query = "SELECT ID, time_received,command, arg, expire_after,status,time_sent FROM commands WHERE status='Sent' or status='Received' AND ComputerID='".$result['hostname']."' ORDER BY ID DESC LIMIT 100";
+				$query = "SELECT ID, time_received,command, arg, expire_after,status,time_sent FROM commands WHERE status='Sent' or status='Received' AND ComputerID='".$result['ID']."' ORDER BY ID DESC LIMIT 100";
 				$results = mysqli_query($db, $query);
 				$commandCount = mysqli_num_rows($results);
 			?>
@@ -157,7 +157,7 @@ PAUSE
 				<?php }?>
 				<?php if($count==0){ ?>
 					<tr>
-						<td colspan=30><center><h5>No Commands Found.</h5></center></td>
+						<td colspan=30><center><h6>No Commands Found.</h6></center></td>
 					</tr>
 				<?php } ?>
 			   </tbody>

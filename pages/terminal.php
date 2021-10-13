@@ -6,15 +6,14 @@ if(!isset($_SESSION['userid'])){
 	http_response_code(404);
 	die();
 }
-//$args = $_POST['args'];
 $expire_after = 5;
 $exists = 0;
 
-$query = "SELECT hostname FROM computerdata WHERE ID='".$ID."'";
+$query = "SELECT hostname,ID FROM computerdata WHERE ID='".$ID."'";
 $results = mysqli_query($db, $query);
 $computer = mysqli_fetch_assoc($results);
 									
-$query = "SELECT ID, expire_time FROM commands WHERE ComputerID='".$computer['hostname']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
+$query = "SELECT ID, expire_time FROM commands WHERE ComputerID='".$computer['ID']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
 $results = mysqli_query($db, $query);
 $existing = mysqli_fetch_assoc($results);
 
@@ -28,19 +27,19 @@ if($existing['ID'] != ""){
 $expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
 
 if($exists == 0){
-	$query = "INSERT INTO commands (ComputerID, userid, command, arg, expire_after, expire_time, status)
-			  VALUES ('".$computer['hostname']."', '".$_SESSION['userid']."', '".$commands."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
+	$query = "INSERT INTO commands (ComputerID, userid, command, expire_after, expire_time, status)
+			  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 	$results = mysqli_query($db, $query);
 	$insertID = mysqli_insert_id($db);
 
 	MQTTpublish($ID."/Commands/CMD",$commands,$ID);
 
 	$activity="Technician Sent ".$commands." Command To: ".$computer['hostname'];
-	//userActivity($activity);
+	userActivity($activity,$_SESSION['userid']);
 	
 	//Get Response
 	$count = 0;
-	while($count <= 5){
+	while($count <= 10){
 		$query = "SELECT data_received FROM commands WHERE ID = '".$insertID."';";
 		$results = mysqli_query($db, $query);
 		$result = mysqli_fetch_assoc($results);
@@ -52,7 +51,7 @@ if($exists == 0){
 	if(trim($result["data_received"])!=""){
 		$response = trim($result["data_received"]);
 	}else{
-		if($count >= 5){
+		if($count >= 10){
 			$response = "Timeout";
 		}else{
 			$response = "No Response";

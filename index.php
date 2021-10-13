@@ -22,16 +22,6 @@
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
 
-	//Get stats
-	$query = "SELECT CompanyID FROM companies where active='1'";
-	$results = mysqli_query($db, $query);
-	$companyCount = mysqli_num_rows($results);
-	$query = "SELECT ID FROM users where active='1'";
-	$results = mysqli_query($db, $query);
-	$userCount = mysqli_num_rows($results);
-	$query = "SELECT ID,teamviewer FROM computerdata where active='1'";
-	$results = mysqli_query($db, $query);
-	$resultCount = mysqli_num_rows($results);
 	if($nologin==false){
 		if($_SESSION['userid']=="" && !in_array(basename($_SERVER['SCRIPT_NAME']), $serverPages)){
 			if(strpos(strtolower($_SERVER['SCRIPT_NAME']),"/ajax/")!==false){ //fix for ajax pages
@@ -72,9 +62,11 @@
 		<link rel="stylesheet" href="assets/css/style.css"/>
 
 		<!--- MDB --->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css" integrity="sha512-0/rEDduZGrqo4riUlwqyuHDQzp2D1ZCgH/gFIfjMIL5az8so6ZiXyhf1Rg8i6xsjv+z/Ubc4tt1thLigEcu6Ug==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
 		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.js"></script>
+
 	</head>
 	<style>
 		a { color:#003366; }
@@ -181,6 +173,9 @@
 							<li onclick="loadSection('EventLogs');" id="secbtnEventLogs" class="secbtn">
 								<i class="fas fa-file-code"></i>&nbsp;&nbsp;&nbsp; Event Logs
 							</li>
+							<li onclick="loadSection('FileManager');" id="secbtnFileManager" class="secbtn">
+								<i class="fas fa-folder"></i>&nbsp;&nbsp;&nbsp; File Manager
+							</li>
 							<hr>
 							<h6 class="">Asset Details</h6>
 							<li onclick="loadSection('Network');" id="secbtnNetwork" class="secbtn">
@@ -225,56 +220,7 @@
 			<?php } ?>
 			<!-- Page Content -->
 			<div id="content" style="margin-top:15px;padding:30px;width:100%;">
-				<?php if($_SESSION['userid']!="" and file_exists("includes/config.php")){ ?>
-					<div class="row">
-						<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-							<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 2']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
-								<a style="color:#fff;cursor:pointer;" onclick="loadSection('Assets');">
-									<div style="padding:10px 10px 0px 20px;">
-										<i class="fas fa-desktop" style="font-size:28px;float:right;"></i>
-										<span style="font-size:20px;" ><?php echo $resultCount; ?></span><br>
-										<span style="font-size:20px;">Assets</span>
-									</div>
-																
-								</a>
-							</div>
-						</div>
-						<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-							<div style="width:100%; background:<?php echo $siteSettings['theme']['Color 3']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
-								<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllCompanies');">
-									<div style="padding:10px 10px 0px 20px;">
-										<i class="fas fa-building" style="font-size:28px;float:right;"></i>
-										<span style="font-size:20px;"><?php echo $companyCount;?></span><br>
-										<span style="font-size:20px;">Customers</span>
-									</div>
-								</a>
-							</div>
-						</div>
-						<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-							<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 4']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
-								<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllUsers');">
-									<div style="padding:10px 10px 0px 20px;">
-										<i class="fas fa-user" style="font-size:28px;float:right;"></i>
-										<span style="font-size:20px;"><?php echo $userCount;?></span><br>
-										<span style="font-size:20px;">Technicians</span>
-									</div>
-								</a>
-							</div>
-						</div>
-						<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-							<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 5']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;">
-								<a style="color:#fff;cursor:pointer;" onclick="loadSection('Tickets');">
-									<div style="padding:10px 10px 0px;">
-										<i class="fas fa-ticket-alt" style="font-size:28px;float:right;"></i>
-										<span style="font-size:20px;"><?php echo $userCount;?></span><br>
-										<span style="font-size:20px;">Tickets</span>
-									</div>
-								</a>
-							</div>
-						</div>
-					</div>
-					
-				<?php } ?>
+			
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top:20px;">
 						<div class="loadSection">
@@ -593,7 +539,7 @@
 								<tr>
 									<td>Latest</td>
 									<td>
-										<button type="button" onclick="loadSectionHistory();" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 1']; ?>;color:#fff;">
+										<button type="button" onclick="loadSectionHistory();" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 3']; ?>;color:#fff;">
 											Select
 										</button>
 									</td>
@@ -652,7 +598,8 @@
 						</form>
 					</div>
 				</div>
-			</div>	
+			</div>
+			
 		<!---------------------------------End MODALS------------------------------------->	
 		<?php } ?>
 	</body>
@@ -664,8 +611,10 @@
 		var computerID = getCookie("ID");
 		var currentSection = getCookie("section");
 		var sectionHistoryDate = "latest";
+		var otherEntry = "";
+		
 		//Load Pages
-		function loadSection(section=currentSection, ID=computerID, date=sectionHistoryDate){
+		function loadSection(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry){
 			document.cookie = "section=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 			document.cookie = "ID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 			setCookie("section", section, 365);
@@ -684,7 +633,7 @@
 			}else{
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
 				$(".recents").load("pages/recent.php?ID="+ID);
-				$(".loadSection").load("includes/loader.php?ID="+ID+"&Date="+date+"&page="+section);
+				$(".loadSection").load("includes/loader.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other);
 				var item = '#secbtn'+section;
 				$(item).addClass('secActive');
 			}
@@ -706,5 +655,5 @@
 				$_SESSION['showModal'] = "";
 			}
 		 } ?>	
-	</script>	
+	</script>
 </html>

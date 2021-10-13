@@ -1,7 +1,9 @@
-$( document ).ready(function() {
-    $("#sortable").sortable();
-    $("#sortable").disableSelection();
-});
+    
+    
+    $( document ).ready(function() {
+        $("#sortable").sortable();
+        $("#sortable").disableSelection();
+    });
     //Load Page
     if (document.cookie.indexOf('section') === -1 ) {
         setCookie("section", "Login", 365);
@@ -96,10 +98,10 @@ function loadHistoricalData(hostname, type){
 function sendCommand(command, prompt, expire_after=5){
     if(confirm("Are you sure you would like to "+prompt+"?")){
         $.post("index.php", {
-          type: "SendCommand",
-          ID: computerID,
-          command: command,
-          expire_after: expire_after
+        type: "SendCommand",
+        ID: computerID,
+        command: command,
+        expire_after: expire_after
         },
         function(data, status){
             toastr.options.progressBar = true;

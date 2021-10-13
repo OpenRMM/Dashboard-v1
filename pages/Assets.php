@@ -16,12 +16,18 @@
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
 ?>
-	<div class="row" style="margin-bottom:10px;margin-top:20px;border-radius:3px;overflow:hidden;padding:0px">
-		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding:5px;padding-bottom:20px;padding-top:30px;border-radius:6px;">			 
+	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
+		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Asset List 
+			<a href="#" title="Refresh" onclick="loadSection('Assets');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+				<i class="fas fa-sync"></i>
+			</a>	
+		</h4>
+	</div>	
+	<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
+		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding:5px;padding-bottom:20px;padding-top:0px;border-radius:6px;">			 
 			   <form method="post" action="index.php">
 				   <div class="card table-card" id="printTable" style="margin-top:-40px;padding:10px">  
 				   		<div class="card-header">
-							<h5>Asset List</h5>
 							<div class="card-header-right">
 								<ul class="list-unstyled card-option">
 									<li><i class="feather icon-maximize full-card"></i></li>

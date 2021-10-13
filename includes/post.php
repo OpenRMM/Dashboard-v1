@@ -283,10 +283,10 @@
 			$expire_after = (int)$_POST['expire_after'];
 			$exists = 0;
 			if(trim($commands)!=""){
-				$query = "SELECT hostname FROM computerdata WHERE ID='".$ID."'";
+				$query = "SELECT hostname,ID FROM computerdata WHERE ID='".$ID."'";
 				$results = mysqli_query($db, $query);
 				$computer = mysqli_fetch_assoc($results);
-				$query = "SELECT ID, expire_time FROM commands WHERE ComputerID='".$computer['hostname']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
+				$query = "SELECT ID, expire_time FROM commands WHERE ComputerID='".$computer['ID']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
 				$results = mysqli_query($db, $query);
 				$existing = mysqli_fetch_assoc($results);
 				if($existing['ID'] != ""){
@@ -297,13 +297,13 @@
 				if($exists == 0){
 					//Generate expire time
 					$expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
-					MQTTpublish($existing['ID']."/Commands/CMD",$commands,$existing['ID']);
+					MQTTpublish($computer['ID']."/Commands/CMD",$commands,$computer['ID']);
 					$query = "INSERT INTO commands (ComputerID, userid, command, expire_after, expire_time, status)
-							  VALUES ('".$computer['hostname']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
+							  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 					$results = mysqli_query($db, $query);
 				}
 			}
-			$activity = "Technician Sent ".$commands." Command To: ".$ID;
+			$activity = "Technician Sent ".$commands." Command To: ".$computer['ID'];
 			userActivity($activity,$_SESSION['userid']);
 			header("location: index.php");
 		}

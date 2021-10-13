@@ -3,8 +3,8 @@ include("db.php");
 if($_SESSION['excludedPages']==""){
     $_SESSION['excludedPages'] = explode(",",$excludedPages); //use this to clear pages if an error occurs
 }
-$_SESSION['page'] = clean(preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['page']));
 
+$_SESSION['page'] = clean(preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['page']));
 if(!in_array($_SESSION['page'], $allPages) || $_SESSION['page']==""){ 
     exit("<center><h5>This page could not be found.</h5></center>");
 }
@@ -52,11 +52,17 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
         <?php
         $results = mysqli_fetch_assoc(mysqli_query($db, $query));
         $lastUpdate=$results['last_update'];
+        if($_SESSION['page']=="FileManager"){
+            $_SESSION['page']="Filesystem";
+        }
         MQTTpublish($_SESSION['computerID']."/Commands/get".$_SESSION['page'],"true",$_SESSION['computerID']);
         sleep(1);
         $results = mysqli_fetch_assoc(mysqli_query($db, $query));
         $lastUpdate_new=$results['last_update'];
         if($lastUpdate!=$lastUpdate_new or $computer['online']=="0"){
+            if($_SESSION['page']=="Filesystem"){
+                $_SESSION['page']="FileManager";
+            }
             include("../pages/".$_SESSION['page'].".php");  
         ?>
             <script> 
@@ -74,23 +80,25 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                 }
                 if($x==15){  //use 15 or 2 for testing
                 ?>
-                    <div style="margin-top:100px"> 
-                        <script> 
-                            $("html, body").animate({ scrollTop: 0 }, "slow"); 
-                        </script> 
-                        <center>
-                            <h5>Asset: <?php echo $_SESSION['ComputerHostname']; ?> is online but did not respond to a request for <?php echo $_SESSION['page']; ?>.</h5>
-                            <br>
-                            <h6>Would you like to display the outdated assset data?</h6>
-                            <br>
-                            <form method="post">
-                                <input value="true" type="hidden" name="ignore">
-                                <input value="<?php echo $_SESSION['page']; ?>" type="hidden" name="page">
-                                <button onclick="location.reload();" class='btn btn-sm btn-primary' type="button" >Retry <i class="fas fa-sync"></i></button>&nbsp;
-                                <button class='btn btn-sm btn-warning' style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;" type="submit" >View Older Asset Information <i class="fas fa-arrow-right"></i></button>  
-                            </form>
-                        <center>
-                    </div> 
+                    <div class="row col-md-6 mx-auto">
+                        <div class="card card-md" style="margin-top:100px;padding:20px"> 
+                            <script> 
+                                $("html, body").animate({ scrollTop: 0 }, "slow"); 
+                            </script> 
+                            <center>
+                                <h5>Asset: <?php echo $_SESSION['ComputerHostname']; ?> is online but did not respond to a request for <?php echo $_SESSION['page']; ?>.</h5>
+                                <br>
+                                <h6>Would you like to display the outdated assset data?</h6>
+                                <br>
+                                <form method="post">
+                                    <input value="true" type="hidden" name="ignore">
+                                    <input value="<?php echo $_SESSION['page']; ?>" type="hidden" name="page">
+                                    <button onclick="location.reload();" class='btn btn-sm btn-primary' type="button" >Retry <i class="fas fa-sync"></i></button>&nbsp;
+                                    <button class='btn btn-sm btn-warning' style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;" type="submit" >View Older Asset Information <i class="fas fa-arrow-right"></i></button>  
+                                </form>
+                            <center>
+                        </div> 
+                    </div>
                 <?php
                 break;
                 }
