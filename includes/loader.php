@@ -52,17 +52,27 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
         <?php
         $results = mysqli_fetch_assoc(mysqli_query($db, $query));
         $lastUpdate=$results['last_update'];
-        if($_SESSION['page']=="FileManager"){
-            $_SESSION['page']="Filesystem";
-        }
-        MQTTpublish($_SESSION['computerID']."/Commands/get".$_SESSION['page'],"true",$_SESSION['computerID']);
+        switch ($_SESSION['page']) {
+            case "FileManager":
+              $page="Filesystem";
+              break;
+            case "Disks":
+                $page="LogicalDisk";
+              break;
+            case "AttachedDevices":
+                $page="PnPEntitys";
+              break;
+            case "Memory":
+                $page="PhysicalMemory";
+              break;
+            default:
+                $page="General";
+          }
+        MQTTpublish($_SESSION['computerID']."/Commands/get".$page,"true",$_SESSION['computerID']);
         sleep(1);
         $results = mysqli_fetch_assoc(mysqli_query($db, $query));
         $lastUpdate_new=$results['last_update'];
         if($lastUpdate!=$lastUpdate_new or $computer['online']=="0"){
-            if($_SESSION['page']=="Filesystem"){
-                $_SESSION['page']="FileManager";
-            }
             include("../pages/".$_SESSION['page'].".php");  
         ?>
             <script> 

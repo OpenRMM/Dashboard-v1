@@ -42,13 +42,10 @@
 		<link rel="icon" href="assets/images/favicon.ico" type="image/ico" sizes="16x16">
 		<!-- jquery-->
 		<script src="assets/js/tagsinput.js"></script>
-		<script src="assets/js/jquery.js" ></script>
-		<script src="assets/js/BootstrapMenu.js" ></script>
+		<script src="assets/js/jqusery.js" ></script>
 		<!--- Bootstap --->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"/>
-		<link rel="stylesheet" href="assets/css/tagsinput.css"/>
-		<link rel="stylesheet" href="assets/css/bootsstrap.min.css"/>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
 
 		<link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
@@ -61,11 +58,8 @@
 		<link rel="stylesheet" href="assets/css/custom.css"/>
 		<link rel="stylesheet" href="assets/css/style.css"/>
 
-		<!--- MDB --->
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css" integrity="sha512-0/rEDduZGrqo4riUlwqyuHDQzp2D1ZCgH/gFIfjMIL5az8so6ZiXyhf1Rg8i6xsjv+z/Ubc4tt1thLigEcu6Ug==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
 		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.js"></script>
 
 	</head>
 	<style>
@@ -190,7 +184,7 @@
 							<li onclick="loadSection('Services');" id="secbtnServices" class="secbtn">
 								<i class="fas fa-cogs"></i>&nbsp;&nbsp;&nbsp; Services
 							</li>
-							<li onclick="loadSection('Proccesses');" id="secbtnProccesses" class="secbtn">
+							<li onclick="loadSection('Processes');" id="secbtnProcesses" class="secbtn">
 								<i class="fas fa-microchip"></i>&nbsp;&nbsp;&nbsp; Processes
 							</li>
 							<li onclick="loadSection('Printers');" id="secbtnPrinters" class="secbtn">
@@ -603,6 +597,7 @@
 		<!---------------------------------End MODALS------------------------------------->	
 		<?php } ?>
 	</body>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.6.0/umd/popper.min.js" integrity="sha512-BmM0/BQlqh02wuK5Gz9yrbe7VyIVwOzD1o40yi1IsTjriX/NGF37NyXHfmFzIlMmoSIBXgqDiG1VNU6kB5dBbA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="assets/js/extra.js" ></script>
 	<script src="assets/js/toastr.js"></script>
 	<script src="assets/js/custom.js"></script>

@@ -55,7 +55,7 @@
 		<?php }?>
 	</div>
 	<div style="text-align:right;" class="col-md-2">
-		<a href="#" title="Refresh" onclick="loadSection('Proccesses');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<a href="#" title="Refresh" onclick="loadSection('Processes');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
 		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
@@ -107,7 +107,7 @@
 	$('#searchInputProc').keypress(function(event){
 		var keycode = (event.keyCode ? event.keyCode : event.which);
 		if(keycode == '13'){
-			search($('#searchInputProc').val(),'Proccesses','<?php echo $computerID; ?>');
+			search($('#searchInputProc').val(),'Processes','<?php echo $computerID; ?>');
 		}
 	});
 </script>
