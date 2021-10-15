@@ -27,7 +27,7 @@ if($computerID<0){
 	exit;
 }		
 //get update
-MQTTpublish($computerID."/Commands/getPhysicalMemory","true",$computerID);
+//MQTTpublish($computerID."/Commands/getPhysicalMemory","true",getSalt(20));
 
 $json = getComputerData($computerID, array("WMI_ComputerSystem", "WMI_PhysicalMemory"), $showDate);
 

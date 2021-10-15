@@ -270,7 +270,8 @@
 	<script>
 	$(document).ready(function() {
 		$('#dataTable').DataTable( {
-			"lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]]
+			"lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
+			colReorder: true
 		} );
 	} );
 </script>

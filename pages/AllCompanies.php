@@ -163,6 +163,8 @@ $companyCount = mysqli_num_rows($results);
 </script>
 	<script>
     $(document).ready(function() {
-          $('#dataTable').DataTable();
+		$('#dataTable').dataTable( {
+			colReorder: true
+		} );
     });
 </script>

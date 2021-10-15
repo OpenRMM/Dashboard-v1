@@ -27,7 +27,7 @@ if($computerID<0){
 	exit;
 }
 //get update
-MQTTpublish($computerID."/Commands/getNetwork","true",$computerID);
+//MQTTpublish($computerID."/Commands/getNetwork","true",getSalt(20));
 
 $json = getComputerData($computerID, array("WMI_NetworkAdapters"), $showDate);
 

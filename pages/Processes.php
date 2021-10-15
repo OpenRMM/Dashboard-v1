@@ -28,7 +28,7 @@
 	}
 
 	//get update
-	MQTTpublish($computerID."/Commands/getProcesses","true",$computerID);
+	//MQTTpublish($computerID."/Commands/getProcesses","true",getSalt(20));
 
 	$json = getComputerData($computerID, array("WMI_Processes"), $showDate);
 
@@ -113,7 +113,9 @@
 </script>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').DataTable();
+		$('#dataTable').dataTable( {
+			colReorder: true
+		} );
 	});
 </script>
 <script>

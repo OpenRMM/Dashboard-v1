@@ -32,8 +32,8 @@
 	$result = mysqli_fetch_assoc($results);
 
 	//get update
-	MQTTpublish($computerID."/Commands/getGeneral","true",$computerID);
-	MQTTpublish($computerID."/Commands/getScreenshot","true",$computerID);
+	//MQTTpublish($computerID."/Commands/getGeneral","true",getSalt(20));
+	MQTTpublish($computerID."/Commands/getScreenshot","true",getSalt(20));
 
 
 	$query = "SELECT name, phone, email,address,comments,date_added FROM companies WHERE CompanyID='".$result['CompanyID']."' LIMIT 1";
@@ -67,26 +67,6 @@
 		//$alertType = "danger";
 	}
 
-	//$hostname = textOnNull(strtoupper($result['hostname']),"No Device Selected");
-	//realtimedatamode
-	//$exists = 0;
-	//$query = "SELECT ID, expire_time FROM commands WHERE ComputerID='".$result['hostname']."' AND status='Sent' AND command='realtimedatamode' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
-	//$results = mysqli_query($db, $query);
-	//$existing = mysqli_fetch_assoc($results);
-	//if($existing['ID'] != ""){
-	//	if(strtotime(date("m/d/Y H:i:s")) <= strtotime($existing['expire_time'])){
-	//		$exists = 1;
-	//	}
-	//}
-	//if($exists == 0){
-	//	Generate expire time
-	//	$expire_after = 2;
-	//	$expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
-	//	$query = "INSERT INTO commands (ComputerID, userid, command, arg, expire_after, expire_time, status)
-	//			  VALUES ('".$result['hostname']."', '".$_SESSION['userid']."', 'realtimedatamode', '', '".$expire_after."', '".$expire_time."', 'Sent')";
-	//	$results = mysqli_query($db, $query);
-	//}
-
 	//log user activity
 	$activity = "Technician Viewed Asset: ".$result['hostname'];
 	userActivity($activity,$_SESSION['userid']);		
@@ -96,13 +76,14 @@
 </style>
 <h4 style="color:#333">
 	Overview of <?php echo $result['hostname']; ?> 
-	<br>
-	<span style="font-size:12px;color:#333"> Last Updated: <?php echo ago($lastPing);?></span>
+	<br>	
 	<?php if($showDate != "latest"){?>
 		<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
 			History: <?php echo date("l, F jS", strtotime($showDate));?>
 		</span>
-	<?php }?>
+	<?php }else{ ?>
+		<span style="font-size:12px;color:#333"> Last Updated: <?php echo ago($lastPing);?></span>
+	<?php } ?>
 	<div class="" style="margin-top:-45px">
 		<center>
 			<?php $alertCount = count($json['Alerts']);?>
@@ -256,7 +237,7 @@
 										<i class="fas fa-comment" style=""></i> One-way Message
 									</button>
 								<?php } ?>
-								<button class="btn btn-sm" type="button" style="width:30%;margin:3px;color:#fff;background:#333;" data-dismiss="modal" data-toggle="modal" data-target="#terminalModal">
+								<button class="btn btn-sm" onclick='$("#terminaltxt").delay(3000).focus();' type="button" style="width:30%;margin:3px;color:#fff;background:#333;" data-dismiss="modal" data-toggle="modal" data-target="#terminalModal">
 									<i class="fas fa-terminal"></i> Terminal
 								</button>
 						<?php } ?>
@@ -279,7 +260,7 @@
 						<li class="list-group-item" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['WMI_ComputerSystem'][0]['Caption']), "N/A");?></li>
 						<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['SystemType'], "N/A");?></li>
 						<li class="list-group-item" style="padding:6px"><b>Asset Model: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['Manufacturer']." ".$json['WMI_ComputerSystem'][0]['Model'], "N/A");?></li>
-						<li class="list-group-item" style="padding:6px"><b>External IP Address: </b><?php echo textOnNull($json['WMI_BIOS'][0]['Version'], "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['WMI_BIOS'][0]['Version'], "N/A");?></li>
 						<li class="list-group-item" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['ExternalIP'], "N/A");?><span style="margin-left:20px"><b>Local IP Address: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['InternalIP'], "N/A");?></span></li>
 						<?php if((int)$json['WMI_Battery'][0]['BatteryStatus']>0){ ?>
 						<li class="list-group-item" style="padding:6px"><b>Battery Status: </b><?php 								
@@ -324,11 +305,27 @@
 						?>
 						<li class="list-group-item" style="padding:6px"><b>Asset Uptime: </b><?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
 						<?php if(count($json['WMI_Firewall']) > 0) {
-							$status = $json['WMI_Firewall'][0]['currentProfile'];
-							if($status=="OFF"){ $status="Disabled"; }else{ $status="Enabled"; }
-							$color = (($status == "Enabled") ? "text-success" : "text-danger");
+
+							$public = $json['WMI_Firewall'][0]['publicProfile'];
+							if($public=="OFF"){ $public="Disabled"; }else{ $public="Enabled"; }
+							$color1 = (($public == "Enabled") ? "text-success" : "text-danger");
+
+							$private = $json['WMI_Firewall'][0]['privateProfile'];
+							if($private=="OFF"){ $private="Disabled"; }else{ $private="Enabled"; }
+							$color2 = (($private == "Enabled") ? "text-success" : "text-danger");
+
+							$domain = $json['WMI_Firewall'][0]['domainProfile'];
+							if($domain=="OFF"){ $domain="Disabled"; }else{ $domain="Enabled"; }
+							$color3 = (($domain == "Enabled") ? "text-success" : "text-danger");
 						?>
-							<li class="list-group-item" style="padding:6px"><b>Firewall Status: </b><span class="<?php echo $color; ?>"><?php echo $status; ?></span></li>
+							<li class="list-group-item" style="padding:6px"><b>Firewall Status: </b><br>
+								<center>
+									Public: <span style="padding-right:20px" class="<?php echo $color1; ?>"><?php echo $public; ?></span>
+									Private: <span style="padding-right:20px" class="<?php echo $color2; ?>"><?php echo $private; ?></span>
+									Domain: <span class="<?php echo $color3; ?>"><?php echo $domain; ?></span>
+								</center>
+							
+							</li>
 						<?php } 
 						if(count($json['WindowsActivation']) > 0) {
 							$status = $json['WindowsActivation']['Value'];
@@ -342,7 +339,7 @@
 						?>
 							<li class="list-group-item" style="padding:6px"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
 						<?php } ?>
-						<li class="list-group-item" style="padding:6px"><b>Agent Version: </b><?php echo $agentVersion; ?></li>
+						<li class="list-group-item" title="Path: <?php echo $json['Agent'][0]['Path']; ?>" style="padding:6px"><b>Agent Version: </b><?php echo $json['Agent'][0]['Version']; ?></li>
 					</ul>
 				</div>
 		  </div>
@@ -400,19 +397,59 @@
 				<div class="modal-body">
 					<input type="hidden" name="type" value="assetOneWayMessage"/>
 					<input type="hidden" name="ID" value="<?php echo $computerID; ?>">
-					<textarea placeholder="Your message here..." name="assetMessage" class="form-control"></textarea>
+					<div class="form-group">
+						<label><b>Title</b></label>
+						<input type="text" id="inputTitle" placeholder="Your title here..." class="form-control" name="alertTitle"/>
+					</div>
+					<div class="form-group">
+						<label><b>Message</b></label>
+						<textarea id="inputMessage" placeholder="Your message here..." name="alertMessage" class="form-control"></textarea>
+					</div>
+					<label><b>Alert Type</b></label>
+					<center>
+						<div class="form-group">							
+							<label class="radio-inline">
+								<input type="radio" id="#inputType" class="form-control" name="alertType" value="alert" checked>Alert
+							</label>
+							<label class="radio-inline">
+								<input type="radio" id="#inputType" class="form-control" name="alertType" value="confirm" >Confirm
+							</label>
+							<label class="radio-inline">
+								<input type="radio" id="#inputType" class="form-control" name="alertType" value="password" >Password
+							</label>
+							<label class="radio-inline">
+								<input type="radio" id="#inputType" class="form-control" name="alertType" value="prompt" >Prompt
+							</label>
+						</div>
+					<center>
 				</div>
 				<div class="modal-footer">
-					<button type="submit"  class="btn btn-primary btn-sm">
+					<button type="button" onclick='sendMessage($("#inputMessage").val());' data-dismiss="modal" class="btn btn-primary btn-sm">
 						Send <i class="fas fa-paper-plane" ></i>
 					</button>
-					<button type="button" class="btn btn-sm btn-default"  data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
 				</div>
 			</form>
 		</div>
 	</div>
 </div>
 <script>
+	function sendMessage(){  
+		var alertType = $("input[name='alertType']:checked").val();
+		var alertTitle = $("#inputTitle").val();
+		var alertMessage = $("#inputMessage").val();
+		$.post("index.php", {
+		type: "assetOneWayMessage",
+		ID: computerID,
+		alertType: alertType,
+		alertTitle: alertTitle,
+		alertMessage: alertMessage,
+		},
+		function(data, status){
+			toastr.options.progressBar = true;
+			toastr.success("Your Message Has Been Sent");
+		});  
+	}
 	$(".sidebarComputerName").text("<?php echo strtoupper($result['hostname']);?>");
 	var data = {
 	  labels: [

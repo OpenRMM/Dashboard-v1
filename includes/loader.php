@@ -54,21 +54,45 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
         $lastUpdate=$results['last_update'];
         switch ($_SESSION['page']) {
             case "FileManager":
-              $page="Filesystem";
-              break;
+                $page="Filesystem";
+                 $retain = false;
+                 $gets = clean(base64_decode($_GET['other']));
+                $get = explode("{}",$gets);
+                $drive = $get[0];
+                $getFolder = $get[1];
+                if($drive==""){
+                    $drive="C";
+                }
+                $message = $drive.":/".$getFolder;
+                $message = str_replace("//","/",$message);
+                if($message==""){ $message=$drive.":/"; }
+                break;
             case "Disks":
                 $page="LogicalDisk";
+                $retain = false;
+                $message = "true";
               break;
             case "AttachedDevices":
                 $page="PnPEntitys";
+                $retain = false;
+                $message = "true";
               break;
             case "Memory":
                 $page="PhysicalMemory";
+                $retain = false;
+                $message = "true";
               break;
+            case "Programs":
+                $page="Products";
+                $retain = false;
+                $message = "true";
+            break;
             default:
                 $page="General";
+                $retain = false;
+                $message = "true";
           }
-        MQTTpublish($_SESSION['computerID']."/Commands/get".$page,"true",$_SESSION['computerID']);
+        MQTTpublish($_SESSION['computerID']."/Commands/get".$page,$message,getSalt(20),$retain);
         sleep(1);
         $results = mysqli_fetch_assoc(mysqli_query($db, $query));
         $lastUpdate_new=$results['last_update'];

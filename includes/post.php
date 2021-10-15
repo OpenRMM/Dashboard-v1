@@ -200,8 +200,11 @@
 		//Oneway asset message
 		if($_POST['type'] == "assetOneWayMessage"){
 			$ID=clean($_POST['ID']);
-			$message=clean($_POST['assetMessage']);
-			MQTTpublish($ID."/Commands/showAlert",$message,$ID);	
+			$message=clean($_POST['alertMessage']);
+			$title=clean($_POST['alertTitle']);
+			$type=clean($_POST['alertType']);
+			$script = '{"title": "'.$title.'", "message": "'.$message.'", "type":"'.$type.'"}';
+			MQTTpublish($ID."/Commands/setAlert",$script,$ID);	
 			$activity="Technician Sent Asset: ".$ID." A One-way Message";		
 			userActivity($activity,$_SESSION['userid']);
 			header("location: index.php");

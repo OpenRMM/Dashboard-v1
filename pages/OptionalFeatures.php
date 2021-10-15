@@ -31,7 +31,7 @@
 	$query = "SELECT hostname FROM computerdata WHERE ID='".$computerID."'";
 	$results = mysqli_query($db, $query);
 	$computer = mysqli_fetch_assoc($results);
-	MQTTpublish($computerID."/Commands/getOptionalFeatures","true",$computerID);
+	//MQTTpublish($computerID."/Commands/getOptionalFeatures","true",getSalt(20));
 
 	$json = getComputerData($computerID, array("WMI_OptionalFeatures"), $showDate);
 
@@ -123,7 +123,9 @@
 </script>
 <script>
 	$(document).ready(function() {
-		  $('#dataTable').DataTable();
+		$('#dataTable').dataTable( {
+			colReorder: true
+		} );
 	});
 </script>
 <script>

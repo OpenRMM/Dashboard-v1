@@ -1,13 +1,6 @@
     
     
-    $( document ).ready(function() {
-        $("#sortable").sortable();
-        $("#sortable").disableSelection();
-    });
-    //Load Page
-    if (document.cookie.indexOf('section') === -1 ) {
-        setCookie("section", "Login", 365);
-    }
+
     //Load historical section, Network, Programs...
     function loadSectionHistory(date="latest"){
         sectionHistoryDate = date;
@@ -56,6 +49,7 @@
             $("#computerAlertsModalList").html($("#computerAlertsModalList").html() + "<div class='calert alert alert-"+alertData[2]+"' role='alert'><b><i class='fas fa-exclamation-triangle text-"+alertData[2]+"'></i> "+ hostname + " " + alertData[0]+"</b> - " + alertData[1] + "</div>");
         }
     }
+
 //Random password
 function randomPassword(length) {
     var chars = "abcdefghijklmnopqrstuvwxyz!@#$%^&*()-+<>ABCDEFGHIJKLMNOP1234567890";

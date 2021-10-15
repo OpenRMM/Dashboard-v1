@@ -28,7 +28,7 @@
 	}
 	
 	//get update
-	MQTTpublish($computerID."/Commands/getServices","true",$computerID);
+	//MQTTpublish($computerID."/Commands/getServices","true",getSalt(20));
 
 	$json = getComputerData($computerID, array("WMI_Services"), $showDate);
 
@@ -120,7 +120,9 @@
 </script>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').DataTable();
+		$('#dataTable').dataTable( {
+			colReorder: true
+		} );
 	});
 </script>
 <script>

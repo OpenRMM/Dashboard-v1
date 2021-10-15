@@ -27,10 +27,10 @@ if($computerID<0){
 	exit;
 }
 //get update
-MQTTpublish($computerID."/Commands/getVideoConfiguration","true",$computerID);
-MQTTpublish($computerID."/Commands/getPointingDevice","true",$computerID);
-MQTTpublish($computerID."/Commands/getDesktopMonitor","true",$computerID);
-MQTTpublish($computerID."/Commands/getPnPEntitys","true",$computerID);
+MQTTpublish($computerID."/Commands/getVideoConfiguration","true",getSalt(20));
+MQTTpublish($computerID."/Commands/getPointingDevice","true",getSalt(20));
+MQTTpublish($computerID."/Commands/getDesktopMonitor","true",getSalt(20));
+//MQTTpublish($computerID."/Commands/getPnPEntitys","true",getSalt(20));
 
 $json = getComputerData($computerID, array("WMI_USBHub", "WMI_DesktopMonitor", "WMI_Keyboard", "WMI_PointingDevice", "WMI_SoundDevice", "WMI_SerialPort", "WMI_PnPEntity"), $showDate);
 
@@ -257,7 +257,9 @@ $online = $results['online'];
 </div>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').DataTable();
+		$('#dataTable').dataTable( {
+			colReorder: true
+		} );
 	});
 </script>
 <script>

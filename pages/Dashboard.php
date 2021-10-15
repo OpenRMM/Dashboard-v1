@@ -15,11 +15,6 @@ $limit = intval($_GET['limit']);
 if($limit == 0){
 	$limit = 20;
 }
-$add = 20;
-$count = 0;
-//$sort = (trim($_GET['sort'])!="" ? $_GET['sort'] : "ID");
-$search = ($_GET['search']);
-$filters = ($_GET['filters']);
 $query = "SELECT username,nicename FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $user = mysqli_fetch_assoc($results);
@@ -350,7 +345,8 @@ $resultCount = mysqli_num_rows($results);
 	$(document).ready(function() {
 		$('#dataTable').dataTable( {
 			"paging": false,
-			"order": []
+			"order": [],
+			colReorder: true
 		} );
 	});
 </script>

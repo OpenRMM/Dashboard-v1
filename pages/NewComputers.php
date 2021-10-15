@@ -173,6 +173,8 @@ if($_SESSION['userid']==""){
 </div>
 <script>
 $(document).ready(function() {
-    $('#dataTable').DataTable();
+    $('#dataTable').dataTable( {
+		colReorder: true
+	} );
 });
 </script>

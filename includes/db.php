@@ -4,8 +4,8 @@
 	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "FileManager,Init,Login,Logout,EventLogs,Alerts,Commands,Dashboard,SiteSettings,Profile,Edit,AllUsers,AllCompanies,Assets,NewComputers,Versions"; 
-	$allPages = "FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,DefaultPrograms,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,NewComputers,OptionalFeatures,Printers,Proccesses,Profile,Programs,Services,Users,Versions";
+	$excludedPages = "Init,Login,Logout,EventLogs,Alerts,Commands,Dashboard,SiteSettings,Profile,Edit,AllUsers,AllCompanies,Assets,NewComputers,Versions"; 
+	$allPages = "FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,DefaultPrograms,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,NewComputers,OptionalFeatures,Printers,Processes,Profile,Programs,Services,Users,Versions";
 	$adminPages = "AllUsers.php,AllCompanies.php,SiteSettings.php";
 ###########################################################################################################################################
 ######################################################## DEV ONLY DO NOT PASS #############################################################
@@ -42,11 +42,11 @@
 	$MQTTusername = $siteSettings['MQTT']['username']; 
 	$MQTTpassword = $siteSettings['MQTT']['password']; 
 	//MQTT Subscribe
-	function MQTTpublish($topic,$message,$computerID){
+	function MQTTpublish($topic,$message,$computerID, $retain=false){
 		global $MQTTserver, $MQTTport, $MQTTusername, $MQTTpassword, $mqttConnect;;
 		$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $computerID);
 		if ($mqtt->connect(true, NULL, $MQTTusername, $MQTTpassword)) {
-			$mqtt->publish($topic, $message, 0, false);
+			$mqtt->publish($topic, $message, 1, $retain);
 			$mqtt->close();
 		} else {
 			$mqttConnect="timeout";
@@ -334,7 +334,7 @@
 	
 	//Get Random Salt
 	function getSalt($n=40) {
-		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%&*()-';
 		$randomString = '';
 		for ($i = 0; $i < $n; $i++) {
 			$index = rand(0, strlen($characters) - 1);

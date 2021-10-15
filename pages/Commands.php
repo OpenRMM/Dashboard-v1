@@ -56,16 +56,16 @@ $error = $json['WMI_Product_error'];
 			<?php if($online=="1"){ ?>
 				<div style="height:200px">		
 					<br>			
-					<button class="btn btn-sm btn-default" data-dismiss="modal" type="button" style="color:#fff;background:#333;margin:5px;width:45%;border:1px solid #333" data-toggle="modal" data-target="#terminalModal">
+					<button class="btn btn-sm btn-default" onclick='$("#terminaltxt").focus();' data-dismiss="modal" type="button" style="color:#fff;background:#333;margin:5px;width:45%;border:1px solid #333" data-toggle="modal" data-target="#terminalModal">
 						<i class="fas fa-terminal" style="margin-top:3px;float:left"></i> Terminal
 					</button>
 					<button class="btn btn-sm btn-success" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:none;" data-toggle="modal" data-target="#agentAlertModal">
 						<i class="fas fa-comment" style="margin-top:3px;float:left"></i> One-way Message
 					</button>
-					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \\"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
+					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
 						<i class="fas fa-desktop" style="float:left;margin-top:3px"></i> Enable Remote Desktop
 					</button>
-					<button data-dismiss="modal" class="btn btn-warning btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \\"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
+					<button data-dismiss="modal" class="btn btn-warning btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
 						<i class="fas fa-desktop" style="float:left;margin-top:3px"></i> Disable Remote Desktop
 					</button>
 					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick="sendCommand('Netsh Advfirewall set allprofiles state on', 'Enable Firewall');">
@@ -177,21 +177,63 @@ PAUSE
 				<div class="modal-body">
 					<input type="hidden" name="type" value="assetOneWayMessage"/>
 					<input type="hidden" name="ID" value="<?php echo $computerID; ?>">
-					<textarea placeholder="Your message here..." name="assetMessage" class="form-control"></textarea>
+					<div class="form-group">
+						<label><b>Title</b></label>
+						<input type="text" id="inputTitle" placeholder="Your title here..." class="form-control" name="alertTitle"/>
+					</div>
+					<div class="form-group">
+						<label><b>Message</b></label>
+						<textarea id="inputMessage" placeholder="Your message here..." name="alertMessage" class="form-control"></textarea>
+					</div>
+					<label><b>Alert Type</b></label>
+					<center>
+						<div class="form-group">							
+							<label class="radio-inline">
+								<input type="radio" id="#inputType" class="form-control" name="alertType" value="alert" checked>Alert
+							</label>
+							<label class="radio-inline">
+								<input type="radio" id="#inputType" class="form-control" name="alertType" value="confirm" >Confirm
+							</label>
+							<label class="radio-inline">
+								<input type="radio" id="#inputType" class="form-control" name="alertType" value="password" >Password
+							</label>
+							<label class="radio-inline">
+								<input type="radio" id="#inputType" class="form-control" name="alertType" value="prompt" >Prompt
+							</label>
+						</div>
+					<center>
 				</div>
 				<div class="modal-footer">
-					<button type="submit"  class="btn btn-primary btn-sm">
+					<button type="button" onclick='sendMessage($("#inputMessage").val());' data-dismiss="modal" class="btn btn-primary btn-sm">
 						Send <i class="fas fa-paper-plane" ></i>
 					</button>
-					<button type="button" class="btn btn-sm btn-default"  data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
 				</div>
 			</form>
 		</div>
 	</div>
 </div>
 <script>
+	function sendMessage(){  
+		var alertType = $("input[name='alertType']:checked").val();
+		var alertTitle = $("#inputTitle").val();
+		var alertMessage = $("#inputMessage").val();
+		$.post("index.php", {
+		type: "assetOneWayMessage",
+		ID: computerID,
+		alertType: alertType,
+		alertTitle: alertTitle,
+		alertMessage: alertMessage,
+		},
+		function(data, status){
+			toastr.options.progressBar = true;
+			toastr.success("Your Message Has Been Sent");
+		});  
+	}
 	$(document).ready(function() {
-		$('#dataTable').DataTable();
+		$('#dataTable').dataTable( {
+			colReorder: true
+		} );
 	});
 </script>
 <script>

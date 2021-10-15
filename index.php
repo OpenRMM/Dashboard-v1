@@ -42,25 +42,28 @@
 		<link rel="icon" href="assets/images/favicon.ico" type="image/ico" sizes="16x16">
 		<!-- jquery-->
 		<script src="assets/js/tagsinput.js"></script>
-		<script src="assets/js/jqusery.js" ></script>
+		<script src="assets/js/jquery.js" ></script>
 		<!--- Bootstap --->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"/>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+		<link rel="stylesheet" href="assets/css/tagsinput.css"/>
+		<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
+		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
 
 		<link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<script src="assets/js/datatable.js"></script>
+		<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
 		<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+		<script src="assets/js/bootstrap.min.js"></script>
 		
-		<link rel="stylesheet" href="assets/css/toastr.css"/>
 		<link rel="stylesheet" href="assets/css/custom.css"/>
 		<link rel="stylesheet" href="assets/css/style.css"/>
 
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
-		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-
+		<script src="https://cdn.datatables.net/colreorder/1.5.4/js/dataTables.colReorder.min.js"></script>	
+		<link rel="stylesheet" href="https://cdn.datatables.net/colreorder/1.5.4/css/colReorder.dataTables.min.css"/>
+		
+		<script src="https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>	
+		<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.0/css/fixedHeader.dataTables.min.css"/>
 	</head>
 	<style>
 		a { color:#003366; }
@@ -166,6 +169,9 @@
 							</li>
 							<li onclick="loadSection('EventLogs');" id="secbtnEventLogs" class="secbtn">
 								<i class="fas fa-file-code"></i>&nbsp;&nbsp;&nbsp; Event Logs
+							</li>
+							<li onclick="loadSection('Registry');" id="secbtnRegistry" class="secbtn">
+								<i class="fas fa-cubes"></i>&nbsp;&nbsp;&nbsp; Registry
 							</li>
 							<li onclick="loadSection('FileManager');" id="secbtnFileManager" class="secbtn">
 								<i class="fas fa-folder"></i>&nbsp;&nbsp;&nbsp; File Manager
@@ -597,7 +603,6 @@
 		<!---------------------------------End MODALS------------------------------------->	
 		<?php } ?>
 	</body>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.6.0/umd/popper.min.js" integrity="sha512-BmM0/BQlqh02wuK5Gz9yrbe7VyIVwOzD1o40yi1IsTjriX/NGF37NyXHfmFzIlMmoSIBXgqDiG1VNU6kB5dBbA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="assets/js/extra.js" ></script>
 	<script src="assets/js/toastr.js"></script>
 	<script src="assets/js/custom.js"></script>
@@ -606,37 +611,46 @@
 		var computerID = getCookie("ID");
 		var currentSection = getCookie("section");
 		var sectionHistoryDate = "latest";
+		$( document ).ready(function() {
+        	$("#sortable").sortable();
+        	$("#sortable").disableSelection();
+		});
+		//Load Page
+		if (document.cookie.indexOf('section') === -1 ) {
+			setCookie("section", "Login", 365);
+		}
+		//Load Pages
 		var otherEntry = "";
 		
 		//Load Pages
 		function loadSection(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry){
-			document.cookie = "section=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-			document.cookie = "ID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-			setCookie("section", section, 365);
-			$('.secbtn').removeClass('secActive');
-			setCookie("ID", ID, 365);
-			computerID = ID;
-			currentSection = section;
-			if(section=="Logout"){
-				toastr.options.progressBar = true;
-				toastr.warning('Securely Logging You Out.');
-				$(".loadSection").load("includes/loader.php?page="+section);
-				setCookie("section", "Login", 365);
-				setTimeout(function() { 
-					location.reload(true);
-				}, 5000);
-			}else{
-				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
-				$(".recents").load("pages/recent.php?ID="+ID);
-				$(".loadSection").load("includes/loader.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other);
-				var item = '#secbtn'+section;
-				$(item).addClass('secActive');
-			}
-			if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-				$('#sidebar').removeClass('active');
-			}
+		document.cookie = "section=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+		document.cookie = "ID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+		setCookie("section", section, 365);
+		$('.secbtn').removeClass('secActive');
+		setCookie("ID", ID, 365);
+		computerID = ID;
+		currentSection = section;
+		if(section=="Logout"){
+			toastr.options.progressBar = true;
+			toastr.warning('Securely Logging You Out.');
+			$(".loadSection").load("includes/loader.php?page="+section);
+			setCookie("section", "Login", 365);
+			setTimeout(function() { 
+				location.reload(true);
+			}, 5000);
+		}else{
+			$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
+			$(".recents").load("pages/recent.php?ID="+ID);
+			$(".loadSection").load("includes/loader.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other);
+			var item = '#secbtn'+section;
+			$(item).addClass('secActive');
 		}
-	
+		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+			$('#sidebar').removeClass('active');
+		}
+	}
+		
 		<?php if($_GET['page']==""){ ?>
 			loadSection(currentSection, computerID);
 		<?php }else{ ?>
@@ -649,6 +663,8 @@
 				echo 'pageAlert("'.$messageTitle.'", "'.$messageText.'");';
 				$_SESSION['showModal'] = "";
 			}
-		 } ?>	
+		 } ?>
+		 	
 	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
 </html>

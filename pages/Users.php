@@ -27,7 +27,7 @@
 		exit;
 	}
 	//get update
-	MQTTpublish($computerID."/Commands/getUsers","true",$computerID);
+	//MQTTpublish($computerID."/Commands/getUsers","true",getSalt(20));
 	
 	$json = getComputerData($computerID, array("WMI_UserAccount","WMI_NetworkLoginProfile"), $showDate);
 
@@ -122,7 +122,9 @@
 </div>
 <script>
 	$(document).ready(function() {
-		  $('#dataTable').DataTable();
+		$('#dataTable').dataTable( {
+			colReorder: true
+		} );
 	});
 </script>
 <script>

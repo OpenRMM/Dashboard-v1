@@ -60,7 +60,9 @@ $online = $results['online'];
 </div>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').DataTable();
+		$('#dataTable').dataTable( {
+			colReorder: true
+		} );
 	});
 </script>
 <script>

@@ -31,8 +31,8 @@ $results = mysqli_query($db, $query);
 $result = mysqli_fetch_assoc($results);
 
 //get update
-MQTTpublish($computerID."/Commands/getLogicalDisk","true",$computerID);
-MQTTpublish($computerID."/Commands/getMappedLogicalDisk","true",$computerID);
+//MQTTpublish($computerID."/Commands/getLogicalDisk","true",getSalt(20));
+MQTTpublish($computerID."/Commands/getMappedLogicalDisk","true",getSalt(20));
 
 $json = getComputerData($result['ID'], array("WMI_MappedLogicalDisk", "WMI_LogicalDisk"), $showDate);
 

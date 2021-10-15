@@ -27,7 +27,7 @@
 		exit;
 	}
 	
-	MQTTpublish($computerID."/Commands/getPrinters","true",$computerID);
+	//MQTTpublish($computerID."/Commands/getPrinters","true",getSalt(20));
 
 	$json = getComputerData($computerID, array("WMI_Printers"), $showDate);
 	
@@ -99,7 +99,9 @@
 </div>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').DataTable();
+		$('#dataTable').dataTable( {
+			colReorder: true
+		} );
 	});
 </script>
 <script>
