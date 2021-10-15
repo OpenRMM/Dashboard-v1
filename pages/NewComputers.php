@@ -14,7 +14,7 @@ if($_SESSION['userid']==""){
 ?>
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 	<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">New Computers
-		<a href="#" title="Refresh" onclick="loadSection('NewComputers');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('NewComputers');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
 	</h4>
@@ -52,7 +52,7 @@ if($_SESSION['userid']==""){
 					<th scope="col">Hostname</th>
 					<th scope="col"></th>
 					<th scope="col">Logged In</th>
-					<th scope="col">Company</th>
+					<th scope="col"><?php echo $msp; ?></th>
 					<th scope="col">Disk Space</th>
 					<th scope="col">Date Added</th>
 				</tr>
@@ -89,7 +89,7 @@ if($_SESSION['userid']==""){
 						<?php echo $result["ID"]; ?>
 					</td>
 					<td>
-						<a style="color:<?php echo $siteSettings['theme']['Color 2']; ?>" href="#" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
+						<a style="color:<?php echo $siteSettings['theme']['Color 2']; ?>" href="javascript:void(0)" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
 							<?php if(!$data['Online']) {?>
 								<i class="fas fa-desktop" style="color:#666;font-size:16px;" title="Offline"></i>
 							<?php }else{?>
@@ -118,7 +118,7 @@ if($_SESSION['userid']==""){
 						?>
 					</td>
 					<td>
-						<a style="color:#000;" href="#" onclick="searchItem('<?php echo textOnNull($result['name'], "N/A");?>');">
+						<a style="color:#000;" href="javascript:void(0)" onclick="searchItem('<?php echo textOnNull($result['name'], "N/A");?>');">
 							<u><?php echo textOnNull($result['name'], "Not Assigned");?></u>
 						</a>
 					</td>
@@ -149,7 +149,7 @@ if($_SESSION['userid']==""){
 		<h5 class="modal-title" id="pageAlert_title">Add Computers</h5>
 		</div>
 		<div class="modal-body">
-		<h6 id="pageAlert_title">Select The Company You Would Like To Add These Computers To.</h6>
+		<h6 id="pageAlert_title">Select The <?php echo $msp; ?> You Would Like To Add These Computers To.</h6>
 		<?php
 		$query = "SELECT CompanyID, name FROM companies ORDER BY CompanyID DESC LIMIT 100";
 		$results = mysqli_query($db, $query);

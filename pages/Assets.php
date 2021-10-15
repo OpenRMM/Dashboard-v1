@@ -18,7 +18,7 @@
 ?>
 	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Asset List 
-			<a href="#" title="Refresh" onclick="loadSection('Assets');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+			<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Assets');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-sync"></i>
 			</a>	
 		</h4>
@@ -45,7 +45,7 @@
 									<th scope="col">Hostname</th>
 									<th scope="col">Logged In</th>
 									<th scope="col">Version</th>
-									<th scope="col">Company</th>
+									<th scope="col"><?php echo $msp; ?></th>
 									<th scope="col">Disk</th>
 									<th scope="col">Actions</th>
 								</tr>
@@ -65,7 +65,7 @@
 									$results = mysqli_query($db, $query);
 									while($result = mysqli_fetch_assoc($results)){
 										if($search==""){
-											$getWMI = array("WMI_LogicalDisk", "WMI_OS", "WMI_ComputerSystem", "Ping");
+											$getWMI = array("WMI_LogicalDisk", "WMI_ComputerSystem", "Ping");
 										}else{
 											$getWMI = array("*");
 										}
@@ -96,7 +96,7 @@
 										}
 									?>
 									<?php echo $json['DefaultPrograms'][10]['Program']; ?>
-									<a style="color:#000;font-size:12px"  href="#" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
+									<a style="color:#000;font-size:12px"  href="javascript:void(0)" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
 										<?php if($result['online']=="0") {?>
 											<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
 										<?php }else{?>
@@ -113,9 +113,9 @@
 										echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username));
 									?>
 									</td>
-									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo $data['WMI_OS'][0]['Caption'];?>'); $('input[type=search]').trigger('keyup'); "><?php echo textOnNull(str_replace('Microsoft', '',$data['WMI_OS'][0]['Caption']), "Windows");?></td>
+									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo $data['WMI_ComputerSystem'][0]['Caption'];?>'); $('input[type=search]').trigger('keyup'); "><?php echo textOnNull(str_replace('Microsoft', '',$data['WMI_ComputerSystem'][0]['Caption']), "Windows");?></td>
 									<td>
-									<a style="color:#000;font-size:12px" href="#" onclick="$('input[type=search]').val('<?php echo textOnNull($result['name'], "N/A");?>');$('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
+									<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="$('input[type=search]').val('<?php echo textOnNull($result['name'], "N/A");?>');$('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
 										<?php echo textOnNull($result['name'], "Not Assigned");?>
 									</a>
 									</td>
@@ -125,10 +125,10 @@
 									</div>
 									</td>
 									<td>
-									<a href="#" onclick="loadSection('Edit', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
+									<a href="javascript:void(0)" onclick="loadSection('Edit', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
 										<i class="fas fa-pencil-alt"></i>
 									</a>
-									<a title="View Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('General', '<?php echo $result['ID']; ?>');" href="#" class="form-inline btn btn-warning btn-sm">
+									<a title="View Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('General', '<?php echo $result['ID']; ?>');" href="javascript:void(0)" class="form-inline btn btn-warning btn-sm">
 										<i class="fas fa-eye"></i>
 									</a>
 									</td>

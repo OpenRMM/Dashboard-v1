@@ -52,11 +52,14 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
         <?php
         $results = mysqli_fetch_assoc(mysqli_query($db, $query));
         $lastUpdate=$results['last_update'];
-        switch ($_SESSION['page']) {
+        $page = $_SESSION['page'];
+        $retain=false;
+        $message="true";
+        switch ($page) {
             case "FileManager":
                 $page="Filesystem";
-                 $retain = false;
-                 $gets = clean(base64_decode($_GET['other']));
+                $retain = false;
+                $gets = clean(base64_decode($_GET['other']));
                 $get = explode("{}",$gets);
                 $drive = $get[0];
                 $getFolder = $get[1];
@@ -86,11 +89,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                 $page="Products";
                 $retain = false;
                 $message = "true";
-            break;
-            default:
-                $page="General";
-                $retain = false;
-                $message = "true";
+            break;       
           }
         MQTTpublish($_SESSION['computerID']."/Commands/get".$page,$message,getSalt(20),$retain);
         sleep(1);
@@ -149,4 +148,10 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
     }else if($('#sectionList').css("display")=="none"){
         $('#sectionList').slideDown(400);
     }
+</script>
+<script>
+	<?php if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['serverStatus']==""){ ?>
+		toastr.remove()
+		toastr.error('The Asset Sever is offline. Assets will not be able to send or recieve new data.');
+	<?php } ?>
 </script>

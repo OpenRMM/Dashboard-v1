@@ -44,7 +44,7 @@ $error = $json['WMI_Product_error'];
 	<div style="padding:20px" class="col-md-12">
 		<h5>Commands
 			<div style="float:right;">
-				<a href="#" title="Refresh" onclick="loadSection('Commands');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+				<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Commands');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-sync"></i>
 				</a>
 			</div>
@@ -54,29 +54,60 @@ $error = $json['WMI_Product_error'];
 		<div class="row">
 			<div style="" class="col-md-5">
 			<?php if($online=="1"){ ?>
-				<div style="height:200px">		
-					<br>			
-					<button class="btn btn-sm btn-default" onclick='$("#terminaltxt").focus();' data-dismiss="modal" type="button" style="color:#fff;background:#333;margin:5px;width:45%;border:1px solid #333" data-toggle="modal" data-target="#terminalModal">
-						<i class="fas fa-terminal" style="margin-top:3px;float:left"></i> Terminal
-					</button>
-					<button class="btn btn-sm btn-success" data-dismiss="modal" type="button" style="margin:5px;width:45%;border:none;" data-toggle="modal" data-target="#agentAlertModal">
-						<i class="fas fa-comment" style="margin-top:3px;float:left"></i> One-way Message
-					</button>
-					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
-						<i class="fas fa-desktop" style="float:left;margin-top:3px"></i> Enable Remote Desktop
-					</button>
-					<button data-dismiss="modal" class="btn btn-warning btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
-						<i class="fas fa-desktop" style="float:left;margin-top:3px"></i> Disable Remote Desktop
-					</button>
-					<button data-dismiss="modal" class="btn btn-primary btn-sm" type="button" style="display:inline;margin:5px;width:45%;border:none" onclick="sendCommand('Netsh Advfirewall set allprofiles state on', 'Enable Firewall');">
-						<i class="fas fa-fire-alt" style="float:left;margin-top:3px"></i> Enable Firewall
-					</button>
-					<button data-dismiss="modal" class="btn btn-warning btn-sm" type="button" style="display:inline;margin:5px;color:#fff;width:45%;border:none" onclick="sendCommand('Netsh Advfirewall set allprofiles state off', 'Disable Firewall');">
-						<i class="fas fa-fire-alt" style="float:left;margin-top:3px"></i> Disable Firewall
-					</button>
+				<div class="row" style="margin-top:50px">		
+					
+					<div class="col-md-3 secbtn" onclick='$("#terminaltxt").focus();' data-dismiss="modal" style="cursor:pointer;color:#fff;background:#333;height:80px;border-radius:5px;margin-right:10px" data-toggle="modal" data-target="#terminalModal">	
+						<center>
+							<i class="fas fa-terminal" style="margin-top:15px;"></i>
+							<br>Terminal
+						</center>
+					</div>
+					<div data-toggle="modal" data-target="#agentAlertModal" class="col-md-3 bg-success text-white secbtn" style="cursor:pointer;height:80px;border-radius:5px;margin-right:10px">
+						<center>
+							<i class="fas fa-comment" style="margin-top:10px;"></i>
+							<br>One-way <br>Message	
+						</center>
+					</div>
+					<div  data-dismiss="modal" class="bg-primary col-md-3 text-white secbtn" style="cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
+						<center>
+							<i class="fas fa-desktop" style="margin-top:15px"></i><br> Enable RDP
+						<center>
+					</div>
+					<div  data-dismiss="modal" class="bg-warning col-md-3 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
+						<center>
+						<i class="fas fa-desktop" style="margin-top:15px"></i><br> Disable RDP
+						<center>
+					</div>
+					<div  data-dismiss="modal" class="bg-primary col-md-3 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick="sendCommand('Netsh Advfirewall set allprofiles state on', 'Enable Firewall');">
+						<center>
+						<i class="fas fa-fire-alt" style="margin-top:15px"></i><br> Enable Firewall
+						<center>
+					</div>
+					<div  data-dismiss="modal" class="bg-warning col-md-3 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('Netsh Advfirewall set allprofiles state off', 'Disable Firewall');">
+						<center>	
+						<i class="fas fa-fire-alt" style="margin-top:15px"></i><br> Disable Firewall
+						<center>
+					</div>
+					<div  data-dismiss="modal" class="bg-secondary col-md-3 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('ipconfig /flushdns', 'Clear DNS Cache');">
+						<center>	
+							<i class="fas fa-network-wired" style="margin-top:15px"></i><br> Flush DNS
+						<center>
+					</div>
+					<div data-dismiss="modal" class="bg-secondary col-md-3 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('sfc /scannow', 'Repair File System');">
+						<center>
+							<i class="fas fa-file" style="margin-top:15px"></i><br> Repair System
+						<center>
+					</div>
+					<div data-dismiss="modal" class="bg-secondary col-md-3 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;">
+						<center>
+							<i class="fas fa-keyboard" style="margin-top:15px"></i><br> Send Keyboard
+						<center>
+					</div>
 				</div>
-				<br>
 			</div>
+		
+		<br>
+	
 			<div style="" class="col-md-7">
 				<h5>Run A Custom Script</h5><br>
 					<div>
@@ -113,16 +144,17 @@ PAUSE
 	<div style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;" class="row">
 		<div class="col-md-12">
 			<?php 
-				$query = "SELECT ID, time_received,command, arg, expire_after,status,time_sent FROM commands WHERE status='Sent' or status='Received' AND ComputerID='".$result['ID']."' ORDER BY ID DESC LIMIT 100";
+				$query = "SELECT * FROM commands WHERE ComputerID='".$computer['ID']."' ORDER BY ID DESC LIMIT 1000";
 				$results = mysqli_query($db, $query);
 				$commandCount = mysqli_num_rows($results);
 			?>
-			<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">				
+			<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">				
 			  <thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">
 				  <th scope="col">Command</th>
 				  <!--<th scope="col">Expire Time</th>-->
 				  <th scope="col">Time Sent</th>
+				  <th scope="col">Data Received</th>
 				  <th scope="col">Status</th>
 				  <th scope="col"></th>
 				</tr>
@@ -134,10 +166,11 @@ PAUSE
 						$count++;
 					?>
 					<tr>
-					  <td title="<?php echo substr($command['command'], 0, 400) . '...'; ?>"><b><?php echo substr($command['command'], 0, 40) . '...'; ?></b></td>
+					  <td title="<?php echo substr($command['command'], 0, 400); if(strlen($command['command'])>400){echo '...'; } ?>"><b><?php echo substr($command['command'], 0, 40); if(strlen($command['command'])>40){echo '...'; } ?></b></td>
 					  <!--<td><?php echo strtolower($command['expire_after']);?> Minutes</td>-->
 					  <td><?php echo $command['time_sent'];?></td>
-					 
+					  <td title="<?php echo substr($command['data_received'], 0, 400); if(strlen($command['data_received'])>400){echo '...'; } ?>"><b><?php echo substr($command['data_received'], 0, 40); if(strlen($command['data_received'])>40){echo '...'; } ?></b></td>
+
 						  <?php if($command['time_received']!=""){
 									$timer = $command['time_received'];
 							   }else{

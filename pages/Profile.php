@@ -35,7 +35,7 @@ if($userID!=$_SESSION['userid']){
 ?>
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 	<h4 style="color:#333">Technician Profile
-		<a href="#" title="Refresh" onclick="loadSection('Profile');" class="btn btn-sm" style="float:right;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Profile');" class="btn btn-sm" style="float:right;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
 	</h4>
@@ -45,7 +45,7 @@ if($userID!=$_SESSION['userid']){
 		<div style="margin-top:-20px;background:#35384e;padding:20px;color:#fff;border-radius:6px;margin-bottom:30px" class="page-heading">
 			<div class="media clearfix">
 				<div class="media-left pr30">
-					<a style="color:#fff" href="#">
+					<a style="color:#fff" href="javascript:void(0)">
 					<i style="font-size:100px;text-align:center" class="fa fa-user" ></i>
 					</a>
 				</div>                      
@@ -59,20 +59,20 @@ if($userID!=$_SESSION['userid']){
 					<form action="index.php" method="POST">
 						<input type="hidden" name="type" value="DeleteUser"/>
 						<input type="hidden" name="ID" value="<?php echo $user['ID']; ?>"/>
-						
-						<?php if($user['active']=="1"){ ?>
-							<input type="hidden" value="0" name="active"/>
-							<button <?php if($user['ID']=="1") echo "disabled"; ?> type="submit" title="Deactivate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
-								<i class="fas fa-trash" ></i> Deactivate			
-							</button>
-						<?php }else{ ?>
-							<input type="hidden" value="1" name="active"/>
-							<button type="submit" title="Activate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-success btn-sm">
-								<i class="fas fa-plus" ></i> Activate
-							</button>
+						<?php if($_SESSION['accountType']=="Admin"){  ?>
+							<?php if($user['active']=="1"){ ?>
+								<input type="hidden" value="0" name="active"/>
+								<button <?php if($user['ID']=="1") echo "disabled"; ?> type="submit" title="Deactivate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
+									<i class="fas fa-trash" ></i> Deactivate			
+								</button>
+							<?php }else{ ?>
+								<input type="hidden" value="1" name="active"/>
+								<button type="submit" title="Activate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-success btn-sm">
+									<i class="fas fa-plus" ></i> Activate
+								</button>
+							<?php } ?>
 						<?php } ?>
-						
-						<a href="#" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo $user['nicename'];?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo $user['accountType'];?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
+						<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo $user['nicename'];?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo $user['accountType'];?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
 							<i class="fas fa-pencil-alt"></i> Edit
 						</a>
 					</form>
@@ -87,10 +87,12 @@ if($userID!=$_SESSION['userid']){
 							<li class="active">
 								<a href="#tab1" data-toggle="tab">Activity</a>
 							</li>
-							<li>            
-								<input type="hidden" name="delActivity" value="<?php echo $userID; ?>">
-								<button style="display:inline;margin-top:-10px;border:none;box-shadow:none" class="btn btn-sm" type="submit" >Clear Activity</button>
-							</li>
+							<?php if($_SESSION['accountType']=="Admin"){  ?>
+								<li>            
+									<input type="hidden" name="delActivity" value="<?php echo $userID; ?>">
+									<button style="display:inline;margin-top:-10px;border:none;box-shadow:none" class="btn btn-sm" type="submit" >Clear Activity</button>
+								</li>
+							<?php } ?>
 						</ul>
 					</form>
 					<div class="tab-content p30" style="margin-top:10px;">

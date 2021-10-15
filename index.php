@@ -24,7 +24,7 @@
 
 	if($nologin==false){
 		if($_SESSION['userid']=="" && !in_array(basename($_SERVER['SCRIPT_NAME']), $serverPages)){
-			if(strpos(strtolower($_SERVER['SCRIPT_NAME']),"/ajax/")!==false){ //fix for ajax pages
+			if(strpos(strtolower($_SERVER['SCRIPT_NAME']),"/pages/")!==false){ //fix for ajax pages
 				echo ("<center><h3>Error loading page, please make you are loged in.</h3></center>");
 			}
 		}
@@ -44,18 +44,19 @@
 		<script src="assets/js/tagsinput.js"></script>
 		<script src="assets/js/jquery.js" ></script>
 		<!--- Bootstap --->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"/>
 		<link rel="stylesheet" href="assets/css/tagsinput.css"/>
 		<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
 		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-
+		
 		<link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		
 		<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
 		<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
 		<script src="assets/js/bootstrap.min.js"></script>
-		
+		<link rel="stylesheet" href="assets/css/toastr.css"/>
 		<link rel="stylesheet" href="assets/css/custom.css"/>
 		<link rel="stylesheet" href="assets/css/style.css"/>
 
@@ -137,7 +138,7 @@
 						<ul style="margin-left:20px" class="nav nav-list collapse" id="navConfig">
 							<?php if($_SESSION['accountType']=="Admin"){ ?>
 								<li onclick="loadSection('AllCompanies');" id="secbtnAllCompanies" style="width:100%" class="secbtn">
-									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Customers
+									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<?php echo $msp; ?>s
 								</li>
 								<li onclick="loadSection('AllUsers');" id="secbtnAllUsers" style="width:100%" class="secbtn">
 									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Technicians
@@ -290,14 +291,16 @@
 								<div class="form-group">
 									<input placeholder="Phone" type="text" name="phone" class="form-control" id="editUserModal_phone"/>
 								</div>
-								<div class="form-group">
-									<label for="editUserModal_type">Access Type</label>
-									<select required name="accountType" class="form-control">
-										<option id="editUserModal_type" value="">Select Option</option>
-										<option value="Standard">Standard</option>
-										<option value="Admin">Admin</option>
-									</select>
-								</div>
+								<?php if($_SESSION['accountType']=="Admin"){  ?>
+									<div class="form-group">
+										<label for="editUserModal_type">Access Type</label>
+										<select required name="accountType" class="form-control">
+											<option id="editUserModal_type" value="">Select Option</option>
+											<option value="Standard">Standard</option>
+											<option value="Admin">Admin</option>
+										</select>
+									</div>
+								<?php } ?>
 								<div class="input-group">
 									<input placeholder="Password" style="display:inline" type="password" id="editUserModal_password" name="password" class="form-control"/>
 									<span class="input-group-btn">
@@ -405,7 +408,7 @@
 						<div class="modal-header">
 							<h6>
 								<b>
-									Add/Edit Company
+									Add/Edit <?php echo $msp; ?>
 								</b>
 							</h6>
 						</div>
@@ -413,7 +416,7 @@
 							<input type="hidden" name="type" value="AddEditCompany"/>
 							<input type="hidden" name="ID" value="" id="editCompanyModal_ID"/>
 							<div class="modal-body">
-								<p>This Will Add Company Information. To Better Assist And Organize Content.</p>
+								<p>This Will Add <?php echo $msp; ?> Information. To Better Assist And Organize Content.</p>
 								<div class="form-group">
 									<input placeholder="Name" type="text" name="name" class="form-control" id="editCompanyModal_name"/>
 								</div>
@@ -666,5 +669,4 @@
 		 } ?>
 		 	
 	</script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
 </html>

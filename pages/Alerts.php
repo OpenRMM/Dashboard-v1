@@ -25,7 +25,7 @@ $online = $results['online'];
 	<div style="padding:20px" class="col-md-12">
 		<h5>Alerts & Monitoring
 			<div style="float:right;">
-				<a href="#" title="Refresh" onclick="loadSection('Alerts');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+				<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Alerts');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-sync"></i>
 				</a>
 			</div>

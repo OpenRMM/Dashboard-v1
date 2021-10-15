@@ -52,10 +52,10 @@ $error = $json['WMI_NetworkAdapters_error'];
 		<?php }?>
 	</h4>	
 	<div style="text-align:right" class="col-md-2">
-		<a href="#" title="Refresh" onclick="loadSection('Network');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Network');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
-		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
+		<a href="javascript:void(0)" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
 			<i class="far fa-calendar-alt"></i>
 		</a>
 	</div>

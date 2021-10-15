@@ -35,14 +35,14 @@ $online = $data['online'];
 	<hr>
 <?php exit; }?>
 <h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Editing Asset: <?php echo $data['hostname']; ?>
-	<a href="#" title="Refresh" onclick="loadSection('Edit');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+	<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Edit');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 		<i class="fas fa-sync"></i>
 	</a>
 </h4>
 <hr>
 <div style="width:100%;backgrdound:#fff;padding:15px;">
 	<p class="lead">
-	   <small class="text-muted"> Here You Can Add Information About The Asset, Client And The Company It's Assigned To.</small>
+	   <small class="text-muted"> Here You Can Add Information About The Asset, Client And The <?php echo $msp; ?> It's Assigned To.</small>
 	</p>
 	<hr />
 	<form method="POST" action="index.php">
@@ -51,7 +51,7 @@ $online = $data['online'];
 				<input type="hidden" name="type" value="EditComputer"/>
 				<input type="hidden" name="ID" value="<?php echo $data['ID']; ?>"/>
 				<div class="form-group float-label-control">
-					<label>Company:</label>
+					<label><?php echo $msp; ?>:</label>
 					<select name="company" class="form-control">
 						<option value="<?php echo $company['CompanyID']; ?>"><?php echo textOnNull($company['name'],"Select A Company"); ?></option>
 						<?php
@@ -72,10 +72,6 @@ $online = $data['online'];
 						<option value="Server">Server</option>
 						<option value="Other">Other</option>
 					</select>
-				</div>
-				<div class="form-group float-label-control">
-					<label>TeamViewer ID:</label>
-					<input type="text" name="TeamID" value="<?php echo $data['teamviewer']; ?>" class="form-control" placeholder="Teamviewer ID?">
 				</div>
 				<hr>
 				<h4 class="page-header">Client Information</h4><br>
@@ -101,7 +97,7 @@ $online = $data['online'];
 			<div class="col-sm-4">
 				<div class="panel panel-default" style="height:auto;color:#fff;color#000;padding:20px;border-radius:6px;margin-bottom:20px;">
 					<center>
-						<a style="width:65%;margin-top:-3px;border:none;" class="btn btn-danger btn-md" data-toggle="modal" data-target="#delModal" href="#">
+						<a style="width:65%;margin-top:-3px;border:none;" class="btn btn-danger btn-md" data-toggle="modal" data-target="#delModal" href="javascript:void(0)">
 							<i class="fas fa-trash"></i> Delete Asset
 						</a>
 					</center>
@@ -123,13 +119,13 @@ $online = $data['online'];
 				<div style="margin-top:20px"  class="panel panel-default">
 					<div class="panel-heading">
 						<h4 class="panel-title">
-							Company Information
+						<?php echo $msp; ?> Information
 						</h4>
 					</div>
 					<div class="panel-body">
 						<ul class="list-group">
-							<li class="list-group-item"><b>Company Name:</b>
-								<a href="#" onclick="searchItem('<?php echo textOnNull($company['name'],"N/A"); ?>');" title="Search Company">
+							<li class="list-group-item"><b><?php echo $msp; ?> Name:</b>
+								<a href="javascript:void(0)" onclick="searchItem('<?php echo textOnNull($company['name'],"N/A"); ?>');" title="Search Company">
 									<?php echo textOnNull($company['name'],"N/A"); ?>
 								</a>
 							</li>
@@ -163,7 +159,7 @@ $online = $data['online'];
 								if($data['hostname']==""){continue;}
 								$count++;
 							?>
-							<a href="#" class="text-dark" onclick="loadSection('Edit', '<?php echo $data['ID']; ?>');">
+							<a href="javascript:void(0)" class="text-dark" onclick="loadSection('Edit', '<?php echo $data['ID']; ?>');">
 								<li class="list-group-item">
 									<i class="fas fa-desktop"></i>&nbsp;
 									<?php echo strtoupper($data['hostname']);?>

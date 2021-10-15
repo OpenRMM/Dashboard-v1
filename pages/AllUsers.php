@@ -17,7 +17,7 @@ $userCount = mysqli_num_rows($results);
 ?>
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 	<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">All Technicians (<?php echo $userCount;?>)
-		<a href="#" title="Refresh" onclick="loadSection('AllUsers');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('AllUsers');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
 		<button type="button" style="margin:5px;background:#0ac282;;float:right;color:#fff" data-toggle="modal" data-target="#userModal" class="btn-sm btn btn-light" title="Add User">
@@ -71,7 +71,7 @@ $userCount = mysqli_num_rows($results);
 				?>
 				<tr>
 					<td><?php echo $user['ID'];?></td>
-					<td><a href="#" onclick="loadSection('Profile','<?php echo $user['ID']; ?>');"><?php echo ucwords($user['nicename']);?></a></td>
+					<td><a href="javascript:void(0)" onclick="loadSection('Profile','<?php echo $user['ID']; ?>');"><?php echo ucwords($user['nicename']);?></a></td>
 					<td><a href="mailto:<?php echo strtolower(crypto('decrypt', $user['email'], $user['hex']));?>"><?php echo textOnNull(strtolower(crypto('decrypt', $user['email'], $user['hex'])),"No Email");?></a></td>
 					<td><a href="tel:<?php echo strtolower(crypto('decrypt', $user['phone'], $user['hex']));?>"><?php echo textOnNull(phone(crypto('decrypt', $user['phone'], $user['hex'])),"No Phone");?></a></td>
 					<td><?php echo strtolower($user['username']);?></td>
@@ -93,7 +93,7 @@ $userCount = mysqli_num_rows($results);
 									<i class="fas fa-plus" ></i>
 								</button>
 							<?php } ?>
-							<a href="#" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo $user['nicename'];?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo $user['accountType'];?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
+							<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo $user['nicename'];?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo $user['accountType'];?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
 								<i class="fas fa-pencil-alt"></i>
 							</a>
 						</form>

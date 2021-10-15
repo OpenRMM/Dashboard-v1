@@ -40,10 +40,10 @@
 </style>
 <div style="margin-top:20px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 	<h4 style="color:<?php echo $siteSettings['theme']['Color 1']; ?>">Site Settings
-		<a href="#" title="Refresh" onclick="loadSection('SiteSettings');" class="btn btn-sm" style="float:right;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
+		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('SiteSettings');" class="btn btn-sm" style="float:right;color:#fff;background:<?php echo $siteSettings['theme']['Color 1'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
-		<a href="#"  data-toggle="modal" data-target="#agentUpload" style="margin-right:5px;display:inline;float:right;background:#fe9365;color:#fff;" class="btn btn-sm">
+		<a href="javascript:void(0)"  data-toggle="modal" data-target="#agentUpload" style="margin-right:5px;display:inline;float:right;background:#fe9365;color:#fff;" class="btn btn-sm">
 			<i class="fas fa-upload"></i> Upload Agent
 		</a>
 	</h4>

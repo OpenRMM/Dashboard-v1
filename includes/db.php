@@ -5,8 +5,8 @@
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
 	$excludedPages = "Init,Login,Logout,EventLogs,Alerts,Commands,Dashboard,SiteSettings,Profile,Edit,AllUsers,AllCompanies,Assets,NewComputers,Versions"; 
-	$allPages = "FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,DefaultPrograms,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,NewComputers,OptionalFeatures,Printers,Processes,Profile,Programs,Services,Users,Versions";
-	$adminPages = "AllUsers.php,AllCompanies.php,SiteSettings.php";
+	$allPages = "AgentSettings,FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,NewComputers,OptionalFeatures,Printers,Processes,Profile,Programs,Services,Users,Versions";
+	$adminPages = "AgentSettings,AllUsers.php,AllCompanies.php,SiteSettings.php";
 ###########################################################################################################################################
 ######################################################## DEV ONLY DO NOT PASS #############################################################
 ###########################################################################################################################################
@@ -42,10 +42,10 @@
 	$MQTTusername = $siteSettings['MQTT']['username']; 
 	$MQTTpassword = $siteSettings['MQTT']['password']; 
 	//MQTT Subscribe
-	function MQTTpublish($topic,$message,$computerID, $retain=false){
+	function MQTTpublish($topic,$message,$computerID,$retain){
 		global $MQTTserver, $MQTTport, $MQTTusername, $MQTTpassword, $mqttConnect;;
 		$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $computerID);
-		if ($mqtt->connect(true, NULL, $MQTTusername, $MQTTpassword)) {
+		if ($mqtt->connect_auto(true, NULL, $MQTTusername, $MQTTpassword)) {
 			$mqtt->publish($topic, $message, 1, $retain);
 			$mqtt->close();
 		} else {
@@ -54,7 +54,7 @@
 		}
 	}
 	$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $computerID);
-	if ($mqtt->connect(true, NULL, $MQTTusername, $MQTTpassword)) { }else{
+	if ($mqtt->connect_auto(true, NULL, $MQTTusername, $MQTTpassword)) { }else{
 		$mqttConnect="timeout";
 	}
 
@@ -64,16 +64,13 @@
 		//exit("<center><h3 style='color:maroon;'>An error has occured. Please try again in a few moments.</h3><a href='#' onclick='location.reload();'>Retry</a><hr></center>");
 	}
     if($createDatabase=="true"){
-        //create db strucrure
         $templine = '';
         $lines = file("databaseStructure.sql");
         foreach ($lines as $line)
         {
-            // Skip it if it's a comment
             if (substr($line, 0, 2) == '--' || $line == '')
                 continue;
             $templine .= $line;
-            // If it has a semicolon at the end, it's the end of the query
             if (substr(trim($line), -1, 1) == ';')
             {
                 mysql_query($db, $templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysql_error($db) . '<br /><br />');
@@ -88,6 +85,11 @@
 			userActivity($activity);
 			exit("<center><br><br><h4>Sorry, You Do Not Have Permission To Access This Page!</h4><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' class='btn btn-warning btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");	
 		}
+	}
+	if($siteSettings['theme']['MSP']=="true"){
+		$msp="Customer";
+	}else{
+		$msp="Group";
 	}
 	//Load general settings from DB
 	function loadGeneralFromDB(){
@@ -153,7 +155,7 @@
 		$alertDelimited = "";
 		//Memory
 		//Total
-		$totalMemory = round((int)$json['WMI_ComputerSystem'][0]['TotalPhysicalMemory'] /1024 /1024 /1024,1); //GB
+		/*$totalMemory = round((int)$json['WMI_ComputerSystem'][0]['TotalPhysicalMemory'] /1024 /1024 /1024,1); //GB
 		if($totalMemory < $siteSettings['Alert Settings']['Memory']['Total']['Danger']){
 			$alertName = "memory_total_danger";
 			$newAlert = array(
@@ -177,7 +179,7 @@
 			$alertDelimited .= implode("|", $newAlert).",";
 		}
 		//Free
-		$freeMemory = round($json['WMI_OS'][0]['FreePhysicalMemory'] / 1024,1); //MB
+	$freeMemory = round($json['WMI_OS'][0]['FreePhysicalMemory'] / 1024,1); //MB
 		if($freeMemory < $siteSettings['Alert Settings']['Memory']['Free']['Danger']){
 			$alertName = "memory_free_danger";
 			$newAlert = array(
@@ -200,7 +202,7 @@
 			);
 			$alertArray[] = $newAlert;
 			$alertDelimited .= implode("|", $newAlert).",";
-		}
+		}*/
 		//Disk Space
 		$disks = $json['WMI_LogicalDisk'];
 		foreach($disks as $disk){
@@ -234,11 +236,11 @@
 		}
 		
 		//Check agent version
-		if($siteSettings['general']['agent_latest_version'] != $json['AgentVersion']['Value']){
+		if($siteSettings['general']['agent_latest_version'] != $json['Agent'][0]['Version']){
 			$alertName = "agent_version";
 			$newAlert = array(
 				"subject"=>"Agent Version",
-				"message"=>"Agent is out of date. Currently installed: ".textOnNull($json['AgentVersion']['Value'], "Unknown"),
+				"message"=>"Agent is out of date. Currently installed: ".textOnNull($json['Agent'][0]['Version'], "Unknown"),
 				"type"=>"warning",
 				"hostname"=>$hostname,
 				"alertName"=>$alertName
@@ -248,7 +250,7 @@
 		}
 		
 		//Windows Activation
-		if($json['WindowsActivation']['Value'] != "Activated"){
+		/*if($json['WindowsActivation']['Value'] != "Activated"){
 			$alertName = "windows_activation";
 			$newAlert = array(
 				"subject"=>"Windows Activation",
@@ -260,7 +262,7 @@
 			$alertArray[] = $newAlert;
 			$alertDelimited .= implode("|", $newAlert).",";
 		}
-		
+		*/
 		return array($alertArray, trim($alertDelimited, ","));
 	}
 	
@@ -316,11 +318,12 @@
 	}
 	
 	//Encrypt And Decrypt With Salt
-	$salt = base64_decode("R1pxNEU1aXBBc21rWW5GQ3dWVjdrQ1F4cUVabGppTk9aWXEzdE1ZRQ==");
+	$salt = base64_decode($siteSettings['Encryption']['salt']);
 	function crypto($action, $string, $salt) {
 		$output = false;
+		global $siteSettings;
 		$encrypt_method = "AES-256-CBC";
-		$secret_key = base64_decode('JE1HX1VuMWltSXQzZCE=');
+		$secret_key = base64_decode($siteSettings['Encryption']['secret']);
 		$key = hash('sha256', $secret_key);
 		$iv = substr(hash('sha256', $salt), 0, 16);
 		if ( $action == 'encrypt' ) {

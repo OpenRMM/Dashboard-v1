@@ -86,7 +86,6 @@
 			$company = clean($_POST['company']);
 			$type = clean($_POST['pctype']);
 			$email = strip_tags($_POST['email']);
-			$TeamID = clean($_POST['TeamID']);
 			$show_alerts = (int)$_POST['show_alerts'];
 			//Edit Recents
 			$activity = "Technician Edited Asset: ".$ID;
@@ -105,7 +104,7 @@
 				}
 			}
 			//Update Computer Data
-			$query = "UPDATE computerdata SET show_alerts='".$show_alerts."', teamviewer='".$TeamID."', computer_type='".$type."', comment='".$comment."', name='".$name."', phone='".$phone."', CompanyID='".$company."', email='".$email."' WHERE ID='".$ID."';";
+			$query = "UPDATE computerdata SET show_alerts='".$show_alerts."', computer_type='".$type."', comment='".$comment."', name='".$name."', phone='".$phone."', CompanyID='".$company."', email='".$email."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
 			header("location: index.php");
 		}
@@ -148,6 +147,9 @@
 				$password2 = clean($_POST['password2']);
 				$encryptedPhone = $encryptedPhone = crypto('encrypt', $phone, $salt);
 				$encryptedPassword = crypto('encrypt', $password, $salt);
+				if($_SESSION['accountType']!="Admin"){  
+					$type="Standard";
+				}
 				if($password == $password2){
 					if($user_ID == 0){
 						$query = "INSERT INTO users (accountType, phone, username, password, hex, nicename , email)
@@ -300,14 +302,63 @@
 				if($exists == 0){
 					//Generate expire time
 					$expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
-					MQTTpublish($computer['ID']."/Commands/CMD",$commands,$computer['ID']);
+					MQTTpublish($computer['ID']."/Commands/CMD",$commands,$computer['ID'],false);
 					$query = "INSERT INTO commands (ComputerID, userid, command, expire_after, expire_time, status)
 							  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 					$results = mysqli_query($db, $query);
 				}
-			}
 			$activity = "Technician Sent ".$commands." Command To: ".$computer['ID'];
 			userActivity($activity,$_SESSION['userid']);
+			}
+			
+			header("location: index.php");
+		}
+		//Get speedtest
+		if($_POST['type'] == "refreshSpeedtest"){
+			$ID = (int)$_POST['CompanyID'];
+			MQTTpublish($ID."/Commands/getOklaSpeedtest","true",getSalt(20),false);
+			header("location: index.php");
+		}
+		//Save agent config
+		if($_POST['type'] == "agentConfig"){
+			$ID = (int)$_POST['ID'];
+			$agent_Heartbeat = clean($_POST['agent_Heartbeat']);
+			$agent_BIOS = clean($_POST['agent_BIOS']);
+			$agent_Features = clean($_POST['agent_Features']);
+			$agent_Processes = clean($_POST['agent_Processes']);
+			$agent_Services = clean($_POST['agent_Services']);
+			$agent_Users = clean($_POST['agent_Users']);
+			$agent_Video = clean($_POST['agent_Video']);
+			$agent_Disk = clean($_POST['agent_Disk']);
+			$agent_Sound = clean($_POST['agent_Sound']);
+			$agent_General = clean($_POST['agent_General']);
+
+			$agent_Pointing = clean($_POST['agent_Pointing']);
+			$agent_Keyboard = clean($_POST['agent_Keyboard']);
+			$agent_Board = clean($_POST['agent_Board']);
+			$agent_Monitor = clean($_POST['agent_Monitor']);
+			$agent_Printers = clean($_POST['agent_Printers']);
+			$agent_NetworkLogin = clean($_POST['agent_NetworkLogin']);
+			$agent_Network = clean($_POST['agent_Network']);
+			$agent_PnP = clean($_POST['agent_PnP']);
+			$agent_SCSI = clean($_POST['agent_SCSI']);
+
+			$agent_Products = clean($_POST['agent_Products']);
+			$agent_Processor = clean($_POST['agent_Processor']);
+			$agent_Firewall = clean($_POST['agent_Firewall']);
+			$agent_Agent = clean($_POST['agent_Agent']);
+			$agent_Battery = clean($_POST['agent_Battery']);
+			$agent_Filesystem = clean($_POST['agent_Filesystem']);
+			$agent_Mapped = clean($_POST['agent_Mapped']);
+			$agent_Memory = clean($_POST['agent_Memory']);
+			$agent_Startup = clean($_POST['agent_Startup']);
+			$agent_Logs = clean($_POST['agent_Logs']);
+
+			$settings='{"interval": {"Heartbeat": '.$agent_Heartbeat.', "getGeneral": '.$agent_General.', "getBIOS": '.$agent_BIOS.', "getStartup": '.$agent_Startup.', "getOptionalFeatures": '.$agent_Features.', "getProcesses": '.$agent_Processes.', "getServices": '.$agent_Services.', "getUsers": '.$agent_Users.', "getVideoConfiguration": '.$agent_Video.', "getLogicalDisk": '.$agent_Disk.', "getMappedLogicalDisk": '.$agent_Mapped.', "getPhysicalMemory": '.$agent_Memory.', "getPointingDevice": '.$agent_Pointing.', "getKeyboard": '.$agent_Keyboard.', "getBaseBoard": '.$agent_Board.', "getDesktopMonitor": '.$agent_Monitor.', "getPrinters": '.$agent_Printers.', "getNetworkLoginProfile": '.$agent_NetworkLogin.', "getNetwork": '.$agent_Network.', "getPnPEntitys": '.$agent_PnP.', "getSoundDevices": '.$agent_Sound.', "getSCSIController": '.$agent_SCSI.', "getProducts": '.$agent_Products.', "getProcessor": '.$agent_Processor.', "getFirewall": '.$agent_Firewall.', "getAgent": '.$agent_Agent.', "getBattery": '.$agent_Battery.', "getFilesystem": '.$agent_Filesystem.', "getEventLogs": '.$agent_Logs.'}}';
+			$query = "UPDATE computerdata SET agent_settings='".$settings."' WHERE ID=".$ID.";";
+			//$results = mysqli_query($db, $query);
+			//echo mysqli_error($db)."sadsada"; exit;
+			MQTTpublish($ID."/Commands/setAgentSettings",$settings,getSalt(20),true);
 			header("location: index.php");
 		}
 		//Update Company Agents

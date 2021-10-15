@@ -27,9 +27,10 @@ if($computerID<0){
 	exit;
 }
 //get update
-MQTTpublish($computerID."/Commands/getVideoConfiguration","true",getSalt(20));
-MQTTpublish($computerID."/Commands/getPointingDevice","true",getSalt(20));
-MQTTpublish($computerID."/Commands/getDesktopMonitor","true",getSalt(20));
+MQTTpublish($computerID."/Commands/getVideoConfiguration","true",getSalt(20),false);
+MQTTpublish($computerID."/Commands/getPointingDevice","true",getSalt(20),false);
+MQTTpublish($computerID."/Commands/getDesktopMonitor","true",getSalt(20),false);
+MQTTpublish($computerID."/Commands/getKeyboard","true",getSalt(20),false);
 //MQTTpublish($computerID."/Commands/getPnPEntitys","true",getSalt(20));
 
 $json = getComputerData($computerID, array("WMI_USBHub", "WMI_DesktopMonitor", "WMI_Keyboard", "WMI_PointingDevice", "WMI_SoundDevice", "WMI_SerialPort", "WMI_PnPEntity"), $showDate);
@@ -54,10 +55,10 @@ $online = $results['online'];
 		<?php }?>
 	</div>
 	<div class="col-md-2" style="text-align:right;">
-		<a href="#" title="Refresh" onclick="loadSection('AttachedDevices');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('AttachedDevices');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
-		<a href="#" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
+		<a href="javascript:void(0)" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
 			<i class="far fa-calendar-alt"></i>
 		</a>
 	</div>

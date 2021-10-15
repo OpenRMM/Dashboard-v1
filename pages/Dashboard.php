@@ -50,8 +50,8 @@ $resultCount = mysqli_num_rows($results);
 					<a style="color:#fff;cursor:pointer;" onclick="loadSection('Assets');">
 						<div style="padding:10px 10px 0px 20px;">
 							<i class="fas fa-desktop" style="font-size:28px;float:right;"></i>
-							<span style="font-size:20px;" ><?php echo $resultCount; ?></span><br>
-							<span style="font-size:20px;">Assets</span>
+							<span style="font-size:18px;" ><?php echo $resultCount; ?></span><br>
+							<span style="font-size:25px;">Assets</span>
 						</div>
 													
 					</a>
@@ -62,8 +62,8 @@ $resultCount = mysqli_num_rows($results);
 					<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllCompanies');">
 						<div style="padding:10px 10px 0px 20px;">
 							<i class="fas fa-building" style="font-size:28px;float:right;"></i>
-							<span style="font-size:20px;"><?php echo $companyCount;?></span><br>
-							<span style="font-size:20px;">Customers</span>
+							<span style="font-size:18px;"><?php echo $companyCount;?></span><br>
+							<span style="font-size:25px;"><?php echo $msp; ?>s</span>
 						</div>
 					</a>
 				</div>
@@ -73,8 +73,8 @@ $resultCount = mysqli_num_rows($results);
 					<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllUsers');">
 						<div style="padding:10px 10px 0px 20px;">
 							<i class="fas fa-user" style="font-size:28px;float:right;"></i>
-							<span style="font-size:20px;"><?php echo $userCount;?></span><br>
-							<span style="font-size:20px;">Technicians</span>
+							<span style="font-size:18px;"><?php echo $userCount;?></span><br>
+							<span style="font-size:25px;">Technicians</span>
 						</div>
 					</a>
 				</div>
@@ -83,9 +83,16 @@ $resultCount = mysqli_num_rows($results);
 				<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 5']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;">
 					<a style="color:#fff;cursor:pointer;" onclick="loadSection('Tickets');">
 						<div style="padding:10px 10px 0px;">
-							<i class="fas fa-ticket-alt" style="font-size:28px;float:right;"></i>
-							<span style="font-size:20px;"><?php echo $userCount;?></span><br>
-							<span style="font-size:20px;">Tickets</span>
+							<i class="fas fa-server" style="font-size:28px;float:right;"></i>
+							<?php
+								if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['serverStatus']==""){
+									$serverStatus="Offline";
+								}else{
+									$serverStatus="Online";
+								} 
+							?>
+							<span style="font-size:18px;"><?php echo $serverStatus; ?></span><br>
+							<span style="font-size:25px;">Server Status</span>
 						</div>
 					</a>
 				</div>
@@ -153,7 +160,7 @@ $resultCount = mysqli_num_rows($results);
 									  <th scope="col">Hostname</th>
 									  <th scope="col"></th>
 									  <th scope="col">Logged In</th>
-									  <th scope="col">Company</th>
+									  <th scope="col"><?php echo $msp; ?></th>
 									  <th scope="col">Date Added</th>
 									</tr>
 							  	</thead>
@@ -167,7 +174,7 @@ $resultCount = mysqli_num_rows($results);
 										$count = 0;
 										$results = mysqli_query($db, $query);
 										while($result = mysqli_fetch_assoc($results)){
-											$getWMI = array("WMI_LogicalDisk", "WMI_OS", "WMI_ComputerSystem", "Ping");
+											$getWMI = array("WMI_LogicalDisk", "WMI_OS", "WMI_ComputerSystem", "Ping","Agent");
 											$data = getComputerData($result['ID'], $getWMI);
 											$count++;
 											$freeSpace = $data['WMI_LogicalDisk'][0]['FreeSpace'];
@@ -186,7 +193,7 @@ $resultCount = mysqli_num_rows($results);
 										<span><?php echo $result["ID"]; ?></span>
 									  </td>
 									  <td>
-										<a style="color:#000" href="#" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
+										<a style="color:#000" href="javascript:void(0)" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
 											<?php if($result['online']=="0") {?>
 												<i class="fas fa-desktop" style="color:#666;font-size:16px;" title="Offline"></i> <!-- needs os icon support -->
 											<?php }else{?>
@@ -212,7 +219,7 @@ $resultCount = mysqli_num_rows($results);
 										<?php $username = textOnNull($data['WMI_ComputerSystem'][0]['UserName'], "Unknown"); echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username)); ?>
 									  </td>
 									  <td>
-										<a style="color:#000;" href="#" onclick="$('input[type=search]').val('<?php echo textOnNull($result['name'], "N/A");?>');$('input[type=search]').trigger('keyup'); $('html, body, table').animate({ scrollTop: 0 }, 'slow');">
+										<a style="color:#000;" href="javascript:void(0)" onclick="$('input[type=search]').val('<?php echo textOnNull($result['name'], "N/A");?>');$('input[type=search]').trigger('keyup'); $('html, body, table').animate({ scrollTop: 0 }, 'slow');">
 											<?php echo textOnNull($result['name'], "Not Assigned");?>
 										</a>
 									  </td>

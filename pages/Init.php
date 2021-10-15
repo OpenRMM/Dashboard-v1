@@ -17,7 +17,7 @@ if($_SESSION['accountType']!="Admin"){
 }
 ?>
 <h4 style="color:#333;?>">OpenRMM Initialization
-	<a href="#" title="Refresh" onclick="loadSection('Init');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:#333;">
+	<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Init');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:#333;">
 		<i class="fas fa-sync"></i>
 	</a>
 </h4>

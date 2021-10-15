@@ -146,18 +146,13 @@ $online = $results['online'];
 									$folderCount++;	
 								}	
 								$count++;	
-						?>
-						
-									
-								
+						?>		
 						<tr <?php if($icon=="folder"){ ?>style="cursor:pointer" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo base64_encode($path);?>');"<?php } ?>>
 							<td>
 								<i style="font-size:18px" class="fas fa-<?php echo $icon; ?> text-secondary"></i>
 							</td>
-							<td>
-								        	
-								<?php echo $info; ?>
-								
+							<td>       	
+								<?php echo $info; ?>	
 							</td>
 							<td style="float:right">
 								<a title="Rename" class="btn btn-sm btn-success" onclick="fileActionsModal('rename','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-pen"></i></a>
@@ -186,7 +181,6 @@ $online = $results['online'];
 			<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">			
 				<div class="card-block text-center">
 					<h4 class="m-b-15">Directory Information</h4>
-					
 					<div class="row justify-content-center m-t-10 b-t-default m-l-0 m-r-0">
 						<div class="col m-t-15 b-r-default">
 							<h6 class="text-muted">Folders</h6>
@@ -209,7 +203,7 @@ $online = $results['online'];
 							$used = $size - $freeSpace ;
 							$usedPct = round(($used/$size) * 100);
 							if($size!=0){
-								$status = round((int)$used/ 1024 /1024 /1024)." GB"." Of ".round((int)$disk['Size']/ 1024 /1024 /1024)." GB Used";
+								$status = round((int)$used/ 1024 /1024 /1024)." of ".round((int)$disk['Size']/ 1024 /1024 /1024)." GB Used";
 							}else{
 								$status="No Size Avaliable";
 							}
@@ -231,7 +225,7 @@ $online = $results['online'];
 							<a href="javascript:void(0)" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo base64_encode(str_replace(":","",$disk['Name'])."{}".$getFolder);?>');">
 								<div class="card bg-dark" style="height:75%;padding:5px;">
 									<div style="text-align:center;">
-										<h5 class="card-title text-white" style="color:#333;">
+										<h5 class="card-title text-white" style="color:#333;padding-top:5px;padding-bottom:10px;">
 											<b><?php echo $disk['Name'];?>\</b>
 										</h5>
 									</div>
@@ -239,7 +233,7 @@ $online = $results['online'];
 										<div class="progress-bar" role="progressbar" style="background:<?php echo $pbColor;?>;width:<?php echo $usedPct;?>%" aria-valuenow="<?php echo $usedPct;?>" aria-valuemin="0" aria-valuemax="100"></div>
 									</div>
 									<center>
-										<p style="font-size:12px" class="text-white">
+										<p style="font-size:10px" class="text-white">
 											<?php echo $status; ?>
 										</p>
 									</center>

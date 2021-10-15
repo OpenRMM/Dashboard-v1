@@ -17,7 +17,7 @@ foreach(array_reverse($recent) as $item) {
 	if($data['ID']==""){ continue; }
 	$count++;
 ?>
-	<a href="#" onclick="loadSection('General', '<?php echo $data['ID']; ?>');">
+	<a href="javascript:void(0)" onclick="loadSection('General', '<?php echo $data['ID']; ?>');">
 		<li class="secbtn">
 			<i class="fas fa-desktop"></i>&nbsp;&nbsp;&nbsp;
 			<?php echo strtoupper($data['hostname']);?>
