@@ -32,7 +32,7 @@ if($exists == 0){
 	$results = mysqli_query($db, $query);
 	$insertID = mysqli_insert_id($db);
 
-	MQTTpublish($ID."/Commands/CMD",$commands,$ID,false);
+	MQTTpublish($ID."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"data":"'.$commands.'"}',$ID,false);
 
 	$activity="Technician Sent ".$commands." Command To: ".$computer['hostname'];
 	userActivity($activity,$_SESSION['userid']);

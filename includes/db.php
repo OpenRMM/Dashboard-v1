@@ -4,7 +4,7 @@
 	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "Init,Login,Logout,EventLogs,Alerts,Commands,Dashboard,SiteSettings,Profile,Edit,AllUsers,AllCompanies,Assets,NewComputers,Versions"; 
+	$excludedPages = "Init,Login,Logout,Alerts,Commands,Dashboard,SiteSettings,Profile,Edit,AllUsers,AllCompanies,Assets,NewComputers,Versions"; 
 	$allPages = "AgentSettings,FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,NewComputers,OptionalFeatures,Printers,Processes,Profile,Programs,Services,Users,Versions";
 	$adminPages = "AgentSettings,AllUsers.php,AllCompanies.php,SiteSettings.php";
 ###########################################################################################################################################

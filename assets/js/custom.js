@@ -99,7 +99,7 @@ function sendCommand(command, prompt, expire_after=5){
         },
         function(data, status){
             toastr.options.progressBar = true;
-            toastr.success('Your Request Has Been Sent.');
+            toastr.info('Your Request Has Been Sent.');
         });
     }
 }

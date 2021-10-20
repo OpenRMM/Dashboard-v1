@@ -124,7 +124,7 @@ $online = $data['online'];
 					</div>
 					<div class="panel-body">
 						<ul class="list-group">
-							<li class="list-group-item"><b><?php echo $msp; ?> Name:</b>
+							<li class="list-group-item"><b>Name:</b>
 								<a href="javascript:void(0)" onclick="searchItem('<?php echo textOnNull($company['name'],"N/A"); ?>');" title="Search Company">
 									<?php echo textOnNull($company['name'],"N/A"); ?>
 								</a>

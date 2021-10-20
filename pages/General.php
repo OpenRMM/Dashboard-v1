@@ -30,11 +30,22 @@
 	$query = "SELECT teamviewer, online, ID, hostname, CompanyID, name, phone, email, computer_type FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$result = mysqli_fetch_assoc($results);
-
-	//get update
-	//MQTTpublish($computerID."/Commands/getOklaSpeedtest","true",getSalt(20),false);
-	MQTTpublish($computerID."/Commands/getScreenshot","true",getSalt(20),false);
-
+	if($result['online']=="1"){
+		//get update
+		$retain=false;
+		MQTTpublish($_SESSION['computerID']."/Commands/getLogicalDisk",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+		MQTTpublish($_SESSION['computerID']."/Commands/getServices",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+		MQTTpublish($_SESSION['computerID']."/Commands/getProcesses",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+		MQTTpublish($_SESSION['computerID']."/Commands/getProducts",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+		MQTTpublish($_SESSION['computerID']."/Commands/getNetworkAdapters",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+		MQTTpublish($_SESSION['computerID']."/Commands/getPrinters",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+		MQTTpublish($_SESSION['computerID']."/Commands/getUsers",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+		MQTTpublish($_SESSION['computerID']."/Commands/getPnPEntitys",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+		MQTTpublish($_SESSION['computerID']."/Commands/getPhysicalMemory",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+		MQTTpublish($_SESSION['computerID']."/Commands/getFilesystem","Application",getSalt(20),$retain);
+		MQTTpublish($_SESSION['computerID']."/Commands/getEventLogs",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+		MQTTpublish($_SESSION['computerID']."/Commands/getScreenshot",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+	}
 
 	$query = "SELECT name, phone, email,address,comments,date_added FROM companies WHERE CompanyID='".$result['CompanyID']."' LIMIT 1";
 	$companies = mysqli_query($db, $query);
@@ -333,8 +344,8 @@
 						?>
 							<li class="list-group-item" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
 						<?php } 
-						if(count($json['Antivirus']) > 0) {
-							$status = $json['Antivirus']['Value'];
+						if(count($json['WMI_ComputerSystem'][0]['Antivirus']) > 0) {
+							$status = $json['WMI_ComputerSystem'][0]['Antivirus'];
 							$color = ($status == "No Antivirus" ? "text-danger" : "text-success");
 						?>
 							<li class="list-group-item" style="padding:6px"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
@@ -357,7 +368,7 @@
 					<?php $loc = $json['WMI_ComputerSystem'][0]['ExternalIP']["loc"]; ?>
 					<div style="width: 100%">
 						<iframe width="100%" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=<?php echo $loc; ?>&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
-							<a href="http://www.gps.ie/">vehicle gps</a>
+							
 						</iframe>
 					</div>
 				</div>
@@ -502,9 +513,9 @@
 </div>
 <script>
 	function sendMessage(){  
-		var type = $("input[name='alertType']:checked").val();
-		$("#inputTitle").val();
-		$("#inputMessage").val();
+		var alertType = $("input[name='alertType']:checked").val();
+		var alertTitle = $("#inputTitle").val();
+		var alertMessage = $("#inputMessage").val();
 		$.post("index.php", {
 		type: "assetOneWayMessage",
 		ID: computerID,

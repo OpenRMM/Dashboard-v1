@@ -112,30 +112,30 @@ $companyCount = mysqli_num_rows($results);
 								<input type="hidden" name="ID" value="<?php echo $company['CompanyID'];?>"/>
 								<?php if($company['active']=="1"){ ?>
 									<input type="hidden" name="companyactive" value="0"/>
-									<button type="submit" title="Remove Company" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
+									<button type="submit" title="Remove <?php echo $msp; ?>" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
 										<i class="fas fa-trash"></i>				
 									</button>
 								<?php }else{ ?>
 									<input type="hidden" name="companyactive" value="1"/>
-									<button type="submit" title="Add Company" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-success btn-sm">
+									<button type="submit" title="Add <?php echo $msp; ?>" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-success btn-sm">
 										<i class="fas fa-plus"></i>
 									</button>
 								<?php }?>
 								
-								<a href="javascript:void(0)" data-toggle="modal" data-target="#companyModal" onclick="editCompany('<?php echo $company['CompanyID'];?>','<?php echo $company['name'];?>','<?php echo $company['address'];?>','<?php echo phone($company['phone']);?>','<?php echo ucfirst($company['email']);?>','<?php echo ucfirst($company['comments']);?>')" title="Edit Company" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
+								<a href="javascript:void(0)" data-toggle="modal" data-target="#companyModal" onclick="editCompany('<?php echo $company['CompanyID'];?>','<?php echo $company['name'];?>','<?php echo $company['address'];?>','<?php echo phone($company['phone']);?>','<?php echo ucfirst($company['email']);?>','<?php echo ucfirst($company['comments']);?>')" title="Edit <?php echo $msp; ?>" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
 									<i class="fas fa-pencil-alt"></i>
 								</a>
 							</form>
 							<form action="index.php" method="post" style="display:inline;">
 								<input type="hidden" value="<?php echo $company['CompanyID'];?>" name="companyAgent">
-								<button type="submit" title="Download Company Agent" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
+								<button type="submit" title="Download <?php echo $msp; ?> Agent" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
 									<i class="fas fa-download"></i>
 								</button>
 							</form>
 							<form action="index.php" method="post" style="display:inline;">
 								<input type="hidden" value="CompanyUpdateAll" name="type">
 								<input type="hidden" value="<?php echo $company['CompanyID'];?>" name="CompanyID">
-								<button type="submit" title="Update Company Agent" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
+								<button type="submit" title="Update <?php echo $msp; ?> Agent" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
 									<i class="fas fa-cloud-upload-alt"></i>
 								</button>
 							</form>				

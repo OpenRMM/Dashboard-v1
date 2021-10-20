@@ -32,19 +32,16 @@ $query = "SELECT ID,teamviewer FROM computerdata where active='1'";
 $results = mysqli_query($db, $query);
 $resultCount = mysqli_num_rows($results);
 
-//Get stats
-$query = "SELECT CompanyID FROM companies where active='1'";
-$results = mysqli_query($db, $query);
-$companyCount = mysqli_num_rows($results);
-$query = "SELECT ID FROM users where active='1'";
-$results = mysqli_query($db, $query);
-$userCount = mysqli_num_rows($results);
-$query = "SELECT ID,teamviewer FROM computerdata where active='1'";
-$results = mysqli_query($db, $query);
-$resultCount = mysqli_num_rows($results);
+if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['serverStatus']==""){
+	$serverStatus="Offline";
+	$serverStatus_color="danger";
+}else{
+	$serverStatus="Online";
+	$serverStatus_color="success";
+} 
 ?>	
-	<?php if($_SESSION['userid']!="" ){ ?>
-		<div class="row">
+	<?php if($_SESSION['usesrid']!="" ){ ?>
+		<div class="row" style="margin-bottom:20px">
 			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
 				<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 2']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
 					<a style="color:#fff;cursor:pointer;" onclick="loadSection('Assets');">
@@ -52,8 +49,7 @@ $resultCount = mysqli_num_rows($results);
 							<i class="fas fa-desktop" style="font-size:28px;float:right;"></i>
 							<span style="font-size:18px;" ><?php echo $resultCount; ?></span><br>
 							<span style="font-size:25px;">Assets</span>
-						</div>
-													
+						</div>							
 					</a>
 				</div>
 			</div>
@@ -84,13 +80,6 @@ $resultCount = mysqli_num_rows($results);
 					<a style="color:#fff;cursor:pointer;" onclick="loadSection('Tickets');">
 						<div style="padding:10px 10px 0px;">
 							<i class="fas fa-server" style="font-size:28px;float:right;"></i>
-							<?php
-								if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['serverStatus']==""){
-									$serverStatus="Offline";
-								}else{
-									$serverStatus="Online";
-								} 
-							?>
 							<span style="font-size:18px;"><?php echo $serverStatus; ?></span><br>
 							<span style="font-size:25px;">Server Status</span>
 						</div>
@@ -99,231 +88,343 @@ $resultCount = mysqli_num_rows($results);
 			</div>
 		</div>
 	<?php } ?>
-	<div class="row" id="sortable" style="margin-bottom:10px;margin-top:20px;border-radius:3px;overflow:hidden;padding:0px">
-		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding:5px;padding-bottom:20px;padding-top:1px;border-radius:6px;">
-				<div style="padding:15px" class="card">
-					<canvas data-centerval="" id="line-chart" height="300"></canvas>
-					<script>
-						new Chart(document.getElementById("line-chart"), {
-						  type: 'line',
-						  data: {
-							labels: [30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1],
-							datasets: [{ 
-								data: [86,114,106,106,107,111,133,221,783,2478,282,350,411,5002,635,809,947,1402,3700,5267,86,114,106,106,107,111,133,221,783,2478],
-								label: "Assets",
-								borderColor: "<?php echo $siteSettings['theme']['Color 2']; ?>",
-								fill: false
-							  }, { 
-								data: [282,350,411,5002,635,809,947,1402,3700,5267,282,350,411,5002,635,809,947,1402,3700,5267,282,350,411,5002,635,809,947,1402,3700,5267],
-								label: "Customers",
-								borderColor: "<?php echo $siteSettings['theme']['Color 3']; ?>",
-								fill: false
-							  }, { 
-								data: [2842,3500,4011,502,6385,809,947,1402,3700,5267,282,350,411,5002,235,809,947,1402,3700,5267,282,350,411,5002,6035,809,947,1402,3700,5267],
-								label: "Technicians",
-								borderColor: "<?php echo $siteSettings['theme']['Color 4']; ?>",
-								fill: false
-							  }
-							  , { 
-								data: [2842,3500,4011,502,6385,809,947,1402,3700,5267,282,350,411,5002,235,809,947,1402,3700,5267,282,350,411,5002,6035,809,947,1402,3700,5267],
-								label: "Tickets",
-								borderColor: "<?php echo $siteSettings['theme']['Color 5']; ?>",
-								fill: false
-							  }
-							]
-						  },
-						  options: {	 
-							title: {
-							  display: true,
-							  text: 'Overview Of The Last 30 Days'
-							}
-						  }
-						});
-					</script>						
-				</div>
-				<form method="post" action="index.php">				
-				   <div class="card table-card" id="sortable printTable" style="margin-top:15px;padding:10px">
-						   <div class="card-header">
-								<h5>Recently Added Assets</h5>
-								<div class="card-header-right">
-									<ul class="list-unstyled card-option">
-										<li><i class="feather icon-maximize full-card"></i></li>
-										<li><i class="feather icon-minus minimize-card"></i></li>
-										<li><i class="feather icon-trash-2 close-card"></i></li>
-									</ul>
-								</div>
-							</div>
-							<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:14px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
-								<thead>
-									<tr style="border-bottom:2px solid #d3d3d3;">
-									  <th scope="col">#</th>
-									  <th scope="col">Hostname</th>
-									  <th scope="col"></th>
-									  <th scope="col">Logged In</th>
-									  <th scope="col"><?php echo $msp; ?></th>
-									  <th scope="col">Date Added</th>
-									</tr>
-							  	</thead>
-							  	<tbody>
-									<?php
-										$query = "SELECT * FROM computerdata
-												INNER JOIN companies ON companies.CompanyID = computerdata.CompanyID
-												WHERE computerdata.active='1'
-												ORDER BY computerdata.ID DESC Limit 10";
-										//Fetch Results
-										$count = 0;
-										$results = mysqli_query($db, $query);
-										while($result = mysqli_fetch_assoc($results)){
-											$getWMI = array("WMI_LogicalDisk", "WMI_OS", "WMI_ComputerSystem", "Ping","Agent");
-											$data = getComputerData($result['ID'], $getWMI);
-											$count++;
-											$freeSpace = $data['WMI_LogicalDisk'][0]['FreeSpace'];
-											$size = $data['WMI_LogicalDisk'][0]['Size'];
-											$used = $size - $freeSpace ;
-											$usedPct = round(($used/$size) * 100);
-											//Determine Warning Level
-											if($usedPct > $siteSettings['Alert Settings']['Disk']['Danger'] ){
-												$pbColor = "red";
-											}elseif($usedPct > $siteSettings['Alert Settings']['Disk']['Warning']){
-												$pbColor = "#ffa500";
-											}else{ $pbColor = $siteSettings['theme']['Color 4']; }
-									?>
-									<tr>
-									  <td>
-										<span><?php echo $result["ID"]; ?></span>
-									  </td>
-									  <td>
-										<a style="color:#000" href="javascript:void(0)" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
-											<?php if($result['online']=="0") {?>
-												<i class="fas fa-desktop" style="color:#666;font-size:16px;" title="Offline"></i> <!-- needs os icon support -->
-											<?php }else{?>
-												<i class="fas fa-desktop" style="color:green;font-size:16px;" title="Online"></i> <!-- needs os icon support -->
-											<?php };?>
-											&nbsp;<?php echo strtoupper($result['hostname']);?>
-										</a>
-									  </td>
-									  <td>
-										<?php $alertCount = count($data['Alerts']);?>
-										<?php if($alertCount > 0){?>
-											<span class="text-danger" data-toggle="modal" data-target="#computerAlerts" style="cursor:pointer;" onclick="computerAlertsModal('<?php echo strtoupper($result['hostname']);?>','<?php echo $data['Alerts_raw'];?>');">
-												<i title="Priority" class="text-danger fa fa-exclamation-triangle" aria-hidden="true"></i>
-												<?php echo $alertCount;?> <?php echo ($alertCount > 1 ? "Alerts" : "Alert");?>
-											</span>
-										<?php }else{?>
-											<span class="text-success" data-toggle="modal" data-target="#computerAlerts" style="cursor:pointer;" onclick="computerAlertsModal('<?php echo strtoupper($result['hostname']);?>');">
-												<i class="fas fa-thumbs-up"></i> No Issues
-											</span>
-										<?php };?>
-									  </td>
-									  <td onclick="$('input[type=search]').val('<?php $username = textOnNull($data['WMI_ComputerSystem'][0]['UserName'], "Unknown"); echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username)); ?>');$('input[type=search]').trigger('keyup'); $('html, body, table').animate({ scrollTop: 0 }, 'slow');">
-										<?php $username = textOnNull($data['WMI_ComputerSystem'][0]['UserName'], "Unknown"); echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username)); ?>
-									  </td>
-									  <td>
-										<a style="color:#000;" href="javascript:void(0)" onclick="$('input[type=search]').val('<?php echo textOnNull($result['name'], "N/A");?>');$('input[type=search]').trigger('keyup'); $('html, body, table').animate({ scrollTop: 0 }, 'slow');">
-											<?php echo textOnNull($result['name'], "Not Assigned");?>
-										</a>
-									  </td>
-									  <td><?php echo gmdate("m/d/y\ h:i",$result['date_added']); ?></td>
-									</tr>
-								<?php }?>
-							    </tbody>
-							</table>
-						</div>			
-						<!------------- Add Company Computers ------------------->
-						<div id="companyComputersModal2" class="modal fade" role="dialog">
-						  <div class="modal-dialog modal-sm">
-							<div class="modal-content">
-							  <div class="modal-header">
-								<h5 class="modal-title" id="pageAlert_title">Add Computers</h5>
-							  </div>
-							  <div class="modal-body">
-								<h6 id="pageAlert_title">Select The Company You Would Like To Add These Computers Too</h6>
-								<?php							
-									$query = "SELECT CompanyID, name FROM companies ORDER BY CompanyID DESC LIMIT 100";
-									$results = mysqli_query($db, $query);
-									$commandCount = mysqli_num_rows($results);
-									while($command = mysqli_fetch_assoc($results)){		
-								?>
-								  <div class="form-check">
-									<input type="radio" required name="companies" value="<?php echo $command['CompanyID']; ?>" class="form-check-input" id="CompanyCheck">
-									<label class="form-check-label" for="CompanyCheck"><?php echo $command['name']; ?></label>
-								  </div>
-								<?php } ?>
-							  </div>
-							  <div class="modal-footer">
-								<input type="hidden" name="type" value="CompanyComputers">
-								<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>
-								<button type="submit" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#fff;">Add</button>
-							  </div>
-							</div>
-						  </div>
-						</div>
-					</form>
-				</div>
-				<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="padding-left:20px;">
-					<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">			
-						<div class="card-block text-center">
-							<h6 class="m-b-15">Assets</h6>
-							<div class="risk-rate">
-								<span><b><?php echo $resultCount; ?></b></span>
-							</div>
-							<h6 class="m-b-10 m-t-10">&nbsp;</h6>
-							<a onclick="loadSection('Assets');" style="cursor:pointer;color:<?php echo $siteSettings['theme']['Color 2']; ?>" class="text-c-yellow b-b-warning">View All Assets</a>
-							<div style="margin-top:10px;" class="row justify-content-center m-t-10 b-t-default m-l-0 m-r-0">
-								<div class="col m-t-15 b-r-default">
-									<h6 class="text-muted">Online</h6>
-									<h6>13</h6>
-								</div>
-								<div class="col m-t-15">
-									<h6 class="text-muted">Offline</h6>
-									<h6>2</h6>
-								</div>
-							</div>
-						</div>
-						<button onclick="printData();" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" title="Export As CSV File" class="btn btn-warning btn-block p-t-15 p-b-15">Export Table</button>		
-					</div>			
-					<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
-						<div style="height:45px" class="panel-heading">
-							<h5 class="panel-title">Notes
-							<form style="display:inline" method="post">
-								<input type="hidden" name="delNote" value="true"/>
-								<button type="submit" class="btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
-							</form>
-							</h5>
-						</div>
-						<div class="card-block texst-center">
-							<?php
-							$count = 0;
-							$query = "SELECT ID, notes FROM users where ID='".$_SESSION['userid']."'";
-							$results = mysqli_query($db, $query);
-							$data = mysqli_fetch_assoc($results);
-							$notes = $data['notes'];
-							if($notes!=""){
-								$allnotes = explode("|",$notes);
-								foreach(array_reverse($allnotes) as $note) {
-									if($note==""){ continue; }
-									if($count>=5){ break; }
-									$note = explode("^",$note);
+	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
+		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>;">Dashboard
+			<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Dashboard');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+				<i class="fas fa-sync"></i>
+			</a>
+			<br>
+			<span style="font-size:14px;color:#999"><?php echo welcome().", ".$user['username']."!"; ?></span>
+		</h4>
+	</div>	
+	<div class="row" style="margin-bottom:10px;margin-top:20px;border-radius:3px;overflow:hidden;padding:0px;">
+		<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 " style="padding-left:20px;">
+			<div class="card user-card2" style="heigsht:100%;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+				<div style="height:45px" class="panel-heading">
+					<h5 class="panel-title">Recently Added Assets</h5>
+				</div>			
+				<div class="card-block text-center">
+					<ul class="list-group">	
+						<?php
+								//Get Total Count
+								$query = "SELECT ID FROM computerdata where active='1'";
+								$results = mysqli_query($db, $query);
+								$resultCount = mysqli_num_rows($results);							
+								$query = "SELECT * FROM computerdata
+											LEFT JOIN companies ON companies.CompanyID = computerdata.CompanyID
+											WHERE computerdata.active='1'
+											ORDER BY computerdata.hostname ASC";
+								//Fetch Results
+								$count = 0;
+								$results = mysqli_query($db, $query);
+								while($result = mysqli_fetch_assoc($results)){
+									if($search==""){
+										$getWMI = array("WMI_LogicalDisk", "WMI_ComputerSystem", "Ping");
+									}else{
+										$getWMI = array("*");
+									}
+									$data = getComputerData($result['ID'], $getWMI);
 									$count++;
-							?>
-								<a title="View Note" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
-									<li  style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
-										<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
-										<?php echo ucwords($note[0]);?>
-									</li>
-								</a>
-							<?php } } ?>
-							<?php if($count==0){ ?>
-								<li class="list-group-item">No Notes</li>
-							<?php } ?>
+									$icons = array("desktop"=>"desktop","server"=>"server","laptop"=>"laptop");
+									if(in_array(strtolower($result['computerType']), $icons)){
+										$icon = $icons[strtolower($result['computerType'])];
+									}else{
+										$icon = "desktop";
+									}
+								?>
+						<li onclick="loadSection('General', '<?php echo $result['ID']; ?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
+							<?php if($result['online']=="0") {?>
+								<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
+							<?php }else{?>
+								<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
+							<?php }?>
+							<?php echo $result['hostname']; ?>
+						</li>
+						<?php }  ?>
+					</ul>
+				</div>
+			</div>	
+							
+			<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+				<div style="height:45px" class="panel-heading">
+					<h5 class="panel-title">Notes
+					<form style="display:inline" method="post">
+						<input type="hidden" name="delNote" value="true"/>
+						<button type="submit" class="btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
+					</form>
+					</h5>
+				</div>
+				<div class="card-block texst-center">
+					<?php
+					$count = 0;
+					$query = "SELECT ID, notes FROM users where ID='".$_SESSION['userid']."'";
+					$results = mysqli_query($db, $query);
+					$data = mysqli_fetch_assoc($results);
+					$notes = $data['notes'];
+					if($notes!=""){
+						$allnotes = explode("|",$notes);
+						foreach(array_reverse($allnotes) as $note) {
+							if($note==""){ continue; }
+							if($count>=5){ break; }
+							$note = explode("^",$note);
+							$count++;
+					?>
+						<a title="View Note" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+							<li  style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
+								<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
+								<?php echo ucwords($note[0]);?>
+							</li>
+						</a>
+					<?php } } ?>
+					<?php if($count==0){ ?>
+						<li class="list-group-item">No Notes</li>
+					<?php } ?>
+				</div>
+				<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" data-toggle="modal" data-target="#noteModal" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
+			</div>
+		</div>
+				
+		<?php 
+		
+		//Get stats
+			//companies
+			$query = "SELECT CompanyID, name FROM companies where active='1'";
+			$companyArray= "";
+			$companys = mysqli_query($db, $query);
+			while($result = mysqli_fetch_assoc($companys)){
+				$companyArray.= "'".$result['name']."',";
+				$query = "SELECT ID FROM computerdata where active='1' and CompanyID='".$result['CompanyID']."'";
+				$count = mysqli_num_rows(mysqli_query($db, $query));
+				$companyTotal.=$count.",";
+			}
+			$companyArray= rtrim($companyArray,',');
+			$companyTotal=rtrim($companyTotal,',');
+
+			//users
+			$query = "SELECT ID FROM users where active='1' and accountType='Admin'";
+			$users1 = mysqli_num_rows(mysqli_query($db, $query));
+			$query = "SELECT ID FROM users where active='1' and accountType='Standard'";
+			$users2 = mysqli_num_rows(mysqli_query($db, $query));
+
+			//assets
+			$query = "SELECT ID FROM computerdata where active='1' and online='1'";
+			$assets1 = mysqli_num_rows(mysqli_query($db, $query));
+			$query = "SELECT ID FROM computerdata where active='1' and online='0'";
+			$assets2 = mysqli_num_rows(mysqli_query($db, $query));
+		
+		?>
+		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mh-40" style="heidght:260px;">
+			<div class="row" style="heighst:200px">
+				<div class="col-md-4 py-1">
+					<div class="card" style="backgrsound:#35384e">
+						<div style="cursor:pointer;" onclick="loadSection('AllUsers');" class="card-body">
+							<canvas data-centerval="" id="chDonut2"></canvas>
+							<h6 style="text-align:center">Users</h6>
 						</div>
-						<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" data-toggle="modal" data-target="#noteModal" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
+					</div>
+				</div>
+				<div class="col-md-4 py-1">
+					<div class="card" style="bacskground:#35384e">
+						<div style="cursor:pointer;" onclick="loadSection('AllCompanies');" class="card-body">
+							<canvas data-centerval="" id="chDonut1"></canvas>
+							<h6 style="text-align:center"><?php echo $msp."s"; ?></h6>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 py-1">
+					<div class="card" style="bacskground:#35384e">
+						<div style="cursor:pointer;" onclick="loadSection('Assets');"  class="card-body">
+							<canvas data-centerval="" id="chDonut3"></canvas>
+							<h6 style="text-align:center">Asset Status</h6>
+						</div>
 					</div>
 				</div>
 			</div>
+			<div style="padding:15px" class="card">
+				<div class="tab-block">
+					<ul class="nav nav-pills">
+						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center;" class="nav-item">
+							<a data-toggle="pill" class="nav-link active" data-toggle="tab" href="#home">Summary</a>
+						</li>
+						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
+							<a data-toggle="pill" class="nav-link"  data-toggle="tab" href="#menu1">Alerts</a>
+						</li>
+						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
+							<a data-toggle="pill" class="nav-link"  data-toggle="tab" href="#menu2">Tasks</a>
+						</li>
+					</ul>
+				</div>
+				<div class="tab-content" style="padding-top:10px;overflow:hidden" >
+					<div id="home" class="tab-pane fade-in active">
+						<h5 style="margin-left:15px;display:inline;">Server Details
+					
+							<h6 style="display:inline;margin-left:25px;margin-top:3px;position:absolute"><span style="color:#000" class="badge badge-<?php echo $serverStatus_color; ?>"><?php echo $serverStatus; ?></span></h6>
+							<button title="Stop Server" style="float:right;margin-top:-10px" class="btn btn-sm btn-danger"><i class="fas fa-power-off"></i></button>
+							<!--<button title="Restart Server" style="float:right;margin-right:10px" class="btn btn-sm btn-warning"><i class="fas fa-sync"></i></button>-->
+							
+						</h5>
+						<hr>
+						<div class="row">
+							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h5  style="padding:7px;" class="panel-title">
+											Hardware Details
+										</h5>
+									</div>
+									<div class="panel-body" style="height:285px;">	
+										<div class="roaw">
+											<ul class="list-group" style="margin-left:20px">
+												<li class="list-group-item" style="padding:6px"><b>Processor: </b><?php echo textOnNull(str_replace("(R)","",str_replace("(TM)","",$json['WMI_Processor'][0]['Name'])), "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['WMI_ComputerSystem'][0]['Caption']), "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['SystemType'], "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['WMI_BIOS'][0]['Version'], "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['ExternalIP']["ip"], "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['InternalIP'], "N/A");?></span></li>
+												<?php if((int)$json['WMI_Battery'][0]['BatteryStatus']>0){ ?>
+												<li class="list-group-item" style="padding:6px"><b>Battery Status: </b><?php 								
+													$statusArray = [
+													"1" => ["Text" => "Discharging", "Color" => "red"],
+													"2" => ["Text" => "Unknown", "Color" => "red"],
+													"3" => ["Text" => "Fully Charged", "Color" => "green"],
+													"4" => ["Text" => "Low", "Color" => "red"],
+													"5" => ["Text" => "Critical", "Color" => "red"],
+													"6" => ["Text" => "Charging", "Color" => "green"],
+													"7" => ["Text" => "Charging And High", "Color" => "green"],
+													"8" => ["Text" => "Charging And Low", "Color" => "green"],
+													"9" => ["Text" => "Charging And Critical", "Color" => "yellow"],
+													"10" =>["Text" => "Undefined", "Color" => "red"],
+													"11" =>["Text" => "Partially Charged", "Color"=>"yellow"]];
+													$statusInt = $json['WMI_Battery'][0]['BatteryStatus'];						
+												?>
+												<?php echo textOnNull($json['WMI_Battery'][0]['EstimatedChargeRemaining'], "Unknown");?>%
+												(<span style="color:<?php echo $statusArray[$statusInt]['Color']; ?>"><?php echo $statusArray[$statusInt]['Text']; ?></span>)	
+												</li>
+												<?php } ?>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h5 style="padding:7px" class="panel-title">
+											Server Details
+										</h5>
+									</div>
+									<div class="panel-body" style="height:285px;">
+										<div class="rsow">
+											<ul class="list-group" style="margin-left:20px">
+												<li class="list-group-item" style="padding:6px"><b>Current User: </b><?php echo textOnNull(basename($json['WMI_ComputerSystem'][0]['UserName']), "Unknown");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Domain: </b><?php echo textOnNull($json['WMI_ComputerSystem'][0]['Domain'], "N/A");?></li>
+												<?php
+													$lastBoot = explode(".", $json['WMI_ComputerSystem'][0]['LastBootUpTime'])[0];
+													$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
+												?>
+												<li class="list-group-item" style="padding:6px"><b>Uptime: </b><?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
+												<?php if(count($json['WMI_Firewall']) > 0) {
+
+													$public = $json['WMI_Firewall'][0]['publicProfile'];
+													if($public=="OFF"){ $public="Disabled"; }else{ $public="Enabled"; }
+													$color1 = (($public == "Enabled") ? "text-success" : "text-danger");
+
+													$private = $json['WMI_Firewall'][0]['privateProfile'];
+													if($private=="OFF"){ $private="Disabled"; }else{ $private="Enabled"; }
+													$color2 = (($private == "Enabled") ? "text-success" : "text-danger");
+
+													$domain = $json['WMI_Firewall'][0]['domainProfile'];
+													if($domain=="OFF"){ $domain="Disabled"; }else{ $domain="Enabled"; }
+													$color3 = (($domain == "Enabled") ? "text-success" : "text-danger");
+												?>
+													<li class="list-group-item" style="padding:6px"><b>Firewall Status: </b><br>
+														<center>
+															<span style="margin-left:40px">Public: <span style="padding-right:20px" class="<?php echo $color1; ?>"><?php echo $public; ?></span></span>
+															Private: <span style="padding-right:20px" class="<?php echo $color2; ?>"><?php echo $private; ?></span>
+															Domain: <span class="<?php echo $color3; ?>"><?php echo $domain; ?></span>
+														</center>
+													
+													</li>
+												<?php } 
+												if(count($json['WindowsActivation']) > 0) {
+													$status = $json['WindowsActivation']['Value'];
+													$color = ($status == "Activated" ? "text-success" : "text-danger");
+												?>
+													<li class="list-group-item" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
+												<?php } 
+												if(count($json['Antivirus']) > 0) {
+													$status = $json['Antivirus']['Value'];
+													$color = ($status == "No Antivirus" ? "text-danger" : "text-success");
+												?>
+													<li class="list-group-item" style="padding:6px"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
+												<?php } ?>
+												<li class="list-group-item" title="Path: <?php echo $json['Agent'][0]['Path']; ?>" style="padding:6px"><b>Server Version: </b><?php echo $json['Agent'][0]['Version']; ?></li>
+											</ul>
+										</div>
+								</div>
+								</div>
+							</div>
+							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h5 style="padding:7px" class="panel-title">
+											Server Error Log
+										</h5>
+									</div>
+									<div class="panel-body" style="height:285px;">
+										<div class="row">
+											<table id="datsaTable" style="width:125%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
+												<thead>
+													<tr style="border-bottom:2px solid #d3d3d3;">
+														<th scope="col">Details</th>
+														<th scope="col">Time</th>
+													</tr>
+												</thead>
+												<tbody>			
+													<tr>
+														<td colspan=2><center><h6>No Logs Found</h6></center></td>
+														<td>&nbsp;</td>
+													</tr>					
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="menu1" class="tab-pane fade">
+						<a href="" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</a><hr>
+						<table class="table table-hover table-borderless" id="datatable">
+							<tr>
+								<th>Status</th>
+								<th>Name</th>
+							</tr>
+							<tr>
+								<td> No Alerts</td>
+								<td></td>
+							</tr>
+						</table>
+					</div>
+					<div id="menu2" class="tab-pane fade">
+						<a href="" class="btn btn-sm btn-warning"><i class="fas fa-plus"></i> &nbsp;Add Task</a><hr>
+						<table class="table table-hover table-borderless" id="datatable">
+							<tr>
+								<th>Status</th>
+								<th>Name</th>
+							</tr>
+							<tr>
+								<td>No Tasks</td>
+								<td></td>
+							</tr>
+						</table>
+					</div>
+				</div>					
+			</div>		
+			</div>
 		</div>
 	</div>
-</div>
+
 <script>
 	function printData(filename) {
 		var csv = [];
@@ -355,6 +456,99 @@ $resultCount = mysqli_num_rows($results);
 			"order": [],
 			colReorder: true
 		} );
+	});
+</script>
+<script>
+	var data = {
+	  labels: [
+	    <?php echo $companyArray; ?>
+	  ],
+	  datasets: [
+	    {
+	      data: [<?php echo $companyTotal; ?>],
+	      backgroundColor: [
+	        "<?php echo $siteSettings['theme']['Color 2']; ?>"
+	      ],
+	      hoverBackgroundColor: [
+	        "#696969"
+	      ]
+	    }]
+	};
+	var data2 = {
+	  labels: [
+		"Administators","Technicians"
+	  ],
+	  datasets: [
+	    {
+	      data: [<?php echo $users1.",".$users2 ?>],
+	      backgroundColor: [
+	        "<?php echo $siteSettings['theme']['Color 3']; ?>"
+	      ],
+	      hoverBackgroundColor: [
+	        "#696969"
+	      ]
+	    }]
+	};
+	var data3 = {
+	  labels: [
+	    "Online","Offline"
+	  ],
+	  datasets: [
+	    {
+	      data: [<?php echo $assets1.",".$assets2; ?>],
+	      backgroundColor: [
+	        "<?php echo $siteSettings['theme']['Color 5']; ?>"
+	      ],
+	      hoverBackgroundColor: [
+	        "#696969"
+	      ]
+	    }]
+	};
+	var promisedDeliveryChart = new Chart(document.getElementById('chDonut1'), {
+	  type: 'pie',
+	  data: data,
+	  options: {
+	  	responsive: true,
+	    legend: {
+	      display: false
+	    }
+	  }
+	});
+	var promisedDeliveryChart = new Chart(document.getElementById('chDonut2'), {
+	  type: 'pie',
+	  data: data2,
+	  options: {
+	  	responsive: true,
+	    legend: {
+	      display: false
+	    }
+	  }
+	});
+	var promisedDeliveryChart = new Chart(document.getElementById('chDonut3'), {
+	  type: 'pie',
+	  data: data3,
+	  options: {
+	  	responsive: true,
+	    legend: {
+	      display: false
+	    }
+	  }
+	});	
+	Chart.pluginService.register({
+	  beforeDraw: function(chart) {
+	    var width = chart.chart.width,
+	        height = chart.chart.height,
+	        ctx = chart.chart.ctx;	
+	    ctx.restore();
+	    var fontSize = (height / 114).toFixed(2);
+	    ctx.font = fontSize + "em sans-serif";
+	    ctx.textBaseline = "middle";
+			var text = $('#'+chart.canvas.id).attr('data-centerval');        
+			textX = Math.round((width - ctx.measureText(text).width) / 2),
+	        textY = height / 2;
+	    ctx.fillText(text, textX, textY);
+	    ctx.save();
+	  }
 	});
 </script>
 <script src="js/tagsinput.js"></script>

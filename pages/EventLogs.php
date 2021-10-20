@@ -17,8 +17,8 @@ $getEvent=clean($_GET['other']);
 if($getEvent==""){
 	$getEvent="Application";
 }
-MQTTpublish($computerID."/Commands/getEventLogs",$getEvent,getSalt(20),false);
-sleep(3);
+//MQTTpublish($computerID."/Commands/getEventLogs",'{"userID":'.$_SESSION['userid'].',"data":"'.$getEvent'"}',getSalt(20),false);
+//sleep(3);
 $json = getComputerData($computerID, array("EventLog_".$getEvent), $showDate);
 	
 $query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
@@ -74,7 +74,8 @@ $error = $json["EventLog_".$getEvent."_error"];
 				<tbody>
 					<?php
 						foreach($events as $key=>$event){
-							
+							$type="";
+							$eventColor="";
 							$count++;
 							if (strpos($event['Type'], 'WARNING') !== false) {
 								$eventColor="background:#fff3cd;color:#856404";
@@ -88,6 +89,10 @@ $error = $json["EventLog_".$getEvent."_error"];
 								$eventColor="background:#d4edda;color:#155724";
 								$type="Success";
 							}
+							if (strpos($event['Type'], 'ERROR') !== false or strpos($event['Type'], 'FAILURE') !== false) {
+								$eventColor="background:#f8d7da;color:#721c24";
+								$type="Error";
+							}
 							$message=htmlspecialchars($event['Message']);
 							$message=clean(str_replace(">","",$message));
 							if($message==""){continue;}
@@ -97,8 +102,6 @@ $error = $json["EventLog_".$getEvent."_error"];
 						<td scope="row"><?php echo $event['Source'];?></td>
 						<td style="color:#333" title="<?php echo $message; ?>">
 							<?php 
-								
-								
 								if (strlen($message) >= 150) {
 									echo substr($message, 0, 150). " ... " . substr($message, -5);
 								}else {

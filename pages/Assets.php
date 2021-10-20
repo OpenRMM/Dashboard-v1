@@ -15,6 +15,12 @@
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
+
+	//assets
+	$query = "SELECT ID FROM computerdata where active='1' and online='1'";
+	$assets1 = mysqli_num_rows(mysqli_query($db, $query));
+	$query = "SELECT ID FROM computerdata where active='1' and online='0'";
+	$assets2 = mysqli_num_rows(mysqli_query($db, $query));
 ?>
 	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Asset List 
@@ -24,18 +30,9 @@
 		</h4>
 	</div>	
 	<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
-		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding:5px;padding-bottom:20px;padding-top:0px;border-radius:6px;">			 
+		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;">			 
 			   <form method="post" action="index.php">
-				   <div class="card table-card" id="printTable" style="margin-top:-40px;padding:10px">  
-				   		<div class="card-header">
-							<div class="card-header-right">
-								<ul class="list-unstyled card-option">
-									<li><i class="feather icon-maximize full-card"></i></li>
-									<li><i class="feather icon-minus minimize-card"></i></li>
-									<li><i class="feather icon-trash-2 close-card"></i></li>
-								</ul>
-							</div>
-						</div>
+				   <div class="card table-card" id="printTable" style="marsgin-top:-20px;padding:10px;border-radius:6px;">  
 						<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">				
 							<thead>
 								<tr style="border-bottom:2px solid #d3d3d3;">
@@ -184,16 +181,14 @@
 						<div class="risk-rate">
 							<span><b><?php echo $resultCount; ?></b></span>
 						</div>
-						<h6 class="m-b-10 m-t-10">&nbsp;</h6>
-						<a onclick="loadSection('Assets');" style="color:<?php echo $siteSettings['theme']['Color 2']; ?>;cursor:pointer" class="text-c-yellow b-b-warning">View All Assets</a>
 						<div class="row justify-content-center m-t-10 b-t-default m-l-0 m-r-0">
 							<div class="col m-t-15 b-r-default">
 								<h6 class="text-muted">Online</h6>
-								<h6>13</h6>
+								<h6><?php echo $assets1; ?></h6>
 							</div>
 							<div class="col m-t-15">
 								<h6 class="text-muted">Offline</h6>
-								<h6>2</h6>
+								<h6><?php echo $assets2; ?></h6>
 							</div>
 						</div>
 					</div>

@@ -10,9 +10,10 @@
 		$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 		$_SESSION['updateIgnore'] = $_POST['ignore'];
 		if($_SESSION['updateIgnore']=="true"){
+			$_SESSION['count']="0";
 			array_push($_SESSION['excludedPages'],$_POST['page']);	
+			header("location: index.php");
 		}
-
 		include("includes/post.php");	
 	}
 
@@ -629,6 +630,8 @@
 		function loadSection(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry){
 		document.cookie = "section=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		document.cookie = "ID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+		var loadSection="";
+		
 		setCookie("section", section, 365);
 		$('.secbtn').removeClass('secActive');
 		setCookie("ID", ID, 365);
@@ -643,11 +646,28 @@
 				location.reload(true);
 			}, 5000);
 		}else{
-			$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
+			if(section!="Logout" && section!="Dashboard"  && section!="Assets"  && section!="Dashboard"  && section!="Profile"  && section!="AllUsers"  && section!="AllCompanies" && section!="Versions" && section!="Init"){
+				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>We are getting the latest information for this asset</h5><br><h6>Instead of waiting, would you like to display the outdated assset data?</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;' type='submit'>View Older Asset Information <i class='fas fa-arrow-right'></i></button></form> <center></div></div>");
+			}else{
+				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
+	
+			}
+		
 			$(".recents").load("pages/recent.php?ID="+ID);
-			$(".loadSection").load("includes/loader.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other);
+			$("html, body").animate({ scrollTop: 0 }, "slow"); 
+			//$(".loadSection").load("includes/loader.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other);
+			loadSection = $.ajax({
+				url: "includes/loader.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other,
+				success: function(data) {
+				$(".loadSection").hide().html(data).fadeIn("fast");
+				request.transport.abort();
+				}
+			
+			});
+			
 			var item = '#secbtn'+section;
 			$(item).addClass('secActive');
+			
 		}
 		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 			$('#sidebar').removeClass('active');
@@ -668,5 +688,11 @@
 			}
 		 } ?>
 		 	
+	</script>
+	<div id="notifications"> </div>
+	<script>
+	setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
+		$("#notifications").load("includes/notifications.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other);	
+	}, 3000);
 	</script>
 </html>

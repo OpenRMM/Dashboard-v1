@@ -95,7 +95,7 @@ if($userID!=$_SESSION['userid']){
 							<?php } ?>
 						</ul>
 					</form>
-					<div class="tab-content p30" style="margin-top:10px;">
+					<div class="tab-content p30"  style="border-radius:6px;margin-top:10px;">
 						<div id="tab1" class="tab-pane active">
 							<div style="padding:0px;">
 								<table id="dataTable" style="width:100%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover  table-borderless">

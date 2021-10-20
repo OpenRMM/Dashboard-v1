@@ -40,6 +40,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
     {
        include("../pages/".$_SESSION['page'].".php");  
        $_SESSION['excludedPages'] = explode(",",$excludedPages);
+       $_SESSION['count']=0;
     }else{
         $query = "SELECT ID, hostname, online, last_update FROM computerdata WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
         $results = mysqli_query($db, $query);
@@ -54,7 +55,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
         $lastUpdate=$results['last_update'];
         $page = $_SESSION['page'];
         $retain=false;
-        $message="true";
+        $message='{"userID":'.$_SESSION['userid'].'}';
         switch ($page) {
             case "FileManager":
                 $page="Filesystem";
@@ -69,27 +70,39 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                 $message = $drive.":/".$getFolder;
                 $message = str_replace("//","/",$message);
                 if($message==""){ $message=$drive.":/"; }
-                break;
+                $message = '{"userID":'.$_SESSION['userid'].',"data":"'.$message.'"}';
+            break;
             case "Disks":
-                $page="LogicalDisk";
-                $retain = false;
-                $message = "true";
-              break;
+                 $page="LogicalDisk";
+                 $retain = false;
+                 $message = '{"userID":'.$_SESSION['userid'].'}';
+            break;
             case "AttachedDevices":
-                $page="PnPEntitys";
-                $retain = false;
-                $message = "true";
-              break;
+                 $page="PnPEntitys";
+                 $retain = false;
+                 $message = '{"userID":'.$_SESSION['userid'].'}';
+            break;
             case "Memory":
-                $page="PhysicalMemory";
-                $retain = false;
-                $message = "true";
-              break;
+                 $page="PhysicalMemory";
+                 $retain = false;
+                 $message = '{"userID":'.$_SESSION['userid'].'}';
+            break;
+            case "Network":
+                 $page="NetworkAdapters";
+                 $retain = false;
+                 $message = '{"userID":'.$_SESSION['userid'].'}';
+            break;
             case "Programs":
-                $page="Products";
+                 $page="Products";
+                 $retain = false;
+                 $message =  '{"userID":'.$_SESSION['userid'].'}';
+            break;   
+            case "EventLogs":
+                $page="EventLogs";
                 $retain = false;
-                $message = "true";
-            break;       
+                $gets = clean(base64_decode($_GET['other']));
+                $message =  '{"userID":'.$_SESSION['userid'].',"Data:":"'.$gets.'"}';
+           break;     
           }
         MQTTpublish($_SESSION['computerID']."/Commands/get".$page,$message,getSalt(20),$retain);
         sleep(1);
@@ -97,47 +110,42 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
         $lastUpdate_new=$results['last_update'];
         if($lastUpdate!=$lastUpdate_new or $computer['online']=="0"){
             include("../pages/".$_SESSION['page'].".php");  
+            $_SESSION['count']=0;
         ?>
             <script> 
                 $("html, body").animate({ scrollTop: 0 }, "slow"); 
             </script> 
         <?php
-        }else{
-            for ($x = 0; $x <= 15; $x++) {
-                $query2 = "SELECT last_update FROM computerdata WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
-                $results2 = mysqli_fetch_assoc(mysqli_query($db, $query2));
-                $lastUpdate2_new=$results2['last_update'];
-                if($lastUpdate!=$lastUpdate2_new){ 
-                    include("../pages/".$_SESSION['page'].".php");
-                    break;
-                }
-                if($x==15){  //use 15 or 2 for testing
-                ?>
-                    <div class="row col-md-6 mx-auto">
-                        <div class="card card-md" style="margin-top:100px;padding:20px"> 
-                            <script> 
-                                $("html, body").animate({ scrollTop: 0 }, "slow"); 
-                            </script> 
-                            <center>
-                                <h5>Asset: <?php echo $_SESSION['ComputerHostname']; ?> is online but did not respond to a request for <?php echo $_SESSION['page']; ?>.</h5>
-                                <br>
-                                <h6>Would you like to display the outdated assset data?</h6>
-                                <br>
-                                <form method="post">
-                                    <input value="true" type="hidden" name="ignore">
-                                    <input value="<?php echo $_SESSION['page']; ?>" type="hidden" name="page">
-                                    <button onclick="location.reload();" class='btn btn-sm btn-primary' type="button" >Retry <i class="fas fa-sync"></i></button>&nbsp;
-                                    <button class='btn btn-sm btn-warning' style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;" type="submit" >View Older Asset Information <i class="fas fa-arrow-right"></i></button>  
-                                </form>
-                            <center>
-                        </div> 
-                    </div>
-                <?php
-                break;
-                }
-                sleep(2);
-                header("Refresh:0");
-            }
+        }else{     
+            if($_SESSION['count']>15){  //use 15 or 2 for testing
+            ?>
+                <div class="row col-md-6 mx-auto">
+                    <div class="card card-md" style="margin-top:100px;padding:20px"> 
+                        <script> 
+                            $("html, body").animate({ scrollTop: 0 }, "slow"); 
+                        </script> 
+                        <center>
+                            <h5>Asset: <?php echo $_SESSION['ComputerHostname']; ?> is online but did not respond to a request for <?php echo $_SESSION['page']; ?>.</h5>
+                            <br>
+                            <h6>Would you like to display the outdated assset data?</h6>
+                            <br>
+                            <form method="post">
+                                <input value="true" type="hidden" name="ignore">
+                                <input value="<?php echo $_SESSION['page']; ?>" type="hidden" name="page">
+                                <button onclick="location.reload();" class='btn btn-sm btn-primary' type="button" >Retry <i class="fas fa-sync"></i></button>&nbsp;
+                                <button class='btn btn-sm btn-warning' style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;" type="submit" >View Older Asset Information <i class="fas fa-arrow-right"></i></button>  
+                            </form>
+                        <center>
+                    </div> 
+                </div>
+            <?php
+                $_SESSION['count']="";
+                exit;
+            }else{
+                if($_SESSION['count']==""){  $_SESSION['count']=0; }
+                $_SESSION['count']++;
+                Header('Location: https://'.$_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
+             }
         } 
     }
 ?>

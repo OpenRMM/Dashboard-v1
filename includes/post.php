@@ -206,7 +206,7 @@
 			$title=clean($_POST['alertTitle']);
 			$type=clean($_POST['alertType']);
 			$script = '{"title": "'.$title.'", "message": "'.$message.'", "type":"'.$type.'"}';
-			MQTTpublish($ID."/Commands/setAlert",$script,$ID);	
+			MQTTpublish($ID."/Commands/setAlert",$script,$ID,false);	
 			$activity="Technician Sent Asset: ".$ID." A One-way Message";		
 			userActivity($activity,$_SESSION['userid']);
 			header("location: index.php");
@@ -302,7 +302,7 @@
 				if($exists == 0){
 					//Generate expire time
 					$expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
-					MQTTpublish($computer['ID']."/Commands/CMD",$commands,$computer['ID'],false);
+					MQTTpublish($computer['ID']."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"data":"'.$commands.'"}',$computer['ID'],false);
 					$query = "INSERT INTO commands (ComputerID, userid, command, expire_after, expire_time, status)
 							  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 					$results = mysqli_query($db, $query);
@@ -316,7 +316,7 @@
 		//Get speedtest
 		if($_POST['type'] == "refreshSpeedtest"){
 			$ID = (int)$_POST['CompanyID'];
-			MQTTpublish($ID."/Commands/getOklaSpeedtest","true",getSalt(20),false);
+			MQTTpublish($ID."/Commands/getOklaSpeedtest",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),false);
 			header("location: index.php");
 		}
 		//Save agent config
@@ -353,8 +353,9 @@
 			$agent_Memory = clean($_POST['agent_Memory']);
 			$agent_Startup = clean($_POST['agent_Startup']);
 			$agent_Logs = clean($_POST['agent_Logs']);
+			$agent_SharedDrives = clean($_POST['agent_SharedDrives']);
 
-			$settings='{"interval": {"Heartbeat": '.$agent_Heartbeat.', "getGeneral": '.$agent_General.', "getBIOS": '.$agent_BIOS.', "getStartup": '.$agent_Startup.', "getOptionalFeatures": '.$agent_Features.', "getProcesses": '.$agent_Processes.', "getServices": '.$agent_Services.', "getUsers": '.$agent_Users.', "getVideoConfiguration": '.$agent_Video.', "getLogicalDisk": '.$agent_Disk.', "getMappedLogicalDisk": '.$agent_Mapped.', "getPhysicalMemory": '.$agent_Memory.', "getPointingDevice": '.$agent_Pointing.', "getKeyboard": '.$agent_Keyboard.', "getBaseBoard": '.$agent_Board.', "getDesktopMonitor": '.$agent_Monitor.', "getPrinters": '.$agent_Printers.', "getNetworkLoginProfile": '.$agent_NetworkLogin.', "getNetwork": '.$agent_Network.', "getPnPEntitys": '.$agent_PnP.', "getSoundDevices": '.$agent_Sound.', "getSCSIController": '.$agent_SCSI.', "getProducts": '.$agent_Products.', "getProcessor": '.$agent_Processor.', "getFirewall": '.$agent_Firewall.', "getAgent": '.$agent_Agent.', "getBattery": '.$agent_Battery.', "getFilesystem": '.$agent_Filesystem.', "getEventLogs": '.$agent_Logs.'}}';
+			$settings='{"interval": {"SharedDrives": '.$agent_SharedDrives.',"Heartbeat": '.$agent_Heartbeat.', "getGeneral": '.$agent_General.', "getBIOS": '.$agent_BIOS.', "getStartup": '.$agent_Startup.', "getOptionalFeatures": '.$agent_Features.', "getProcesses": '.$agent_Processes.', "getServices": '.$agent_Services.', "getUsers": '.$agent_Users.', "getVideoConfiguration": '.$agent_Video.', "getLogicalDisk": '.$agent_Disk.', "getMappedLogicalDisk": '.$agent_Mapped.', "getPhysicalMemory": '.$agent_Memory.', "getPointingDevice": '.$agent_Pointing.', "getKeyboard": '.$agent_Keyboard.', "getBaseBoard": '.$agent_Board.', "getDesktopMonitor": '.$agent_Monitor.', "getPrinters": '.$agent_Printers.', "getNetworkLoginProfile": '.$agent_NetworkLogin.', "getNetwork": '.$agent_Network.', "getPnPEntitys": '.$agent_PnP.', "getSoundDevices": '.$agent_Sound.', "getSCSIController": '.$agent_SCSI.', "getProducts": '.$agent_Products.', "getProcessor": '.$agent_Processor.', "getFirewall": '.$agent_Firewall.', "getAgent": '.$agent_Agent.', "getBattery": '.$agent_Battery.', "getFilesystem": '.$agent_Filesystem.', "getEventLogs": '.$agent_Logs.'}}';
 			$query = "UPDATE computerdata SET agent_settings='".$settings."' WHERE ID=".$ID.";";
 			//$results = mysqli_query($db, $query);
 			//echo mysqli_error($db)."sadsada"; exit;
@@ -448,7 +449,6 @@
 					$results = mysqli_query($db, $query);
 					$_SESSION['userid']=$data['ID'];
 					$_SESSION['username']=$data['username'];
-					
 					$activity="Technician Logged In";
 					userActivity($activity,$data['ID']);
 					

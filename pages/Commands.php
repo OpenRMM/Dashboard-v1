@@ -54,7 +54,7 @@ $error = $json['WMI_Product_error'];
 		<div class="row">
 			<div style="" class="col-md-5">
 			<?php if($online=="1"){ ?>
-				<div class="row" style="margin-top:50px">		
+				<div class="row" style="margin-top:50px;margin-left:50px">		
 					
 					<div class="col-md-3 secbtn" onclick='$("#terminaltxt").focus();' data-dismiss="modal" style="cursor:pointer;color:#fff;background:#333;height:80px;border-radius:5px;margin-right:10px" data-toggle="modal" data-target="#terminalModal">	
 						<center>

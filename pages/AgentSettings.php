@@ -207,6 +207,11 @@ $agent_settings = json_decode($data['agent_settings'], true);
 									<input class="range-slider__range" type="range" name="agent_Startup" value="<?php echo $agent_settings['interval']['getStartup']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
+								<label class="form-label" for="customRange2">Shared Drives</label>
+								<div class="range">
+									<input class="range-slider__range" type="range" name="agent_SharedDrives" value="<?php echo $agent_settings['interval']['getSharedDrives']; ?>" min="0" max="360">
+									<span class="range-slider__value">0</span>
+								</div>
 								
 							</div>
 						</div>	
