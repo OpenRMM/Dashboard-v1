@@ -42,7 +42,7 @@
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
 		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
-			Optional Features (<?php echo count($json['WMI_OptionalFeatures']); ?>)
+			Optional Features (<?php echo count($json['WMI_OptionalFeatures']['Response']); ?>)
 		</h4>
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;"> 
@@ -82,7 +82,7 @@
 				"3"=>array("state"=>"Absent", "color"=>"gray"),
 				"4"=>array("state"=>"Unknown", "color"=>"gray")
 			);
-			$OptionalFeatures = $json['WMI_OptionalFeatures'];
+			$OptionalFeatures = $json['WMI_OptionalFeatures']['Response'];
 			$error = $json['WMI_OptionalFeatures_error'];
 			//Sort The array by Name ASC
 			usort($OptionalFeatures, function($a, $b) {

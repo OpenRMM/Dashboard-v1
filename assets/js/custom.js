@@ -3,10 +3,10 @@
 
     //Load historical section, Network, Programs...
     function loadSectionHistory(date="latest"){
-        sectionHistoryDate = date;
-        $(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow text-primary'></div><div class='spinner-grow text-success'></div><div class='spinner-grow text-info'></div><div class='spinner-grow text-warning'></div><div class='spinner-grow text-danger'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
-        $(".loadSection").load("includes/loader.php?page="+currentSection+"&ID="+computerID+"&Date="+date);
-        $("#historicalDateSelection_modal").modal("hide");
+       // sectionHistoryDate = date;
+       // $(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow text-primary'></div><div class='spinner-grow text-success'></div><div class='spinner-grow text-info'></div><div class='spinner-grow text-warning'></div><div class='spinner-grow text-danger'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
+      //  $(".loadSection").load("includes/loader.php?page="+currentSection+"&ID="+computerID+"&Date="+date);
+      //  $("#historicalDateSelection_modal").modal("hide");
     }
     //Sidebar
     $(document).ready(function () {
@@ -78,16 +78,16 @@ function pageAlert(title, message, type="default"){
     }
 }
 //Load Historical Data
-function loadHistoricalData(hostname, type){
-    $("#historicalData").html("<center><h3 style='margin-top:40px;'><i class='fas fa-spinner fa-spin'></i></h3></center>");
-    $("#historicalData_modal").modal("show");
-    $.post("pages/LoadHistorical.php", {
-      hostname: hostname,
-      type: type
-    },
-    function(data, status){
-      $("#historicalData").html(data);
-    });
+function loadHistoricalData(ID, type){
+   // $("#historicalData").html("<center><h3 style='margin-top:40px;'><i class='fas fa-spinner fa-spin'></i></h3></center>");
+   // $("#historicalData_modal").modal("show");
+   // $.post("pages/LoadHistorical.php", {
+    //  ID: ID,
+    //  type: type
+   // },
+  //  function(data, status){
+    //  $("#historicalData").html(data);
+    //});
 }
 function sendCommand(command, prompt, expire_after=5){
     if(confirm("Are you sure you would like to "+prompt+"?")){

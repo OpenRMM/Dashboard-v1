@@ -13,7 +13,9 @@
 	//Set Timezone
 	date_default_timezone_set("America/Chicago");
 	$serverPages = array("cron.php", "LoadHistorical.php");
-	$_SESSION['excludedPages'] = explode(",", $excludedPages);
+	if($_SESSION['excludedPages']==""){
+		$_SESSION['excludedPages'] = explode(",", $excludedPages);
+	}
 	$allPages = explode(",", $allPages);
 	$adminPages = explode(",", $allAdminPages);
 	if(!in_array(basename($_SERVER['SCRIPT_NAME']), $serverPages)){
@@ -104,22 +106,10 @@
 	function getComputerData($ID, $fields = array("*"), $date = "latest"){
 		global $db, $siteSettings;
 		$retResult = array();
-		if(in_array("*", $fields)){
 			$query = "SELECT WMI_Name, WMI_Data, last_update FROM wmidata WHERE ComputerID='".$ID."'";
-		}else{
-			$query = "SELECT WMI_Name, WMI_Data, last_update FROM wmidata WHERE (";
-			//Only get wanted fields
-			foreach($fields as $field){
-				$query .= " WMI_Name = '".$field."' OR"; 
+			if($_SESSION['date']!="latest" and $_SESSION['date']!=""){
+				$query .= " and last_update LIKE '%".$_SESSION['date']."%'";
 			}
-			$query = trim($query, "OR");
-			$query .= ") AND ComputerID='".$ID."'";
-		}
-		
-		//DateTime 
-		if($date != "latest"){
-			$query .= " AND last_update LIKE '".clean($date)."%'";
-		}
 		$query .= " ORDER BY ID DESC";
 		$results = mysqli_query($db, $query);
 		while($row = mysqli_fetch_assoc($results)){

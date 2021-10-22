@@ -67,7 +67,7 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>Displays</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$monitors = $json['WMI_DesktopMonitor'];
+			$monitors = $json['WMI_DesktopMonitor']['Response'];
 			$error = $json['WMI_DesktopMonitor_error'];
 			foreach($monitors as $device){		
 		?>
@@ -92,7 +92,7 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>USB Hubs</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$hubs = $json['WMI_USBHub'];
+			$hubs = $json['WMI_USBHub']['Response'];
 			$error = $json['WMI_USBHub_error'];
 			foreach($hubs as $hub){	
 		?>
@@ -116,7 +116,7 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>Keyboards</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$keyboards = $json['WMI_Keyboard'];
+			$keyboards = $json['WMI_Keyboard']['Response'];
 			$error = $json['WMI_Keyboard_error'];
 			foreach($keyboards as $device){	
 		?>
@@ -141,7 +141,7 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>Pointing Devices</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$pointingDevices = $json['WMI_PointingDevice'];
+			$pointingDevices = $json['WMI_PointingDevice']['Response'];
 			$error = $json['WMI_PointingDevice_error'];
 			foreach($pointingDevices as $device){	
 		?>
@@ -166,7 +166,7 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>Sound</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$SoundDevices = $json['WMI_SoundDevice'];
+			$SoundDevices = $json['WMI_SoundDevice']['Response'];
 			$error = $json['WMI_SoundDevice_error'];
 			foreach($SoundDevices as $device){	
 		?>
@@ -191,7 +191,7 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>Serial Ports</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$SerialPorts = $json['WMI_SerialPort'];
+			$SerialPorts = $json['WMI_SerialPort']['Response'];
 			$error = $json['WMI_SerialPort_error'];
 			foreach($SerialPorts as $device){	
 		?>
@@ -214,7 +214,7 @@ $online = $results['online'];
 	</div>
 </div>
 	<hr>
-	<h6 style="color:#000"><b>Plug And Play Devices (<?php echo count($json['WMI_PnPEntity']); ?>)</b></h6>
+	<h6 style="color:#000"><b>Plug And Play Devices (<?php echo count($json['WMI_PnPEntity']['Response']); ?>)</b></h6>
 	<div style="padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;margin-top:20px;">
 		<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 			<thead>
@@ -228,7 +228,7 @@ $online = $results['online'];
 			</thead>
 			<tbody>
 				<?php
-					$PnPEntity = $json['WMI_PnPEntity'];
+					$PnPEntity = $json['WMI_PnPEntity']['Response'];
 					$error = $json['WMI_PnPEntity_error'];
 					//Sort The array by Name ASC
 					usort($PnPEntity, function($a, $b) {

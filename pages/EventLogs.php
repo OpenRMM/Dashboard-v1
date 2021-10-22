@@ -25,7 +25,7 @@ $query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 
-$events = $json["EventLog_".$getEvent];
+$events = $json["EventLog_".$getEvent]['Response'];
 $error = $json["EventLog_".$getEvent."_error"];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">

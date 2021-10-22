@@ -68,8 +68,8 @@
 										}
 										$data = getComputerData($result['ID'], $getWMI);
 										//Determine Warning Level
-										$freeSpace = $data['WMI_LogicalDisk'][0]['FreeSpace'];
-										$size = $data['WMI_LogicalDisk'][0]['Size'];
+										$freeSpace = $data['WMI_LogicalDisk']['Response'][0]['FreeSpace'];
+										$size = $data['WMI_LogicalDisk']['Response'][0]['Size'];
 										$used = $size - $freeSpace;
 										$usedPct = round(($used/$size) * 100);
 										if($usedPct > $siteSettings['Alert Settings']['Disk']['Danger'] ){
@@ -85,21 +85,20 @@
 									</td>
 									<td>
 									<?php
-										$icons = array("desktop"=>"desktop","server"=>"server","laptop"=>"laptop");
-										if(in_array(strtolower($result['computerType']), $icons)){
-											$icon = $icons[strtolower($result['computerType'])];
+										$icons = array("desktop","server","laptop");
+										if(in_array(strtolower($result['computer_type']), $icons)){
+											$icon = strtolower($result['computer_type']);
 										}else{
-											$icon = "desktop";
-										}
+											$icon = "server";
+										} 
 									?>
-									<?php echo $json['DefaultPrograms'][10]['Program']; ?>
-									<a style="color:#000;font-size:12px"  href="javascript:void(0)" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
+									<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
 										<?php if($result['online']=="0") {?>
 											<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
 										<?php }else{?>
 											<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
 										<?php }?>
-										&nbsp;<?php echo strtoupper($result['hostname']);?> <?php echo strtoupper($result['Hostname']);?>
+										&nbsp;<?php echo strtoupper($result['hostname']);?>
 									</a>
 									</td>
 									<?php

@@ -36,7 +36,7 @@
 	$results = mysqli_fetch_assoc(mysqli_query($db, $query));
 	$online = $results['online'];
 
-	$procs = $json['WMI_Processes'];
+	$procs = $json['WMI_Processes']['Response'];
 	$error = $json['WMI_Processes_error'];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">

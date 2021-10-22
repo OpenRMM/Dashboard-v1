@@ -49,7 +49,7 @@ if($getFolder!=""){
 
 $json = getComputerData($computerID, array("WMI_ComputerSystem", "WMI_Filesystem", "WMI_LogicalDisk"), $showDate);
 
-$disks = $json['WMI_LogicalDisk'];
+$disks = $json['WMI_LogicalDisk']['Response'];
 $query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
@@ -92,7 +92,7 @@ $online = $results['online'];
 						</thead>
 						<tbody>
 						<?php	
-							$slots = $json['WMI_Filesystem'][0];
+							$slots = $json['WMI_Filesystem']['Response'][0];
 							$files=array();
 							//print_r($slots);
 							$folders=array();

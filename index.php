@@ -12,6 +12,7 @@
 		if($_SESSION['updateIgnore']=="true"){
 			$_SESSION['count']="0";
 			array_push($_SESSION['excludedPages'],$_POST['page']);	
+			//$_SESSION['updateIgnore']="";
 			header("location: index.php");
 		}
 		include("includes/post.php");	
@@ -535,7 +536,7 @@
 					<div class="modal-content">
 						<div class="modal-header">
 							<h5 class="modal-title">
-								Historical Data
+								View Historical Data
 							</h5>
 						</div>
 						<div class="modal-body" style="overflow:auto;max-height:400px;">
@@ -543,9 +544,12 @@
 								<tr>
 									<td>Latest</td>
 									<td>
-										<button type="button" onclick="loadSectionHistory();" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 3']; ?>;color:#fff;">
-											Select
-										</button>
+										<form method="post">
+											<input type="hidden" value="latest" name="historyDate">
+											<button type="submit" class="btn btn-sm btn-secondary" >
+												Select
+											</button>
+										</form>
 									</td>
 								</tr>
 								<?php
@@ -554,18 +558,22 @@
 									while($count <= $showLast){ $count++;
 									$niceDate = date("l, F jS", strtotime("-".$count." day"));
 									$formatedDate = date("n/j/Y", strtotime("-".$count." day"));
+									$formatedDate2 = date("Y-n-j", strtotime("-".$count." day"));
 								?>
 								<tr>
 									<td><?php echo $niceDate; ?></td>
 									<td>
-										<button type="button" onclick="loadSectionHistory('<?php echo $formatedDate;?>');" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#fff;">Select</button>
-									</td>
+										<form method="post">
+											<input type="hidden" value="<?php echo $formatedDate2; ?>" name="historyDate"> 
+											<button type="submit" class="btn btn-sm btn-warning">Select</button>
+										</form>
+										</td>
 								</tr>
 								<?php }?>
 							</table>
 						</div>
 						<div class="modal-footer">
-							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-sm btn-secondary"  data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
@@ -603,9 +611,188 @@
 					</div>
 				</div>
 			</div>
-			
+
+			<div class="modal fade in" id="editTrigger" tabinsdex="-1" role="dialog" aria-hidden="true" >
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" >Create New Task</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">×</span>
+							</button>
+						</div>
+						<form method="post">
+							<div class="modal-body">
+								<label>Task Name</label>
+								<input maxlength="30" required type="text" class="form-control" name="name">
+								<br><hr>
+								<h4>Conditions</h4>
+								<table class="table">
+									<tbody>
+										<tr>
+											<th scope="row" style="vertical-align:middle;">IF</th>
+											<td>
+												<input type="hidden" value="newTask" name="type">
+												<select required class="form-control" style="width:23%;display:inline-block;" name="taskCond1">
+													<option value="Total Alert Count">Total Alert Count</option>
+													<option value="Total Ram/Memory">Total Ram/Memory</option>
+													<option value="Available Disk Space">Available Disk Space</option>
+													<option value="Total Disk Space">Total Disk Space</option>
+													<option value="Domain">Domain</option>
+													<option value="Public IP Address">Public IP Address</option>
+													<option value="Antivirus">Antivirus</option>
+
+													<option value="Agent Version">Agent Version</option>
+													<option value="Total User Accounts">Total User Accounts</option>
+													<option value="Command Received">Command Received</option>
+													<option value="Agent Comes Online">Agent Comes Online</option>
+													<option value="Agent Goes Offline">Agent Goes Offline</option>
+													<option value="Windows Activation">Windows Activation</option>
+													<option value="Local IP Address">Local IP Address</option>
+													<option value="Last Update">Last Update</option>
+
+												</select>
+
+												<select class="form-control" required style="width:20%;display:inline-block;" name="taskCond1Comparison">
+													<option value="=">Equals</option>
+													<option value="!=">Not Equal</option>
+													<option value=">">Greater than</option>
+													<option value="<">Less than</option>
+													<option value=">=">Greater than or equals</option>
+													<option value="<=">Less than equals</option>
+													<option value="contain">Contains</option>
+													<option value="notcontain">Does not Contain</option>
+												</select>
+
+												<input type="text" required placeholder="Value" class="form-control" style="width:57%;display:inline-block;" name="taskCond1Value">     
+											</td>
+										</tr>
+										<tr>
+											<td colspan=2 style="float:left"><h6>(optional)</h6></td>
+										</tr>
+										<tr>
+											<th scope="row" style="vertical-align:middle;">AND</th>
+											<td>
+												<select class="form-control" style="width:23%;display:inline-block;"name="taskCond2">	
+													<option value="Total Ram/Memory">Total Ram/Memory</option>
+													<option value="Total Alert Count">Total Alert Count</option>
+													<option value="Available Disk Space">Available Disk Space</option>
+													<option value="Total Disk Space">Total Disk Space</option>
+													<option value="Domain">Domain</option>
+													<option value="Public IP Address">Public IP Address</option>
+													<option value="Antivirus">Antivirus</option>
+
+													<option value="Agent Version">Agent Version</option>
+													<option value="Total User Accounts">Total User Accounts</option>
+													<option value="Command Received">Command Received</option>
+													<option value="Agent Comes Online">Agent Comes Online</option>
+													<option value="Agent Goes Offline">Agent Goes Offline</option>
+													<option value="Windows Activation">Windows Activation</option>
+													<option value="Local IP Address">Local IP Address</option>
+													<option value="Last Update">Last Update</option>
+
+												</select>
+
+												<select class="form-control" style="width:20%;display:inline-block;" name="taskCond2Comparison">
+													<option value="=">Equals</option>
+													<option value="!=">Not Equal</option>
+													<option value=">">Greater than</option>
+													<option value="<">Less than</option>
+													<option value=">=">Greater than or equals</option>
+													<option value="<=">Less than equals</option>
+													<option value="contain">Contains</option>
+													<option value="notcontain">Does not Contain</option>
+												</select>
+
+												<input type="text" placeholder="Value" class="form-control" style="width:57%;display:inline-block;" name="taskCond2Value">     
+											</td>
+										</tr>
+										<tr>
+											<th scope="row" style="vertical-align:middle;">OR</th>
+											<td>
+												<select class="form-control" style="width:23%;display:inline-block;" name="taskCond3">
+													<option value="Available Disk Space">Available Disk Space</option>
+													<option value="Total Ram/Memory">Total Ram/Memory</option>
+													<option value="Total Alert Count">Total Alert Count</option>
+													<option value="Total Disk Space">Total Disk Space</option>
+													<option value="Domain">Domain</option>
+													<option value="Public IP Address">Public IP Address</option>
+													<option value="Antivirus">Antivirus</option>
+
+													<option value="Agent Version">Agent Version</option>
+													<option value="Total User Accounts">Total User Accounts</option>
+													<option value="Command Received">Command Received</option>
+													<option value="Agent Comes Online">Agent Comes Online</option>
+													<option value="Agent Goes Offline">Agent Goes Offline</option>
+													<option value="Windows Activation">Windows Activation</option>
+													<option value="Local IP Address">Local IP Address</option>
+													<option value="Last Update">Last Update</option>
+
+												</select>
+
+												<select class="form-control" style="width:20%;display:inline-block;" name="taskCond3Comparison">
+													<option value="=">Equals</option>
+													<option value="!=">Not Equal</option>
+													<option value=">">Greater than</option>
+													<option value="<">Less than</option>
+													<option value=">=">Greater than or equals</option>
+													<option value="<=">Less than equals</option>
+													<option value="contain">Contains</option>
+													<option value="notcontain">Does not Contain</option>
+												</select>
+
+												<input type="text" placeholder="Value" class="form-control" style="width:57%;display:inline-block;" name="taskCond3Value">     
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<hr>
+								<h4>Action</h4>
+								<table class="table" id="actionsTable">
+									<thead>
+										<tr>
+											<th scope="col">Type</th>
+											<th scope="col">Title/Pushover Email</th>
+											<th scope="col">Command/Message</th>
+										</tr>
+									</thead>
+									<tbody>		
+										<tr>
+											<td>
+												<select required class="form-control" name="taskAct1">
+													<option value="Log">Action Log</option>
+													<option value="Command">Send Command</option>
+													<option value="Pushover">Pushover</option>
+												</select>
+											</td>
+											<td>
+												<input required type="text" class="form-control" name="taskAct1Title">  
+											</td>
+											<td>
+												<input type="text" required placeholder="Message" class="form-control" name="taskAct1Message">     
+											</td>
+											</tr>
+									</tbody>
+								</table>
+								<p><b>Note:</b> To add log items to the message use: [condition state] [date] [time]</p>	
+							</div>
+							<div class="modal-footer">	
+								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+								<button type="submit" class="btn btn-warning btn-sm" >Create Task</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+									
 		<!---------------------------------End MODALS------------------------------------->	
 		<?php } ?>
+		<div id="notifications"> </div>
+		<script>
+		setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
+			$("#notifications").load("includes/notifications.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other);	
+		}, 3000);
+		</script>
 	</body>
 	<script src="assets/js/extra.js" ></script>
 	<script src="assets/js/toastr.js"></script>
@@ -689,10 +876,6 @@
 		 } ?>
 		 	
 	</script>
-	<div id="notifications"> </div>
-	<script>
-	setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
-		$("#notifications").load("includes/notifications.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other);	
-	}, 3000);
-	</script>
+
+
 </html>

@@ -18,21 +18,21 @@ $results = mysqli_query($db, $query);
 $existing = mysqli_fetch_assoc($results);
 
 if($existing['ID'] != ""){
-	if(strtotime(date("m/d/Y H:i:s")) <= strtotime($existing['expire_time'])){
+	if(strtotime(date("Y-m-d h:i:s")) <= strtotime($existing['expire_time'])){
 		$exists = 1;
 	}
 }
 
 //generate expire time
-$expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
+$expire_time = date("Y-m-d h:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("Y-m-d h:i:s"))));
 
 if($exists == 0){
 	$query = "INSERT INTO commands (ComputerID, userid, command, expire_after, expire_time, status)
 			  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 	$results = mysqli_query($db, $query);
 	$insertID = mysqli_insert_id($db);
-
-	MQTTpublish($ID."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"data":"'.$commands.'"}',$ID,false);
+	//echo mysqli_error($db);exit;
+	MQTTpublish($ID."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"commandID": "'.$insertID.'","data":"'.$commands.'"}',$ID,false);
 
 	$activity="Technician Sent ".$commands." Command To: ".$computer['hostname'];
 	userActivity($activity,$_SESSION['userid']);
@@ -52,7 +52,7 @@ if($exists == 0){
 		$response = trim($result["data_received"]);
 	}else{
 		if($count >= 10){
-			$response = "Timeout";
+			$response = "Response timed out";
 		}else{
 			$response = "No Response";
 		}
@@ -60,5 +60,5 @@ if($exists == 0){
 ?>
 	<pre style="color:#fff;"><?php echo $response;?></pre>
 <?php }else{?>
-	Computer not found or command already sent
+	This command has already been sent. Please wait 5 minutes before retrying this command.
 <?php }?>

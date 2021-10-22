@@ -38,7 +38,7 @@ $online = $results['online'];
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
 		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
-			Memory/Ram (<?php echo count($json['WMI_PhysicalMemory']);?>)
+			Memory/Ram (<?php echo count($json['WMI_PhysicalMemory']['Response']);?>)
 		</h4>
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;"> 
@@ -61,7 +61,7 @@ $online = $results['online'];
 </div>
 <div class="row">
 <?php
-	$slots = $json['WMI_PhysicalMemory'];
+	$slots = $json['WMI_PhysicalMemory']['Response'];
 	$error = $json['WMI_PhysicalMemory_error'];
 	foreach($slots as $slot=>$info){
 ?>

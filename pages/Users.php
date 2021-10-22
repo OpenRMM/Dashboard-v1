@@ -38,7 +38,7 @@
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
 		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
-			User Accounts (<?php echo count($json['WMI_UserAccount']);?>)
+			User Accounts (<?php echo count($json['WMI_UserAccount']['Response']);?>)
 		</h4>
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;">
@@ -76,16 +76,15 @@
 				</thead>
 				<tbody>
 					<?php
-						$users = $json['WMI_UserAccount'];
+						$users = $json['WMI_UserAccount']['Response'];
 						$users_error = $json['WMI_UserAccount_error'];
 						
-						$netlogins = $json['WMI_NetworkLoginProfile'];
+						$netlogins = $json['WMI_NetworkLoginProfile']['Response'];
 						$netlogin_error = $json['WMI_NetworkLoginProfile_error'];
 						
 						$numberOfLogins = array();
 						foreach($users as $user){
 							//Find network login profile
-							
 							foreach($netlogins as $netlogin){
 								if(strtolower($netlogin['Caption']) == strtolower($user['Name'])){
 									$numberOfLogins[strtolower($user['Name'])] = $netlogin['NumberOfLogons'];
@@ -111,9 +110,9 @@
 					</tr>			
 				<?php }
 					if(count($users) == 0){ ?>
-						<div class="col-md-12" style="padding:5px;">
-							<center><h5>No Users found.</h5></center>
-						</div>
+						<td colspan=8>
+							<center><h6>No users found.</h6></center>
+					</td>
 				<?php }?>
 				</tbody>
 			</table>

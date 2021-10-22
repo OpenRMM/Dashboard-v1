@@ -13,7 +13,7 @@ if($_SESSION['userid']==""){
 }
 $computerID = (int)clean($_GET['ID']);
 
-$query = "SELECT ID, show_alerts, teamviewer,hostname, CompanyID, phone, email, online, name, comment,computer_type FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT ID, show_alerts, hostname, CompanyID, phone, email, online, name, comment,computer_type FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $data = mysqli_fetch_assoc($results);
 
@@ -37,6 +37,9 @@ $online = $data['online'];
 <h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Editing Asset: <?php echo $data['hostname']; ?>
 	<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Edit');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 		<i class="fas fa-sync"></i>
+	</a>
+	<a href="javascript:void(0)" title="Agent Configuration" onclick="loadSection('AgentSettings');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<i class="fas fa-cogs"></i>
 	</a>
 </h4>
 <hr>

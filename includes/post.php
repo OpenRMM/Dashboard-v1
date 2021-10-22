@@ -199,13 +199,50 @@
 			userActivity($activity,$delActivity);
 			header("location: index.php");
 		}
+
+		//delete task
+		if($_POST['type'] == "delTask"){
+			$del=(int)$_POST['ID'];
+			$query = "UPDATE tasks SET active='0' WHERE ID='".$del."';";
+			$results = mysqli_query($db, $query);
+			$activity="Technician Deleted Task ID: ".$del;		
+			userActivity($activity,$_SESSION['userid']);
+			header("location: index.php");
+		}
+
+		//Create task
+		if($_POST['type'] == "newTask"){
+			$name=clean($_POST['name']);
+			$taskCond1=clean($_POST['taskCond1']);
+			$taskCond1Comparison=clean($_POST['taskCond1Comparison']);
+			$taskCond1Value=clean($_POST['taskCond1Value']);
+			$taskCond2=clean($_POST['taskCond2']);
+			$taskCond2Comparison=clean($_POST['taskCond2Comparison']);
+			$taskCond2Value=clean($_POST['taskCond2Value']);
+			$taskCond3=clean($_POST['taskCond3']);
+			$taskCond3Comparison=clean($_POST['taskCond3Comparison']);
+			$taskCond3Value=clean($_POST['taskCond3Value']);
+			$taskAct1=clean($_POST['taskAct1']);
+			$taskAct1Title=clean($_POST['taskAct1Title']);
+			$taskAct1Message=clean($_POST['taskAct1Message']);
+
+			$query = "INSERT INTO tasks (taskName,condition1Type,condition1Comparison,condition1Value,condition2Type,condition2Comparison,condition2Value,condition3Type,condition3Comparison,condition3Value,actionCommand,actionTitle,actionValue)
+			VALUES ('".$name."','".$taskCond1."','".$taskCond1Comparison."','".$taskCond1Value."','".$taskCond2."','".$taskCond2Comparison."','".$taskCond2Value."','".$taskCond3."','".$taskCond3Comparison."','".$taskCond3Value."','".$taskAct1."','".$taskAct1Title."','".$taskAct1Message."')";
+  			$results = mysqli_query($db, $query);
+			//echo mysqli_error($db);exit;
+			$activity="User Created: ".$taskCond1." task";		
+			userActivity($activity,$_SESSION['userid']);
+			
+			header("location: index.php");
+		}
+
 		//Oneway asset message
 		if($_POST['type'] == "assetOneWayMessage"){
 			$ID=clean($_POST['ID']);
 			$message=clean($_POST['alertMessage']);
 			$title=clean($_POST['alertTitle']);
 			$type=clean($_POST['alertType']);
-			$script = '{"title": "'.$title.'", "message": "'.$message.'", "type":"'.$type.'"}';
+			$script = '{"userID":"'.$_SESSION['userid'].'","data": {"Title": "'.$title.'", "Message": "'.$message.'", "Type":"'.$type.'"}}';
 			MQTTpublish($ID."/Commands/setAlert",$script,$ID,false);	
 			$activity="Technician Sent Asset: ".$ID." A One-way Message";		
 			userActivity($activity,$_SESSION['userid']);
@@ -221,8 +258,8 @@
 				$comments = clean($_POST['comments']);
 				$email = str_replace("'", "", $_POST['email']);
 				if($ID == 0){
-					$query = "INSERT INTO companies (name, phone, address, comments, email, date_added)
-							  VALUES ('".$name."', '".$phone."', '".$address."', '".$comments."', '".$email."','".time()."')";
+					$query = "INSERT INTO companies (name, phone, address, comments, email)
+							  VALUES ('".$name."', '".$phone."', '".$address."', '".$comments."', '".$email."')";
 					$activity = "Technician Added A Company: ".$name;
 					userActivity($activity,$_SESSION['userid']);
 				}else{
@@ -295,17 +332,19 @@
 				$results = mysqli_query($db, $query);
 				$existing = mysqli_fetch_assoc($results);
 				if($existing['ID'] != ""){
-					if(strtotime(date("m/d/Y H:i:s")) <= strtotime($existing['expire_time'])){
+					if(strtotime(date("Y-m-d h:i:s")) <= strtotime($existing['expire_time'])){
 						$exists = 1;
 					}
 				}
 				if($exists == 0){
 					//Generate expire time
-					$expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
-					MQTTpublish($computer['ID']."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"data":"'.$commands.'"}',$computer['ID'],false);
+					$expire_time = date("Y-m-d h:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("Y-m-d h:i:s"))));
+					
 					$query = "INSERT INTO commands (ComputerID, userid, command, expire_after, expire_time, status)
 							  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 					$results = mysqli_query($db, $query);
+					$insertID = mysqli_insert_id($db);
+					MQTTpublish($computer['ID']."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"commandID": "'.$insertID.'","data":"'.$commands.'"}',$computer['ID'],false);
 				}
 			$activity = "Technician Sent ".$commands." Command To: ".$computer['ID'];
 			userActivity($activity,$_SESSION['userid']);
@@ -313,6 +352,13 @@
 			
 			header("location: index.php");
 		}
+
+		//historical
+		if(isset($_POST['historyDate'])){
+			$_SESSION['date'] = clean($_POST['historyDate']);
+			header("location: index.php");
+		}
+
 		//Get speedtest
 		if($_POST['type'] == "refreshSpeedtest"){
 			$ID = (int)$_POST['CompanyID'];

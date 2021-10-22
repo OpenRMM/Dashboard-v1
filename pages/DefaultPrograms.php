@@ -30,7 +30,7 @@ if($computerID<0){
 
 $json = getComputerData($computerID , array("DefaultPrograms"), $showDate);
 
-$programs = $json['DefaultPrograms'];
+$programs = $json['DefaultPrograms']['Response'];
 $error = $json['DefaultPrograms_error'];
 
 $query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
@@ -97,7 +97,7 @@ $online = $results['online'];
 		<?php }
 			if($count == 0){ ?>
 				<tr>
-					<td colspan=4><center><h5>No Default Programs Found.</h5></center></td>
+					<td colspan=4><center><h6>No Default Programs Found.</h6></center></td>
 				</tr>
 		<?php }?>
 	   </tbody>

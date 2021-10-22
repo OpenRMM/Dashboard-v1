@@ -40,9 +40,9 @@ $query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 
-$mappedDisks = $json['WMI_MappedLogicalDisk'];
-$disks = $json['WMI_LogicalDisk'];
-$shared = $json['WMI_SharedDrives'];
+$mappedDisks = $json['WMI_MappedLogicalDisk']['Response'];
+$disks = $json['WMI_LogicalDisk']['Response'];
+$shared = $json['WMI_SharedDrives']['Response'];
 
 $error1 = $json['WMI_MappedLogicalDisk_error'];
 $error2 = $json['WMI_LogicalDisk_error'];

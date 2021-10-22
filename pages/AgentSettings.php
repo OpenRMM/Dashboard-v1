@@ -18,7 +18,7 @@ $results = mysqli_query($db, $query);
 $data = mysqli_fetch_assoc($results);
 
 $online = $data['online'];
-$agent_settings = json_decode($data['agent_settings'], true);
+$agent_settings = json_decode($data['agent_settings']['Response'], true);
 
 ?>
 <?php if($data['hostname']==""){ ?>
