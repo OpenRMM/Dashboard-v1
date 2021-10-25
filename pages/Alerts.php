@@ -5,7 +5,7 @@ if($_SESSION['userid']==""){
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
@@ -33,7 +33,7 @@ $online = $results['online'];
 		<br>
 		<hr>
 		<p>Configure Notifications For This Asset.</p>	
-		<form action="index.php" method="post">
+		<form action="/" method="post">
 			<div>			
 				<div class="row" style="margin-left:20px;padding-bottom:30px">
 					<?php

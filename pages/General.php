@@ -5,7 +5,7 @@
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
@@ -53,7 +53,7 @@
 			$results = mysqli_query($db, $query);
 		}
 	}
-	if($result['hostname']==""){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='index.php'><u>Dashboard</u></a></p></center><hr>"); }
+	if($result['hostname']==""){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='/'><u>Dashboard</u></a></p></center><hr>"); }
 	
 	$online = $result['online'];
 	$lastPing = $json['Ping'];
@@ -448,7 +448,7 @@
 			<div class="panel-body" style="overflow:hidden;background:#1D1D35;height:285px;">
 				<div class="rsow">
 					<a target="_blank" href="<?php echo str_replace(".png","",$json['OklaSpeedtest']['Response']['share']); ?>">
-						<form style="" method="post" action="index.php">
+						<form style="" method="post" action="/">
 						<?php if($json['OklaSpeedtest']['Response']['share']!=""){ ?>
 							<center><img width="80%" style="margin-top:-10px" height="80%" src="<?php echo $json['OklaSpeedtest']['Response']['share']; ?>"/></center>
 						<?php }else{ ?>
@@ -515,7 +515,7 @@
 			<div class="modal-header">
 				<h5 class="modal-title">One-way Message to Agent: <?php echo $_SESSION['ComputerHostname']; ?></h5>
 			</div>
-			<form method="post" action="index.php">
+			<form method="post" action="/">
 				<div class="modal-body">
 					<input type="hidden" name="type" value="assetOneWayMessage"/>
 					<input type="hidden" name="ID" value="<?php echo $computerID; ?>">
@@ -556,7 +556,7 @@
 		var alertType = $("input[name='alertType']:checked").val();
 		var alertTitle = $("#inputTitle").val();
 		var alertMessage = $("#inputMessage").val();
-		$.post("index.php", {
+		$.post("/", {
 		type: "assetOneWayMessage",
 		ID: computerID,
 		alertType: alertType,

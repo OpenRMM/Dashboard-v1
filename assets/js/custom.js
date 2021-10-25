@@ -1,54 +1,46 @@
-    
-    
-
-    //Load historical section, Network, Programs...
-    function loadSectionHistory(date="latest"){
-       // sectionHistoryDate = date;
-       // $(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow text-primary'></div><div class='spinner-grow text-success'></div><div class='spinner-grow text-info'></div><div class='spinner-grow text-warning'></div><div class='spinner-grow text-danger'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
-      //  $(".loadSection").load("includes/loader.php?page="+currentSection+"&ID="+computerID+"&Date="+date);
-      //  $("#historicalDateSelection_modal").modal("hide");
-    }
     //Sidebar
-    $(document).ready(function () {
-        $('.sidebarCollapse').on('click', function () {
-            $('#sidebar').toggleClass('active');
+$(document).ready(function () {
+    $('.sidebarCollapse').on('click', function () {
+        $('#sidebar').toggleClass('active');
+    });
+});
+
+//Terminal
+$('#terminaltxt').keypress(function(event){
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == '13'){
+        $("#terminalResponse").html("Sending Command: "+$('#terminaltxt').val()+" <i class='fas fa-spinner fa-spin'></i>");
+        $.post("pages/terminal.php", {
+            id: computerID,
+            command: $('#terminaltxt').val()
+        },
+        function(data, status){
+            $("#terminalResponse").html(data);
         });
-    });
-	//Terminal
-    $('#terminaltxt').keypress(function(event){
-        var keycode = (event.keyCode ? event.keyCode : event.which);
-        if(keycode == '13'){
-            $("#terminalResponse").html("Sending Command: "+$('#terminaltxt').val()+" <i class='fas fa-spinner fa-spin'></i>");
-            $.post("pages/terminal.php", {
-              id: computerID,
-              command: $('#terminaltxt').val()
-            },
-            function(data, status){
-              $("#terminalResponse").html(data);
-            });
-        }
-    });
-    //Alerts Modal
-    function computerAlertsModal(title, delimited='none', showHostname = false){
-        $("#computerAlertsHostname").html("<b>Alerts for "+title+"</b>");
-        if(delimited=="none"){
-            $("#computerAlertsModalList").html("<div class='alert alert-success' style='font-size:12px' role='alert'><b><i class='fas fa-thumbs-up'></i> No Issues</b></div>");
-            return;
-        }
-        $("#computerAlertsModalList").html("")
-        var alerts = delimited.split(",");
-        var hostname = "";
-        for(alert in alerts){
-            var alertData = alerts[alert].split("|");
-            if(alertData[0].trim()==""){
-                continue;
-            }
-            if(showHostname == true){
-                hostname = alertData[3];
-            }
-            $("#computerAlertsModalList").html($("#computerAlertsModalList").html() + "<div class='calert alert alert-"+alertData[2]+"' role='alert'><b><i class='fas fa-exclamation-triangle text-"+alertData[2]+"'></i> "+ hostname + " " + alertData[0]+"</b> - " + alertData[1] + "</div>");
-        }
     }
+});
+
+//Alerts Modal
+function computerAlertsModal(title, delimited='none', showHostname = false){
+    $("#computerAlertsHostname").html("<b>Alerts for "+title+"</b>");
+    if(delimited=="none"){
+        $("#computerAlertsModalList").html("<div class='alert alert-success' style='font-size:12px' role='alert'><b><i class='fas fa-thumbs-up'></i> No Issues</b></div>");
+        return;
+    }
+    $("#computerAlertsModalList").html("")
+    var alerts = delimited.split(",");
+    var hostname = "";
+    for(alert in alerts){
+        var alertData = alerts[alert].split("|");
+        if(alertData[0].trim()==""){
+            continue;
+        }
+        if(showHostname == true){
+            hostname = alertData[3];
+        }
+        $("#computerAlertsModalList").html($("#computerAlertsModalList").html() + "<div class='calert alert alert-"+alertData[2]+"' role='alert'><b><i class='fas fa-exclamation-triangle text-"+alertData[2]+"'></i> "+ hostname + " " + alertData[0]+"</b> - " + alertData[1] + "</div>");
+    }
+}
 
 //Random password
 function randomPassword(length) {
@@ -60,12 +52,14 @@ function randomPassword(length) {
     }
     return pass;
 }
+
 //Set random passwords to inputs
 function generate() {
     var pass = randomPassword(8);
     $('#editUserModal_password').prop('type', 'text').val(pass);
     $('#editUserModal_password2').prop('type', 'text').val(pass);
 }
+
 //Page Alerts, replaces alert()
 function pageAlert(title, message, type="default"){
     if(title.trim() == ""){
@@ -77,18 +71,8 @@ function pageAlert(title, message, type="default"){
         toastr[type](message,title);
     }
 }
-//Load Historical Data
-function loadHistoricalData(ID, type){
-   // $("#historicalData").html("<center><h3 style='margin-top:40px;'><i class='fas fa-spinner fa-spin'></i></h3></center>");
-   // $("#historicalData_modal").modal("show");
-   // $.post("pages/LoadHistorical.php", {
-    //  ID: ID,
-    //  type: type
-   // },
-  //  function(data, status){
-    //  $("#historicalData").html(data);
-    //});
-}
+
+//Send commands
 function sendCommand(command, prompt, expire_after=5){
     if(confirm("Are you sure you would like to "+prompt+"?")){
         $.post("index.php", {
@@ -99,7 +83,7 @@ function sendCommand(command, prompt, expire_after=5){
         },
         function(data, status){
             toastr.options.progressBar = true;
-            toastr.info('Your Request Has Been Sent.');
+            toastr.info('Your Command Has Been Sent.');
         });
     }
 }

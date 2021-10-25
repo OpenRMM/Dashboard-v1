@@ -34,7 +34,7 @@ if($_SESSION['userid']!=""){ ?>
 				<h2>OpenRMM</h2>
 				<p>Login To Access Our Remote Monitoring & Management Platform.</p>
 			</div>
-			<form method="post" action="index.php" class="form-signin">
+			<form method="post" action="/" class="form-signin">
 				<div style="text-align:left" class="form-label-group">
 					<label  for="inputEmail"><b>Username:</b></label>
 					<input maxlength="25" minlength="4" type="text" name="loginusername" id="inputEmail" class="form-control" placeholder="Username" required autofocus>

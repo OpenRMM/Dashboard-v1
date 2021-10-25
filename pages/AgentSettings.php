@@ -5,7 +5,7 @@ if($_SESSION['userid']==""){
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
@@ -43,7 +43,7 @@ $agent_settings = json_decode($data['agent_settings']['Response'], true);
 	   <small class="text-muted"> Here You Fine Tune The Configuation Option For This Particular Agent.</small>
 	</p>
 	<hr />
-	<form method="POST" action="index.php">
+	<form method="POST" action="/">
 	<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 		<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" style="padding:5px;padding-bottom:20px;padding-top:0px;border-radius:6px;">			 
 				   <div class="card table-card" id="printTable" style="margin-top:-40px;padding:10px">  

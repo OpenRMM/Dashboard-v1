@@ -5,7 +5,7 @@ if($_SESSION['userid']==""){
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
@@ -79,7 +79,7 @@ $userCount = mysqli_num_rows($results);
 					<td><?php echo ucwords($user['accountType']);?></td>
 					<td><?php echo $status;?></td>
 					<td>
-						<form action="index.php" method="POST">
+						<form action="/" method="POST">
 							<input type="hidden" name="type" value="DeleteUser"/>
 							<input type="hidden" name="ID" value="<?php echo $user['ID']; ?>"/>
 							<?php if($user['active']=="1"){ ?>

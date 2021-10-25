@@ -5,7 +5,7 @@
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
@@ -54,7 +54,7 @@
 		    <div class="panel-heading">
               <span class="panel-title">Configure Site Settings</span>
             </div>
-			<form method="POST" action="index.php" style="padding:10px">
+			<form method="POST" action="/" style="padding:10px">
 				<input type="hidden" name="type" value="saveSiteSettings"/>
 				<div contenteditable="true"><?php echo $text;  ?></div>	
 				<div style="margin-top:30px;" class="form-group float-label-control">                 
@@ -65,7 +65,7 @@
 	</div>
 	<div class="col-md-3">  
 		<div class="card table-card panel">
-			<form method="POST" action="index.php">
+			<form method="POST" action="/">
 				<div class="panel-heading">
 					<span class="panel-title">Sitewide Alert</span>
 				</div>
@@ -82,7 +82,7 @@
 <script>
 	function getSiteSettings(){
 		var retdata;
-		$.post("index.php", {
+		$.post("/", {
 		  type: "getSiteSettings",
 		},
 		function(data, status){

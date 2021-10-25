@@ -5,7 +5,7 @@ if($_SESSION['userid']==""){
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
@@ -68,7 +68,7 @@ $online = $results['online'];
 </div>
 <div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 	<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;border-radius:6px;">			 
-			<form method="post" action="index.php">
+			<form method="post" action="/">
 				<div class="card table-card" id="printTable" style="margin-top:-40px;padding:10px">  
 					<div class="card-header">
 						<div class="card-header-right">

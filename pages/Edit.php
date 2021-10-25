@@ -5,7 +5,7 @@ if($_SESSION['userid']==""){
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
@@ -48,7 +48,7 @@ $online = $data['online'];
 	   <small class="text-muted"> Here You Can Add Information About The Asset, Client And The <?php echo $msp; ?> It's Assigned To.</small>
 	</p>
 	<hr />
-	<form method="POST" action="index.php">
+	<form method="POST" action="/">
 		<div class="row">
 			<div style="padding:20px;border-radius:6px" class="card card-sm col-sm-8">
 				<input type="hidden" name="type" value="EditComputer"/>
@@ -191,7 +191,7 @@ $online = $data['online'];
 		<p>Are You Sure You Would Like To Delete This Asset? This Cannot Be Undone.</p>
 	  </div>
 	  <div class="modal-footer">
-		  <form action="index.php" method="POST">
+		  <form action="/" method="POST">
 			<input type="hidden" name="type" value="DeleteComputer"/>
 			<input type="hidden" name="ID" value="<?php echo $data['ID'];?>"/>
 			<input type="hidden" name="hostname" value="<?php echo $data['hostname'];?>"/>

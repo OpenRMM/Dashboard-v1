@@ -5,7 +5,7 @@ if($_SESSION['userid']==""){
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
@@ -178,7 +178,7 @@ PAUSE
 							   } ?>
 					  <td title="<?php echo $timer; ?>" ><b><?php echo $command['status'];?></b></td>
 					   <td>
-						   <form action="index.php" method="POST">
+						   <form action="/" method="POST">
 								<input type="hidden" name="type" value="DeleteCommand"/>
 								<input type="hidden" name="ID" value="<?php echo $command['ID']; ?>"/>
 									<button type="submit" title="Delete Command" style="border:none;" class="btn btn-danger btn-sm">
@@ -206,7 +206,7 @@ PAUSE
 			<div class="modal-header">
 				<h5 class="modal-title">One-way Message to Agent: <?php echo $_SESSION['ComputerHostname']; ?></h5>
 			</div>
-			<form method="post" action="index.php">
+			<form method="post" action="/">
 				<div class="modal-body">
 					<input type="hidden" name="type" value="assetOneWayMessage"/>
 					<input type="hidden" name="ID" value="<?php echo $computerID; ?>">
@@ -251,7 +251,7 @@ PAUSE
 		var alertType = $("input[name='alertType']:checked").val();
 		var alertTitle = $("#inputTitle").val();
 		var alertMessage = $("#inputMessage").val();
-		$.post("index.php", {
+		$.post("/", {
 		type: "assetOneWayMessage",
 		ID: computerID,
 		alertType: alertType,

@@ -5,7 +5,7 @@ if($_SESSION['userid']==""){
 	toastr.error('Session timed out.');
 	setTimeout(function(){
 		setCookie("section", "Login", 365);	
-		window.location.replace("../index.php");
+		window.location.replace("..//");
 	}, 3000);		
 </script>
 <?php 
@@ -56,7 +56,7 @@ if($userID!=$_SESSION['userid']){
 					</h4>
 					<p style="color:#dedede">View All Assets Added By This User. You Can Also Access Contact Information And Recent Activity. </p>
 					<hr>
-					<form action="index.php" method="POST">
+					<form action="/" method="POST">
 						<input type="hidden" name="type" value="DeleteUser"/>
 						<input type="hidden" name="ID" value="<?php echo $user['ID']; ?>"/>
 						<?php if($_SESSION['accountType']=="Admin"){  ?>
@@ -82,7 +82,7 @@ if($userID!=$_SESSION['userid']){
 		<div class="row">
 			<div class="col-md-8">
 				<div class="tab-block">
-					<form style="margin-bottom:-10px" method="POST" action="index.php" style="display:inline">
+					<form style="margin-bottom:-10px" method="POST" action="/" style="display:inline">
 						<ul class="nav nav-tabs">
 							<li class="active">
 								<a href="#tab1" data-toggle="tab">Activity</a>

@@ -5,7 +5,7 @@ if($_SESSION['userid']==""){
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("../");
 		}, 3000);		
 	</script>
 <?php 
@@ -420,14 +420,14 @@ if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['se
 								<td><?php echo $task['actionCommand'].": ". $task['actionValue']; ?></td>
 								<td><?php echo $last_run; ?></td>
 								<td style="float:right">
-									<form action="index.php" method="post" style="display:inline;">
+									<form action="/" method="post" style="display:inline;">
 										<input type="hidden" value="<?php echo $task['ID'];?>" name="ID">
 										<input type="hidden" value="startTask" name="type">
 										<button type="submit" title="Run Task Now" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
 											<i class="fas fa-play"></i>
 										</button>
 									</form>
-									<form action="index.php" method="post" style="display:inline;">
+									<form action="/" method="post" style="display:inline;">
 										<input type="hidden" value="delTask" name="type">
 										<input type="hidden" value="<?php echo $task['ID'];?>" name="ID">
 										<button type="submit" title="Delete Task" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">

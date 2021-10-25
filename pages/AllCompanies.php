@@ -5,7 +5,7 @@ if($_SESSION['userid']==""){
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
@@ -107,7 +107,7 @@ $companyCount = mysqli_num_rows($results);
 							<?php echo textOnNull(ucfirst($company['comments']), "No Comments");?>
 						</td>
 						<td>
-							<form action="index.php" style="display:inline" method="POST">
+							<form action="/" style="display:inline" method="POST">
 								<input type="hidden" name="type" value="DeleteCompany"/>
 								<input type="hidden" name="ID" value="<?php echo $company['CompanyID'];?>"/>
 								<?php if($company['active']=="1"){ ?>
@@ -126,13 +126,13 @@ $companyCount = mysqli_num_rows($results);
 									<i class="fas fa-pencil-alt"></i>
 								</a>
 							</form>
-							<form action="index.php" method="post" style="display:inline;">
+							<form action="/" method="post" style="display:inline;">
 								<input type="hidden" value="<?php echo $company['CompanyID'];?>" name="companyAgent">
 								<button type="submit" title="Download <?php echo $msp; ?> Agent" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
 									<i class="fas fa-download"></i>
 								</button>
 							</form>
-							<form action="index.php" method="post" style="display:inline;">
+							<form action="/" method="post" style="display:inline;">
 								<input type="hidden" value="CompanyUpdateAll" name="type">
 								<input type="hidden" value="<?php echo $company['CompanyID'];?>" name="CompanyID">
 								<button type="submit" title="Update <?php echo $msp; ?> Agent" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">

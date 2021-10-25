@@ -5,7 +5,7 @@ if($_SESSION['userid']==""){
 	toastr.error('Session timed out.');
 	setTimeout(function(){
 		setCookie("section", "Login", 365);	
-		window.location.replace("../index.php");
+		window.location.replace("..//");
 	}, 3000);		
 </script>
 <?php 
@@ -40,7 +40,7 @@ $error = $json["EventLog_".$getEvent."_error"];
 		<p>The Application Event Log May Help You Diagnose Any Issues That May Occur.</p>	
 		<hr>
 		<div class="tab-block">
-			<form style="margin-bottom:-10px" method="POST" action="index.php" style="display:inline">
+			<form style="margin-bottom:-10px" method="POST" action="/" style="display:inline">
 				<ul class="nav nsv-tabs">
 					<?php if($getEvent=="Application"){ $style="background:#333;color:#fff;"; }else{ $style="background:#f3f3f3;color:#333;"; } ?>
 					<li style="<?php echo $style; ?>padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">

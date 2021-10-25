@@ -5,7 +5,7 @@ if($_SESSION['userid']==""){
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
@@ -20,7 +20,7 @@ if($_SESSION['userid']==""){
 	</h4>
 </div>
 <div style="overflow:auto;width:100%">
-	<form method="post" action="index.php">
+	<form method="post" action="/">
 	  <div class="card table-card" id="printTable" >
 		   <div class="card-header">
 				<h5>Listing All Current Customers</h5>

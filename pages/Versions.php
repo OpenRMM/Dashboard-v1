@@ -66,7 +66,7 @@ $nologin=true;
 						</td>
 						<td><?php echo gmdate("m/d/Y", filemtime("../downloads/".$entry)); ?></td>
 						<td>
-							<a class="btn btn-sm" <?php if($user==false){ echo 'style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;color:#fff;background:'.$siteSettings['theme']['Color 4'].'"'; }else echo '"'; ?> href="../../download/index.php?file=<?php echo urlencode($entry); ?>">
+							<a class="btn btn-sm" <?php if($user==false){ echo 'style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;color:#fff;background:'.$siteSettings['theme']['Color 4'].'"'; }else echo '"'; ?> href="../../download//?file=<?php echo urlencode($entry); ?>">
 								<?php if($user==false){ echo "<i class='fas fa-download'>&nbsp;</i>"; }else{ echo "Download"; } ?>
 							</a>
 							<?php if($user==false) { ?>
