@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 11, 2021 at 12:47 PM
+-- Generation Time: Oct 25, 2021 at 11:20 AM
 -- Server version: 10.3.29-MariaDB
 -- PHP Version: 7.2.29
 
@@ -30,16 +30,15 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `commands` (
   `ID` int(11) NOT NULL,
-  `ComputerID` varchar(100) NOT NULL,
-  `userid` int(100) NOT NULL,
-  `command` varchar(500) NOT NULL,
-  `arg` varchar(500) NOT NULL,
-  `time_sent` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6),
-  `expire_after` int(5) NOT NULL DEFAULT 5,
-  `expire_time` varchar(30) DEFAULT NULL,
-  `data_received` text DEFAULT NULL,
-  `time_received` varchar(25) DEFAULT NULL,
-  `status` varchar(25) NOT NULL
+  `ComputerID` int(11) DEFAULT NULL,
+  `userid` int(11) NOT NULL,
+  `command` varchar(500) NOT NULL DEFAULT '',
+  `time_sent` timestamp(6) NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6),
+  `expire_after` int(5) NOT NULL,
+  `expire_time` timestamp(6) NULL DEFAULT NULL,
+  `data_received` text NOT NULL DEFAULT '',
+  `time_received` timestamp(6) NULL DEFAULT NULL,
+  `status` varchar(25) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -55,7 +54,7 @@ CREATE TABLE `companies` (
   `address` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
   `comments` longtext CHARACTER SET utf8mb4 NOT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
-  `date_added` varchar(15) CHARACTER SET utf8mb4 NOT NULL,
+  `date_added` timestamp(6) NOT NULL DEFAULT current_timestamp(6),
   `active` int(2) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -74,13 +73,13 @@ CREATE TABLE `computerdata` (
   `email` varchar(100) NOT NULL DEFAULT '',
   `comment` varchar(500) NOT NULL DEFAULT '',
   `active` int(1) NOT NULL DEFAULT 1,
-  `computer_type` varchar(25) NOT NULL DEFAULT '',
-  `date_added` int(20) DEFAULT NULL,
-  `teamviewer` varchar(20) DEFAULT '',
+  `computer_type` varchar(25) NOT NULL DEFAULT 'Desktop',
+  `date_added` datetime(6) DEFAULT current_timestamp(6),
   `show_alerts` int(1) DEFAULT 0,
-  `last_update` varchar(20) NOT NULL DEFAULT current_timestamp(),
-  `last_command_received` varchar(15) NOT NULL DEFAULT '',
-  `online` int(1) NOT NULL DEFAULT 0
+  `last_update` timestamp(6) NOT NULL DEFAULT current_timestamp(6),
+  `heartbeat` timestamp(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6),
+  `online` int(1) NOT NULL DEFAULT 0,
+  `agent_settings` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '{}'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 
 -- --------------------------------------------------------
@@ -93,7 +92,8 @@ CREATE TABLE `general` (
   `ID` int(11) NOT NULL,
   `agent_latest_version` varchar(10) NOT NULL,
   `last_cron` varchar(25) NOT NULL DEFAULT '',
-  `sitewideAlert` text NOT NULL
+  `sitewideAlert` text NOT NULL,
+  `serverStatus` int(11) NOT NULL DEFAULT 0
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -107,6 +107,22 @@ CREATE TABLE `screenshots` (
   `ComputerID` int(11) NOT NULL,
   `image` mediumblob NOT NULL,
   `date_added` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tasks`
+--
+
+CREATE TABLE `tasks` (
+  `ID` int(11) NOT NULL,
+  `taskName` varchar(100) NOT NULL DEFAULT '',
+  `TaskDetails` text NOT NULL DEFAULT '',
+  `userID` int(20) NOT NULL DEFAULT 0,
+  `ComputerID` int(20) NOT NULL DEFAULT 0,
+  `active` int(1) NOT NULL DEFAULT 1,
+  `last_run` varchar(20) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -144,7 +160,7 @@ CREATE TABLE `wmidata` (
   `ComputerID` int(11) DEFAULT NULL,
   `WMI_Name` varchar(50) DEFAULT NULL,
   `WMI_Data` longtext DEFAULT NULL,
-  `last_update` varchar(25) NOT NULL DEFAULT current_timestamp()
+  `last_update` timestamp(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -168,8 +184,7 @@ ALTER TABLE `companies`
 -- Indexes for table `computerdata`
 --
 ALTER TABLE `computerdata`
-  ADD PRIMARY KEY (`ID`),
-  ADD UNIQUE KEY `hostname` (`hostname`);
+  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indexes for table `general`
@@ -183,6 +198,12 @@ ALTER TABLE `general`
 ALTER TABLE `screenshots`
   ADD PRIMARY KEY (`ID`),
   ADD UNIQUE KEY `ComputerID` (`ComputerID`);
+
+--
+-- Indexes for table `tasks`
+--
+ALTER TABLE `tasks`
+  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indexes for table `users`
@@ -225,6 +246,12 @@ ALTER TABLE `computerdata`
 -- AUTO_INCREMENT for table `screenshots`
 --
 ALTER TABLE `screenshots`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `tasks`
+--
+ALTER TABLE `tasks`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --

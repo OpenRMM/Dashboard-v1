@@ -130,6 +130,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                     MQTTpublish($_SESSION['computerID']."/Commands/getAgent",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
                     MQTTpublish($_SESSION['computerID']."/Commands/getBIOS",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
                     MQTTpublish($_SESSION['computerID']."/Commands/getProcessor",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                    MQTTpublish($_SESSION['computerID']."/Commands/getAgentLog",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
                 break;     
             }
             MQTTpublish($_SESSION['computerID']."/Commands/get".$page,$message,getSalt(20),$retain);

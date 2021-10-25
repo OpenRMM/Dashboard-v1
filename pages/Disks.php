@@ -58,7 +58,7 @@ $error2 = $json['WMI_LogicalDisk_error'];
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-				History: <?php echo date("l, F jS g:i A", strtotime($json['WMI_LogicalDisk_lastUpdate']));?>
+				History: <?php echo date("l, F jS", strtotime($showDate));?>
 			</span>
 		<?php }?>
 	</div>
@@ -134,7 +134,7 @@ $error2 = $json['WMI_LogicalDisk_error'];
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-				History: <?php echo date("l, F jS g:i A", strtotime($json['WMI_LogicalDisk_lastUpdate']));?>
+				History: <?php echo date("l, F jS", strtotime($showDate));?>
 			</span>
 		<?php }?>	
 	</div>
@@ -202,7 +202,7 @@ $error2 = $json['WMI_LogicalDisk_error'];
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-				History: <?php echo date("l, F jS g:i A", strtotime($json['WMI_SharedDrives_lastUpdate']));?>
+				History: <?php echo date("l, F jS", strtotime($showDate));?>
 			</span>
 		<?php }?>	
 	</div>

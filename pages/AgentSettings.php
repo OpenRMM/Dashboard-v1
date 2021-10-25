@@ -107,6 +107,11 @@ $agent_settings = json_decode($data['agent_settings']['Response'], true);
 									<input class="range-slider__range" type="range" name="agent_Sound" value="<?php echo $agent_settings['interval']['getSoundDevices']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
+								<label class="form-label" for="customRange2">Windows Updates</label>
+								<div class="range">
+									<input class="range-slider__range" type="range" name="agent_WindowsUpdates" value="<?php echo $agent_settings['interval']['getWindowsUpdates']; ?>" min="0" max="360">
+									<span class="range-slider__value">0</span>
+								</div>
 							</div>
 							<div style="padding:20px;border-radius:6px" class="col-sm-4">
 								<label class="form-label" for="customRange2">Pointing Device</label>
@@ -157,6 +162,11 @@ $agent_settings = json_decode($data['agent_settings']['Response'], true);
 								<label class="form-label" for="customRange2">Event Logs</label>
 								<div class="range">
 									<input class="range-slider__range" type="range" name="agent_Logs" value="<?php echo $agent_settings['interval']['getEventLogs']; ?>" min="0" max="360">
+									<span class="range-slider__value">0</span>
+								</div>
+								<label class="form-label" for="customRange2">Agent Logs</label>
+								<div class="range">
+									<input class="range-slider__range" type="range" name="agent_logs" value="<?php echo $agent_settings['interval']['getAgentLogs']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 							</div>
@@ -212,7 +222,7 @@ $agent_settings = json_decode($data['agent_settings']['Response'], true);
 									<input class="range-slider__range" type="range" name="agent_SharedDrives" value="<?php echo $agent_settings['interval']['getSharedDrives']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
-								
+							
 							</div>
 						</div>	
 					</div>	

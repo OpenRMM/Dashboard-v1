@@ -63,6 +63,20 @@
 		//$alertType = "danger";
 	}
 
+	$ram = formatBytes($json['WMI_ComputerSystem']['Response'][0]['FreePhysicalMemory'],0);
+	$maxram = formatBytes($json['WMI_ComputerSystem']['Response'][0]['Totalphysicalmemory'],0);
+	$ramPercentMin = round(99 - ($ram / $maxram) * 100,0);
+	$ramPercentMax =  round(($ram / $maxram) * 100,0);
+	if((int)$ramPercentMin=="0"){$ramPercentMin=100;}
+	function formatBytes($bytes, $precision = 0) { 
+		$units = array('B', 'KB', 'MB', 'GB', 'TB'); 
+		$bytes = max($bytes, 0); 
+		$pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 
+		$pow = min($pow, count($units) - 1); 
+		$bytes /= pow(1024, $pow);
+		return round($bytes, $precision);
+	} 
+
 	//log user activity
 	$activity = "Technician Viewed Asset: ".$result['hostname'];
 	userActivity($activity,$_SESSION['userid']);		
@@ -166,7 +180,7 @@
     <div class="col-md-<?php echo $size; ?> py-1">
         <div class="card">
             <div class="card-body">
-                <canvas data-centerval="37.1%" id="chDonut1"></canvas>
+                <canvas data-centerval="<?php echo (int)round($ramPercentMin,0); ?>%" id="chDonut1"></canvas>
                 <h6 style="text-align:center">RAM Usage</h6>
             </div>
         </div>
@@ -186,8 +200,10 @@
 						$pbColor = "#ffa500";
 					}else{ $pbColor = "#03925e"; }
 					$left = 100 - $usedPct;
+					if((int)$usedPct=="0"){$usedPct=100;}
+					
 				?>
-                <canvas data-centerval="<?php echo $usedPct;?>%" id="chDonut3"></canvas>
+                <canvas data-centerval="<?php echo (int)$usedPct;?>%" id="chDonut3"></canvas>
                 <h6 style="text-align:center">Disk Usage</h6>
             </div>
         </div>
@@ -367,20 +383,55 @@
 					Agent Error Log
 				</h5>
 			</div>
-			<div class="panel-body" style="height:285px;">
+			<div class="panel-body" style="height:285px;overflow:hidden">
 				<div class="row">
-					<table id="datsaTable" style="width:125%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
+					<table id="dataTable" style="width:125%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
 						<thead>
 							<tr style="border-bottom:2px solid #d3d3d3;">
-							<th scope="col">Title</th>
+							<th style="width:20px;">Title</th>
 							<th scope="col">Details</th>
 							</tr>
 						</thead>
-						<tbody>			
-							<tr>
-								<td colspan=2><center><h6>No Logs Found</h6></center></td>
-								<td>&nbsp;</td>
-							</tr>					
+						<tbody>		
+						<?php
+							$Logs = array_reverse($json['AgentLog']['Response']);
+							$error = $json['AgentLog_error'];
+							//Sort The array by Name ASC
+							usort($Logs, function($a, $b) {
+								return $a['Name'] <=> $b['Name'];
+							});
+							foreach($Logs as $key=>$log){
+								if (strpos($log['Type'], 'Warn') !== false) {
+									$logColor="background:#fff3cd;color:#856404";
+									$type="Warning";
+								}
+								if (strpos($log['Type'], 'Info') !== false) {
+									//$logColor="background:#e2e3e5;color:#383d41";
+									$logColor="";
+									$type="Information";
+								}
+								if (strpos($log['Type'], 'Error') !== false ) {
+									$logColor="background:#f8d7da;color:#721c24";
+									$type="Error";
+								}
+								$time = $log['Time'];
+								$count++;
+								if($count==400){
+									break;
+								}
+								if (strlen($log['Message']) >= 45) {
+									$message= substr($log['Message'], 0, 45)."...";
+								}
+								else {
+									$message= $log['Message'];
+								}
+							
+						?>	
+							<tr style="<?php echo $logColor; ?>">
+								<td width="5%" ><?php echo $log['Title']; ?></td>
+								<td title="<?php echo $log['Message']." @ ".$time; ?>" ><?php echo $message; ?></td>
+							</tr>	
+							<?php } ?>				
 						</tbody>
 					</table>
 				</div>
@@ -394,17 +445,19 @@
 					Speedtest
 				</h5>
 			</div>
-			<div class="panel-body" style="background:#1D1D35;height:285px;">
-				<div class="row">
+			<div class="panel-body" style="overflow:hidden;background:#1D1D35;height:285px;">
+				<div class="rsow">
 					<a target="_blank" href="<?php echo str_replace(".png","",$json['OklaSpeedtest']['Response']['share']); ?>">
-						<form method="post" action="index.php">
+						<form style="" method="post" action="index.php">
 						<?php if($json['OklaSpeedtest']['Response']['share']!=""){ ?>
 							<center><img width="80%" style="margin-top:-10px" height="80%" src="<?php echo $json['OklaSpeedtest']['Response']['share']; ?>"/></center>
-						<?php }else{ echo "<center><h5 style='padding:30px;color:#fff'>Refresh to get the latest Speedtest</h5></center><br><br>"; } ?>
+						<?php }else{ ?>
+							<center><h6 style='text-align:center;width:100%;bottom:0;padding:30px;color:#fff'>Refresh the results to get the latest Internet Speedtest from this asset.</h6></center><br><br>
+						<?php } ?>
 							<input type="hidden" value="refreshSpeedtest" name="type">
 							<input type="hidden" value="<?php echo $computerID; ?>" name="CompanyID">
 							<center>
-								<button class="btn btn-md btn-secondary" style="width:95%;bottom:0" type="submit">Refresh Results</button>
+								<button class="btn btn-md btn-secondary" style="width:100%;bottom:0" type="submit">Refresh Results</button>
 							</center>
 						</form>
 					</a>
@@ -444,7 +497,9 @@
 			</li>
 		</ul>
 		<span style="color:#696969;float:right;font-size:10px;">
-			Added <?php echo gmdate("m/d/Y\ h:i:s", $company['date_added']); ?>
+		<?php if($company['date_added']!=""){ ?>
+			Added <?php echo date("m/d/Y\ h:i:s", strtotime($company['date_added'])); 
+		} ?>
 		</span>
 	  </div>
 	  <div class="modal-footer">
@@ -520,7 +575,7 @@
 	  ],
 	  datasets: [
 	    {
-	      data: [20,80],
+	      data: [<?php echo (int)$ramPercentMin .",".(int)$ramPercentMax; ?>],
 	      backgroundColor: [
 	        "<?php echo $siteSettings['theme']['Color 2']; ?>"
 	      ],
@@ -550,7 +605,7 @@
 	  ],
 	  datasets: [
 	    {
-	      data: [<?php echo $usedPct.",".$left; ?>],
+	      data: [<?php echo (int)$usedPct.",".(int)$left; ?>],
 	      backgroundColor: [
 	        "<?php echo $siteSettings['theme']['Color 5']; ?>"
 	      ],
@@ -583,11 +638,14 @@
 	  type: 'doughnut',
 	  data: data3,
 	  options: {
+		
 	  	responsive: true,
 	    legend: {
 	      display: false
 	    }
+		
 	  }
+		
 	});	
 	Chart.pluginService.register({
 	  beforeDraw: function(chart) {
@@ -608,9 +666,16 @@
 </script>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').DataTable();
-		$('#dataTable2').DataTable();
-	});
+		$('#dataTable').DataTable( {
+			"lengthMenu": [[5], [5]],
+			colReorder: true,
+			"searching": false,
+			"lengthChange": false,
+			"info": false,
+			"order": [],
+			colReorder: true
+		} );
+	} );
 </script>
 <script>
 	<?php if($online=="0"){ ?>

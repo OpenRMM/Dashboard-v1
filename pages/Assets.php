@@ -102,14 +102,14 @@
 									</a>
 									</td>
 									<?php
-										$username = textOnNull($data['WMI_ComputerSystem'][0]['UserName'], "Unknown");
+										$username = textOnNull($data['WMI_ComputerSystem']['Response'][0]['UserName'], "Unknown");
 									?>
 									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username)); ?>'); $('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
 									<?php
 										echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username));
 									?>
 									</td>
-									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo $data['WMI_ComputerSystem'][0]['Caption'];?>'); $('input[type=search]').trigger('keyup'); "><?php echo textOnNull(str_replace('Microsoft', '',$data['WMI_ComputerSystem'][0]['Caption']), "Windows");?></td>
+									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo textOnNull(str_replace('Microsoft', '',$data['WMI_ComputerSystem']['Response'][0]['Caption']), "Windows");?>'); $('input[type=search]').trigger('keyup'); "><?php echo textOnNull(str_replace('Microsoft', '',$data['WMI_ComputerSystem']['Response'][0]['Caption']), "Windows");?></td>
 									<td>
 									<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="$('input[type=search]').val('<?php echo textOnNull($result['name'], "N/A");?>');$('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
 										<?php echo textOnNull($result['name'], "Not Assigned");?>
@@ -124,7 +124,7 @@
 									<a href="javascript:void(0)" onclick="loadSection('Edit', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
 										<i class="fas fa-pencil-alt"></i>
 									</a>
-									<a title="View Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('General', '<?php echo $result['ID']; ?>');" href="javascript:void(0)" class="form-inline btn btn-warning btn-sm">
+									<a title="View Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('General', '<?php echo $result['ID']; ?>');" href="javascript:void(0)" class="form-inline btn btn-warning btn-sm">
 										<i class="fas fa-eye"></i>
 									</a>
 									</td>

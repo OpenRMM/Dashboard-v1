@@ -46,7 +46,7 @@
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-				History: <?php echo date("l, F jS g:i A", strtotime($json['WMI_UserAccount_lastUpdate']));?>
+				History: <?php echo date("l, F jS", strtotime($showDate));?>
 			</span>
 		<?php }?>
 	</div>
@@ -93,11 +93,11 @@
 					?>							
 					<tr>
 					  <td><?php echo textOnNull(ucfirst($user['Name']), "N/A");?></td>																			
-					  <td><?php echo $user['Disabled'];?>	</td>						
-					  <td><?php echo textOnNull($user['PasswordRequired'], "N/A");?></td>					
+					  <td><?php if($user['Disabled']=="1"){echo "Yes"; }else{ echo "No"; } ?>	</td>						
+					  <td><?php if($user['PasswordRequired']=="1"){echo "Yes"; }elseif($user['PasswordRequired']==""){ echo "Unknown"; }else{ echo "No";}?></td>					
 					  <td><?php echo textOnNull($user['LocalAccount'], "N/A");?></td>						
 					  <td><?php echo textOnNull($user['Domain'], "N/A");?></td>
-					  <td><?php echo textOnNull($numberOfLogins[strtolower($user['Name'])], "N/A");?></td>
+					  <td><?php echo textOnNull($numberOfLogins[strtolower($user['Name'])], "Unknown");?></td>
 					  <td title="<?php echo $user['Description']; ?>"><?php echo textOnNull(strlen($user['Description']) > 20 ? substr($user['Description'],0,20)."..." : $user['Description'], "Not Set");?></td>
 					  <td>
 						<?php if($user['Disabled']=="True"){ ?>

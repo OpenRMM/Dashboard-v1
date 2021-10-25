@@ -47,7 +47,7 @@ $error = $json['WMI_NetworkAdapters_error'];
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-				History: <?php echo date("l, F jS g:i A", strtotime($json['WMI_NetworkAdapters_lastUpdate']));?>
+				History: <?php echo date("l, F jS", strtotime($showDate));?>
 			</span>
 		<?php }?>
 	</h4>	
@@ -78,7 +78,7 @@ $error = $json['WMI_NetworkAdapters_error'];
 			?>
 				<tr>
 					<td><?php echo textOnNull($adapter['Description'],"None");?></td>	
-					<td><?php echo textOnNull($adapter['DHCPEnabled'],"None");?></td>				
+					<td><?php if($adapter['DHCPEnabled']=="1"){echo "Yes"; }elseif($adapter['DHCPEnabled']==""){ echo "Unknown"; }else{ echo "No";}?></td>				
 					<td><?php echo textOnNull($adapter['MACAddress'],"None"); ?></td>
 					<td><?php echo textOnNull($adapter['DHCPServer'],"None"); ?></td>
 				</tr>			

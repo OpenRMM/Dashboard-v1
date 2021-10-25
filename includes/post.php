@@ -226,13 +226,13 @@
 			$taskAct1Title=clean($_POST['taskAct1Title']);
 			$taskAct1Message=clean($_POST['taskAct1Message']);
 
-			$query = "INSERT INTO tasks (taskName,condition1Type,condition1Comparison,condition1Value,condition2Type,condition2Comparison,condition2Value,condition3Type,condition3Comparison,condition3Value,actionCommand,actionTitle,actionValue)
-			VALUES ('".$name."','".$taskCond1."','".$taskCond1Comparison."','".$taskCond1Value."','".$taskCond2."','".$taskCond2Comparison."','".$taskCond2Value."','".$taskCond3."','".$taskCond3Comparison."','".$taskCond3Value."','".$taskAct1."','".$taskAct1Title."','".$taskAct1Message."')";
+			$taskDetails="{}";
+
+			$query = "INSERT INTO tasks (taskName,taskDetails)
+			VALUES ('".$name."','".$taskDetails."')";
   			$results = mysqli_query($db, $query);
-			//echo mysqli_error($db);exit;
 			$activity="User Created: ".$taskCond1." task";		
-			userActivity($activity,$_SESSION['userid']);
-			
+			userActivity($activity,$_SESSION['userid']);	
 			header("location: index.php");
 		}
 
@@ -400,8 +400,11 @@
 			$agent_Startup = clean($_POST['agent_Startup']);
 			$agent_Logs = clean($_POST['agent_Logs']);
 			$agent_SharedDrives = clean($_POST['agent_SharedDrives']);
+			$agent_Logs = clean($_POST['agent_logs']);
+			$agent_WindowsUpdates = clean($_POST['agent_WindowsUpdates']);
+		
 
-			$settings='{"interval": {"SharedDrives": '.$agent_SharedDrives.',"Heartbeat": '.$agent_Heartbeat.', "getGeneral": '.$agent_General.', "getBIOS": '.$agent_BIOS.', "getStartup": '.$agent_Startup.', "getOptionalFeatures": '.$agent_Features.', "getProcesses": '.$agent_Processes.', "getServices": '.$agent_Services.', "getUsers": '.$agent_Users.', "getVideoConfiguration": '.$agent_Video.', "getLogicalDisk": '.$agent_Disk.', "getMappedLogicalDisk": '.$agent_Mapped.', "getPhysicalMemory": '.$agent_Memory.', "getPointingDevice": '.$agent_Pointing.', "getKeyboard": '.$agent_Keyboard.', "getBaseBoard": '.$agent_Board.', "getDesktopMonitor": '.$agent_Monitor.', "getPrinters": '.$agent_Printers.', "getNetworkLoginProfile": '.$agent_NetworkLogin.', "getNetwork": '.$agent_Network.', "getPnPEntitys": '.$agent_PnP.', "getSoundDevices": '.$agent_Sound.', "getSCSIController": '.$agent_SCSI.', "getProducts": '.$agent_Products.', "getProcessor": '.$agent_Processor.', "getFirewall": '.$agent_Firewall.', "getAgent": '.$agent_Agent.', "getBattery": '.$agent_Battery.', "getFilesystem": '.$agent_Filesystem.', "getEventLogs": '.$agent_Logs.'}}';
+			$settings='{"interval": {"getWindowsUpdates": '.$agent_WindowsUpdates.',"getAgentLogs": '.$agent_Logs.',"getSharedDrives": '.$agent_SharedDrives.',"Heartbeat": '.$agent_Heartbeat.', "getGeneral": '.$agent_General.', "getBIOS": '.$agent_BIOS.', "getStartup": '.$agent_Startup.', "getOptionalFeatures": '.$agent_Features.', "getProcesses": '.$agent_Processes.', "getServices": '.$agent_Services.', "getUsers": '.$agent_Users.', "getVideoConfiguration": '.$agent_Video.', "getLogicalDisk": '.$agent_Disk.', "getMappedLogicalDisk": '.$agent_Mapped.', "getPhysicalMemory": '.$agent_Memory.', "getPointingDevice": '.$agent_Pointing.', "getKeyboard": '.$agent_Keyboard.', "getBaseBoard": '.$agent_Board.', "getDesktopMonitor": '.$agent_Monitor.', "getPrinters": '.$agent_Printers.', "getNetworkLoginProfile": '.$agent_NetworkLogin.', "getNetwork": '.$agent_Network.', "getPnPEntitys": '.$agent_PnP.', "getSoundDevices": '.$agent_Sound.', "getSCSIController": '.$agent_SCSI.', "getProducts": '.$agent_Products.', "getProcessor": '.$agent_Processor.', "getFirewall": '.$agent_Firewall.', "getAgent": '.$agent_Agent.', "getBattery": '.$agent_Battery.', "getFilesystem": '.$agent_Filesystem.', "getEventLogs": '.$agent_Logs.'}}';
 			$query = "UPDATE computerdata SET agent_settings='".$settings."' WHERE ID=".$ID.";";
 			//$results = mysqli_query($db, $query);
 			//echo mysqli_error($db)."sadsada"; exit;

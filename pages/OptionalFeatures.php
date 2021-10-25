@@ -50,7 +50,7 @@
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-				History: <?php echo date("l, F jS g:i A", strtotime($json['WMI_OptionalFeatures_lastUpdate']));?>
+				History: <?php echo date("l, F jS", strtotime($showDate));?>
 			</span>
 		<?php }?>
 	</div>
