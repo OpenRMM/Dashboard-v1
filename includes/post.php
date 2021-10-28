@@ -9,7 +9,7 @@
             $_SESSION['excludedPages'] = explode(",",$excludedPages);
             // echo mysqli_error($db);exit;
             // echo '<script>window.onload = function() { pageAlert("User Settings", "User settings changed successfully.","Success"); };</script>';
-            header("location: index.php");
+            header("location: /");
         }
         //init.php
         if($_POST['type'] == "init"){
@@ -75,7 +75,7 @@
             unlink("includes/config.php");
             $_SESSION['excludedPages'] = explode(",",$excludedPages);
             file_put_contents("includes/config.php","<?php \$siteSettingsJson = '".$data."';");
-            header("location: index.php");
+            header("location: /");
         }
         //edit asset
         if($_POST['type'] == "EditComputer"){
@@ -90,7 +90,7 @@
 			//Edit Recents
 			$activity = "Technician Edited Asset: ".$ID;
 			userActivity($activity,$_SESSION['userid']);
-			$query = "UPDATE users SET recentedit='".implode(",", $_SESSION['recentedit'])."' WHERE ID=".$_SESSION['userid'].";";
+			$query = "UPDATE users SET recent_edit='".implode(",", $_SESSION['recentedit'])."' WHERE ID=".$_SESSION['userid'].";";
 			if (in_array($ID, $_SESSION['recentedit'])){
 				if (($key = array_search($ID, $_SESSION['recentedit'])) !== false) {
 					unset($_SESSION['recentedit'][$key]);
@@ -104,22 +104,22 @@
 				}
 			}
 			//Update Computer Data
-			$query = "UPDATE computerdata SET show_alerts='".$show_alerts."', computer_type='".$type."', comment='".$comment."', name='".$name."', phone='".$phone."', CompanyID='".$company."', email='".$email."' WHERE ID='".$ID."';";
+			$query = "UPDATE computers SET show_alerts='".$show_alerts."', computer_type='".$type."', comment='".$comment."', name='".$name."', phone='".$phone."', company_id='".$company."', email='".$email."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
-			header("location: index.php");
+			header("location: /");
 		}
 		//Delete computer on edit.php
 		if($_POST['type'] == "DeleteComputer"){
 			$ID = (int)$_POST['ID'];
 			$hostname = clean($_POST['hostname']);
 			if($ID > 0){
-				$query = "UPDATE computerdata SET active='0' WHERE ID='".$ID."';";
+				$query = "UPDATE computers SET active='0' WHERE ID='".$ID."';";
 				$results = mysqli_query($db, $query);
-				$query = "DELETE FROM wmidata WHERE ComputerID='".$ID."';";
+				$query = "DELETE FROM wmidata WHERE computer_id='".$ID."';";
 				$results = mysqli_query($db, $query);
 				$activity = "Technician Deleted Asset: ".$ID;
 				userActivity($activity,$_SESSION['userid']);
-				header("location: index.php");
+				header("location: /");
 			}
     }
 		//Add Computers To Company
@@ -127,11 +127,11 @@
 			$computers = $_POST['computers'];
 			$companies = $_POST['companies'];
 			foreach($computers as $computer) {
-				$query = "UPDATE computerdata SET CompanyID='".$companies."' WHERE ID='".$computer."';";
+				$query = "UPDATE computers SET company_id='".$companies."' WHERE ID='".$computer."';";
 				$results = mysqli_query($db, $query);
 				echo $computer;
 			}
-			header("location: index.php");
+			header("location: /");
 		}
 		//Add Edit/User
 		if($_POST['type'] == "AddEditUser"){
@@ -174,7 +174,7 @@
 				}else{ //passwords do not match
 					echo '<script>window.onload = function() { pageAlert("User Settings", "Password change failed, passwords do not match.","Danger"); };</script>';
 				}
-				//header("location: index.php?page=AllUsers&danger=".base64_encode($error));
+				//header("location: /?page=AllUsers&danger=".base64_encode($error));
 			}
 		}
 		//delete note
@@ -184,7 +184,7 @@
 			$results = mysqli_query($db, $query);			
 			$activity="Technician Deleted All Notes";		
 			userActivity($activity,$_SESSION['userid']);
-			header("location: index.php");
+			header("location: /");
 		}
 		//delete user activity
 		if(isset($_POST['delActivity'])){
@@ -197,7 +197,7 @@
 			}
 			$activity="Admin Deleted All Activity Logs For This Technician";		
 			userActivity($activity,$delActivity);
-			header("location: index.php");
+			header("location: /");
 		}
 
 		//delete task
@@ -207,33 +207,29 @@
 			$results = mysqli_query($db, $query);
 			$activity="Technician Deleted Task ID: ".$del;		
 			userActivity($activity,$_SESSION['userid']);
-			header("location: index.php");
+			header("location: /");
 		}
 
 		//Create task
 		if($_POST['type'] == "newTask"){
 			$name=clean($_POST['name']);
-			$taskCond1=clean($_POST['taskCond1']);
-			$taskCond1Comparison=clean($_POST['taskCond1Comparison']);
-			$taskCond1Value=clean($_POST['taskCond1Value']);
-			$taskCond2=clean($_POST['taskCond2']);
-			$taskCond2Comparison=clean($_POST['taskCond2Comparison']);
-			$taskCond2Value=clean($_POST['taskCond2Value']);
-			$taskCond3=clean($_POST['taskCond3']);
-			$taskCond3Comparison=clean($_POST['taskCond3Comparison']);
-			$taskCond3Value=clean($_POST['taskCond3Value']);
 			$taskAct1=clean($_POST['taskAct1']);
-			$taskAct1Title=clean($_POST['taskAct1Title']);
 			$taskAct1Message=clean($_POST['taskAct1Message']);
 
-			$taskDetails="{}";
-
-			$query = "INSERT INTO tasks (taskName,taskDetails)
-			VALUES ('".$name."','".$taskDetails."')";
+			$taskDetails='{"Name":"'.$name.'","Conditions":{';
+			for ($x = 1; $x <= $taskCondtion_max; $x++) {
+				$task = "taskCond".$x;
+				$taskDetails.= '"'.$x.'": {"Type":"'.clean($_POST[$task]).'","Comparison":"'.clean($_POST[$task.'Comparison']).'","';
+				$taskDetails .= 'Value":"'.clean($_POST[$task.'Value']).'"},';
+			}
+			$taskDetails = rtrim($taskDetails,",");
+			$taskDetails.= '},"Actions":{"Type":"'.$taskAct1.'","Argument":"'.$taskAct1Message.'"}}';
+			$query = "INSERT INTO tasks (user_id,name,details)VALUES ('".$_SESSION['userid']."','".$name."','".$taskDetails."')";
   			$results = mysqli_query($db, $query);
-			$activity="User Created: ".$taskCond1." task";		
+			 // echo mysqli_error($db); exit;
+			$activity="User Created task: ".mysqli_insert_id($db);		
 			userActivity($activity,$_SESSION['userid']);	
-			header("location: index.php");
+			header("location: /");
 		}
 
 		//Oneway asset message
@@ -246,7 +242,7 @@
 			MQTTpublish($ID."/Commands/setAlert",$script,$ID,false);	
 			$activity="Technician Sent Asset: ".$ID." A One-way Message";		
 			userActivity($activity,$_SESSION['userid']);
-			header("location: index.php");
+			header("location: /");
 		}
 		//Add Edit/Company
 		if($_POST['type'] == "AddEditCompany"){
@@ -264,24 +260,24 @@
 					userActivity($activity,$_SESSION['userid']);
 				}else{
 					$query = "UPDATE companies SET name='".$name."', phone='".$phone."', address='".$address."', email='".$email."', comments='".$comments."'
-							  WHERE CompanyID='".$ID."' LIMIT 1";
+							  WHERE company_id='".$ID."' LIMIT 1";
 					$activity = "Technician Edited A Company: ".$name;
 					userActivity($activity,$_SESSION['userid']);
 				}
 				$results = mysqli_query($db, $query);
 				
-				header("location: index.php");
+				header("location: /");
 			}
 		}
 		//Delete Company
 		if($_POST['type'] == "DeleteCompany"){
 			$ID = (int)$_POST['ID'];
 			$active = (int)$_POST['companyactive'];
-			$query = "UPDATE companies SET active='".$active."' WHERE CompanyID='".$ID."';";
+			$query = "UPDATE companies SET active='".$active."' WHERE company_id='".$ID."';";
 			$results = mysqli_query($db, $query);
 			$activity = "Technician Deleted A Company: ".$ID;
 			userActivity($activity,$_SESSION['userid']);
-			header("location: index.php");
+			header("location: /");
 		}
 		//Delete User
 		if($_POST['type'] == "DeleteUser"){
@@ -291,7 +287,7 @@
 			$results = mysqli_query($db, $query);
 			$activity = "Technician Deleted A Technician: ".$ID;
 			userActivity($activity,$_SESSION['userid']);			
-			header("location: index.php");
+			header("location: /");
 		}
 		//Delete Command
 		if($_POST['type'] == "DeleteCommand"){
@@ -301,7 +297,7 @@
 			userActivity($activity,$_SESSION['userid']);
 			$query = "UPDATE commands SET command='Deleted' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
-			header("location: index.php");
+			header("location: /");
 		}
 		//Create Note
 		if(isset($_POST['note'])){			
@@ -316,7 +312,7 @@
 			$query = "UPDATE users SET notes='".$note."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);		
 			userActivity($activity,$_SESSION['userid']);
-			header("location: index.php");
+			header("location: /");
 		}
 		//Commands
 		if($_POST['type'] == "SendCommand"){
@@ -325,10 +321,10 @@
 			$expire_after = (int)$_POST['expire_after'];
 			$exists = 0;
 			if(trim($commands)!=""){
-				$query = "SELECT hostname,ID FROM computerdata WHERE ID='".$ID."'";
+				$query = "SELECT hostname,ID FROM computers WHERE ID='".$ID."'";
 				$results = mysqli_query($db, $query);
 				$computer = mysqli_fetch_assoc($results);
-				$query = "SELECT ID, expire_time FROM commands WHERE ComputerID='".$computer['ID']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
+				$query = "SELECT ID, expire_time FROM commands WHERE computer_id='".$computer['ID']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
 				$results = mysqli_query($db, $query);
 				$existing = mysqli_fetch_assoc($results);
 				if($existing['ID'] != ""){
@@ -340,7 +336,7 @@
 					//Generate expire time
 					$expire_time = date("Y-m-d h:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("Y-m-d h:i:s"))));
 					
-					$query = "INSERT INTO commands (ComputerID, userid, command, expire_after, expire_time, status)
+					$query = "INSERT INTO commands (computer_id, userid, command, expire_after, expire_time, status)
 							  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 					$results = mysqli_query($db, $query);
 					$insertID = mysqli_insert_id($db);
@@ -350,20 +346,20 @@
 			userActivity($activity,$_SESSION['userid']);
 			}
 			
-			header("location: index.php");
+			header("location: /");
 		}
 
 		//historical
 		if(isset($_POST['historyDate'])){
 			$_SESSION['date'] = clean($_POST['historyDate']);
-			header("location: index.php");
+			header("location: /");
 		}
 
 		//Get speedtest
 		if($_POST['type'] == "refreshSpeedtest"){
 			$ID = (int)$_POST['CompanyID'];
 			MQTTpublish($ID."/Commands/getOklaSpeedtest",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),false);
-			header("location: index.php");
+			header("location: /");
 		}
 		//Save agent config
 		if($_POST['type'] == "agentConfig"){
@@ -405,11 +401,11 @@
 		
 
 			$settings='{"interval": {"getWindowsUpdates": '.$agent_WindowsUpdates.',"getAgentLogs": '.$agent_Logs.',"getSharedDrives": '.$agent_SharedDrives.',"Heartbeat": '.$agent_Heartbeat.', "getGeneral": '.$agent_General.', "getBIOS": '.$agent_BIOS.', "getStartup": '.$agent_Startup.', "getOptionalFeatures": '.$agent_Features.', "getProcesses": '.$agent_Processes.', "getServices": '.$agent_Services.', "getUsers": '.$agent_Users.', "getVideoConfiguration": '.$agent_Video.', "getLogicalDisk": '.$agent_Disk.', "getMappedLogicalDisk": '.$agent_Mapped.', "getPhysicalMemory": '.$agent_Memory.', "getPointingDevice": '.$agent_Pointing.', "getKeyboard": '.$agent_Keyboard.', "getBaseBoard": '.$agent_Board.', "getDesktopMonitor": '.$agent_Monitor.', "getPrinters": '.$agent_Printers.', "getNetworkLoginProfile": '.$agent_NetworkLogin.', "getNetwork": '.$agent_Network.', "getPnPEntitys": '.$agent_PnP.', "getSoundDevices": '.$agent_Sound.', "getSCSIController": '.$agent_SCSI.', "getProducts": '.$agent_Products.', "getProcessor": '.$agent_Processor.', "getFirewall": '.$agent_Firewall.', "getAgent": '.$agent_Agent.', "getBattery": '.$agent_Battery.', "getFilesystem": '.$agent_Filesystem.', "getEventLogs": '.$agent_Logs.'}}';
-			$query = "UPDATE computerdata SET agent_settings='".$settings."' WHERE ID=".$ID.";";
+			$query = "UPDATE computers SET agent_settings='".$settings."' WHERE ID=".$ID.";";
 			//$results = mysqli_query($db, $query);
 			//echo mysqli_error($db)."sadsada"; exit;
 			MQTTpublish($ID."/Commands/setAgentSettings",$settings,getSalt(20),true);
-			header("location: index.php");
+			header("location: /");
 		}
 		//Update Company Agents
 		if($_POST['type'] == "CompanyUpdateAll"){
@@ -417,10 +413,10 @@
 			$commands = "C:\\\\Open_RMM\\\\Update.bat";
 			$expire_after = 5;
 			$exists = 0;
-			$query = "SELECT ID, hostname FROM computerdata WHERE CompanyID='".$ID."' AND active='1'";
+			$query = "SELECT ID, hostname FROM computers WHERE company_id='".$ID."' AND active='1'";
 			$results = mysqli_query($db, $query);
 			while($computer = mysqli_fetch_assoc($results)){
-				$query = "SELECT ID, expire_time FROM commands WHERE ComputerID='".$computer['hostname']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
+				$query = "SELECT ID, expire_time FROM commands WHERE computer_id='".$computer['hostname']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
 				$results = mysqli_query($db, $query);
 				$existing = mysqli_fetch_assoc($results);
 				if(isset($existing['ID'])){
@@ -431,7 +427,7 @@
 				if($exists == 0){
 					//Generate expire time
 					$expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
-					$query = "INSERT INTO commands (ComputerID, userid, command,  expire_after, expire_time, status)
+					$query = "INSERT INTO commands (computer_id, userid, command,  expire_after, expire_time, status)
 							  VALUES ('".$computer['hostname']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 					$results = mysqli_query($db, $query);
 				}
@@ -467,7 +463,7 @@
 			unlink("downloads/".$version);
 			$activity = "Technician Deleted An Agent Version: ".$version;
 			userActivity($activity,$_SESSION['userid']);
-			header("location: index.php");
+			header("location: /");
 		}
 		//Get Site Settings
 		if($_POST['type'] == "getSiteSettings"){
@@ -501,17 +497,17 @@
 					$activity="Technician Logged In";
 					userActivity($activity,$data['ID']);
 					
-					$_SESSION['accountType']=$data['accountType'];	
+					$_SESSION['accountType']=$data['account_type'];	
 					$_SESSION['showModal']="true";	
 					$_SESSION['recent']=explode(",",$data['recents']);
 					if($data['recents']==""){ $_SESSION['recent']=array(); }
-					$_SESSION['recentedit']=explode(",",$data['recentedit']);
-					if($data['recentedit']==""){ $_SESSION['recentedit']=array(); }
+					$_SESSION['recentedit']=explode(",",$data['recent_edit']);
+					if($data['recent_edit']==""){ $_SESSION['recentedit']=array(); }
 					
-			    	header("location: index.php");
+			    	header("location: /");
 				}else{
 					$_SESSION['loginMessage'] = "Incorrect Login Details";
-					header("location: index.php");
+					header("location: /");
 				}
 		}
 		//Upload or download new agent file
@@ -562,6 +558,6 @@
 				$activity = "Technician Configured Customer: ".$company." Agent Files";
 				userActivity($activity,$_SESSION['userid']);
 				echo '<script>window.onload = function() { pageAlert("File Upload", "Download Started For Customer Agent","Default"); };</script>';
-				header("location: ../../download/index.php?company=".$company);
+				header("location: ../../download//?company=".$company);
 			}
 		}

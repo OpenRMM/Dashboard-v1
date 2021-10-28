@@ -8,12 +8,12 @@ if($_SESSION['userid']!=""){
     {  //on agent page
         $json = getComputerData($_SESSION['computerID'], array("*"), "latest");
 
-        $query = "SELECT * FROM computerdata WHERE ID='".$_SESSION['computerID']."' ORDER BY ID DESC";
+        $query = "SELECT * FROM computers WHERE ID='".$_SESSION['computerID']."' ORDER BY ID DESC";
         $results = mysqli_query($db, $query);
         $existing = mysqli_fetch_assoc($results);
 
         //duplicate hostname
-        $query = "SELECT * FROM computerdata WHERE hostname='".$existing['hostname']."' ORDER BY ID DESC";
+        $query = "SELECT * FROM computers WHERE hostname='".$existing['hostname']."' ORDER BY ID DESC";
         $results = mysqli_query($db, $query);
         $checkrows=mysqli_num_rows($results);
         if( $checkrows>1 and $_SESSION['notifReset']==""){
@@ -36,22 +36,19 @@ if($_SESSION['userid']!=""){
         $alertResponse = $json['Alert']['Response'];
         $alertUser = $json['Alert']['Request']['userID'];
         if($alertResponse!="" and $alertUser==$_SESSION['userid']){
-            $query = "UPDATE wmidata SET WMI_Name='Alerted' WHERE ComputerID='".$_SESSION['computerID']."' and WMI_Name='Alert';";
+            $query = "UPDATE wmidata SET name='Alerted' WHERE ComputerID='".$_SESSION['computerID']."' and name='Alert';";
             $results = mysqli_query($db, $query);
             echo "<script>toastr.info('".$existing['hostname']." Replied to Message: ".$alertResponse."','',{timeOut:0,extendedTimeOut: 0}); </script>";
         }
-
         $_SESSION['notifReset2']="";
     }else{
         //not on agent page
         echo "<script>toastr.clear(); </script>";
         $_SESSION['notifReset']="";
-
-
     }
 
     //check if 2 servers
-    $query = "SELECT * FROM computerdata WHERE computer_type='OpenRMM Server' and online='1' and active='1' ORDER BY ID DESC";
+    $query = "SELECT * FROM computers WHERE computer_type='OpenRMM Server' and online='1' and active='1' ORDER BY ID DESC";
     $results = mysqli_query($db, $query);
     $existing = mysqli_fetch_assoc($results);
     $checkrows=mysqli_num_rows($results);
@@ -60,7 +57,6 @@ if($_SESSION['userid']!=""){
         $_SESSION['notifReset2']="1";
     }
 }
-
 ?>
 <script>
     toastr.options = {'preventDuplicates': true ,'closeButton': true }

@@ -29,20 +29,20 @@
 	//get update
 	//MQTTpublish($computerID."/Commands/getUsers","true",getSalt(20));
 	
-	$json = getComputerData($computerID, array("WMI_UserAccount","WMI_NetworkLoginProfile"), $showDate);
+	$json = getComputerData($computerID, array("Users","NetworkLoginProfile"), $showDate);
 
-	$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+	$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_fetch_assoc(mysqli_query($db, $query));
 	$online = $results['online'];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
 		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
-			User Accounts (<?php echo count($json['WMI_UserAccount']['Response']);?>)
+			User Accounts (<?php echo count($json['Users']['Response']);?>)
 		</h4>
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;">
-				Last Update: <?php echo ago($json['WMI_UserAccount_lastUpdate']);?>
+				Last Update: <?php echo ago($json['Users_lastUpdate']);?>
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
@@ -76,11 +76,11 @@
 				</thead>
 				<tbody>
 					<?php
-						$users = $json['WMI_UserAccount']['Response'];
-						$users_error = $json['WMI_UserAccount_error'];
+						$users = $json['Users']['Response'];
+						$users_error = $json['Users_error'];
 						
-						$netlogins = $json['WMI_NetworkLoginProfile']['Response'];
-						$netlogin_error = $json['WMI_NetworkLoginProfile_error'];
+						$netlogins = $json['NetworkLoginProfile']['Response'];
+						$netlogin_error = $json['NetworkLoginProfile_error'];
 						
 						$numberOfLogins = array();
 						foreach($users as $user){

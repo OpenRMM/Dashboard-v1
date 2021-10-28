@@ -49,7 +49,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
        
       
     }else{
-        $query = "SELECT ID, hostname, online, last_update FROM computerdata WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
+        $query = "SELECT ID, hostname, online, last_update FROM computers WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
         $results = mysqli_query($db, $query);
         $computer = mysqli_fetch_assoc($results);
         $_SESSION['ComputerHostname']=$computer['hostname'];
@@ -182,14 +182,14 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
 ?>
 <script>
     var section = getCookie("section");
-    if(section == "Edit" ||section == "Profile" || section == "Assets" || section == "Dashboard" || section == "AllUsers" || section == "AllCompanies" || section == "NewComputers" || section == "Versions" || section == "SiteSettings"){
+    if(section == "Edit" ||section == "Profile" || section == "Assets" || section == "Dashboard" || section == "AllUsers" || section == "AllCompanies" || section == "NewComputers" || section == "Versions" || section == "Init"){
         $('#sectionList').slideUp(400);
     }else if($('#sectionList').css("display")=="none"){
         $('#sectionList').slideDown(400);
     }
 </script>
 <script>
-	<?php if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['serverStatus']==""){ ?>
+	<?php if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['server_status']==""){ ?>
 		toastr.remove()
 		toastr.error('The Asset Sever is offline. Assets will not be able to send or recieve new data.');
 	<?php } ?>

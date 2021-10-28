@@ -5,7 +5,7 @@
 		toastr.error('Session timed out.');
 		setTimeout(function(){
 			setCookie("section", "Login", 365);	
-			window.location.replace("../index.php");
+			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
@@ -17,9 +17,9 @@
 	$username=$user['username'];
 
 	//assets
-	$query = "SELECT ID FROM computerdata where active='1' and online='1'";
+	$query = "SELECT ID FROM computers where active='1' and online='1'";
 	$assets1 = mysqli_num_rows(mysqli_query($db, $query));
-	$query = "SELECT ID FROM computerdata where active='1' and online='0'";
+	$query = "SELECT ID FROM computers where active='1' and online='0'";
 	$assets2 = mysqli_num_rows(mysqli_query($db, $query));
 ?>
 	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
@@ -31,7 +31,7 @@
 	</div>	
 	<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;">			 
-			   <form method="post" action="index.php">
+			   <form method="post" action="/">
 				   <div class="card table-card" id="printTable" style="marsgin-top:-20px;padding:10px;border-radius:6px;">  
 						<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">				
 							<thead>
@@ -50,26 +50,23 @@
 							<tbody>
 								<?php
 									//Get Total Count
-									$query = "SELECT ID FROM computerdata where active='1'";
+									$query = "SELECT ID FROM computers where active='1'";
 									$results = mysqli_query($db, $query);
 									$resultCount = mysqli_num_rows($results);							
-									$query = "SELECT * FROM computerdata
-												LEFT JOIN companies ON companies.CompanyID = computerdata.CompanyID
-												WHERE computerdata.active='1'
-												ORDER BY computerdata.hostname ASC";
+									$query = "SELECT * FROM computers WHERE active='1' ORDER BY hostname ASC";
 									//Fetch Results
 									$count = 0;
 									$results = mysqli_query($db, $query);
 									while($result = mysqli_fetch_assoc($results)){
 										if($search==""){
-											$getWMI = array("WMI_LogicalDisk", "WMI_ComputerSystem", "Ping");
+											$getWMI = array("LogicalDisk", "General", "Ping");
 										}else{
 											$getWMI = array("*");
 										}
 										$data = getComputerData($result['ID'], $getWMI);
 										//Determine Warning Level
-										$freeSpace = $data['WMI_LogicalDisk']['Response'][0]['FreeSpace'];
-										$size = $data['WMI_LogicalDisk']['Response'][0]['Size'];
+										$freeSpace = $data['LogicalDisk']['Response'][0]['FreeSpace'];
+										$size = $data['LogicalDisk']['Response'][0]['Size'];
 										$used = $size - $freeSpace;
 										$usedPct = round(($used/$size) * 100);
 										if($usedPct > $siteSettings['Alert Settings']['Disk']['Danger'] ){
@@ -78,6 +75,9 @@
 											$pbColor = "#ffa500";
 										}else{ $pbColor = "#03925e"; }
 										$count++;
+										$query2 = "SELECT * FROM companies where active='1' and ID='".$result['company_id']."'";
+										$results2 = mysqli_query($db, $query2);
+										$company = mysqli_fetch_assoc($results2)
 								?>
 								<tr>
 									<td>
@@ -102,17 +102,17 @@
 									</a>
 									</td>
 									<?php
-										$username = textOnNull($data['WMI_ComputerSystem']['Response'][0]['UserName'], "Unknown");
+										$username = textOnNull($data['General']['Response'][0]['UserName'], "Unknown");
 									?>
 									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username)); ?>'); $('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
 									<?php
 										echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username));
 									?>
 									</td>
-									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo textOnNull(str_replace('Microsoft', '',$data['WMI_ComputerSystem']['Response'][0]['Caption']), "Windows");?>'); $('input[type=search]').trigger('keyup'); "><?php echo textOnNull(str_replace('Microsoft', '',$data['WMI_ComputerSystem']['Response'][0]['Caption']), "Windows");?></td>
+									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo textOnNull(str_replace('Microsoft', '',$data['General']['Response'][0]['Caption']), "Windows");?>'); $('input[type=search]').trigger('keyup'); "><?php echo textOnNull(str_replace('Microsoft', '',$data['General']['Response'][0]['Caption']), "Windows");?></td>
 									<td>
-									<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="$('input[type=search]').val('<?php echo textOnNull($result['name'], "N/A");?>');$('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
-										<?php echo textOnNull($result['name'], "Not Assigned");?>
+									<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="$('input[type=search]').val('<?php echo textOnNull($company['name'], "N/A");?>');$('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
+										<?php echo textOnNull($company['name'], "Not Assigned");?>
 									</a>
 									</td>
 									<td>
@@ -133,9 +133,9 @@
 							<?php  if($count==0){ ?>
 								<tr>
 									<td colspan=9>
-										<p style="text-align:center;font-size:18px;">
-											<b>No Assets To Display</b>
-										</p>
+										<center>
+											<h6>No Assets To Display</h6>
+										</center>
 									</td>
 								</tr>
 							<?php } ?>
@@ -152,13 +152,13 @@
 						<div class="modal-body">
 							<h6 id="pageAlert_title">Select The Customer You Would Like To Add These Assets Too</h6>
 							<?php							
-								$query = "SELECT CompanyID, name FROM companies ORDER BY CompanyID DESC LIMIT 100";
+								$query = "SELECT company_id, name FROM companies ORDER BY company_id DESC LIMIT 100";
 								$results = mysqli_query($db, $query);
 								$commandCount = mysqli_num_rows($results);
 								while($command = mysqli_fetch_assoc($results)){		
 							?>
 							<div class="form-check">
-								<input type="radio" required name="companies" value="<?php echo $command['CompanyID']; ?>" class="form-check-input" id="CompanyCheck">
+								<input type="radio" required name="companies" value="<?php echo $command['company_id']; ?>" class="form-check-input" id="CompanyCheck">
 								<label class="form-check-label" for="CompanyCheck"><?php echo $command['name']; ?></label>
 							</div>
 							<?php } ?>

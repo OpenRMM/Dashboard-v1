@@ -9,7 +9,7 @@ if(!isset($_SESSION['userid'])){
 $expire_after = 5;
 $exists = 0;
 
-$query = "SELECT hostname,ID FROM computerdata WHERE ID='".$ID."'";
+$query = "SELECT hostname,ID FROM computers WHERE ID='".$ID."'";
 $results = mysqli_query($db, $query);
 $computer = mysqli_fetch_assoc($results);
 									

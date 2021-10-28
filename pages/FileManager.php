@@ -47,10 +47,10 @@ if($getFolder!=""){
 	$len3 = substr($info,1);
 }
 
-$json = getComputerData($computerID, array("WMI_ComputerSystem", "WMI_Filesystem", "WMI_LogicalDisk"), $showDate);
+$json = getComputerData($computerID, array("General", "Filesystem", "LogicalDisk"), $showDate);
 
-$disks = $json['WMI_LogicalDisk']['Response'];
-$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$disks = $json['LogicalDisk']['Response'];
+$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 
@@ -92,7 +92,7 @@ $online = $results['online'];
 						</thead>
 						<tbody>
 						<?php	
-							$slots = $json['WMI_Filesystem']['Response'][0];
+							$slots = $json['Filesystem']['Response'][0];
 							$files=array();
 							//print_r($slots);
 							$folders=array();
@@ -100,7 +100,7 @@ $online = $results['online'];
 							$folderCount=0;	
 							$fileCount=0;	
 							$slots = str_replace("//","/",$slots);
-							$error = $json['WMI_Filesystem_error'];
+							$error = $json['Filesystem_error'];
 							$getFolder2 = $getFolder;
 							foreach($slots as $slot=>$info){ 
 								$info = str_replace("C:","",$info);

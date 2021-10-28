@@ -11,7 +11,7 @@ if($_SESSION['userid']==""){
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
-$query = "SELECT ID,username,last_login,active,email,nicename,hex,phone,accountType FROM users ORDER BY nicename ASC";
+$query = "SELECT ID,username,last_login,active,email,nicename,hex,phone,account_type FROM users ORDER BY nicename ASC";
 $results = mysqli_query($db, $query);
 $userCount = mysqli_num_rows($results);
 ?>

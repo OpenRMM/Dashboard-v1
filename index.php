@@ -13,13 +13,13 @@
 			$_SESSION['count']="0";
 			array_push($_SESSION['excludedPages'],$_POST['page']);	
 			//$_SESSION['updateIgnore']="";
-			header("location: index.php");
+			header("location: /");
 		}
 		include("includes/post.php");	
 	}
 
 	//Get user data
-	$query = "SELECT username,nicename,accountType FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+	$query = "SELECT username,nicename,account_type FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
@@ -103,7 +103,7 @@
 								<i style="font-size:16px" class="fas fa-bell"></i>
 								<span style="margin-top" class="text-white badge bg-c-pink"><?php if($messageText==""){ echo "0"; }else{ echo "1"; } ?></span>
 							</button>
-							<?php if($user['accountType']=="Admin"){ ?>
+							<?php if($user['account_type']=="Admin"){ ?>
 								<button type="button" onclick="loadSection('Init','true');"style="border:none;box-shadow:none" class="btn-sm btn" title="Configure OpenRMM">
 									<i style="font-size:16px" class="fas fa-cog"></i>
 								</button>
@@ -269,15 +269,23 @@
 		if (document.cookie.indexOf('section') === -1 ) {
 			setCookie("section", "Login", 365);
 		}
+
 		//Load Pages
 		var otherEntry = "";
 		
 		//Load Pages
+		
 		function loadSection(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry){
 		document.cookie = "section=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		document.cookie = "ID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		var loadSection="";
-		
+
+		<?php 
+		if($_SESSION['page']==""){
+			//echo 'section="Login";';
+		}
+		?>
+
 		setCookie("section", section, 365);
 		$('.secbtn').removeClass('secActive');
 		setCookie("ID", ID, 365);
@@ -335,6 +343,31 @@
 		 } ?>
 		 	
 	</script>
-
-
+	<script>
+	
+		var counter = 2;
+		$("#addButton").click(function () {
+	 
+		var newTextBoxDiv = $(document.createElement('tr'))
+			.attr("id", 'TextBoxDiv' + counter);
+		newTextBoxDiv.after().html('<th scope="row" style="vertical-align:middle;">AND</th>' +
+			'<td>' +
+			'<select required class="form-control" style="width:23%;display:inline-block;" name="taskCond' + counter + '">'+
+			'<option value="Total Alert Count">Total Alert Count</option><option value="Total Ram/Memory">Total Ram/Memory</option><option value="Available Disk Space">Available Disk Space</option><option value="Total Disk Space">Total Disk Space</option><option value="Domain">Domain</option><option value="Public IP Address">Public IP Address</option><option value="Antivirus">Antivirus</option><option value="Agent Version">Agent Version</option><option value="Total User Accounts">Total User Accounts</option><option value="Command Received">Command Received</option><option value="Agent Comes Online">Agent Comes Online</option><option value="Agent Goes Offline">Agent Goes Offline</option><option value="Windows Activation">Windows Activation</option><option value="Local IP Address">Local IP Address</option><option value="Last Update">Last Update</option></select> <select class="form-control" required style="width:20%;display:inline-block;" name="taskCond' + counter + 'Comparison"><option value="=">Equals</option><option value="!=">Not Equal</option><option value=">">Greater than</option><option value="<">Less than</option><option value=">=">Greater than or equals</option><option value="<=">Less than equals</option><option value="contain">Contains</option><option value="notcontain">Does not Contain</option></select>' +
+			' <input style="width:47%;display:inline-block;" type="text" class="form-control" required  name="taskCond' + counter + 
+			'Value" id="textbox' + counter + '" value="" ><button onclick="hide('+ counter + ');" type="button" id="removeButton' + counter + '" style="margin-left:10px" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></td>');
+			newTextBoxDiv.appendTo("#TextBoxesGroup");
+		counter++;
+		if(counter><?php echo $taskCondtion_max; ?>){
+				$("#addButton" ).hide();
+				return false;
+		}  
+		}); 
+		function hide(counter2) {
+			counter--;
+			$("#addButton" ).show();
+			$("#TextBoxDiv" + counter2).remove();
+		};
+	
+	</script>
 </html>

@@ -11,7 +11,7 @@ if($_SESSION['userid']==""){
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
-$query = "SELECT CompanyID,name,phone,email,address,comments,active FROM companies where CompanyID<>'1' ORDER BY active,name ASC";
+$query = "SELECT ID,name,phone,email,address,comments,active FROM companies where ID<>'1' ORDER BY active,name ASC";
 $results = mysqli_query($db, $query);
 $companyCount = mysqli_num_rows($results);
 ?>
@@ -62,7 +62,7 @@ $companyCount = mysqli_num_rows($results);
 						$computersWithAlerts = 0;
 						$aggrigateAlerts = "";
 						
-						$query = "SELECT ID FROM computerdata WHERE CompanyID='".$company['CompanyID']."'";
+						$query = "SELECT ID FROM computers WHERE CompanyID='".$company['CompanyID']."'";
 						$computerResults = mysqli_query($db, $query);
 						$computerCount = mysqli_num_rows($computerResults);
 						

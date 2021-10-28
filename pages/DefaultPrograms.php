@@ -33,7 +33,7 @@ $json = getComputerData($computerID , array("DefaultPrograms"), $showDate);
 $programs = $json['DefaultPrograms']['Response'];
 $error = $json['DefaultPrograms_error'];
 
-$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 ?>

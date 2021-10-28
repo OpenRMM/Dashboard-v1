@@ -29,21 +29,21 @@ if($computerID<0){
 //get update
 //MQTTpublish($computerID."/Commands/getNetwork","true",getSalt(20));
 
-$json = getComputerData($computerID, array("WMI_NetworkAdapters"), $showDate);
+$json = getComputerData($computerID, array("NetworkAdapters"), $showDate);
 
-$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 
-$adapters = $json['WMI_NetworkAdapters']['Response'];
-$error = $json['WMI_NetworkAdapters_error'];
+$adapters = $json['NetworkAdapters']['Response'];
+$error = $json['NetworkAdapters_error'];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>" class="col-md-10">
 		Network Adapters (<?php echo count($adapters);?>)<br/>
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;">
-				Last Update: <?php echo ago($json['WMI_NetworkAdapters_lastUpdate']);?>
+				Last Update: <?php echo ago($json['NetworkAdapters_lastUpdate']);?>
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">

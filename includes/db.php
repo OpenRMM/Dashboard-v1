@@ -4,9 +4,10 @@
 	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "Init,Login,Logout,Alerts,Commands,Dashboard,SiteSettings,Profile,Edit,AllUsers,AllCompanies,Assets,NewComputers,Versions"; 
+	$excludedPages = "Init,Login,Logout,Alerts,Commands,Dashboard,Profile,Edit,AllUsers,AllCompanies,Assets,NewComputers,Versions"; 
 	$allPages = "AgentSettings,FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,NewComputers,OptionalFeatures,Printers,Processes,Profile,Programs,Services,Users,Versions";
-	$adminPages = "AgentSettings,AllUsers.php,AllCompanies.php,SiteSettings.php";
+	$adminPages = "AgentSettings,AllUsers.php,AllCompanies.php";
+	$taskCondtion_max = 5;
 ###########################################################################################################################################
 ######################################################## DEV ONLY DO NOT PASS #############################################################
 ###########################################################################################################################################
@@ -106,7 +107,7 @@
 	function getComputerData($ID, $fields = array("*"), $date = "latest"){
 		global $db, $siteSettings;
 		$retResult = array();
-			$query = "SELECT WMI_Name, WMI_Data, last_update FROM wmidata WHERE ComputerID='".$ID."'";
+			$query = "SELECT name, data, last_update FROM computer_data WHERE computer_id='".$ID."'";
 			if($_SESSION['date']!="latest" and $_SESSION['date']!=""){
 				$query .= " and last_update LIKE '%".$_SESSION['date']."%'";
 			}
@@ -114,16 +115,16 @@
 		$results = mysqli_query($db, $query);
 		while($row = mysqli_fetch_assoc($results)){
 		
-			if(isset($retResult[$row['WMI_Name']])){continue;}
-			if($row['WMI_Name']!="Ping"){
-				$decoded = jsonDecode($row['WMI_Data'], true);
-				$retResult[$row['WMI_Name']] = $decoded['json'];
-				$retResult[$row['WMI_Name']."_raw"] = $row['WMI_Data'];
-				$retResult[$row['WMI_Name']."_error"] = $decoded['error'];
+			if(isset($retResult[$row['name']])){continue;}
+			if($row['name']!="Ping"){
+				$decoded = jsonDecode($row['data'], true);
+				$retResult[$row['name']] = $decoded['json'];
+				$retResult[$row['name']."_raw"] = $row['data'];
+				$retResult[$row['name']."_error"] = $decoded['error'];
 			}else{
-				$retResult[$row['WMI_Name']] = $row['WMI_Data'];
+				$retResult[$row['name']] = $row['data'];
 			}
-			$retResult[$row['WMI_Name']."_lastUpdate"] = $row['last_update'];
+			$retResult[$row['name']."_lastUpdate"] = $row['last_update'];
 		}
    
 		$getAlerts = getComputerAlerts($ID, $retResult);
@@ -136,7 +137,7 @@
 	function getComputerAlerts($ID, $json){
         global $db, $siteSettings;
 
-        $query = "SELECT * FROM computerdata WHERE ID='".$ID."'";
+        $query = "SELECT * FROM computers WHERE ID='".$ID."'";
         $result = mysqli_query($db, $query);
         $computer = mysqli_fetch_assoc($result);
         $hostname = $computer['hostname'].": ";
@@ -371,20 +372,20 @@
 		$users = mysqli_query($db, $query);
 		$user = mysqli_fetch_assoc($users);
 		$activity=clean($activity2);
-		if($user['userActivity']==""){
+		if($user['user_activity']==""){
 			$active = $activity."@".time();
 		}else{
-			$activeFix = clean(explode("|",$user['userActivity']));
+			$activeFix = clean(explode("|",$user['user_activity']));
 			$fix = end($activeFix);
 			$activeFix2 = explode("@",$fix);
 			if($activeFix2[0]==clean($activity)){
-				$active= $user['userActivity'];				
+				$active= $user['user_activity'];				
 			}else{
-				$activeFix = explode("|",$user['userActivity']."|".$activity."@".time());
+				$activeFix = explode("|",$user['user_activity']."|".$activity."@".time());
 				$active = implode("|",array_slice($activeFix,0,$userActivityLimit));
 			}
 		}
-		$query = "UPDATE users SET userActivity='".$active."' WHERE ID=".$IDuser.";";
+		$query = "UPDATE users SET user_activity='".$active."' WHERE ID=".$IDuser.";";
 		$results = mysqli_query($db, $query);	
 	}
 

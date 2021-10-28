@@ -29,14 +29,14 @@
 	
 	//MQTTpublish($computerID."/Commands/getPrinters","true",getSalt(20));
 
-	$json = getComputerData($computerID, array("WMI_Printers"), $showDate);
+	$json = getComputerData($computerID, array("Printers"), $showDate);
 	
-	$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+	$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_fetch_assoc(mysqli_query($db, $query));
 	$online = $results['online'];
 
-	$printers = $json['WMI_Printers']['Response'];
-	$error = $json['WMI_Printers_error'];
+	$printers = $json['Printers']['Response'];
+	$error = $json['Printers_error'];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
@@ -45,7 +45,7 @@
 		</h4>
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;"> 
-				Last Update: <?php echo ago($json['WMI_Printers_lastUpdate']);?>
+				Last Update: <?php echo ago($json['Printers_lastUpdate']);?>
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">

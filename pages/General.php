@@ -28,11 +28,11 @@
 		exit;
 	}
 	
-	$query = "SELECT online, ID, hostname, CompanyID, name, phone, email, computer_type FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+	$query = "SELECT online, ID, hostname, company_id, name, phone, email, computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$result = mysqli_fetch_assoc($results);
 
-	$query = "SELECT name, phone, email,address,comments,date_added FROM companies WHERE CompanyID='".$result['CompanyID']."' LIMIT 1";
+	$query = "SELECT name, phone, email,address,comments,date_added FROM companies WHERE ID='".$result['company_id']."' LIMIT 1";
 	$companies = mysqli_query($db, $query);
 	$company = mysqli_fetch_assoc($companies);
 	
@@ -63,8 +63,8 @@
 		//$alertType = "danger";
 	}
 
-	$ram = formatBytes($json['WMI_ComputerSystem']['Response'][0]['FreePhysicalMemory'],0);
-	$maxram = formatBytes($json['WMI_ComputerSystem']['Response'][0]['Totalphysicalmemory'],0);
+	$ram = formatBytes($json['General']['Response'][0]['FreePhysicalMemory'],0);
+	$maxram = formatBytes($json['General']['Response'][0]['Totalphysicalmemory'],0);
 	$ramPercentMin = round(99 - ($ram / $maxram) * 100,0);
 	$ramPercentMax =  round(($ram / $maxram) * 100,0);
 	if((int)$ramPercentMin=="0"){$ramPercentMin=100;}
@@ -76,7 +76,10 @@
 		$bytes /= pow(1024, $pow);
 		return round($bytes, $precision);
 	} 
-
+	$cpuUsage= $json['Processor']['Response'][0]['LoadPercentage'];
+	if($cpuUage==""){
+		$cpuUsage="100";
+	}
 	//log user activity
 	$activity = "Technician Viewed Asset: ".$result['hostname'];
 	userActivity($activity,$_SESSION['userid']);		
@@ -141,7 +144,7 @@
 	</div>
 <?php } 
  if($online=="1"){ 
-	$query = "SELECT * FROM screenshots WHERE ComputerID='".$computerID."' order by ID desc LIMIT 1";
+	$query = "SELECT * FROM screenshots WHERE computer_id='".$computerID."' order by ID desc LIMIT 1";
 	$computers = mysqli_query($db, $query);
 	$computer = mysqli_fetch_assoc($computers);
 	if(base64_encode($computer['image'])!=""){
@@ -172,7 +175,7 @@
     <div class="col-md-<?php echo $size; ?> py-1">
         <div class="card">
             <div class="card-body">
-                <canvas data-centerval="37.2%" id="chDonut2"></canvas>
+                <canvas data-centerval="<?php echo $cpuUsage; ?>%" id="chDonut2"></canvas>
                 <h6 style="text-align:center">CPU Usage</h6>
             </div>
         </div>
@@ -190,8 +193,8 @@
             <div class="card-body">
 				<?php
 				//Determine Warning Level
-					$freeSpace = $json['WMI_LogicalDisk']['Response'][0]['FreeSpace'];
-					$size2 = $json['WMI_LogicalDisk']['Response'][0]['Size'];
+					$freeSpace = $json['LogicalDisk']['Response'][0]['FreeSpace'];
+					$size2 = $json['LogicalDisk']['Response'][0]['Size'];
 					$used = $size2 - $freeSpace;
 					$usedPct = round(($used/$size2) * 100);
 					if($usedPct > $siteSettings['Alert Settings']['Disk']['Danger'] ){
@@ -262,19 +265,25 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h5  style="padding:7px" class="panel-title">
-					Hardware Details
+					Asset Details
 				</h5>
 			</div>
 			<div class="panel-body" style="height:285px;">	
 				<div class="roaw">
 					<ul class="list-group" style="margin-left:20px">
-						<li class="list-group-item" style="padding:6px"><b>Processor: </b><?php echo textOnNull(str_replace("(R)","",str_replace("(TM)","",$json['WMI_Processor']['Response'][0]['Name'])), "N/A");?></li>
-						<li class="list-group-item" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['WMI_ComputerSystem']['Response'][0]['Caption']), "N/A");?></li>
-						<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull($json['WMI_ComputerSystem']['Response'][0]['SystemType'], "N/A");?></li>
-						<li class="list-group-item" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['WMI_BIOS']['Response'][0]['Version'], "N/A");?></li>
-						<li class="list-group-item" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['WMI_ComputerSystem']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
-						<li class="list-group-item" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['WMI_ComputerSystem']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
-						<?php if((int)$json['WMI_Battery']['Response'][0]['BatteryStatus']>0){ ?>
+						<li class="list-group-item" style="padding:6px"><b>Processor: </b><?php echo textOnNull(str_replace("(R)","",str_replace("(TM)","",$json['Processor']['Response'][0]['Name'])), "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['General']['Response'][0]['Caption']), "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull($json['General']['Response'][0]['SystemType'], "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['BIOS']['Response'][0]['Version'], "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['General']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['General']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
+						<?php if(count($json['WindowsActivation']['Response']) > 0) {
+							$status = $json['WindowsActivation']['Response'][0]['LicenseStatus'];
+							$color = ($status == "Licensed" ? "text-success" : "text-danger");
+						?>
+							<li class="list-group-item" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
+						<?php } 
+						 if((int)$json['Battery']['Response'][0]['BatteryStatus']>0){ ?>
 						<li class="list-group-item" style="padding:6px"><b>Battery Status: </b><?php 								
 							$statusArray = [
 							"1" => ["Text" => "Discharging", "Color" => "red"],
@@ -288,9 +297,9 @@
 							"9" => ["Text" => "Charging And Critical", "Color" => "yellow"],
 							"10" =>["Text" => "Undefined", "Color" => "red"],
 							"11" =>["Text" => "Partially Charged", "Color"=>"yellow"]];
-							$statusInt = $json['WMI_Battery']['Response'][0]['BatteryStatus'];						
+							$statusInt = $json['Battery']['Response'][0]['BatteryStatus'];						
 						?>
-						<?php echo textOnNull($json['WMI_Battery']['Response'][0]['EstimatedChargeRemaining'], "Unknown");?>%
+						<?php echo textOnNull($json['Battery']['Response'][0]['EstimatedChargeRemaining'], "Unknown");?>%
 						(<span style="color:<?php echo $statusArray[$statusInt]['Color']; ?>"><?php echo $statusArray[$statusInt]['Text']; ?></span>)	
 						</li>
 						<?php } ?>
@@ -303,30 +312,30 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h5 style="padding:7px" class="panel-title">
-					Asset Details
+					
 				</h5>
 			</div>
 			<div class="panel-body" style="height:285px;">
 				<div class="rsow">
 					<ul class="list-group" style="margin-left:20px">
-						<li class="list-group-item" style="padding:6px"><b>Current User: </b><?php echo textOnNull(basename($json['WMI_ComputerSystem']['Response'][0]['UserName']), "Unknown");?></li>
-						<li class="list-group-item" style="padding:6px"><b>Domain: </b><?php echo textOnNull($json['WMI_ComputerSystem']['Response'][0]['Domain'], "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Current User: </b><?php echo textOnNull(basename($json['General']['Response'][0]['UserName']), "Unknown");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Domain: </b><?php echo textOnNull($json['General']['Response'][0]['Domain'], "N/A");?></li>
 						<?php
-							$lastBoot = explode(".", $json['WMI_ComputerSystem']['Response'][0]['LastBootUpTime'])[0];
+							$lastBoot = explode(".", $json['General']['Response'][0]['LastBootUpTime'])[0];
 							$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
 						?>
 						<li class="list-group-item" style="padding:6px"><b>Uptime: </b><?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
-						<?php if(count($json['WMI_Firewall']) > 0) {
+						<?php if(count($json['Firewall']) > 0) {
 
-							$public = $json['WMI_Firewall']['Response'][0]['publicProfile'];
+							$public = $json['Firewall']['Response'][0]['publicProfile'];
 							if($public=="OFF"){ $public="Disabled"; }else{ $public="Enabled"; }
 							$color1 = (($public == "Enabled") ? "text-success" : "text-danger");
 
-							$private = $json['WMI_Firewall']['Response'][0]['privateProfile'];
+							$private = $json['Firewall']['Response'][0]['privateProfile'];
 							if($private=="OFF"){ $private="Disabled"; }else{ $private="Enabled"; }
 							$color2 = (($private == "Enabled") ? "text-success" : "text-danger");
 
-							$domain = $json['WMI_Firewall']['Response'][0]['domainProfile'];
+							$domain = $json['Firewall']['Response'][0]['domainProfile'];
 							if($domain=="OFF"){ $domain="Disabled"; }else{ $domain="Enabled"; }
 							$color3 = (($domain == "Enabled") ? "text-success" : "text-danger");
 						?>
@@ -339,14 +348,9 @@
 							
 							</li>
 						<?php } 
-						if(count($json['WindowsActivation']) > 0) {
-							$status = $json['WindowsActivation']['Response']['Value'];
-							$color = ($status == "Activated" ? "text-success" : "text-danger");
-						?>
-							<li class="list-group-item" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
-						<?php } 
-						if(count($json['WMI_ComputerSystem']['Response'][0]['Antivirus']) > 0) {
-							$status = $json['WMI_ComputerSystem']['Response'][0]['Antivirus'];
+						
+						if(count($json['General']['Response'][0]['Antivirus']) > 0) {
+							$status = $json['General']['Response'][0]['Antivirus'];
 							$color = ($status == "No Antivirus" ? "text-danger" : "text-success");
 						?>
 							<li class="list-group-item" style="padding:6px"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
@@ -366,7 +370,7 @@
 			</div>
 			<div class="panel-body" style="height:285px;">
 				<div class="row">
-					<?php $loc = $json['WMI_ComputerSystem']['Response'][0]['ExternalIP']["loc"]; ?>
+					<?php $loc = $json['General']['Response'][0]['ExternalIP']["loc"]; ?>
 					<div style="width: 100%">
 						<iframe width="100%" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=<?php echo $loc; ?>&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
 							
@@ -455,7 +459,7 @@
 							<center><h6 style='text-align:center;width:100%;bottom:0;padding:30px;color:#fff'>Refresh the results to get the latest Internet Speedtest from this asset.</h6></center><br><br>
 						<?php } ?>
 							<input type="hidden" value="refreshSpeedtest" name="type">
-							<input type="hidden" value="<?php echo $computerID; ?>" name="CompanyID">
+							<input type="hidden" value="<?php echo $computerID; ?>" name="company_id">
 							<center>
 								<button class="btn btn-md btn-secondary" style="width:100%;bottom:0" type="submit">Refresh Results</button>
 							</center>
@@ -521,10 +525,10 @@
 					<input type="hidden" name="ID" value="<?php echo $computerID; ?>">
 					<div class="form-group">
 						<label>Title</label>
-						<input type="text" id="#inputTitle" class="form-control" name="alertTitle"/>
+						<input type="text" placeholder="What should the title be?" id="#inputTitle" class="form-control" name="alertTitle"/>
 					</div>
 					<div class="form-group">
-						<textarea id="inputMessage" placeholder="Your message here..." name="alertMessage" class="form-control"></textarea>
+						<textarea id="inputMessage" placeholder="What is your message?" name="alertMessage" class="form-control"></textarea>
 					</div>
 					<center>
 						<label class="radio-inline">
@@ -542,10 +546,10 @@
 					<center>
 				</div>
 				<div class="modal-footer">
+					<button type="button" class="btn btn-sm btn-default"  data-dismiss="modal">Close</button>
 					<button type="button" onclick='sendMessage()' data-dismiss="modal" class="btn btn-primary btn-sm">
 						Send <i class="fas fa-paper-plane" ></i>
 					</button>
-					<button type="button" class="btn btn-sm btn-default"  data-dismiss="modal">Close</button>
 				</div>
 			</form>
 		</div>
@@ -590,7 +594,7 @@
 	  ],
 	  datasets: [
 	    {
-	      data: [72,38],
+	      data: [<?php echo $cpuUsage.",".(100 - $cpuUsage); ?>],
 	      backgroundColor: [
 	        "<?php echo $siteSettings['theme']['Color 3']; ?>"
 	      ],

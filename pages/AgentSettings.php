@@ -13,7 +13,7 @@ if($_SESSION['userid']==""){
 }
 $computerID = (int)clean($_GET['ID']);
 
-$query = "SELECT ID, hostname, online, agent_settings FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT ID, hostname, online, agent_settings FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $data = mysqli_fetch_assoc($results);
 

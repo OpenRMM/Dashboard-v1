@@ -21,7 +21,7 @@ if($getEvent==""){
 //sleep(3);
 $json = getComputerData($computerID, array("EventLog_".$getEvent), $showDate);
 	
-$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 

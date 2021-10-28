@@ -20,7 +20,7 @@ $results = mysqli_query($db, $query);
 $user = mysqli_fetch_assoc($results);
 $username=$user['username'];
 
-$query = "SELECT ID,hostname,computer_type FROM computerdata where active='1' and computer_type='OpenRMM Server' and online='1' LIMIT 1";
+$query = "SELECT ID,hostname,computer_type FROM computers where active='1' and computer_type='OpenRMM Server' and online='1' LIMIT 1";
 $results = mysqli_query($db, $query);
 $computer = mysqli_fetch_assoc($results);
 $resultCount = mysqli_num_rows($results);
@@ -38,7 +38,7 @@ function welcome(){
 
 
 
-if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['serverStatus']==""){
+if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['server_status']==""){
 	$serverStatus="Offline";
 	$serverStatus_color="danger";
 }else{
@@ -113,23 +113,20 @@ if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['se
 					<ul class="list-group">	
 						<?php
 								//Get Total Count
-								$query = "SELECT ID FROM computerdata where active='1'";
+								$query = "SELECT ID FROM computers where active='1'";
 								$results = mysqli_query($db, $query);
 								$resultCount = mysqli_num_rows($results);							
-								$query = "SELECT * FROM computerdata
-											LEFT JOIN companies ON companies.CompanyID = computerdata.CompanyID
-											WHERE computerdata.active='1'
-											ORDER BY computerdata.hostname ASC";
+								$query = "SELECT * FROM computers WHERE active='1'ORDER BY hostname ASC";
 								//Fetch Results
 								$count = 0;
 								$results = mysqli_query($db, $query);
 								while($result = mysqli_fetch_assoc($results)){
 									if($search==""){
-										$getWMI = array("WMI_LogicalDisk", "WMI_ComputerSystem", "Ping");
+										$getWMI = array("LogicalDisk", "General", "Ping");
 									}else{
 										$getWMI = array("*");
 									}
-									$data = getComputerData($result['ID'], $getWMI);
+									$data = getComputerData($result['computers.ID'], $getWMI);
 									$count++;
 									$icons = array("desktop","server","laptop");
 									if(in_array(strtolower($result['computer_type']), $icons)){
@@ -192,12 +189,12 @@ if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['se
 		<?php 	
 		//Get stats
 			//companies
-			$query = "SELECT CompanyID, name FROM companies where active='1'";
+			$query = "SELECT ID, name FROM companies where active='1'";
 			$companyArray= "";
 			$companys = mysqli_query($db, $query);
 			while($result = mysqli_fetch_assoc($companys)){
 				$companyArray.= "'".$result['name']."',";
-				$query = "SELECT ID FROM computerdata where active='1' and CompanyID='".$result['CompanyID']."'";
+				$query = "SELECT ID FROM computers where active='1' and company_id='".$result['company_id']."'";
 				$count = mysqli_num_rows(mysqli_query($db, $query));
 				$companyTotal.=$count.",";
 			}
@@ -205,15 +202,15 @@ if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['se
 			$companyTotal=rtrim($companyTotal,',');
 
 			//users
-			$query = "SELECT ID FROM users where active='1' and accountType='Admin'";
+			$query = "SELECT ID FROM users where active='1' and account_type='Admin'";
 			$users1 = mysqli_num_rows(mysqli_query($db, $query));
-			$query = "SELECT ID FROM users where active='1' and accountType='Standard'";
+			$query = "SELECT ID FROM users where active='1' and account_type='Standard'";
 			$users2 = mysqli_num_rows(mysqli_query($db, $query));
 
 			//assets
-			$query = "SELECT ID FROM computerdata where active='1' and online='1'";
+			$query = "SELECT ID FROM computers where active='1' and online='1'";
 			$assets1 = mysqli_num_rows(mysqli_query($db, $query));
-			$query = "SELECT ID FROM computerdata where active='1' and online='0'";
+			$query = "SELECT ID FROM computers where active='1' and online='0'";
 			$assets2 = mysqli_num_rows(mysqli_query($db, $query));
 		
 		?>
@@ -260,7 +257,7 @@ if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['se
 				</div>
 				<div class="tab-content" style="padding-top:10px;overflow:hidden" >
 					<div id="home" class="tab-pane fade-in active">
-						<h5 style="margin-left:15px;display:inline;">Server Details
+						<h5 style="margin-left:15px;display:inline;">Server Information Summary
 							<h6 style="display:inline;margin-left:25px;margin-top:3px;position:absolute">
 								<span style="color:#000" class="badge badge-<?php echo $serverStatus_color; ?>"><?php echo $serverStatus; ?></span>
 							</h6>
@@ -276,19 +273,19 @@ if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['se
 								<div class="panel panel-default">
 									<div class="panel-heading">
 										<h5  style="padding:7px;" class="panel-title">
-											Hardware Details
+											Details
 										</h5>
 									</div>
 									<div class="panel-body" style="height:285px;">	
 										<div class="roaw">
 											<ul class="list-group" style="margin-left:20px">
-												<li class="list-group-item" style="padding:6px"><b>Processor: </b><?php echo textOnNull(str_replace("(R)","",str_replace("(TM)","",$json['WMI_Processor']['Response'][0]['Name'])), "N/A");?></li>
-												<li class="list-group-item" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['WMI_ComputerSystem']['Response'][0]['Caption']), "N/A");?></li>
-												<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull($json['WMI_ComputerSystem']['Response'][0]['SystemType'], "N/A");?></li>
-												<li class="list-group-item" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['WMI_BIOS']['Response'][0]['Version'], "N/A");?></li>
-												<li class="list-group-item" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['WMI_ComputerSystem']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
-												<li class="list-group-item" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['WMI_ComputerSystem']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
-												<?php if((int)$json['WMI_Battery']['Response'][0]['BatteryStatus']>0){ ?>
+												<li class="list-group-item" style="padding:6px"><b>Processor: </b><?php echo textOnNull(str_replace("(R)","",str_replace("(TM)","",$json['Processor']['Response'][0]['Name'])), "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['General']['Response'][0]['Caption']), "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull($json['General']['Response'][0]['SystemType'], "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['BIOS']['Response'][0]['Version'], "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['General']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['General']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
+												<?php if((int)$json['Battery']['Response'][0]['BatteryStatus']>0){ ?>
 												<li class="list-group-item" style="padding:6px"><b>Battery Status: </b><?php 								
 													$statusArray = [
 													"1" => ["Text" => "Discharging", "Color" => "red"],
@@ -302,9 +299,9 @@ if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['se
 													"9" => ["Text" => "Charging And Critical", "Color" => "yellow"],
 													"10" =>["Text" => "Undefined", "Color" => "red"],
 													"11" =>["Text" => "Partially Charged", "Color"=>"yellow"]];
-													$statusInt = $json['WMI_Battery'][0]['BatteryStatus'];						
+													$statusInt = $json['Battery'][0]['BatteryStatus'];						
 												?>
-												<?php echo textOnNull($json['WMI_Battery']['Response'][0]['EstimatedChargeRemaining'], "Unknown");?>%
+												<?php echo textOnNull($json['Battery']['Response'][0]['EstimatedChargeRemaining'], "Unknown");?>%
 												(<span style="color:<?php echo $statusArray[$statusInt]['Color']; ?>"><?php echo $statusArray[$statusInt]['Text']; ?></span>)	
 												</li>
 												<?php } ?>
@@ -317,23 +314,23 @@ if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['se
 								<div class="panel panel-default">
 									<div class="panel-heading">
 										<h5 style="padding:7px" class="panel-title">
-											Server Details
+											
 										</h5>
 									</div>
 									<div class="panel-body" style="height:285px;">
 										<div class="rsow">
 											<ul class="list-group" style="margin-left:20px">
 												<li class="list-group-item" style="padding:6px"><b>Hostname: </b><?php echo textOnNull(basename($computer['hostname']), "Unknown");?></li>
-												<li class="list-group-item" style="padding:6px"><b>Current User: </b><?php echo textOnNull(basename($json['WMI_ComputerSystem']['Response'][0]['UserName']), "Unknown");?></li>
-												<li class="list-group-item" style="padding:6px"><b>Domain: </b><?php echo textOnNull($json['WMI_ComputerSystem']['Response'][0]['Domain'], "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Current User: </b><?php echo textOnNull(basename($json['General']['Response'][0]['UserName']), "Unknown");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Domain: </b><?php echo textOnNull($json['General']['Response'][0]['Domain'], "N/A");?></li>
 												<?php
-													$lastBoot = explode(".", $json['WMI_ComputerSystem']['Response'][0]['LastBootUpTime'])[0];
+													$lastBoot = explode(".", $json['General']['Response'][0]['LastBootUpTime'])[0];
 													$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
 												?>
 												<li class="list-group-item" style="padding:6px"><b>Uptime: </b><?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
 												<?php  
-												if(count($json['WindowsActivation']) > 0) {
-													$status = $json['WindowsActivation']['Value'];
+												if(count($json['WindowsActivation']['Response']) > 0) {
+													$status = $json['WindowsActivation']['Response'][0]['LicenseStatus'];
 													$color = ($status == "Activated" ? "text-success" : "text-danger");
 												?>
 													<li class="list-group-item" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
@@ -354,7 +351,7 @@ if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['se
 								<div class="panel panel-default">
 									<div class="panel-heading">
 										<h5 style="padding:7px" class="panel-title">
-											Server Error Log
+											Error Log
 										</h5>
 									</div>
 									<div class="panel-body" style="height:285px;">
@@ -399,8 +396,7 @@ if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['se
 						<table class="table table-hover table-borderless" id="datatable">
 							<tr>
 								<th>Task Name</th>
-								<th>Condition Types</th>
-								<th>Action</th>
+							
 								<th>Last run</td>
 								<th style="float:right"></th>
 							</tr>
@@ -410,14 +406,14 @@ if($siteSettings['general']['serverStatus']=="0" or $siteSettings['general']['se
 							while($task = mysqli_fetch_assoc($results)){
 								$count++;
 
-								if($task['condition2Type']!=""){ $type=", ".$task['condition2Type'];}
-								if($task['condition3Type']!=""){ $type.=", ".$task['condition3Type'];}
+							
 								if($task['last_run']!=""){ $last_run=$task['last_run'];}else{ $last_run="Never";}
+								
 							?>
 							<tr>
-								<td><?php echo $task['taskName']; ?></td>
-								<td><?php echo $task['condition1Type'].$type; ?></td>
-								<td><?php echo $task['actionCommand'].": ". $task['actionValue']; ?></td>
+								<td><?php echo $task['name']; ?></td>
+							
+								
 								<td><?php echo $last_run; ?></td>
 								<td style="float:right">
 									<form action="/" method="post" style="display:inline;">

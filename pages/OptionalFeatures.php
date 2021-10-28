@@ -28,25 +28,25 @@
 		exit;
 	}
 	//get update
-	$query = "SELECT hostname FROM computerdata WHERE ID='".$computerID."'";
+	$query = "SELECT hostname FROM computers WHERE ID='".$computerID."'";
 	$results = mysqli_query($db, $query);
 	$computer = mysqli_fetch_assoc($results);
 	//MQTTpublish($computerID."/Commands/getOptionalFeatures","true",getSalt(20));
 
-	$json = getComputerData($computerID, array("WMI_OptionalFeatures"), $showDate);
+	$json = getComputerData($computerID, array("OptionalFeatures"), $showDate);
 
-	$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+	$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_fetch_assoc(mysqli_query($db, $query));
 	$online = $results['online'];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
 		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
-			Optional Features (<?php echo count($json['WMI_OptionalFeatures']['Response']); ?>)
+			Optional Features (<?php echo count($json['OptionalFeatures']['Response']); ?>)
 		</h4>
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;"> 
-				Last Update: <?php echo ago($json['WMI_OptionalFeatures_lastUpdate']);?>
+				Last Update: <?php echo ago($json['OptionalFeatures_lastUpdate']);?>
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
@@ -82,8 +82,8 @@
 				"3"=>array("state"=>"Absent", "color"=>"gray"),
 				"4"=>array("state"=>"Unknown", "color"=>"gray")
 			);
-			$OptionalFeatures = $json['WMI_OptionalFeatures']['Response'];
-			$error = $json['WMI_OptionalFeatures_error'];
+			$OptionalFeatures = $json['OptionalFeatures']['Response'];
+			$error = $json['OptionalFeatures_error'];
 			//Sort The array by Name ASC
 			usort($OptionalFeatures, function($a, $b) {
 				return $a['Name'] <=> $b['Name'];

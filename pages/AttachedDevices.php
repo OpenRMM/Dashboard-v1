@@ -33,9 +33,9 @@ MQTTpublish($computerID."/Commands/getDesktopMonitor","true",getSalt(20),false);
 MQTTpublish($computerID."/Commands/getKeyboard","true",getSalt(20),false);
 //MQTTpublish($computerID."/Commands/getPnPEntitys","true",getSalt(20));
 
-$json = getComputerData($computerID, array("WMI_USBHub", "WMI_DesktopMonitor", "WMI_Keyboard", "WMI_PointingDevice", "WMI_SoundDevice", "WMI_SerialPort", "WMI_PnPEntity"), $showDate);
+$json = getComputerData($computerID, array("USBHub", "DesktopMonitor", "Keyboard", "PointingDevice", "SoundDevices", "SerialPort", "PnPEntities"), $showDate);
 
-$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 ?>
@@ -46,7 +46,7 @@ $online = $results['online'];
 		</h4>
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;">
-				Last Update: <?php echo ago($json['WMWMI_USBHub_lastUpdate']);?>
+				Last Update: <?php echo ago($json['WMUSBHub_lastUpdate']);?>
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
@@ -67,8 +67,8 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>Displays</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$monitors = $json['WMI_DesktopMonitor']['Response'];
-			$error = $json['WMI_DesktopMonitor_error'];
+			$monitors = $json['DesktopMonitor']['Response'];
+			$error = $json['DesktopMonitor_error'];
 			foreach($monitors as $device){		
 		?>
 			<div class="col-md-2" style="padding:5px;">
@@ -92,8 +92,8 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>USB Hubs</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$hubs = $json['WMI_USBHub']['Response'];
-			$error = $json['WMI_USBHub_error'];
+			$hubs = $json['USBHub']['Response'];
+			$error = $json['USBHub_error'];
 			foreach($hubs as $hub){	
 		?>
 			<div class="col-md-2" style="padding:3px;">
@@ -116,8 +116,8 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>Keyboards</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$keyboards = $json['WMI_Keyboard']['Response'];
-			$error = $json['WMI_Keyboard_error'];
+			$keyboards = $json['Keyboard']['Response'];
+			$error = $json['Keyboard_error'];
 			foreach($keyboards as $device){	
 		?>
 			<div class="col-md-3" style="padding:5px;">
@@ -141,8 +141,8 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>Pointing Devices</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$pointingDevices = $json['WMI_PointingDevice']['Response'];
-			$error = $json['WMI_PointingDevice_error'];
+			$pointingDevices = $json['PointingDevice']['Response'];
+			$error = $json['PointingDevice_error'];
 			foreach($pointingDevices as $device){	
 		?>
 			<div class="col-md-3" style="padding:5px;">
@@ -166,8 +166,8 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>Sound</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$SoundDevices = $json['WMI_SoundDevice']['Response'];
-			$error = $json['WMI_SoundDevice_error'];
+			$SoundDevices = $json['SoundDevices']['Response'];
+			$error = $json['SoundDevices_error'];
 			foreach($SoundDevices as $device){	
 		?>
 			<div class="col-md-3" style="padding:5px;">
@@ -191,8 +191,8 @@ $online = $results['online'];
 	<h6 style="color:#000"><b>Serial Ports</b></h6>
 	<div class="row" style="margin-bottom:10px;padding-left:40px;">
 		<?php
-			$SerialPorts = $json['WMI_SerialPort']['Response'];
-			$error = $json['WMI_SerialPort_error'];
+			$SerialPorts = $json['SerialPort']['Response'];
+			$error = $json['SerialPort_error'];
 			foreach($SerialPorts as $device){	
 		?>
 			<div class="col-md-3" style="padding:5px;">
@@ -214,7 +214,7 @@ $online = $results['online'];
 	</div>
 </div>
 	<hr>
-	<h6 style="color:#000"><b>Plug And Play Devices (<?php echo count($json['WMI_PnPEntity']['Response']); ?>)</b></h6>
+	<h6 style="color:#000"><b>Plug And Play Devices (<?php echo count($json['PnPEntities']['Response']); ?>)</b></h6>
 	<div style="padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;margin-top:20px;">
 		<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 			<thead>
@@ -228,8 +228,8 @@ $online = $results['online'];
 			</thead>
 			<tbody>
 				<?php
-					$PnPEntity = $json['WMI_PnPEntity']['Response'];
-					$error = $json['WMI_PnPEntity_error'];
+					$PnPEntity = $json['PnPEntities']['Response'];
+					$error = $json['PnPEntities_error'];
 					//Sort The array by Name ASC
 					usort($PnPEntity, function($a, $b) {
 						return $a['PNPClass'] <=> $b['PNPClass'];

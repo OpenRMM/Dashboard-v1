@@ -13,11 +13,11 @@ if($_SESSION['userid']==""){
 }
 $computerID = (int)clean($_GET['ID']);
 
-$query = "SELECT ID, show_alerts, hostname, CompanyID, phone, email, online, name, comment,computer_type FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT ID, show_alerts, hostname, company_id, phone, email, online, name, comment,computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $data = mysqli_fetch_assoc($results);
 
-$query = "SELECT CompanyID, name, phone, address, email, comments FROM companies WHERE CompanyID='".$data['CompanyID']."' LIMIT 1";
+$query = "SELECT ID, name, phone, address, email, comments FROM companies WHERE ID='".$data['company_id']."' LIMIT 1";
 $companys = mysqli_query($db, $query);
 $company = mysqli_fetch_assoc($companys);
 
@@ -56,12 +56,12 @@ $online = $data['online'];
 				<div class="form-group float-label-control">
 					<label><?php echo $msp; ?>:</label>
 					<select name="company" class="form-control">
-						<option value="<?php echo $company['CompanyID']; ?>"><?php echo textOnNull($company['name'],"Select A Company"); ?></option>
+						<option value="<?php echo $company['ID']; ?>"><?php echo textOnNull($company['name'],"Select A Company"); ?></option>
 						<?php
-							$query = "SELECT CompanyID, name FROM companies WHERE active='1' ORDER BY CompanyID ASC";
+							$query = "SELECT ID, name FROM companies WHERE active='1' ORDER BY ID ASC";
 							$results = mysqli_query($db, $query);
 							while($result = mysqli_fetch_assoc($results)){ ?>
-								<option value='<?php echo $result['CompanyID'];?>'><?php echo $result['name'];?></option>
+								<option value='<?php echo $result['ID'];?>'><?php echo $result['name'];?></option>
 						<?php }?>
 					</select>
 					<br>
@@ -156,7 +156,7 @@ $online = $data['online'];
 							$recentedit = array_slice($_SESSION['recentedit'], -4, 4, true);
 							foreach(array_reverse($recentedit) as $item) {
 								if($item==""){continue;}
-								$query = "SELECT * FROM computerdata where ID='".$item."'";
+								$query = "SELECT * FROM computers where ID='".$item."'";
 								$results = mysqli_query($db, $query);
 								$data = mysqli_fetch_assoc($results);
 								if($data['hostname']==""){continue;}

@@ -26,7 +26,7 @@ if($computerID<0){
 	<?php
 	exit;
 }
-$query = "SELECT ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $result = mysqli_fetch_assoc($results);
 
@@ -34,18 +34,18 @@ $result = mysqli_fetch_assoc($results);
 //MQTTpublish($computerID."/Commands/getLogicalDisk","true",getSalt(20));
 MQTTpublish($computerID."/Commands/getMappedLogicalDisk","true",getSalt(20),false);
 MQTTpublish($computerID."/Commands/getSharedDrives","true",getSalt(20),false);
-$json = getComputerData($result['ID'], array("WMI_MappedLogicalDisk", "WMI_LogicalDisk","WMI_SharedDrives"), $showDate);
+$json = getComputerData($result['ID'], array("MappedLogicalDisk", "LogicalDisk","SharedDrives"), $showDate);
 
-$query = "SELECT  online, ID, hostname FROM computerdata WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 
-$mappedDisks = $json['WMI_MappedLogicalDisk']['Response'];
-$disks = $json['WMI_LogicalDisk']['Response'];
-$shared = $json['WMI_SharedDrives']['Response'];
+$mappedDisks = $json['MappedLogicalDisk']['Response'];
+$disks = $json['LogicalDisk']['Response'];
+$shared = $json['SharedDrives']['Response'];
 
-$error1 = $json['WMI_MappedLogicalDisk_error'];
-$error2 = $json['WMI_LogicalDisk_error'];
+$error1 = $json['MappedLogicalDisk_error'];
+$error2 = $json['LogicalDisk_error'];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div class="col-md-10">
@@ -54,7 +54,7 @@ $error2 = $json['WMI_LogicalDisk_error'];
 		</h4>	
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;"> 
-				Last Update: <?php echo ago($json['WMI_LogicalDisk_lastUpdate']);?>
+				Last Update: <?php echo ago($json['LogicalDisk_lastUpdate']);?>
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
@@ -130,7 +130,7 @@ $error2 = $json['WMI_LogicalDisk_error'];
 		</h4>
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;"> 
-				Last Update: <?php echo ago($json['WMI_LogicalDisk_lastUpdate']);?>
+				Last Update: <?php echo ago($json['LogicalDisk_lastUpdate']);?>
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
@@ -198,7 +198,7 @@ $error2 = $json['WMI_LogicalDisk_error'];
 		</h4>
 		<?php if($showDate == "latest"){?>
 			<span style="font-size:12px;color:#666;"> 
-				Last Update: <?php echo ago($json['WMI_SharedDrives_lastUpdate']);?>
+				Last Update: <?php echo ago($json['SharedDrives_lastUpdate']);?>
 			</span>
 		<?php }else{?>
 			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
