@@ -13,12 +13,13 @@
 ###########################################################################################################################################
 	//Set Timezone
 	date_default_timezone_set("America/Chicago");
+
 	$serverPages = array("cron.php", "LoadHistorical.php");
-	if($_SESSION['excludedPages']==""){
+	if(!isset($_SESSION['excludedPages'])){
 		$_SESSION['excludedPages'] = explode(",", $excludedPages);
 	}
 	$allPages = explode(",", $allPages);
-	$adminPages = explode(",", $allAdminPages);
+	$adminPages = explode(",", $adminPages);
 	if(!in_array(basename($_SERVER['SCRIPT_NAME']), $serverPages)){
 		ini_set('session.gc_maxlifetime', 3600);
 		ini_set('display_errors', 0);
@@ -102,6 +103,7 @@
 		$general = mysqli_fetch_assoc($results);
 		return $general;
 	}
+	
 	$siteSettings['general'] = loadGeneralFromDB();
 	//Function to aggrigate data from pc
 	function getComputerData($ID, $fields = array("*"), $date = "latest"){
@@ -117,12 +119,14 @@
 		
 			if(isset($retResult[$row['name']])){continue;}
 			if($row['name']!="Ping"){
-				$decoded = jsonDecode($row['data'], true);
+				$decoded = jsonDecode(computerDecrypt($row['data']), true);
 				$retResult[$row['name']] = $decoded['json'];
-				$retResult[$row['name']."_raw"] = $row['data'];
+				//$retResult[$row['name']."_raw"] = $row['data'];
+				$retResult[$row['name']."_raw"] = computerDecrypt($row['data']);
 				$retResult[$row['name']."_error"] = $decoded['error'];
 			}else{
-				$retResult[$row['name']] = $row['data'];
+				//$retResult[$row['name']] = $row['data'];
+			echo computerDecrypt($row['data']);
 			}
 			$retResult[$row['name']."_lastUpdate"] = $row['last_update'];
 		}
@@ -132,12 +136,11 @@
 		$retResult["Alerts_raw"] = $getAlerts[1];
 		return $retResult;
 	}
-	
+
 	//Alerts
 	function getComputerAlerts($ID, $json){
         global $db, $siteSettings;
-
-        $query = "SELECT * FROM computers WHERE ID='".$ID."'";
+		$query = "SELECT * FROM computers WHERE ID='".$ID."'";
         $result = mysqli_query($db, $query);
         $computer = mysqli_fetch_assoc($result);
         $hostname = $computer['hostname'].": ";
@@ -227,11 +230,11 @@
 		}
 		
 		//Check agent version
-		if($siteSettings['general']['agent_latest_version'] != $json['Agent'][0]['Version']){
+		if($siteSettings['general']['agent_latest_version'] != $json['Agent']['Response'][0]['Version']){
 			$alertName = "agent_version";
 			$newAlert = array(
 				"subject"=>"Agent Version",
-				"message"=>"Agent is out of date. Currently installed: ".textOnNull($json['Agent'][0]['Version'], "Unknown"),
+				"message"=>"Agent is out of date. Currently installed: ".textOnNull($json['Agent']['Response'][0]['Version'], "Unknown"),
 				"type"=>"warning",
 				"hostname"=>$hostname,
 				"alertName"=>$alertName
@@ -336,6 +339,14 @@
 		}
 		return $randomString;
 	}
+	function formatBytes($bytes, $precision = 0) { 
+		$units = array('B', 'KB', 'MB', 'GB', 'TB'); 
+		$bytes = max($bytes, 0); 
+		$pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 
+		$pow = min($pow, count($units) - 1); 
+		$bytes /= pow(1024, $pow);
+		return round($bytes, $precision);
+	} 
 	//Custom JsonDecode with error handling
 	function jsonDecode($json, $assoc = false) {
 		for ($i = 0; $i <= 31; ++$i) { 
@@ -372,21 +383,48 @@
 		$users = mysqli_query($db, $query);
 		$user = mysqli_fetch_assoc($users);
 		$activity=clean($activity2);
-		if($user['user_activity']==""){
+		if(crypto('decrypt',$user['user_activity'],$user['hex'])==""){
 			$active = $activity."@".time();
 		}else{
-			$activeFix = clean(explode("|",$user['user_activity']));
+			$activeFix = clean(explode("|",crypto('decrypt',$user['user_activity'],$user['hex'])));
 			$fix = end($activeFix);
 			$activeFix2 = explode("@",$fix);
 			if($activeFix2[0]==clean($activity)){
-				$active= $user['user_activity'];				
+				$active= crypto('decrypt',$user['user_activity'],$user['hex']);				
 			}else{
-				$activeFix = explode("|",$user['user_activity']."|".$activity."@".time());
+				$activeFix = explode("|",crypto('decrypt',$user['user_activity'],$user['hex'])."|".$activity."@".time());
 				$active = implode("|",array_slice($activeFix,0,$userActivityLimit));
 			}
 		}
+		$active = crypto('encrypt',$active,$user['hex']);
 		$query = "UPDATE users SET user_activity='".$active."' WHERE ID=".$IDuser.";";
 		$results = mysqli_query($db, $query);	
 	}
-
+	
+	function computerEncrypt(array $data): string
+	{
+		GLOBAL $passphrase;
+		$data_json_64 = base64_encode(json_encode($data));
+		$secret_key = hex2bin($siteSettings['agentEncryption']['secret']);
+		$iv = random_bytes(openssl_cipher_iv_length('aes-256-gcm'));
+		$tag = '';
+		$encrypted_64 = openssl_encrypt($data_json_64, 'aes-256-gcm', $secret_key, 0, $iv, $tag);
+		$json = new stdClass();
+		$json->iv = base64_encode($iv);
+		$json->data = $encrypted_64;
+		$json->tag = base64_encode($tag);
+		return base64_encode(json_encode($json));
+	}
+	function computerDecrypt($data)
+	{
+		GLOBAL $siteSettings;
+		$secret_key = hex2bin($siteSettings['agentEncryption']['secret']);
+		$json = json_decode(base64_decode($data), true);
+		$iv = base64_decode($json['iv']);
+		$tag = base64_decode($json['tag']);
+		$encrypted_data = base64_decode($json['data']);
+		$decrypted_data = openssl_decrypt($encrypted_data, 'aes-256-gcm', $secret_key, OPENSSL_RAW_DATA, $iv, $tag);
+		return json_decode(base64_decode($decrypted_data),True);
+		
+	}
 ?>

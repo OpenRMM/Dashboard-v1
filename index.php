@@ -19,7 +19,7 @@
 	}
 
 	//Get user data
-	$query = "SELECT username,nicename,account_type FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+	$query = "SELECT username,nicename,account_type,hex FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
@@ -103,7 +103,7 @@
 								<i style="font-size:16px" class="fas fa-bell"></i>
 								<span style="margin-top" class="text-white badge bg-c-pink"><?php if($messageText==""){ echo "0"; }else{ echo "1"; } ?></span>
 							</button>
-							<?php if($user['account_type']=="Admin"){ ?>
+							<?php if(crypto('decrypt',$user['account_type'],$user['hex'])=="Admin"){ ?>
 								<button type="button" onclick="loadSection('Init','true');"style="border:none;box-shadow:none" class="btn-sm btn" title="Configure OpenRMM">
 									<i style="font-size:16px" class="fas fa-cog"></i>
 								</button>
@@ -121,7 +121,7 @@
 						<div style="text-align:center;width:100%">
 							<a style="cursor:pointer" onclick="loadSection('Profile','<?php echo $_SESSION['userid']; ?>');">
 								<i style="color:#282828;font-size:68px;text-align:center" class="fa fa-user" ></i>
-								<h6 style="color:#fff;margin-top:10px"><?php echo ucwords($user['nicename']); ?></h6>
+								<h6 style="color:#fff;margin-top:10px"><?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex'])); ?></h6>
 							</a>
 							<a onclick="loadSection('Profile','<?php echo $_SESSION['userid']; ?>');"  style="cursor:pointer;color:#d3d3d3">Profile</a>
 							<span style="color:#fff"> &#8226; </span> 					
@@ -173,9 +173,9 @@
 							<li onclick="loadSection('EventLogs');" id="secbtnEventLogs" class="secbtn">
 								<i class="fas fa-file-code"></i>&nbsp;&nbsp;&nbsp; Event Logs
 							</li>
-							<li onclick="loadSection('Registry');" id="secbtnRegistry" class="secbtn">
+							<!-- li onclick="loadSection('Registry');" id="secbtnRegistry" class="secbtn">
 								<i class="fas fa-cubes"></i>&nbsp;&nbsp;&nbsp; Registry
-							</li>
+							</li -->
 							<li onclick="loadSection('FileManager');" id="secbtnFileManager" class="secbtn">
 								<i class="fas fa-folder"></i>&nbsp;&nbsp;&nbsp; File Manager
 							</li>
@@ -348,8 +348,7 @@
 		var counter = 2;
 		$("#addButton").click(function () {
 	 
-		var newTextBoxDiv = $(document.createElement('tr'))
-			.attr("id", 'TextBoxDiv' + counter);
+		var newTextBoxDiv = $(document.createElement('tr')).attr("id", 'TextBoxDiv' + counter);
 		newTextBoxDiv.after().html('<th scope="row" style="vertical-align:middle;">AND</th>' +
 			'<td>' +
 			'<select required class="form-control" style="width:23%;display:inline-block;" name="taskCond' + counter + '">'+

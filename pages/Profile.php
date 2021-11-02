@@ -25,11 +25,11 @@ if($_SESSION['accountType']=="Standard" & $userID!=$_SESSION['userid']){
 	userActivity($activity,$_SESSION['userid']);
 	exit("<center><br><br><h4>Sorry, You Do Not Have Permission To Access This Page!</h4><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' class='btn btn-warning btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");	
 }
-
-$userActivity2 = explode("|",$user['userActivity']);
+//echo $_SESSION['accountType'];
+$userActivity2 = explode("|",crypto('decrypt',$user['user_activity'],$user['hex']));
 $userActivity = array_reverse($userActivity2,true);
 if($userID!=$_SESSION['userid']){
-	$activity="Technician Viewed The Profile Of ".ucwords($user['nicename'])."'";
+	$activity="Technician Viewed The Profile Of ".ucwords(crypto('decrypt',$user['nicename'],$user['hex']))."'";
 	userActivity($activity, $_SESSION['userid']);
 }
 ?>
@@ -50,51 +50,51 @@ if($userID!=$_SESSION['userid']){
 					</a>
 				</div>                      
 				<div style="margin-top:20px" class="media-body va-m">
-					<h4 style="color:#fff" class="media-heading"><?php echo ucwords($user['nicename']); ?> 
+					<h4 style="color:#fff" class="media-heading"><?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex'])); ?> 
 					<span style="float:right;font-size:12px">User ID: <?php echo $user['ID']; ?></span>
-					<span style="font-size:14px" ><small>last seen: <?php echo gmdate("m/d/y h:i", $user['last_login']); ?></small></span>
+					<span style="font-size:14px" ><small>Last Seen: <?php if($user['last_login']==""){ echo "never"; }else{ echo ago(date('m/d/Y H:i:s',$user['last_login'])); } ?></small></span>
 					</h4>
 					<p style="color:#dedede">View All Assets Added By This User. You Can Also Access Contact Information And Recent Activity. </p>
 					<hr>
-					<form action="/" method="POST">
-						<input type="hidden" name="type" value="DeleteUser"/>
-						<input type="hidden" name="ID" value="<?php echo $user['ID']; ?>"/>
-						<?php if($_SESSION['accountType']=="Admin"){  ?>
-							<?php if($user['active']=="1"){ ?>
-								<input type="hidden" value="0" name="active"/>
-								<button <?php if($user['ID']=="1") echo "disabled"; ?> type="submit" title="Deactivate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
-									<i class="fas fa-trash" ></i> Deactivate			
-								</button>
-							<?php }else{ ?>
-								<input type="hidden" value="1" name="active"/>
-								<button type="submit" title="Activate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-success btn-sm">
-									<i class="fas fa-plus" ></i> Activate
-								</button>
-							<?php } ?>
+					<?php if($_SESSION['accountType']=="Admin"){  ?>
+						<?php if($user['active']=="1"){ ?>
+							
+							<button id="userDel<?php echo $user['ID']; ?>" onclick="deleteUserProfile('<?php echo $user['ID']; ?>','0')" <?php if($user['ID']=="1") echo "disabled"; ?> type="button" title="Deactivate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
+								<i class="fas fa-trash" ></i> Deactivate			
+							</button>
+							<button type="button" id="userAct<?php echo $user['ID']; ?>" onclick="deleteUserProfile('<?php echo $user['ID']; ?>','1')" title="Activate User" style="display:none;margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-success btn-sm">
+								<i class="fas fa-plus" ></i> Activate
+							</button>
+						<?php }else{ ?>
+							<button type="button" id="userAct<?php echo $user['ID']; ?>" onclick="deleteUserProfile('<?php echo $user['ID']; ?>','1')" title="Activate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-success btn-sm">
+								<i class="fas fa-plus" ></i> Activate
+							</button>
+							<button id="userDel<?php echo $user['ID']; ?>" onclick="deleteUserProfile('<?php echo $user['ID']; ?>','0')" <?php if($user['ID']=="1") echo "disabled"; ?> type="button" title="Deactivate User" style="display:none;margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
+								<i class="fas fa-trash" ></i> Deactivate			
+							</button>
 						<?php } ?>
-						<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo $user['nicename'];?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo $user['accountType'];?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
-							<i class="fas fa-pencil-alt"></i> Edit
-						</a>
-					</form>
+					<?php } ?>
+					<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
+						<i class="fas fa-pencil-alt"></i> Edit
+					</a>
+					
 				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-8">
 				<div class="tab-block">
-					<form style="margin-bottom:-10px" method="POST" action="/" style="display:inline">
 						<ul class="nav nav-tabs">
 							<li class="active">
 								<a href="#tab1" data-toggle="tab">Activity</a>
 							</li>
 							<?php if($_SESSION['accountType']=="Admin"){  ?>
-								<li>            
-									<input type="hidden" name="delActivity" value="<?php echo $userID; ?>">
-									<button style="display:inline;margin-top:-10px;border:none;box-shadow:none" class="btn btn-sm" type="submit" >Clear Activity</button>
+								<li>    
+									<input type="hidden" id="delActivity" name="delActivity" value="<?php echo $userID; ?>">        
+									<button style="display:inline;margin-top:-10px;border:none;box-shadow:none" onclick="deleteActivity()" class="btn btn-sm" type="button" >Clear Activity</button>
 								</li>
 							<?php } ?>
 						</ul>
-					</form>
 					<div class="tab-content p30"  style="border-radius:6px;margin-top:10px;">
 						<div id="tab1" class="tab-pane active">
 							<div style="padding:0px;">
@@ -106,7 +106,7 @@ if($userID!=$_SESSION['userid']){
 										<th scope="col">Time</th>			  
 										</tr>
 									</thead>
-									<tbody>			
+									<tbody id="activity">			
 											<?php 
 											$count=0;
 											foreach($userActivity as $key=>$item) {
@@ -147,24 +147,22 @@ if($userID!=$_SESSION['userid']){
 					</ul>
 					</div>
 				</div>
+				<?php if($_SESSION['accountType']=="Admin" or $user['ID']==$_SESSION['userid']){  ?>
 				<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
 					<div style="height:45px" class="panel-heading">
 						<h5 class="panel-title">Notes
 						<?php if($userID==$_SESSION['userid']){ ?>
-							<form style="display:inline" method="post">
-								<input type="hidden" name="delNote" value="true"/>
-								<button type="submit" class="btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
-							</form>
+							<button id="delNote" type="button" onclick="deleteNote('1');" class="delNote btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
 						<?php } ?>
 						</h5>
 					</div>
-					<div class="card-block texst-center">
+					<div id="TextBoxesGroup" class="card-block texst-center">
 					<?php
 					$count = 0;
-					$query = "SELECT ID, notes FROM users where ID='".$userID."'";
+					$query = "SELECT ID, notes,hex FROM users where ID='".$userID."'";
 					$results = mysqli_query($db, $query);
 					$data = mysqli_fetch_assoc($results);
-					$notes = $data['notes'];
+					$notes = crypto('decrypt',$data['notes'],$data['hex']);
 					if($notes!=""){
 						$allnotes = explode("|",$notes);
 						foreach(array_reverse($allnotes) as $note) {
@@ -173,7 +171,7 @@ if($userID!=$_SESSION['userid']){
 							$note = explode("^",$note);
 							$count++;
 					?>
-						<a title="View Note" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+						<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
 							<li style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
 								<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 								<?php echo ucwords($note[0]);?>
@@ -182,12 +180,15 @@ if($userID!=$_SESSION['userid']){
 					<?php } } ?>
 					<?php if($count==0){ ?>
 						<li class="list-group-item">No Notes</li>
+					<?php }else{ ?>
+					<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 					<?php } ?>
 				</div>
 				<?php if($userID==$_SESSION['userid']){ ?>
 				<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" data-toggle="modal" data-target="#noteModal"  title="Create New Note" class="btn btn-block p-t-15 p-b-15">Create New Note</button>
 				<?php } ?>
 			</div>
+			<?php } ?>
 		</div>	
 	</div>
 </section>

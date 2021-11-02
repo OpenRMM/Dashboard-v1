@@ -31,6 +31,9 @@ if(!file_exists("config.php") or !$db or $mqttConnect=="timeout" or $result==0){
     exit;
 }
 
+//$query = "UPDATE users SET last_login='".time()."' WHERE ID=".$_SESSION['userid'].";";
+//$results = mysqli_query($db, $query);
+
 $_SESSION['computerID'] = (int)$_GET['ID'];
 //$_SESSION['date']=preg_replace("([^0-9/])", "", $_GET['Date']);
 if($_SESSION['date']==""){ 
@@ -60,85 +63,94 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
         <?php
         $results = mysqli_fetch_assoc(mysqli_query($db, $query));
         $lastUpdate=$results['last_update'];
-        $page = $_SESSION['page'];
-        $retain=false;
-        $message='{"userID":'.$_SESSION['userid'].'}';
-        if($_SESSION['count']==0){
-            switch ($page) {
-                case "FileManager":
-                    $page="Filesystem";
-                    $retain = false;
-                    $gets = clean(base64_decode($_GET['other']));
-                    $get = explode("{}",$gets);
-                    $drive = $get[0];
-                    $getFolder = $get[1];
-                    if($drive==""){
-                        $drive="C";
-                    }
-                    $message = $drive.":/".$getFolder;
-                    $message = str_replace("//","/",$message);
-                    if($message==""){ $message=$drive.":/"; }
-                    $message = '{"userID":'.$_SESSION['userid'].',"data":"'.$message.'"}';
-                break;
-                case "Disks":
-                    $page="LogicalDisk";
-                    $retain = false;
-                    $message = '{"userID":'.$_SESSION['userid'].'}';
-                break;
-                case "AttachedDevices":
-                    $page="PnPEntitys";
-                    $retain = false;
-                    $message = '{"userID":'.$_SESSION['userid'].'}';
-                break;
-                case "Memory":
-                    $page="PhysicalMemory";
-                    $retain = false;
-                    $message = '{"userID":'.$_SESSION['userid'].'}';
-                break;
-                case "Network":
-                    $page="NetworkAdapters";
-                    $retain = false;
-                    $message = '{"userID":'.$_SESSION['userid'].'}';
-                break;
-                case "Programs":
-                    $page="Products";
-                    $retain = false;
-                    $message =  '{"userID":'.$_SESSION['userid'].'}';
-                break;   
-                case "EventLogs":
-                    $page="EventLogs";
-                    $retain = false;
-                    $gets = clean($_GET['other']);
-                    if($gets==""){$gets="Application";}
-                    $message =  '{"userID":'.$_SESSION['userid'].',"data":"'.$gets.'"}';
-                case "General":
-                    $page="General";
-                    $retain=false;
-                    $retain=false;
-                    MQTTpublish($_SESSION['computerID']."/Commands/getLogicalDisk",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getServices",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getProcesses",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getProducts",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getNetworkAdapters",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getPrinters",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getUsers",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getPnPEntitys",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getPhysicalMemory",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getFilesystem","Application",getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getEventLogs",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getScreenshot",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getAgent",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getBIOS",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getProcessor",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                    MQTTpublish($_SESSION['computerID']."/Commands/getAgentLog",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
-                break;     
+        $now = strtotime("-2 minutes");
+        if(strtotime($lastUpdate) < $now) {
+            $page = $_SESSION['page'];
+            $retain=false;
+            $message='{"userID":'.$_SESSION['userid'].'}';
+            if($_SESSION['count']==0){
+                switch ($page) {
+                    case "FileManager":
+                        $page="Filesystem";
+                        $retain = false;
+                        $gets = clean(base64_decode($_GET['other']));
+                        $get = explode("{}",$gets);
+                        $drive = $get[0];
+                        $getFolder = $get[1];
+                        if($drive==""){
+                            $drive="C";
+                        }
+                        $message = $drive.":/".$getFolder;
+                        $message = str_replace("//","/",$message);
+                        if($message==""){ $message=$drive.":/"; }
+                        $message = '{"userID":'.$_SESSION['userid'].',"data":"'.$message.'"}';
+                    break;
+                    case "Disks":
+                        $page="LogicalDisk";
+                        $retain = false;
+                        $message = '{"userID":'.$_SESSION['userid'].'}';
+                    break;
+                    case "AttachedDevices":
+                        $page="PnPEntitys";
+                        $retain = false;
+                        $message = '{"userID":'.$_SESSION['userid'].'}';
+                    break;
+                    case "Memory":
+                        $page="PhysicalMemory";
+                        $retain = false;
+                        $message = '{"userID":'.$_SESSION['userid'].'}';
+                    break;
+                    case "Network":
+                        $page="NetworkAdapters";
+                        $retain = false;
+                        $message = '{"userID":'.$_SESSION['userid'].'}';
+                    break;
+                    case "Programs":
+                        $page="Products";
+                        $retain = false;
+                        $message =  '{"userID":'.$_SESSION['userid'].'}';
+                    break;   
+                    case "EventLogs":
+                        $page="EventLogs";
+                        $retain = false;
+                        $gets = clean($_GET['other']);
+                        if($gets==""){$gets="Application";}
+                        $message =  '{"userID":'.$_SESSION['userid'].',"data":"'.$gets.'"}';
+
+                    case "General":
+                        $page="General";
+                        $retain=false;
+                        $retain=false;
+                        $message='{"userID":'.$_SESSION['userid'].'}';
+                        MQTTpublish($_SESSION['computerID']."/Commands/getLogicalDisk",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getServices",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getProcesses",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getProducts",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getNetworkAdapters",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getPrinters",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getUsers",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getPnPEntitys",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getPhysicalMemory",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getFilesystem",'{"userID":'.$_SESSION['userid'].',"data":"C:/"}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getEventLogs",'{"userID":'.$_SESSION['userid'].',"data":"Application"}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getScreenshot",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getAgent",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getBIOS",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getProcessor",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/getAgentLog",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
+                    break;     
+                }
+                
+                MQTTpublish($_SESSION['computerID']."/Commands/get".$page,$message,getSalt(20),$retain);
             }
-            MQTTpublish($_SESSION['computerID']."/Commands/get".$page,$message,getSalt(20),$retain);
-        }
             sleep(1);
-      
-        $results = mysqli_fetch_assoc(mysqli_query($db, $query));
-        $lastUpdate_new=$results['last_update'];
+            $results = mysqli_fetch_assoc(mysqli_query($db, $query));
+            $lastUpdate_new=$results['last_update'];
+        }else{
+            $lastUpdate_new = "1"; 
+            $lastUpdate = "2"; 
+        }
+       
         if($lastUpdate!=$lastUpdate_new or $computer['online']=="0"){
             include("../pages/".$_SESSION['page'].".php");  
             $_SESSION['count']=0;

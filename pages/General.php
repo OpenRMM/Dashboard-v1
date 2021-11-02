@@ -28,11 +28,11 @@
 		exit;
 	}
 	
-	$query = "SELECT online, ID, hostname, company_id, name, phone, email, computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
+	$query = "SELECT online, ID, hostname, company_id, name, phone, email,hex, computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$result = mysqli_fetch_assoc($results);
 
-	$query = "SELECT name, phone, email,address,comments,date_added FROM companies WHERE ID='".$result['company_id']."' LIMIT 1";
+	$query = "SELECT name, phone, email,address,comments,date_added,hex FROM companies WHERE ID='".$result['company_id']."' LIMIT 1";
 	$companies = mysqli_query($db, $query);
 	$company = mysqli_fetch_assoc($companies);
 	
@@ -68,14 +68,7 @@
 	$ramPercentMin = round(99 - ($ram / $maxram) * 100,0);
 	$ramPercentMax =  round(($ram / $maxram) * 100,0);
 	if((int)$ramPercentMin=="0"){$ramPercentMin=100;}
-	function formatBytes($bytes, $precision = 0) { 
-		$units = array('B', 'KB', 'MB', 'GB', 'TB'); 
-		$bytes = max($bytes, 0); 
-		$pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 
-		$pow = min($pow, count($units) - 1); 
-		$bytes /= pow(1024, $pow);
-		return round($bytes, $precision);
-	} 
+
 	$cpuUsage= $json['Processor']['Response'][0]['LoadPercentage'];
 	if($cpuUage==""){
 		$cpuUsage="100";
@@ -109,9 +102,9 @@
 					<i title="<?php echo $alertCount;?> Issues" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
 			</button>
 			<?php }else{?>
-				<span class="text-success" title="No Issues" data-toggle="modal" data-target="#computerAlerts" style="cursor:pointer;padding-left:15px;" onclick="computerAlertsModal('this PC');">
+				<button class="btn btn-sm btn-success" title="No Issues" data-toggle="modal" data-target="#computerAlerts" style="cursor:pointer;padding-left:15px;" onclick="computerAlertsModal('this PC');">
 					<i class="fas fa-thumbs-up"></i> 
-				</span>
+			</button>
 			<?php }?>
 			<?php
 				$agentVersion = $json['Agent'][0]['Version'];
@@ -226,13 +219,13 @@
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 						<a href="javascript:void(0)" style="color:<?php echo $siteSettings['theme']['Color 5']; ?>" data-toggle="modal" data-target="#companyMoreInfo">
 							<h5>
-								<?php echo ($result['name']!="" ? ucwords($result['name'])." at" : ""); ?>
-								<?php echo textOnNull(($company['name']!="N/A" ? $company['name'] : ""), "No ".$msp." Name"); ?>
+								<?php echo crypto('decrypt',$result['name'],$result['hex'])!="" ? ucwords(crypto('decrypt',$result['name'],$result['hex']))." at" : ""; ?>
+								<?php echo textOnNull((crypto('decrypt',$company['name'],$company['hex'])!="N/A" ? crypto('decrypt',$company['name'],$company['hex']) : ""), "No ".$msp." Name"); ?>
 							</h5>
 						</a>
-						<span style="color:#666;font-size:14px;"><?php echo textOnNull(phone($result['phone']), "No ".$msp." Phone"); ?> &bull;
-							<a href="mailto:<?php echo $result['email']; ?>">
-								<?php echo textOnNull(phone($result['email']), "No ".$msp." Email"); ?>
+						<span style="color:#666;font-size:14px;"><?php echo textOnNull(phone(crypto('decrypt',$result['phone'],$result['hex'])), "No ".$msp." Phone"); ?> &bull;
+							<a href="mailto:<?php echo crypto('decrypt', $result['email'],$result['hex']); ?>">
+								<?php echo textOnNull(phone(crypto('decrypt',$result['email'],$result['hex'])), "No ".$msp." Email"); ?>
 							</a>
 						</span>
 					</div>
@@ -271,14 +264,15 @@
 			<div class="panel-body" style="height:285px;">	
 				<div class="roaw">
 					<ul class="list-group" style="margin-left:20px">
-						<li class="list-group-item" style="padding:6px"><b>Processor: </b><?php echo textOnNull(str_replace("(R)","",str_replace("(TM)","",$json['Processor']['Response'][0]['Name'])), "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Processor: </b><?php echo textOnNull(str_replace(" 0 ", " ",str_replace("CPU", "",str_replace("(R)","",str_replace("(TM)","",$json['Processor']['Response'][0]['Name'])))), "N/A");?></li>
 						<li class="list-group-item" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['General']['Response'][0]['Caption']), "N/A");?></li>
-						<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull($json['General']['Response'][0]['SystemType'], "N/A");?></li>
+						<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull(str_replace("PC", "",$json['General']['Response'][0]['SystemType']), "N/A");?></li>
 						<li class="list-group-item" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['BIOS']['Response'][0]['Version'], "N/A");?></li>
 						<li class="list-group-item" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['General']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
 						<li class="list-group-item" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['General']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
 						<?php if(count($json['WindowsActivation']['Response']) > 0) {
 							$status = $json['WindowsActivation']['Response'][0]['LicenseStatus'];
+							if($status!="Licensed")$status="Not activated";
 							$color = ($status == "Licensed" ? "text-success" : "text-danger");
 						?>
 							<li class="list-group-item" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
@@ -475,28 +469,28 @@
   <div class="modal-dialog">
 	<div class="modal-content">
 	  <div class="modal-header">
-		<h4 class="modal-title"><?php if($company['name']!="N/A"){ echo textOnNull($company['name'], "No ".$msp." Info"); }else{ echo $msp." Information";} ?></h4>
+		<h4 class="modal-title"><?php if(crypto('decrypt', $company['name'],$company['hex'])!="N/A"){ echo textOnNull(crypto('decrypt',$company['name'],$company['hex']), "No ".$msp." Info"); }else{ echo $msp." Information";} ?></h4>
 	  </div>
 	  <div class="modal-body">
 		<ul class="list-group">
 			<li class="list-group-item">
 				<b>Phone:</b>
-				<?php echo textOnNull(phone($company['phone']), "No ".$msp." Phone"); ?>
+				<?php echo textOnNull(phone(crypto('decrypt',$company['phone'],$company['hex'])), "No ".$msp." Phone"); ?>
 			</li>
 			<li class="list-group-item">
 				<b>Email:</b>
-				<a href="mailto:<?php echo $company['email']; ?>">
-					<?php echo textOnNull($company['email'], "No ".$msp." Email"); ?>
+				<a href="mailto:<?php echo crypto('decrypt',$company['email'],$company['hex']); ?>">
+					<?php echo textOnNull(crypto('decrypt',$company['email'],$company['hex']), "No ".$msp." Email"); ?>
 				</a>
 			</li>
 			<li class="list-group-item">
 				<b>Address:</b>
-				<?php echo textOnNull($company['address'], "No ".$msp." Address"); ?>
+				<?php echo textOnNull(crypto('decrypt',$company['address'],$company['hex']), "No ".$msp." Address"); ?>
 			</li>
 			<li class="list-group-item">
 				<b>Comments:</b><br>
 				<span style="margin-left:10px;">
-					<?php echo textOnNull($company['Comments'], "No Comments"); ?>
+					<?php echo textOnNull(crypto('decrypt',$company['comments'],$company['hex']), "No Comments"); ?>
 				</span>
 			</li>
 		</ul>

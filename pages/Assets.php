@@ -36,9 +36,7 @@
 						<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">				
 							<thead>
 								<tr style="border-bottom:2px solid #d3d3d3;">
-									<th scope="col">
-									<input onclick="toggle(this);" id="allcomputers" value="<?php echo $result['ID']; ?>" style="display:inline;appearance:none;" type="checkbox"/>
-									</th>		  
+									<th scope="col">ID</th>		  
 									<th scope="col">Hostname</th>
 									<th scope="col">Logged In</th>
 									<th scope="col">Version</th>
@@ -111,8 +109,8 @@
 									</td>
 									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo textOnNull(str_replace('Microsoft', '',$data['General']['Response'][0]['Caption']), "Windows");?>'); $('input[type=search]').trigger('keyup'); "><?php echo textOnNull(str_replace('Microsoft', '',$data['General']['Response'][0]['Caption']), "Windows");?></td>
 									<td>
-									<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="$('input[type=search]').val('<?php echo textOnNull($company['name'], "N/A");?>');$('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
-										<?php echo textOnNull($company['name'], "Not Assigned");?>
+									<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="$('input[type=search]').val('<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']), "N/A");?>');$('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
+										<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']), "Not Assigned");?>
 									</a>
 									</td>
 									<td>
@@ -196,19 +194,16 @@
 				<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
 					<div style="height:45px" class="panel-heading">
 						<h5 class="panel-title">Notes
-							<form style="display:inline" method="post">
-								<input type="hidden" name="delNote" value="true"/>
-								<button type="submit" class="btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
-							</form>
+							<button id="delNote" type="button" onclick="deleteNote('1');" class="delNote btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
 						</h5>
 					</div>
-					<div class="card-block texst-center">
+					<div id="TextBoxesGroup" class="card-block texst-center">
 						<?php
 						$count = 0;
-						$query = "SELECT ID, notes FROM users where ID='".$_SESSION['userid']."'";
+						$query = "SELECT ID, notes,hex FROM users where ID='".$_SESSION['userid']."'";
 						$results = mysqli_query($db, $query);
 						$data = mysqli_fetch_assoc($results);
-						$notes = $data['notes'];
+						$notes = crypto('decrypt',$data['notes'],$data['hex']);
 						if($notes!=""){
 							$allnotes = explode("|",$notes);
 							foreach(array_reverse($allnotes) as $note) {
@@ -217,7 +212,7 @@
 								$note = explode("^",$note);
 								$count++;
 						?>
-							<a title="View Note" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+							<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
 								<li style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
 									<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 									<?php echo ucwords($note[0]);?>
@@ -226,6 +221,8 @@
 						<?php } } ?>
 						<?php if($count==0){ ?>
 							<li  class="list-group-item">No Notes</li>
+						<?php }else{ ?>
+						<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 						<?php } ?>
 					</div>
 					<button data-toggle="modal" data-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>

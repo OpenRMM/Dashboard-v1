@@ -2,6 +2,7 @@
 	$activity = "Technician Logged Out";
 	userActivity($activity,$_SESSION['userid']);	
 	$_SESSION['userid']="";
+	$_SESSION['AccountType']="";
 	session_unset();
 	session_destroy();
 ?>

@@ -114,25 +114,25 @@
 								</b>
 							</h6>
 						</div>
-						<form id="note" method="POST">
+					
 							<div class="modal-body">
 								<p>This Will Create A New Note That Only You And Other Administrators Can See.</p>
 								<div class="form-group">
 									<label for="noteTitle">Title</label>
-									<input type="text" class="form-control" placeholder="" name="noteTitle">
+									<input id="noteTitle" type="text" class="form-control" placeholder="" name="noteTitle">
 								</div>
 								<div class="form-group">
 									<label for="note">Note</label>
-									<textarea rows="6" required maxlength="300" name="note" class="form-control"></textarea>
+									<textarea id="note" rows="6" required maxlength="300" name="note" class="form-control"></textarea>
 								</div>
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
-								<button type="submit"  style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning">
+								<button data-dismiss="modal" type="button" onclick="newNote()"  style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning">
 									<i class="fas fa-save"></i> Save
 								</button>
 							</div>
-						</form>
+					
 					</div>
 				</div>
 			</div>
@@ -364,7 +364,7 @@
 					</div>
 				</div>
 			</div>
-
+            <!--new task -->
 			<div class="modal fade in" id="editTrigger" tabinsdex="-1" role="dialog" aria-hidden="true" >
 				<div class="modal-dialog modal-lg" role="document">
 					<div class="modal-content">
@@ -376,16 +376,16 @@
 						</div>
 						<form method="post">
 							<div class="modal-body">
-								<label>Task Name</label>
+								<h6>Task Name</h6>
 								<input maxlength="30" required type="text" class="form-control" name="name">
 								<br><hr>
-								<h4>Conditions</h4>
+								<h6>Conditions</h6>
 								<table class="table">
 									<tbody id="TextBoxesGroup">
 										<tr>
 											<th scope="row" style="vertical-align:middle;">IF</th>
 											<td>
-												<input type="hidden" value="newTask" name="type">
+												<input type="hidden" value="newTask" name="type">                                               
 												<select required class="form-control" style="width:23%;display:inline-block;" name="taskCond1">
 													<option value="Total Alert Count">Total Alert Count</option>
 													<option value="Total Ram/Memory">Total Ram/Memory</option>
@@ -427,7 +427,7 @@
 									</tbody>
 								</table>
 								<hr>
-								<h4>Action</h4>
+								<h6>Action</h6>
 								<table class="table" id="actionsTable">
 									<thead>
 										<tr>
@@ -465,6 +465,84 @@
 					</div>
 				</div>
 			</div>
-									
+			<!-- new alert -->
+            <div class="modal fade in" id="editAlert" tabinsdex="-1" role="dialog" aria-hidden="true" >
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" >Create New Alert</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">×</span>
+							</button>
+						</div>
+						<form method="post">
+							<div class="modal-body">
+								<h6>Alert Name</h6><hr>
+								<input maxlength="30" required type="text" class="form-control" name="name">
+								<br>
+                                <div id="alertCompany">
+                                    <h6><?php echo $msp; ?></h6><hr>
+                                    <select  name="alertCompany" class="form-control">
+                                        <option value="0">All <?php echo $msp."s"; ?></option>
+                                        <?php
+                                            $query = "SELECT ID, name,hex FROM companies WHERE active='1' ORDER BY ID ASC";
+                                            $results = mysqli_query($db, $query);
+                                            while($result = mysqli_fetch_assoc($results)){ ?>
+                                                <option value='<?php echo $result['ID'];?>'><?php echo crypto('decrypt',$result['name'],$result['hex']);?></option>
+                                        <?php }?>
+                                    
+                                    </select>
+                                    <br>
+                                </div>
+								<h6>Condition</h6>
+								<table class="table">
+									<tbody id="TextBoxesGroup">
+										<tr>
+											<th scope="row" style="vertical-align:middle;">IF</th>
+											<td>
+												<input type="hidden" value="newAlert" name="type">
+                                                <input type="hidden" value="" id="alertID" name="ID">
+												<select required class="form-control" style="width:23%;display:inline-block;" name="alertCondition">
+													<option value="Total Alert Count">Total Alert Count</option>
+													<option value="Total Ram/Memory">Total Ram/Memory</option>
+													<option value="Available Disk Space">Available Disk Space</option>
+													<option value="Total Disk Space">Total Disk Space</option>
+													<option value="Domain">Domain</option>
+													<option value="Public IP Address">Public IP Address</option>
+													<option value="Antivirus">Antivirus</option>
+
+													<option value="Agent Version">Agent Version</option>
+													<option value="Total User Accounts">Total User Accounts</option>
+													<option value="Command Received">Command Received</option>
+													<option value="Agent Comes Online">Agent Comes Online</option>
+													<option value="Agent Goes Offline">Agent Goes Offline</option>
+													<option value="Windows Activation">Windows Activation</option>
+													<option value="Local IP Address">Local IP Address</option>
+													<option value="Last Update">Last Update</option>
+												</select>
+												<select class="form-control" required style="width:20%;display:inline-block;" name="alertComparison">
+													<option value="=">Equals</option>
+													<option value="!=">Not Equal</option>
+													<option value=">">Greater than</option>
+													<option value="<">Less than</option>
+													<option value=">=">Greater than or equals</option>
+													<option value="<=">Less than equals</option>
+													<option value="contain">Contains</option>
+													<option value="notcontain">Does not Contain</option>
+												</select>
+												<input type="text" required placeholder="Value" class="form-control" style="width:47%;display:inline-block;" name="alertValue">     
+                                            </td>
+										</tr>
+									</tbody>
+								</table>	
+							</div>
+							<div class="modal-footer">	
+								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+								<button type="submit" class="btn btn-primary btn-sm" >Create Alert</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>						
 		<!---------------------------------End MODALS------------------------------------->	
 		<?php } ?>

@@ -23,54 +23,112 @@ $online = $results['online'];
 ?>
 <div style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div style="padding:20px" class="col-md-12">
-		<h5>Alerts & Monitoring
+		<h5>Alert Configuration
 			<div style="float:right;">
 				<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Alerts');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-sync"></i>
 				</a>
-			</div>
+			</div><br>
+			<p>Configure Notifications For This Asset.</p>
 		</h5>
-		<br>
 		<hr>
-		<p>Configure Notifications For This Asset.</p>	
-		<form action="/" method="post">
-			<div>			
-				<div class="row" style="margin-left:20px;padding-bottom:30px">
-					<?php
-					$count = 0;
-					foreach($siteSettings['Alert Settings'] as $type=>$alert){
-						$count++;	
-					?>
-						<div class="card col-sm-2" style="color:#fff;background:#353c4e;margin-bottom:5px;padding:10px;margin-right:15px;">
-							<div>
-								<h6 style="color:#fff"><b><?php echo $type; ?>:</b></h6>
-								<div style="font-size:12px" >
-									<?php foreach($alert as $option=>$options){ ?>
-										<?php if(count($options) > 1){ //Contains Sub Options?>
-											<b><?php echo $option;?></b>
-											<?php foreach($options as $subOptionKey=>$subOptionValue){ ?>
-												<div class="checkbox" style="margin-left:15px;font-size:12px">
-													<label>
-														<input type="checkbox" name="alert_settings_<?php echo $type."_".$option."_".$subOptionKey;?>" value="1"> <?php echo $subOptionKey; ?>
-													</label>
-												</div>
-												<?php }?>
-												<?php }else{?>
-												<div class="checkbox"style="font-size:12px">
-													<label>
-														<input type="checkbox" name="alert_settings_<?php echo $type."_".$option;?>" value="1"> <?php echo $option; ?>
-													</label>
-												</div>
-											<?php }?>
-										<?php }?>
-								</div>
-							</div>
-						</div>
-					<?php } ?>
-				</div>
-			</div>
-			<button type="submit" style="float:right;margin-top:-30px;width:100px;background:<?php echo $siteSettings['theme']['Color 2'];?>" class="btn btn-warning btn-sm">Save</button>
- 		</form>
+		<button data-toggle="modal" data-target="#editAlert" onclick="$('#alertCompany').hide();$('#alertID').val('<?php echo $computerID; ?>');" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</button><hr>
+		<table class="table table-hover table-borderless" id="datatable">
+			<tr>
+				<th>Name</th>
+				<th >Alert Details</th>
+				<th>Current Value</th>
+				<th style="float:right">Actions</th>
+			</tr>
+			<?php
+			$count=0;
+			$query = "SELECT * FROM alerts WHERE active='1' and computer_id='".$computerID."' ORDER BY ID ASC";
+			$results = mysqli_query($db, $query);
+			while($alert = mysqli_fetch_assoc($results)){
+				$count++;
+				if($alert['last_run']!=""){ $last_run=$alert['last_run'];}else{ $last_run="Never";}
+				$details=jsonDecode($alert['details'],true);
+				$json = getComputerData($computerID, array("*"), $showDate);
+				
+				switch ($details['json']['Details']['Condition']) {
+					case "Total Alert Count":
+					  $currentValue="0";
+					break;
+					case "Total Ram/Memory":
+					$currentValue=formatBytes($json['General']['Response'][0]['Totalphysicalmemory'],0);
+					break;
+					case "Available Disk Space":
+						$currentValue=formatBytes($json['LogicalDisk']['Response'][0]['FreeSpace']);
+					break;
+					case "Total Disk Space":
+						$currentValue=formatBytes($json['LogicalDisk']['Response'][0]['Size']);
+					break;
+					case "Domain":
+						$currentValue=$json['General']['Response'][0]['Domain'];
+					break;
+					case "Public IP Address":
+						$currentValue=$json['General']['Response'][0]['ExternalIP']["ip"];
+					break;
+					case "Antivirus":
+						$currentValue=$json['General']['Response'][0]['Antivirus'];
+					break;
+					case "Agent Version":
+						$currentValue=$json['Agent']['Response'][0]['Version'];
+					break;
+					case "Total User Accounts":
+						$currentValue="0";
+					break;
+					case "Command Received":
+						$currentValue="0";
+					break;
+					case "Agent Comes Online":
+						if($results['online']=="0")$status="Offline";
+						if($results['online']=="1")$status="Online";
+						$currentValue=$status;
+					break;
+					case "Agent Goes Offline":
+						if($results['online']=="0")$status="Offline";
+						if($results['online']=="1")$status="Online";
+						$currentValue=$status;
+					break;
+					case "Windows Activation":
+						$status = $json['WindowsActivation']['Response'][0]['LicenseStatus'];
+						if($status!="Licensed")$status="Not activated";
+						$currentValue=$status;
+					break;
+					case "Local IP Address":
+						$currentValue=$json['General']['Response'][0]['PrimaryLocalIP'];
+					break;
+					case "Last Update":
+						$currentValue=$json['Ping'];
+					break;
+					  
+				
+					default:
+					 $currentValue="unknown";
+				  }
+			?>
+			<tr>
+				<td><?php echo $alert['name']; ?></td>
+				<td>If <b><?php echo $details['json']['Details']['Condition']."</b> ".$details['json']['Details']['Comparison']." ".$details['json']['Details']['Value']; ?></td>
+				<td><?php echo $currentValue; ?></td>
+				<td style="float:right">
+					<form action="/" method="post" style="display:inline;">
+						<input type="hidden" value="delAlert" name="type">
+						<input type="hidden" value="<?php echo $alert['ID'];?>" name="ID">
+						<button type="submit" title="Delete Alert" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
+							<i class="fas fa-trash"></i>
+						</button>
+					</form>	
+				</td>
+			</tr>
+			<?php } 
+			if($count == 0){ ?>
+				<tr>
+					<td colspan=4><center><h6>Once you create an Alert, it will show up here.</h6></center></td>
+				</tr>
+		<?php }?>
+		</table>
   	</div>
 <script>
     $(".sidebarComputerName").text("<?php echo strtoupper($_SESSION['ComputerHostname']);?>");

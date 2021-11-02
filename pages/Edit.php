@@ -13,11 +13,11 @@ if($_SESSION['userid']==""){
 }
 $computerID = (int)clean($_GET['ID']);
 
-$query = "SELECT ID, show_alerts, hostname, company_id, phone, email, online, name, comment,computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT ID, show_alerts, hostname, company_id, phone,hex, email, online, name, comment,computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $data = mysqli_fetch_assoc($results);
 
-$query = "SELECT ID, name, phone, address, email, comments FROM companies WHERE ID='".$data['company_id']."' LIMIT 1";
+$query = "SELECT ID, name, phone, address, email, comments,hex FROM companies WHERE ID='".$data['company_id']."' LIMIT 1";
 $companys = mysqli_query($db, $query);
 $company = mysqli_fetch_assoc($companys);
 
@@ -56,13 +56,14 @@ $online = $data['online'];
 				<div class="form-group float-label-control">
 					<label><?php echo $msp; ?>:</label>
 					<select name="company" class="form-control">
-						<option value="<?php echo $company['ID']; ?>"><?php echo textOnNull($company['name'],"Select A Company"); ?></option>
+						<option value="<?php echo $company['ID']; ?>"><?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']),"Select A Company"); ?></option>
 						<?php
-							$query = "SELECT ID, name FROM companies WHERE active='1' ORDER BY ID ASC";
+							$query = "SELECT ID, name,hex FROM companies WHERE active='1' ORDER BY ID ASC";
 							$results = mysqli_query($db, $query);
 							while($result = mysqli_fetch_assoc($results)){ ?>
-								<option value='<?php echo $result['ID'];?>'><?php echo $result['name'];?></option>
+								<option value='<?php echo $result['ID'];?>'><?php echo crypto('decrypt',$result['name'],$result['hex']);?></option>
 						<?php }?>
+						<option value="0">Not Assigned</option>
 					</select>
 					<br>
 					<label>Asset Type:</label>
@@ -80,18 +81,18 @@ $online = $data['online'];
 				<h4 class="page-header">Client Information</h4><br>
 				<div class="form-group float-label-control">
 					<label>Client Name:</label>
-					<input type="text" name="name" value="<?php echo $data['name']; ?>" class="form-control" placeholder="What's Their Name?">
+					<input type="text" name="name" value="<?php echo crypto('decrypt',$data['name'],$data['hex']); ?>" class="form-control" placeholder="What's Their Name?">
 				</div>
 				<div class="form-group float-label-control">
 					<label>Client Phone:</label>
-					<input type="text" name="phone" value="<?php echo $data['phone']; ?>" class="form-control" placeholder="What's Their Phone Number?">
+					<input type="text" name="phone" value="<?php echo crypto('decrypt',$data['phone'],$data['hex']); ?>" class="form-control" placeholder="What's Their Phone Number?">
 				</div>
 				<div class="form-group float-label-control">
 					<label>Client Email Address:</label>
-					<input type="email" name="email" value="<?php echo $data['email']; ?>" class="form-control" placeholder="What's Their Email Address?">
+					<input type="email" name="email" value="<?php echo crypto('decrypt',$data['email'],$data['hex']); ?>" class="form-control" placeholder="What's Their Email Address?">
 				</div>
 				<div class="form-group float-label-control">
-					<textarea rows=12 style="resize:vertical" placeholder="Any Comments?" name="comment" class="form-control"><?php echo $data['comment']; ?></textarea>
+					<textarea rows=12 style="resize:vertical" placeholder="Any Comments?" name="comment" class="form-control"><?php echo crypto('decrypt',$data['comment'],$data['hex']); ?></textarea>
 				</div>
 				<div style="margin-top:30px;" class="form-group float-label-control">
 					<input style="background:#0ac282;color:#fff" type="submit" class="form-control" value="Save Details">
@@ -128,18 +129,18 @@ $online = $data['online'];
 					<div class="panel-body">
 						<ul class="list-group">
 							<li class="list-group-item"><b>Name:</b>
-								<a href="javascript:void(0)" onclick="searchItem('<?php echo textOnNull($company['name'],"N/A"); ?>');" title="Search Company">
-									<?php echo textOnNull($company['name'],"N/A"); ?>
+								<a href="javascript:void(0)" onclick="searchItem('<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']),"N/A"); ?>');" title="Search Company">
+									<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']),"N/A"); ?>
 								</a>
 							</li>
 							<li class="list-group-item"><b>Email:</b>
-								<a href="mailto:<?php echo $company['email']; ?>">
-									<?php echo textOnNull(ucfirst($company['email']),"N/A"); ?>
+								<a href="mailto:<?php echo crypto('decrypt',$company['email'],$company['hex']); ?>">
+									<?php echo textOnNull(ucfirst(crypto('decrypt',$company['email'],$company['hex'])),"N/A"); ?>
 								</a>
 							</li>
-							<li class="list-group-item"><b>Phone:</b> <?php echo textOnNull(phone($company['phone']),"N/A"); ?></li>
-							<li class="list-group-item"><b>Address:</b> <?php echo textOnNull($company['address'],"N/A"); ?></li>
-							<li class="list-group-item"><b>Additional Info:</b> <?php echo textOnNull(ucfirst($company['comments']),"None"); ?></li>
+							<li class="list-group-item"><b>Phone:</b> <?php echo textOnNull(phone(crypto('decrypt',$company['phone'],$company['hex'])),"N/A"); ?></li>
+							<li class="list-group-item"><b>Address:</b> <?php echo textOnNull(crypto('decrypt',$company['address'],$company['hex']),"N/A"); ?></li>
+							<li class="list-group-item"><b>Additional Info:</b> <?php echo textOnNull(ucfirst(crypto('decrypt',$company['comments'],$company['hex'])),"None"); ?></li>
 						</ul>
 					</div>
 				</div>

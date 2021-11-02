@@ -18,8 +18,8 @@ $results = mysqli_query($db, $query);
 $data = mysqli_fetch_assoc($results);
 
 $online = $data['online'];
-$agent_settings = json_decode($data['agent_settings']['Response'], true);
-
+$agent_settings = json_decode($data['agent_settings'], true);
+print_r($agent_settings['Response']['Interval']);
 ?>
 <?php if($data['hostname']==""){ ?>
 	<br>
@@ -59,114 +59,114 @@ $agent_settings = json_decode($data['agent_settings']['Response'], true);
 								<input type="hidden" name="ID" value="<?php echo $data['ID']; ?>"/>
 								<label class="form-label" for="customRange2">Heartbeat</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Heartbeat" value="<?php echo $agent_settings['interval']['Heartbeat']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Heartbeat" value="<?php echo $agent_settings['Interval']['getHeartbeat']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Asset Overview</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_General" value="<?php echo $agent_settings['interval']['getGeneral']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_General" value="<?php echo $agent_settings['Interval']['getGeneral']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">BIOS</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_BIOS" value="<?php echo $agent_settings['interval']['getBIOS']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_BIOS" value="<?php echo $agent_settings['Interval']['getBIOS']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Optional Features</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Features" value="<?php echo $agent_settings['interval']['getOptionalFeatures']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Features" value="<?php echo $agent_settings['Interval']['getOptionalFeatures']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Processes</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Processes" value="<?php echo $agent_settings['interval']['getProcesses']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Processes" value="<?php echo $agent_settings['Interval']['getProcesses']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Services</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Services" value="<?php echo $agent_settings['interval']['getServices']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Services" value="<?php echo $agent_settings['Interval']['getServices']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Users</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Users" value="<?php echo $agent_settings['interval']['getUsers']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Users" value="<?php echo $agent_settings['Interval']['getUsers']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Video Configuration</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Video" value="<?php echo $agent_settings['interval']['getVideoConfiguration']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Video" value="<?php echo $agent_settings['Interval']['getVideoConfiguration']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Logical Disk</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Disk" value="<?php echo $agent_settings['interval']['getLogicalDisk']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Disk" value="<?php echo $agent_settings['Interval']['getLogicalDisk']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Sound Devices</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Sound" value="<?php echo $agent_settings['interval']['getSoundDevices']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Sound" value="<?php echo $agent_settings['Interval']['getSoundDevices']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Windows Updates</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_WindowsUpdates" value="<?php echo $agent_settings['interval']['getWindowsUpdates']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_WindowsUpdates" value="<?php echo $agent_settings['Interval']['getWindowsUpdates']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 							</div>
 							<div style="padding:20px;border-radius:6px" class="col-sm-4">
 								<label class="form-label" for="customRange2">Pointing Device</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Pointing" value="<?php echo $agent_settings['interval']['getPointingDevice']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Pointing" value="<?php echo $agent_settings['Interval']['getPointingDevice']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Keyboard</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Keyboard" value="<?php echo $agent_settings['interval']['getKeyboard']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Keyboard" value="<?php echo $agent_settings['Interval']['getKeyboard']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Base Board</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Board" value="<?php echo $agent_settings['interval']['getBaseBoard']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Board" value="<?php echo $agent_settings['Interval']['getBaseBoard']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Desktop Monitor</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Monitor" value="<?php echo $agent_settings['interval']['getDesktopMonitor']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Monitor" value="<?php echo $agent_settings['Interval']['getDesktopMonitor']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Printers</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Printers" value="<?php echo $agent_settings['interval']['getPrinters']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Printers" value="<?php echo $agent_settings['Interval']['getPrinters']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Network Login Profile</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_NetworkLogin" value="<?php echo $agent_settings['interval']['getNetworkLoginProfile']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_NetworkLogin" value="<?php echo $agent_settings['Interval']['getNetworkLoginProfile']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Network</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Network" value="<?php echo $agent_settings['interval']['getNetwork']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Network" value="<?php echo $agent_settings['Interval']['getNetwork']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">PnP Entitys</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_PnP" value="<?php echo $agent_settings['interval']['getPnPEntitys']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_PnP" value="<?php echo $agent_settings['Interval']['getPnPEntitys']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">SCSI Controller</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_SCSI" value="<?php echo $agent_settings['interval']['getSCSIController']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_SCSI" value="<?php echo $agent_settings['Interval']['getSCSIController']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Event Logs</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Logs" value="<?php echo $agent_settings['interval']['getEventLogs']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Logs" value="<?php echo $agent_settings['Interval']['getEventLogs']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Agent Logs</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_logs" value="<?php echo $agent_settings['interval']['getAgentLogs']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_logs" value="<?php echo $agent_settings['Interval']['getAgentLogs']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 							</div>
@@ -174,52 +174,52 @@ $agent_settings = json_decode($data['agent_settings']['Response'], true);
 
 								<label class="form-label" for="customRange2">Products</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Products" value="<?php echo $agent_settings['interval']['getProducts']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Products" value="<?php echo $agent_settings['Interval']['getProducts']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Processor</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Processor" value="<?php echo $agent_settings['interval']['getProcessor']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Processor" value="<?php echo $agent_settings['Interval']['getProcessor']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Firewall</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Firewall" value="<?php echo $agent_settings['interval']['getFirewall']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Firewall" value="<?php echo $agent_settings['Interval']['getFirewall']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Agent</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Agent" value="<?php echo $agent_settings['interval']['getAgent']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Agent" value="<?php echo $agent_settings['Interval']['getAgent']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Battery</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Battery" value="<?php echo $agent_settings['interval']['getBattery']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Battery" value="<?php echo $agent_settings['Interval']['getBattery']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Filesystem</label>
 								<div class="range">
-								<input class="range-slider__range" type="range" name="agent_Filesystem" value="<?php echo $agent_settings['interval']['getFilesystem']; ?>" min="0" max="360">
+								<input class="range-slider__range" type="range" name="agent_Filesystem" value="<?php echo $agent_settings['Interval']['getFilesystem']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Mapped Logical Disk</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Mapped" value="<?php echo $agent_settings['interval']['getMappedLogicalDisk']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Mapped" value="<?php echo $agent_settings['Interval']['getMappedLogicalDisk']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Physical Memory</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Memory" value="<?php echo $agent_settings['interval']['getPhysicalMemory']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Memory" value="<?php echo $agent_settings['Interval']['getPhysicalMemory']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Startup</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Startup" value="<?php echo $agent_settings['interval']['getStartup']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Startup" value="<?php echo $agent_settings['Interval']['getStartup']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">Shared Drives</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_SharedDrives" value="<?php echo $agent_settings['interval']['getSharedDrives']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_SharedDrives" value="<?php echo $agent_settings['Interval']['getSharedDrives']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 							

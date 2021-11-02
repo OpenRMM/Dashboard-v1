@@ -11,7 +11,7 @@ if($_SESSION['userid']==""){
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
-$query = "SELECT ID,name,phone,email,address,comments,active FROM companies where ID<>'1' ORDER BY active,name ASC";
+$query = "SELECT hex,ID,name,phone,email,address,comments,active FROM companies where ID<>'1' ORDER BY active,name ASC";
 $results = mysqli_query($db, $query);
 $companyCount = mysqli_num_rows($results);
 ?>
@@ -20,12 +20,12 @@ $companyCount = mysqli_num_rows($results);
 		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('AllCompanies');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
-		<button type="button" style="float:right;margin:5px;background:#0ac282;;color:#fff" data-toggle="modal" data-target="#companyModal" class="btn-sm btn btn-light" title="Add User">
+		<button type="button" style="float:right;margin:5px;background:#0ac282;;color:#fff" data-toggle="modal" data-target="#companyModal" class="btn-sm btn btn-light" title="Add User" onclick="editCompany('','','','','','')">
 			<i class="fas fa-plus"></i> Add  <?php echo $msp; ?> 
 		</button>	
 	</h4>
 </div>	
-<div class="card table-card" id="printTable" >
+<div class="card table-card">
 	<div class="card-header">
 		<h5>Listing All Current <?php echo $msp; ?>s</h5>
 		<div class="card-header-right">
@@ -58,11 +58,12 @@ $companyCount = mysqli_num_rows($results);
 			<tbody>
 				<?php
 					//Fetch Results
+					$count=0;
 					while($company = mysqli_fetch_assoc($results)){
 						$computersWithAlerts = 0;
 						$aggrigateAlerts = "";
-						
-						$query = "SELECT ID FROM computers WHERE CompanyID='".$company['CompanyID']."'";
+						$count++;
+						$query = "SELECT ID FROM computers WHERE company_id='".$company['ID']."'";
 						$computerResults = mysqli_query($db, $query);
 						$computerCount = mysqli_num_rows($computerResults);
 						
@@ -75,12 +76,12 @@ $companyCount = mysqli_num_rows($results);
 							}
 						}
 				?>
-					<tr>
+					<tr id="companyList<?php echo $company['ID']; ?>">
 						<td>
-							<?php echo $company['CompanyID'];?>
+							<?php echo $company['ID'];?>
 						</td>
 						<td>
-								<b><?php echo $company['name'];?></b>
+								<b><?php echo crypto('decrypt', $company['name'], $company['hex']);?></b>
 								&nbsp;(<?php echo $computerCount;?>)
 						</td>
 						<td>
@@ -96,46 +97,50 @@ $companyCount = mysqli_num_rows($results);
 							<?php }?>
 						</td>
 						<td>
-							<?php echo textOnNull(phone($company['phone']),"No Phone");?>
+							<?php echo textOnNull(phone(crypto('decrypt', $company['phone'], $company['hex'])),"No Phone");?>
 						</td>
 						<td>
 							<a href="mailto:<?php echo $company['email'];?>">
-								<?php echo textOnNull(ucfirst($company['email']),"No Email");?>
+								<?php echo textOnNull(ucfirst(crypto('decrypt', $company['email'], $company['hex'])),"No Email");?>
 							</a>
 						</td>
 						<td>
-							<?php echo textOnNull(ucfirst($company['comments']), "No Comments");?>
+							<?php echo textOnNull(ucfirst(crypto('decrypt', $company['comments'], $company['hex'])), "No Comments");?>
 						</td>
 						<td>
-							<form action="/" style="display:inline" method="POST">
+							<form style="display:inline" >
 								<input type="hidden" name="type" value="DeleteCompany"/>
-								<input type="hidden" name="ID" value="<?php echo $company['CompanyID'];?>"/>
+								<input type="hidden" name="ID" value="<?php echo $company['ID'];?>"/>
 								<?php if($company['active']=="1"){ ?>
-									<input type="hidden" name="companyactive" value="0"/>
-									<button type="submit" title="Remove <?php echo $msp; ?>" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
+									<button type="button" id="delCompany<?php echo $company['ID']; ?>" onclick="deleteCompany(<?php echo $company['ID']; ?>,'0')" title="Remove <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm">
 										<i class="fas fa-trash"></i>				
 									</button>
-								<?php }else{ ?>
-									<input type="hidden" name="companyactive" value="1"/>
-									<button type="submit" title="Add <?php echo $msp; ?>" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-success btn-sm">
+									<button type="button" id="actCompany<?php echo $company['ID']; ?>" onclick="deleteCompany(<?php echo $company['ID']; ?>,'1')" title="Reactivate <?php echo $msp; ?>" style="display:none;margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-success btn-sm">
 										<i class="fas fa-plus"></i>
+									</button>
+								<?php }else{ ?>
+									<button type="button" id="actCompany<?php echo $company['ID']; ?>" onclick="deleteCompany(<?php echo $company['ID']; ?>,'1')" title="Reactivate <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-success btn-sm">
+										<i class="fas fa-plus"></i>
+									</button>
+									<button type="button" id="delCompany<?php echo $company['ID']; ?>" onclick="deleteCompany(<?php echo $company['ID']; ?>,'0')" title="Remove <?php echo $msp; ?>" style="display:none;margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm">
+										<i class="fas fa-trash"></i>				
 									</button>
 								<?php }?>
 								
-								<a href="javascript:void(0)" data-toggle="modal" data-target="#companyModal" onclick="editCompany('<?php echo $company['CompanyID'];?>','<?php echo $company['name'];?>','<?php echo $company['address'];?>','<?php echo phone($company['phone']);?>','<?php echo ucfirst($company['email']);?>','<?php echo ucfirst($company['comments']);?>')" title="Edit <?php echo $msp; ?>" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
+								<a href="javascript:void(0)" data-toggle="modal" data-target="#companyModal" onclick="editCompany('<?php echo $company['ID'];?>','<?php echo crypto('decrypt',$company['name'],$company['hex']);?>','<?php echo crypto('decrypt',$company['address'],$company['hex']);?>','<?php echo phone(crypto('decrypt',$company['phone'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['email'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['comments'],$company['hex']));?>')" title="Edit <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
 									<i class="fas fa-pencil-alt"></i>
 								</a>
 							</form>
 							<form action="/" method="post" style="display:inline;">
-								<input type="hidden" value="<?php echo $company['CompanyID'];?>" name="companyAgent">
-								<button type="submit" title="Download <?php echo $msp; ?> Agent" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
+								<input type="hidden" value="<?php echo $company['ID'];?>" name="companyAgent">
+								<button type="submit" title="Download <?php echo $msp; ?> Agent" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
 									<i class="fas fa-download"></i>
 								</button>
 							</form>
 							<form action="/" method="post" style="display:inline;">
 								<input type="hidden" value="CompanyUpdateAll" name="type">
-								<input type="hidden" value="<?php echo $company['CompanyID'];?>" name="CompanyID">
-								<button type="submit" title="Update <?php echo $msp; ?> Agent" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-dark btn-sm">
+								<input type="hidden" value="<?php echo $company['ID'];?>" name="CompanyID">
+								<button type="submit" title="Update <?php echo $msp; ?> Agent" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
 									<i class="fas fa-cloud-upload-alt"></i>
 								</button>
 							</form>				

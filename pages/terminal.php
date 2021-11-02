@@ -13,7 +13,7 @@ $query = "SELECT hostname,ID FROM computers WHERE ID='".$ID."'";
 $results = mysqli_query($db, $query);
 $computer = mysqli_fetch_assoc($results);
 									
-$query = "SELECT ID, expire_time FROM commands WHERE ComputerID='".$computer['ID']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
+$query = "SELECT ID, expire_time FROM commands WHERE computer_id='".$computer['ID']."' AND status='Sent' AND command='".$commands."' AND user_id='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
 $results = mysqli_query($db, $query);
 $existing = mysqli_fetch_assoc($results);
 
@@ -27,7 +27,7 @@ if($existing['ID'] != ""){
 $expire_time = date("Y-m-d h:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("Y-m-d h:i:s"))));
 
 if($exists == 0){
-	$query = "INSERT INTO commands (ComputerID, userid, command, expire_after, expire_time, status)
+	$query = "INSERT INTO commands (computer_id, user_id, command, expire_after, expire_time, status)
 			  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 	$results = mysqli_query($db, $query);
 	$insertID = mysqli_insert_id($db);

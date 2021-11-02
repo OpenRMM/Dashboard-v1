@@ -116,7 +116,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 								$query = "SELECT ID FROM computers where active='1'";
 								$results = mysqli_query($db, $query);
 								$resultCount = mysqli_num_rows($results);							
-								$query = "SELECT * FROM computers WHERE active='1'ORDER BY hostname ASC";
+								$query = "SELECT * FROM computers WHERE active='1'ORDER BY hostname ASC LIMIT 7";
 								//Fetch Results
 								$count = 0;
 								$results = mysqli_query($db, $query);
@@ -151,19 +151,16 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 			<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
 				<div style="height:45px" class="panel-heading">
 					<h5 class="panel-title">Notes
-					<form style="display:inline" method="post">
-						<input type="hidden" name="delNote" value="true"/>
-						<button type="submit" class="btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
-					</form>
+						<button id="delNote" type="button" onclick="deleteNote('1');" class="delNote btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
 					</h5>
 				</div>
-				<div class="card-block">
+				<div id="TextBoxesGroup" class="card-block">
 					<?php
 					$count = 0;
-					$query = "SELECT ID, notes FROM users where ID='".$_SESSION['userid']."'";
+					$query = "SELECT ID, notes,hex FROM users where ID='".$_SESSION['userid']."'";
 					$results = mysqli_query($db, $query);
 					$data = mysqli_fetch_assoc($results);
-					$notes = $data['notes'];
+					$notes = crypto('decrypt', $data['notes'],$data['hex']);
 					if($notes!=""){
 						$allnotes = explode("|",$notes);
 						foreach(array_reverse($allnotes) as $note) {
@@ -172,7 +169,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 							$note = explode("^",$note);
 							$count++;
 					?>
-						<a title="View Note" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+						<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
 							<li  style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
 								<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 								<?php echo ucwords($note[0]);?>
@@ -181,6 +178,8 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 					<?php } } ?>
 					<?php if($count==0){ ?>
 						<li class="list-group-item">No Notes</li>
+					<?php }else{ ?>
+					<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 					<?php } ?>
 				</div>
 				<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" data-toggle="modal" data-target="#noteModal" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
@@ -189,22 +188,22 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 		<?php 	
 		//Get stats
 			//companies
-			$query = "SELECT ID, name FROM companies where active='1'";
+			$query = "SELECT ID, name,hex FROM companies where active='1'";
 			$companyArray= "";
 			$companys = mysqli_query($db, $query);
 			while($result = mysqli_fetch_assoc($companys)){
-				$companyArray.= "'".$result['name']."',";
-				$query = "SELECT ID FROM computers where active='1' and company_id='".$result['company_id']."'";
+				$companyArray.= "'".crypto('decrypt', $result['name'],$result['hex'])."',";
+				$query = "SELECT ID FROM computers where active='1' and company_id='".$result['ID']."'";
 				$count = mysqli_num_rows(mysqli_query($db, $query));
 				$companyTotal.=$count.",";
 			}
 			$companyArray= rtrim($companyArray,',');
 			$companyTotal=rtrim($companyTotal,',');
-
+			if($count==0){$companyTotal="0,100";}
 			//users
-			$query = "SELECT ID FROM users where active='1' and account_type='Admin'";
+			$query = "SELECT ID FROM users where active='1'";
 			$users1 = mysqli_num_rows(mysqli_query($db, $query));
-			$query = "SELECT ID FROM users where active='1' and account_type='Standard'";
+			$query = "SELECT ID FROM users where active='0'";
 			$users2 = mysqli_num_rows(mysqli_query($db, $query));
 
 			//assets
@@ -279,9 +278,9 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 									<div class="panel-body" style="height:285px;">	
 										<div class="roaw">
 											<ul class="list-group" style="margin-left:20px">
-												<li class="list-group-item" style="padding:6px"><b>Processor: </b><?php echo textOnNull(str_replace("(R)","",str_replace("(TM)","",$json['Processor']['Response'][0]['Name'])), "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Processor: </b><?php echo textOnNull(str_replace(" 0 ", " ",str_replace("CPU", "",str_replace("(R)","",str_replace("(TM)","",$json['Processor']['Response'][0]['Name'])))), "N/A");?></li>
 												<li class="list-group-item" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['General']['Response'][0]['Caption']), "N/A");?></li>
-												<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull($json['General']['Response'][0]['SystemType'], "N/A");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull(str_replace("PC", "",$json['General']['Response'][0]['SystemType']), "N/A");?></li>
 												<li class="list-group-item" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['BIOS']['Response'][0]['Version'], "N/A");?></li>
 												<li class="list-group-item" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['General']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
 												<li class="list-group-item" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['General']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
@@ -331,7 +330,8 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 												<?php  
 												if(count($json['WindowsActivation']['Response']) > 0) {
 													$status = $json['WindowsActivation']['Response'][0]['LicenseStatus'];
-													$color = ($status == "Activated" ? "text-success" : "text-danger");
+													if($status!="Licensed")$status="Not activated";
+													$color = ($status == "Licensed" ? "text-success" : "text-danger");
 												?>
 													<li class="list-group-item" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
 												<?php } 
@@ -377,18 +377,49 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 						</div>
 					</div>
 					<div id="menu1" class="tab-pane fade">
-						<a href="" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</a><hr>
+						<button data-toggle="modal" data-target="#editAlert" onclick="$('#alertCompany').show();$('#alertID').val('');" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</button><hr>
 						<table class="table table-hover table-borderless" id="datatable">
 							<tr>
-								<th>Status</th>
+								
 								<th>Name</th>
+								<th >Alert Details</th>
+								<th><?php echo $msp; ?></th>
 								<th style="float:right">Actions</th>
 							</tr>
-							<tr>
-								<td></td>
-								<td> No Alerts</td>
-								<td style="float:right"></td>
+							<?php
+							$count=0;
+							$query = "SELECT * FROM alerts WHERE active='1' and computer_id='0' ORDER BY ID ASC";
+							$results = mysqli_query($db, $query);
+							while($alert = mysqli_fetch_assoc($results)){
+								$count++;
+
+								if($alert['last_run']!=""){ $last_run=$alert['last_run'];}else{ $last_run="Never";}
+								$details=jsonDecode($alert['details'],true);
+								if($alert['company_id']=="0"){
+									$company="All ".$msp."s";
+								}else{
+									$query = "SELECT * FROM companies WHERE active='1' and ID='".$alert['company_id']."' ORDER BY ID ASC";
+									$results = mysqli_query($db, $query);
+									$companyArray = mysqli_fetch_assoc($results);
+									$company=crypto('decrypt', $companyArray['name'],$companyArray['hex']);
+								}
+							?>
+							<tr id="alert<?php echo $alert['ID']; ?>">
+								<td><?php echo $alert['name']; ?></td>
+								<td>If <b><?php echo $details['json']['Details']['Condition']."</b> ".$details['json']['Details']['Comparison']." ".$details['json']['Details']['Value']; ?></td>
+								<td><?php echo $company; ?></td>
+								<td style="float:right">
+									<button type="button" onclick="deleteAlert('<?php echo $alert['ID']; ?>')" title="Delete Alert" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
+										<i class="fas fa-trash"></i>
+									</button>									
+								</td>
 							</tr>
+							<?php } 
+							if($count == 0){ ?>
+								<tr>
+									<td colspan=4><center><h6>Once you create an Alert, it will show up here.</h6></center></td>
+								</tr>
+						<?php }?>
 						</table>
 					</div>
 					<div id="menu2" class="tab-pane fade">
@@ -396,24 +427,19 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 						<table class="table table-hover table-borderless" id="datatable">
 							<tr>
 								<th>Task Name</th>
-							
 								<th>Last run</td>
 								<th style="float:right"></th>
 							</tr>
 							<?php
+							$count=0;
 							$query = "SELECT * FROM tasks WHERE active='1' ORDER BY ID ASC";
 							$results = mysqli_query($db, $query);
 							while($task = mysqli_fetch_assoc($results)){
 								$count++;
-
-							
 								if($task['last_run']!=""){ $last_run=$task['last_run'];}else{ $last_run="Never";}
-								
 							?>
-							<tr>
+							<tr id="task<?php echo $task['ID']; ?>">
 								<td><?php echo $task['name']; ?></td>
-							
-								
 								<td><?php echo $last_run; ?></td>
 								<td style="float:right">
 									<form action="/" method="post" style="display:inline;">
@@ -423,19 +449,15 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 											<i class="fas fa-play"></i>
 										</button>
 									</form>
-									<form action="/" method="post" style="display:inline;">
-										<input type="hidden" value="delTask" name="type">
-										<input type="hidden" value="<?php echo $task['ID'];?>" name="ID">
-										<button type="submit" title="Delete Task" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
-											<i class="fas fa-trash"></i>
-										</button>
-									</form>	
+									<button type="button" onclick="deleteTask('<?php echo $task['ID']; ?>')" title="Delete Task" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
+										<i class="fas fa-trash"></i>
+									</button>
 								</td>
 							</tr>
 							<?php } 
 							if($count == 0){ ?>
 								<tr>
-									<td colspan=4><center><h6>No Tasks Found.</h6></center></td>
+									<td colspan=4><center><h6>Once you create a Task, it will show up here.</h6></center></td>
 								</tr>
 						<?php }?>
 						</table>
@@ -497,7 +519,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 	};
 	var data2 = {
 	  labels: [
-		"Administators","Technicians"
+		"Active","Deactivated"
 	  ],
 	  datasets: [
 	    {

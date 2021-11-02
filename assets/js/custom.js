@@ -87,3 +87,129 @@ function sendCommand(command, prompt, expire_after=5){
         });
     }
 }
+function deleteNote(delNote){  
+    $.post("index.php", {
+    delNote: delNote
+    },
+    function(data, status){
+        toastr.options.progressBar = true;
+        toastr.info('Your Notes Have Been Deleted.');
+        $(".noteList").hide();
+        $(".no_noteList").show();
+    });
+}
+function deleteCompany(ID,status2){  
+    $.post("index.php", {
+        ID: ID,
+        type: "DeleteCompany",
+        companyactive: status2
+    },
+    function(data, status){
+        if(status2=="0"){
+            toastr.options.progressBar = true;
+            toastr.info('The selected <?php echo $msp; ?> has been deactivated.');
+            $("#actCompany" + ID).show();
+            $("#delCompany" + ID).hide();
+        }
+        if(status2=="1"){
+            toastr.options.progressBar = true;
+            toastr.info('The selected <?php echo $msp; ?> has been activated.');
+            $("#actCompany" + ID).hide();
+            $("#delCompany" + ID).show(); 
+        }
+
+    });
+}
+function deleteUser(ID,status2){  
+    $.post("index.php", {
+        ID: ID,
+        type: "DeleteUser",
+        useractive: status2
+    },
+    function(data, status){
+        if(status2=="0"){
+            toastr.options.progressBar = true;
+            toastr.info('The selected user has been deactivated.');
+            $("#actUser" + ID).show();
+            $("#delUser" + ID).hide();
+        }
+        if(status2=="1"){
+            toastr.options.progressBar = true;
+            toastr.info('The selected user has been activated.');
+            $("#actUser" + ID).hide();
+            $("#delUser" + ID).show();    
+        }
+
+    });
+}
+function deleteAlert(ID){  
+    $.post("index.php", {
+        ID: ID,
+        type: "delAlert"
+    },
+    function(data, status){
+        toastr.options.progressBar = true;
+        toastr.info('The selected alert has been deleted.');
+        $("#alert" + ID).fadeOut();
+    });
+}
+function deleteTask(ID){  
+    $.post("index.php", {
+        ID: ID,
+        type: "delTask"
+    },
+    function(data, status){
+        toastr.options.progressBar = true;
+        toastr.info('The selected task has been deleted.');
+        $("#task" + ID).fadeOut();
+    });
+}
+function deleteUserProfile(ID,useractive){  
+    $.post("index.php", {
+        ID: ID,
+        type: "DeleteUser",
+        useractive: useractive
+    },
+    function(data, status){
+        if(useractive=="0"){
+            toastr.options.progressBar = true;
+            toastr.info('The selected user has been disabled.');
+            $("#userDel" + ID).hide();
+            $("#userAct" + ID).show();  
+        }
+        if(useractive=="1"){
+            toastr.options.progressBar = true;
+            toastr.info('The selected user has been enabled.');
+            $("#userAct" + ID).hide();
+            $("#userDel" + ID).show();  
+        }
+    });
+}
+function newNote(){  
+    var note = $("#note").val();
+    var noteTitle = $("#noteTitle").val(); 
+    $.post("index.php", {
+        note: note,
+        noteTitle: noteTitle
+    },
+    function(data, status){
+        $(".no_noteList").hide();
+        $("#note").val('');
+        $("#noteTitle").val(''); 
+        var newTextBoxDiv = $(document.createElement('div')).attr("id", 'TextBoxDiv' + counter);
+		newTextBoxDiv.after().html('<a title="View Note" class="noteList" onclick="$(\'#notetitle\').text(\''+ noteTitle + '\');$(\'#notedesc\').text(\'' + note + '\');" data-toggle="modal" data-target="#viewNoteModal"><li style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item"><i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>' + noteTitle + '</li> </a>');
+		newTextBoxDiv.prependTo("#TextBoxesGroup");  
+        
+    });
+}
+function deleteActivity(){
+    var ID = $("#delActivity").val();  
+    $.post("index.php", {
+        delActivity: ID
+    },
+    function(data, status){
+        toastr.options.progressBar = true;
+        toastr.info('The Activity has been cleared for this user');
+        $("#activity").slideUp("slow");
+    });
+}

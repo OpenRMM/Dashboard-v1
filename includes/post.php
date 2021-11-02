@@ -40,7 +40,8 @@
                 $color4="#333";
                 $color5="#595f69";
             }
-  
+			$rand = random_bytes(32); // chiper = AES-256-CBC ? 32 : 16
+			$agentSecret='base64:'.base64_encode($rand);
 			$mqttHost = clean($_POST['mqttHost']);
             $mqttPort = clean($_POST['mqttPort']);
             $mqttUsername = clean($_POST['mqttUsername']);
@@ -52,6 +53,7 @@
             include("includes/config_init.php");
            
             $data = $siteSettingsJson;
+			$data = str_replace("[agentSecret]",$agentSecret,$data);
             $data = str_replace("[mysqlHost]",$mysqlHost,$data);
             $data = str_replace("[mysqlPort]",$mysqlPort,$data);
             $data = str_replace("[mysqlUsername]",$mysqlUsername,$data);
@@ -80,12 +82,17 @@
         //edit asset
         if($_POST['type'] == "EditComputer"){
 			$ID = (int)$_POST['ID'];
-			$name = clean($_POST['name']);
-			$comment = clean($_POST['comment']);
-			$phone = clean($_POST['phone']);
+			//$salt = getSalt(40);
+			$query = "SELECT ID, hex FROM computers WHERE ID='".$ID."' LIMIT 1";
+			$results = mysqli_query($db, $query);
+			$result = mysqli_fetch_assoc($results);
+			$salt=$result['hex'];
+			$name = crypto('encrypt', clean($_POST['name']),$salt);
+			$comment = crypto('encrypt', clean($_POST['comment']),$salt);
+			$phone = crypto('encrypt', clean($_POST['phone']),$salt);
 			$company = clean($_POST['company']);
 			$type = clean($_POST['pctype']);
-			$email = strip_tags($_POST['email']);
+			$email = crypto('encrypt',strip_tags($_POST['email']),$salt);
 			$show_alerts = (int)$_POST['show_alerts'];
 			//Edit Recents
 			$activity = "Technician Edited Asset: ".$ID;
@@ -136,37 +143,46 @@
 		//Add Edit/User
 		if($_POST['type'] == "AddEditUser"){
 			if(isset($_POST['username'])){
-				$salt = getSalt(40);
+				
+				
 				$user_ID = (int)$_POST['ID'];
+				if($user_ID == 0){
+					$salt = getSalt(40);
+				}else{
+					$query = "SELECT password, hex FROM users WHERE ID='".$user_ID."' LIMIT 1";
+					$results = mysqli_query($db, $query);
+					$result = mysqli_fetch_assoc($results);
+					$salt=$result['hex'];
+				}
 				$username = clean($_POST['username']);
-				$name = clean($_POST['name']);
+				$name2 = clean($_POST['name']);
+				$name = crypto('encrypt', $name2, $salt);
 				$phone = clean($_POST['phone']);
 				$type = ucwords(clean($_POST['accountType']));
 				$email = crypto('encrypt', $_POST['email'], $salt);
 				$password = clean($_POST['password']);
 				$password2 = clean($_POST['password2']);
 				$encryptedPhone = $encryptedPhone = crypto('encrypt', $phone, $salt);
-				$encryptedPassword = crypto('encrypt', $password, $salt);
+				$encryptedPassword = password_hash($password, PASSWORD_DEFAULT);
 				if($_SESSION['accountType']!="Admin"){  
-					$type="Standard";
+					//$type="Standard";
 				}
+				$type = crypto('encrypt', $type, $salt);
 				if($password == $password2){
 					if($user_ID == 0){
-						$query = "INSERT INTO users (accountType, phone, username, password, hex, nicename , email)
+						$query = "INSERT INTO users (account_type, phone, username, password, hex, nicename , email)
 								  VALUES ('".$type."','".$encryptedPhone."','".$username."', '".$encryptedPassword."','".$salt."','".$name."','".$email."')";
                                  
 						$activity = "Technician Added Another Technician: ".ucwords($name);
 					//	userActivity($activity,$_SESSION['userid']);
 					}else{
-						$query = "SELECT password, hex FROM users WHERE ID='".$user_ID."' LIMIT 1";
-						$results = mysqli_query($db, $query);
-						$result = mysqli_fetch_assoc($results);
+					
 						if($password==""){
-							$encryptedPassword = crypto('decrypt', $result['password'], $result['hex']);
-							$encryptedPassword = crypto('encrypt', $encryptedPassword, $salt);
+							$encryptedPassword = $result['password'];
+							//$encryptedPassword = crypto('encrypt', $encryptedPassword, $salt);
 						}
-						$query = "UPDATE users SET accountType='".$type."',phone='".$encryptedPhone."',username='".$username."',nicename='".$name."', email='".$email."', password='".$encryptedPassword."', hex='".$salt."' WHERE ID='".$user_ID."'";
-						$activity = "Technician Edited Another Technician: ".ucwords($name);
+						$query = "UPDATE users SET account_type='".$type."',phone='".$encryptedPhone."',username='".$username."',nicename='".$name."', email='".$email."', password='".$encryptedPassword."', hex='".$salt."' WHERE ID='".$user_ID."'";
+						$activity = "Technician Edited Another Technician: ".ucwords($name2);
 						userActivity($activity,$_SESSION['userid']);
 					}
 					if(!$results = mysqli_query($db, $query)){  }
@@ -189,7 +205,7 @@
 		//delete user activity
 		if(isset($_POST['delActivity'])){
 			$delActivity=(int)$_POST['delActivity'];
-			$query = "UPDATE users SET userActivity='' WHERE ID='".$delActivity."';";
+			$query = "UPDATE users SET user_activity='' WHERE ID='".$delActivity."';";
 			$results = mysqli_query($db, $query);
 			if($delActivity!=$_SESSION['userid']){
 				$activity="Technician Deleted User: ".$delActivity." Activity Logs";		
@@ -206,6 +222,16 @@
 			$query = "UPDATE tasks SET active='0' WHERE ID='".$del."';";
 			$results = mysqli_query($db, $query);
 			$activity="Technician Deleted Task ID: ".$del;		
+			userActivity($activity,$_SESSION['userid']);
+			header("location: /");
+		}
+
+		//delete alert
+		if($_POST['type'] == "delAlert"){
+			$del=(int)$_POST['ID'];
+			$query = "UPDATE alerts SET active='0' WHERE ID='".$del."';";
+			$results = mysqli_query($db, $query);
+			$activity="Technician Deleted Alert ID: ".$del;		
 			userActivity($activity,$_SESSION['userid']);
 			header("location: /");
 		}
@@ -232,6 +258,25 @@
 			header("location: /");
 		}
 
+		//Create alert
+		if($_POST['type'] == "newAlert"){
+			$name=clean($_POST['name']);
+			$id=clean((int)$_POST['ID']);
+			$alertComparison=clean($_POST['alertComparison']);
+			$alertCondition=clean($_POST['alertCondition']);
+			$alertValue=clean($_POST['alertValue']);
+			$alertCompany=clean((int)$_POST['alertCompany']);
+			$details='"Condition":"'.$alertCondition.'","Comparison":"'.$alertComparison.'","Value":"'.$alertValue.'"';
+			$alertDetails='{"Name":"'.$name.'","Company":"'.$alertCompany.'","Details":{'.$details.'}}';
+			
+			$query = "INSERT INTO alerts (computer_id,company_id,user_id,name,details)VALUES ('".$id."','".$alertCompany."','".$_SESSION['userid']."','".$name."','".$alertDetails."')";
+  			$results = mysqli_query($db, $query);
+			//echo mysqli_error($db); exit;
+			$activity="User Created alert: ".mysqli_insert_id($db);		
+			userActivity($activity,$_SESSION['userid']);	
+			header("location: /");
+		}
+
 		//Oneway asset message
 		if($_POST['type'] == "assetOneWayMessage"){
 			$ID=clean($_POST['ID']);
@@ -248,20 +293,26 @@
 		if($_POST['type'] == "AddEditCompany"){
 			if(isset($_POST['name'], $_POST['phone'], $_POST['address'], $_POST['email'])){
 				$ID = (int)$_POST['ID'];
-				$name = clean($_POST['name']);
+				$salt = getSalt(40);
+				$name2 = clean($_POST['name']);
+				$name = crypto('encrypt', $name2, $salt);
 				$phone = clean($_POST['phone']);
+				$phone = crypto('encrypt', $phone, $salt);
 				$address = clean($_POST['address']);
+				$address = crypto('encrypt', $address, $salt);
 				$comments = clean($_POST['comments']);
+				$comments = crypto('encrypt', $comments, $salt);
 				$email = str_replace("'", "", $_POST['email']);
+				$email = crypto('encrypt', $email, $salt);
 				if($ID == 0){
-					$query = "INSERT INTO companies (name, phone, address, comments, email)
-							  VALUES ('".$name."', '".$phone."', '".$address."', '".$comments."', '".$email."')";
+					$query = "INSERT INTO companies (hex,name, phone, address, comments, email)
+							  VALUES ('".$salt."','".$name."', '".$phone."', '".$address."', '".$comments."', '".$email."')";
 					$activity = "Technician Added A Company: ".$name;
 					userActivity($activity,$_SESSION['userid']);
 				}else{
-					$query = "UPDATE companies SET name='".$name."', phone='".$phone."', address='".$address."', email='".$email."', comments='".$comments."'
-							  WHERE company_id='".$ID."' LIMIT 1";
-					$activity = "Technician Edited A Company: ".$name;
+					$query = "UPDATE companies SET hex='".$salt."',name='".$name."', phone='".$phone."', address='".$address."', email='".$email."', comments='".$comments."'
+							  WHERE ID='".$ID."' LIMIT 1";
+					$activity = "Technician Edited A Company: ".$name2;
 					userActivity($activity,$_SESSION['userid']);
 				}
 				$results = mysqli_query($db, $query);
@@ -273,7 +324,7 @@
 		if($_POST['type'] == "DeleteCompany"){
 			$ID = (int)$_POST['ID'];
 			$active = (int)$_POST['companyactive'];
-			$query = "UPDATE companies SET active='".$active."' WHERE company_id='".$ID."';";
+			$query = "UPDATE companies SET active='".$active."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
 			$activity = "Technician Deleted A Company: ".$ID;
 			userActivity($activity,$_SESSION['userid']);
@@ -302,13 +353,15 @@
 		//Create Note
 		if(isset($_POST['note'])){			
 			$ID=$_SESSION['userid'];
+			$salt = getSalt(40);
 			$activity = "Technician Created A Note";
 			$newnote = clean($_POST['note']);
 			$noteTitle = clean($_POST['noteTitle']);
-			$query = "SELECT notes FROM users WHERE ID='".$ID."'";
+			$query = "SELECT notes,hex FROM users WHERE ID='".$ID."'";
 			$results = mysqli_query($db, $query);
 			$oldnote = mysqli_fetch_assoc($results);
-			$note = $oldnote['notes'].$noteTitle."^".$newnote."|";
+			$note = crypto('decrypt',$oldnote['notes'],$oldnote['hex']).$noteTitle."^".$newnote."|";
+			$note = crypto('encrypt', $note, $oldnote['hex']);
 			$query = "UPDATE users SET notes='".$note."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);		
 			userActivity($activity,$_SESSION['userid']);
@@ -324,7 +377,7 @@
 				$query = "SELECT hostname,ID FROM computers WHERE ID='".$ID."'";
 				$results = mysqli_query($db, $query);
 				$computer = mysqli_fetch_assoc($results);
-				$query = "SELECT ID, expire_time FROM commands WHERE computer_id='".$computer['ID']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
+				$query = "SELECT ID, expire_time FROM commands WHERE computer_id='".$computer['ID']."' AND status='Sent' AND command='".$commands."' AND user_id='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
 				$results = mysqli_query($db, $query);
 				$existing = mysqli_fetch_assoc($results);
 				if($existing['ID'] != ""){
@@ -336,7 +389,7 @@
 					//Generate expire time
 					$expire_time = date("Y-m-d h:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("Y-m-d h:i:s"))));
 					
-					$query = "INSERT INTO commands (computer_id, userid, command, expire_after, expire_time, status)
+					$query = "INSERT INTO commands (computer_id, user_id, command, expire_after, expire_time, status)
 							  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 					$results = mysqli_query($db, $query);
 					$insertID = mysqli_insert_id($db);
@@ -400,7 +453,7 @@
 			$agent_WindowsUpdates = clean($_POST['agent_WindowsUpdates']);
 		
 
-			$settings='{"interval": {"getWindowsUpdates": '.$agent_WindowsUpdates.',"getAgentLogs": '.$agent_Logs.',"getSharedDrives": '.$agent_SharedDrives.',"Heartbeat": '.$agent_Heartbeat.', "getGeneral": '.$agent_General.', "getBIOS": '.$agent_BIOS.', "getStartup": '.$agent_Startup.', "getOptionalFeatures": '.$agent_Features.', "getProcesses": '.$agent_Processes.', "getServices": '.$agent_Services.', "getUsers": '.$agent_Users.', "getVideoConfiguration": '.$agent_Video.', "getLogicalDisk": '.$agent_Disk.', "getMappedLogicalDisk": '.$agent_Mapped.', "getPhysicalMemory": '.$agent_Memory.', "getPointingDevice": '.$agent_Pointing.', "getKeyboard": '.$agent_Keyboard.', "getBaseBoard": '.$agent_Board.', "getDesktopMonitor": '.$agent_Monitor.', "getPrinters": '.$agent_Printers.', "getNetworkLoginProfile": '.$agent_NetworkLogin.', "getNetwork": '.$agent_Network.', "getPnPEntitys": '.$agent_PnP.', "getSoundDevices": '.$agent_Sound.', "getSCSIController": '.$agent_SCSI.', "getProducts": '.$agent_Products.', "getProcessor": '.$agent_Processor.', "getFirewall": '.$agent_Firewall.', "getAgent": '.$agent_Agent.', "getBattery": '.$agent_Battery.', "getFilesystem": '.$agent_Filesystem.', "getEventLogs": '.$agent_Logs.'}}';
+			$settings='{"Interval": {"getWindowsUpdates": '.$agent_WindowsUpdates.',"getAgentLogs": '.$agent_Logs.',"getSharedDrives": '.$agent_SharedDrives.',"Heartbeat": '.$agent_Heartbeat.', "getGeneral": '.$agent_General.', "getBIOS": '.$agent_BIOS.', "getStartup": '.$agent_Startup.', "getOptionalFeatures": '.$agent_Features.', "getProcesses": '.$agent_Processes.', "getServices": '.$agent_Services.', "getUsers": '.$agent_Users.', "getVideoConfiguration": '.$agent_Video.', "getLogicalDisk": '.$agent_Disk.', "getMappedLogicalDisk": '.$agent_Mapped.', "getPhysicalMemory": '.$agent_Memory.', "getPointingDevice": '.$agent_Pointing.', "getKeyboard": '.$agent_Keyboard.', "getBaseBoard": '.$agent_Board.', "getDesktopMonitor": '.$agent_Monitor.', "getPrinters": '.$agent_Printers.', "getNetworkLoginProfile": '.$agent_NetworkLogin.', "getNetwork": '.$agent_Network.', "getPnPEntitys": '.$agent_PnP.', "getSoundDevices": '.$agent_Sound.', "getSCSIController": '.$agent_SCSI.', "getProducts": '.$agent_Products.', "getProcessor": '.$agent_Processor.', "getFirewall": '.$agent_Firewall.', "getAgent": '.$agent_Agent.', "getBattery": '.$agent_Battery.', "getFilesystem": '.$agent_Filesystem.', "getEventLogs": '.$agent_Logs.'}}';
 			$query = "UPDATE computers SET agent_settings='".$settings."' WHERE ID=".$ID.";";
 			//$results = mysqli_query($db, $query);
 			//echo mysqli_error($db)."sadsada"; exit;
@@ -477,27 +530,20 @@
 		}
 		//login
 		if(isset($_POST['loginusername'], $_POST['password'])){
-			$count=0;
 			$username = $_POST['loginusername'];
 			$password = $_POST['password'];
 			$query = "SELECT * FROM users where active='1' and username='".$username."'";
 			$results= mysqli_query($db, $query);
 			$count = mysqli_num_rows($results);
 			$data = mysqli_fetch_assoc($results);
-            //echo mysqli_error($db);exit;
 			$dbPassword= $data['password'];
-            $dbPassword=crypto('decrypt', $data['password'], $data['hex']);
-			if($password!==$dbPassword or $dbPassword=="")$count=0;
-				//echo $password." ".$dbPassword;
-				if($count>0){
-					$query = "UPDATE users SET last_login='".time()."' WHERE ID=".$data['ID'].";";
-					$results = mysqli_query($db, $query);
+			if(password_verify($password,$dbPassword)) { 
 					$_SESSION['userid']=$data['ID'];
 					$_SESSION['username']=$data['username'];
 					$activity="Technician Logged In";
 					userActivity($activity,$data['ID']);
 					
-					$_SESSION['accountType']=$data['account_type'];	
+					$_SESSION['accountType']= crypto('decrypt', $data['account_type'] , $data['hex']);;
 					$_SESSION['showModal']="true";	
 					$_SESSION['recent']=explode(",",$data['recents']);
 					if($data['recents']==""){ $_SESSION['recent']=array(); }
