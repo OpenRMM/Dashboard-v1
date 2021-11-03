@@ -51,7 +51,8 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"/>
 		<link rel="stylesheet" href="assets/css/tagsinput.css"/>
 		<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
-		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 		
 		<link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 		
@@ -249,7 +250,7 @@
 		<div id="notifications"> </div>
 		<script>
 		setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
-			$("#notifications").load("includes/notifications.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other);	
+			$("#notifications").load("includes/notifications.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other));	
 		}, 3000);
 		</script>
 	</body>
@@ -257,9 +258,8 @@
 	<script src="assets/js/toastr.js"></script>
 	<script src="assets/js/custom.js"></script>
 	<script>
-		
-		var computerID = getCookie("ID");
-		var currentSection = getCookie("section");
+		var computerID = atob(getCookie("ID"));
+		var currentSection = atob(getCookie("section"));
 		var sectionHistoryDate = "latest";
 		$( document ).ready(function() {
         	$("#sortable").sortable();
@@ -267,35 +267,24 @@
 		});
 		//Load Page
 		if (document.cookie.indexOf('section') === -1 ) {
-			setCookie("section", "Login", 365);
+			setCookie("section",  btoa("Login"), 365);
 		}
-
 		//Load Pages
 		var otherEntry = "";
-		
-		//Load Pages
-		
 		function loadSection(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry){
 		document.cookie = "section=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		document.cookie = "ID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		var loadSection="";
-
-		<?php 
-		if($_SESSION['page']==""){
-			//echo 'section="Login";';
-		}
-		?>
-
-		setCookie("section", section, 365);
+		setCookie("section", btoa(section), 365);
 		$('.secbtn').removeClass('secActive');
-		setCookie("ID", ID, 365);
+		setCookie("ID", btoa(ID), 365);
 		computerID = ID;
 		currentSection = section;
 		if(section=="Logout"){
 			toastr.options.progressBar = true;
 			toastr.warning('Securely Logging You Out.');
-			$(".loadSection").load("includes/loader.php?page="+section);
-			setCookie("section", "Login", 365);
+			$(".loadSection").load("includes/loader.php?page="+btoa(section));
+			setCookie("section", btoa("Login"), 365);
 			setTimeout(function() { 
 				location.reload(true);
 			}, 5000);
@@ -304,31 +293,26 @@
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>We are getting the latest information for this asset</h5><br><h6>Instead of waiting, would you like to display the outdated assset data?</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;' type='submit'>View Older Asset Information <i class='fas fa-arrow-right'></i></button></form> <center></div></div>");
 			}else{
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
-	
 			}
-		
-			$(".recents").load("pages/recent.php?ID="+ID);
+			$(".recents").load("pages/recent.php?ID="+btoa(ID));
 			$("html, body").animate({ scrollTop: 0 }, "slow"); 
 			//$(".loadSection").load("includes/loader.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other);
 			loadSection = $.ajax({
-				url: "includes/loader.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other,
+				url: "includes/loader.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other),
 				success: function(data) {
 				$(".loadSection").hide().html(data).fadeIn("fast");
 				request.transport.abort();
 				}
-			
 			});
-			
 			var item = '#secbtn'+section;
-			$(item).addClass('secActive');
-			
+			$(item).addClass('secActive');	
 		}
 		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 			$('#sidebar').removeClass('active');
 		}
 	}
-		
 		<?php if($_GET['page']==""){ ?>
+		if(currentSection==""){ currentSection="Login"; }
 			loadSection(currentSection, computerID);
 		<?php }else{ ?>
 			loadSection("<?php echo ucfirst($_GET['page']);?>", "<?php echo (int)$_GET['ID'];?>");
@@ -340,11 +324,9 @@
 				echo 'pageAlert("'.$messageTitle.'", "'.$messageText.'");';
 				$_SESSION['showModal'] = "";
 			}
-		 } ?>
-		 	
+		 } ?>	 	
 	</script>
 	<script>
-	
 		var counter = 2;
 		$("#addButton").click(function () {
 	 

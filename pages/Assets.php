@@ -30,12 +30,29 @@
 		</h4>
 	</div>	
 	<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
-		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;">			 
-			   <form method="post" action="/">
-				   <div class="card table-card" id="printTable" style="marsgin-top:-20px;padding:10px;border-radius:6px;">  
-						<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">				
+		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;">
+			<div styles="float:right;" class="dropdown">
+				<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right" data-toggle="dropdown">
+					Actions <i class="fas fa-sort-down"></i>
+				</button>
+				<div class="dropdown-menu">
+					<a class="dropdown-item" data-toggle="modal" href="javascript:void(0)" data-target="#companyComputersModal2" >Assign Selected To <?php echo $msp; ?></a>
+					<hr>
+					<a class="dropdown-item bg-danger" data-toggle="modal" href="javascript:void(0)" data-target="#deleteAssets" >Delete Selected Assets</a>
+				</div>
+			</div>
+		</div> 
+		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;">
+			<form method="post" action="/">
+				<div class="card table-card" id="printTable" style="marsgin-top:-20px;padding:10px;border-radius:6px;">  
+				   <table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">				
 							<thead>
 								<tr style="border-bottom:2px solid #d3d3d3;">
+									<th >
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox" value="<?php echo $result['ID']; ?>" style="margin-top:-15px" name="computers[]" id="checkall">	
+										</div>
+									</th>
 									<th scope="col">ID</th>		  
 									<th scope="col">Hostname</th>
 									<th scope="col">Logged In</th>
@@ -77,54 +94,59 @@
 										$results2 = mysqli_query($db, $query2);
 										$company = mysqli_fetch_assoc($results2)
 								?>
-								<tr>
+								<tr id="row<?php echo $result['ID']; ?>">
 									<td>
-									<span title="ID"><?php echo $result['ID']; ?></span>
+										<div class="form-check">
+											<input class="form-check-input checkbox" type="checkbox" value="<?php echo $result['ID']; ?>" name="computers[]" id="flexCheckDefault">	
+										</div>
 									</td>
 									<td>
-									<?php
-										$icons = array("desktop","server","laptop");
-										if(in_array(strtolower($result['computer_type']), $icons)){
-											$icon = strtolower($result['computer_type']);
-										}else{
-											$icon = "server";
-										} 
-									?>
-									<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
-										<?php if($result['online']=="0") {?>
-											<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
-										<?php }else{?>
-											<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
-										<?php }?>
-										&nbsp;<?php echo strtoupper($result['hostname']);?>
-									</a>
+										<span title="ID"><?php echo $result['ID']; ?></span>
 									</td>
-									<?php
-										$username = textOnNull($data['General']['Response'][0]['UserName'], "Unknown");
-									?>
+									<td>
+										<?php
+											$icons = array("desktop","server","laptop");
+											if(in_array(strtolower($result['computer_type']), $icons)){
+												$icon = strtolower($result['computer_type']);
+											}else{
+												$icon = "server";
+											} 
+										?>
+										<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
+											<?php if($result['online']=="0") {?>
+												<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
+											<?php }else{?>
+												<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
+											<?php }?>
+											&nbsp;<?php echo strtoupper($result['hostname']);?>
+										</a>
+									</td>
+										<?php
+											$username = textOnNull($data['General']['Response'][0]['UserName'], "Unknown");
+										?>
 									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username)); ?>'); $('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
-									<?php
-										echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username));
-									?>
+										<?php
+											echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username));
+										?>
 									</td>
 									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo textOnNull(str_replace('Microsoft', '',$data['General']['Response'][0]['Caption']), "Windows");?>'); $('input[type=search]').trigger('keyup'); "><?php echo textOnNull(str_replace('Microsoft', '',$data['General']['Response'][0]['Caption']), "Windows");?></td>
 									<td>
-									<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="$('input[type=search]').val('<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']), "N/A");?>');$('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
-										<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']), "Not Assigned");?>
-									</a>
+										<a id="col<?php echo $result['ID']; ?>" style="color:#000;font-size:12px" href="javascript:void(0)" onclick="$('input[type=search]').val('<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']), "N/A");?>');$('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
+											<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']), "Not Assigned");?>
+										</a>
 									</td>
 									<td>
-									<div class="progress" style="margin-top:5px;height:10px;background:#a4b0bd" title="<?php echo $usedPct;?>%">
-										<div class="progress-bar" role="progressbar" style=";background:<?php echo $pbColor;?>;width:<?php echo $usedPct;?>%" aria-valuenow="<?php echo $usedPct;?>" aria-valuemin="0" aria-valuemax="100"></div>
-									</div>
+										<div class="progress" style="margin-top:5px;height:10px;background:#a4b0bd" title="<?php echo $usedPct;?>%">
+											<div class="progress-bar" role="progressbar" style=";background:<?php echo $pbColor;?>;width:<?php echo $usedPct;?>%" aria-valuenow="<?php echo $usedPct;?>" aria-valuemin="0" aria-valuemax="100"></div>
+										</div>
 									</td>
 									<td>
-									<a href="javascript:void(0)" onclick="loadSection('Edit', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
-										<i class="fas fa-pencil-alt"></i>
-									</a>
-									<a title="View Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('General', '<?php echo $result['ID']; ?>');" href="javascript:void(0)" class="form-inline btn btn-warning btn-sm">
-										<i class="fas fa-eye"></i>
-									</a>
+										<a href="javascript:void(0)" onclick="loadSection('Edit', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
+											<i class="fas fa-pencil-alt"></i>
+										</a>
+										<a title="View Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('General', '<?php echo $result['ID']; ?>');" href="javascript:void(0)" class="form-inline btn btn-warning btn-sm">
+											<i class="fas fa-eye"></i>
+										</a>
 									</td>
 								</tr>
 							<?php }?>
@@ -139,36 +161,60 @@
 							<?php } ?>
 							</tbody>
 						</table>
+						
 					</div>
-					<!------------- Add Company Computers ------------------->
-					<div id="companyComputersModal2" class="modal fade" role="dialog">
-					<div class="modal-dialog modal-sm">
+				<!------------- Add Company Computers ------------------->
+				<div id="companyComputersModal2" class="modal fade" role="dialog">
+					<div class="modal-dialog modal-md">
 						<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="pageAlert_title">Assign Assets</h5>
-						</div>
-						<div class="modal-body">
-							<h6 id="pageAlert_title">Select The Customer You Would Like To Add These Assets Too</h6>
-							<?php							
-								$query = "SELECT company_id, name FROM companies ORDER BY company_id DESC LIMIT 100";
-								$results = mysqli_query($db, $query);
-								$commandCount = mysqli_num_rows($results);
-								while($command = mysqli_fetch_assoc($results)){		
-							?>
-							<div class="form-check">
-								<input type="radio" required name="companies" value="<?php echo $command['company_id']; ?>" class="form-check-input" id="CompanyCheck">
-								<label class="form-check-label" for="CompanyCheck"><?php echo $command['name']; ?></label>
+							<div class="modal-header">
+								<h5 class="modal-title" id="pageAlert_title">Assign Assets</h5>
 							</div>
-							<?php } ?>
-						</div>
-						<div class="modal-footer">
-							<input type="hidden" name="type" value="CompanyComputers">
-							<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>
-							<button type="submit" class="btn btn-sm btn-warning" style="color:#fff;">Add</button>
-						</div>
+							<div class="modal-body">
+								<h6 id="pageAlert_title">Select The <?php echo $msp; ?> You Would Like To Add These Assets To</h6><hr>
+								<?php							
+									$query = "SELECT ID, name,hex FROM companies ORDER BY ID DESC LIMIT 100";
+									$results = mysqli_query($db, $query);
+									$companyCount = mysqli_num_rows($results);
+									while($company = mysqli_fetch_assoc($results)){		
+								?>
+								<div class="form-check">
+											
+									<input type="radio" company="<?php echo $company['ID']; ?>" required name="companies" value="<?php echo crypto('decrypt', $company['name'], $company['hex']); ?>" class="form-check-input" id="CompanyCheck">
+									<label class="form-check-label" for="CompanyCheck"><?php echo crypto('decrypt', $company['name'], $company['hex']); ?></label>
+								</div>
+								<?php } ?>
+								<div class="form-check">	
+									
+									<input type="radio" company="0" required name="companies" value="Not Assigned" class="form-check-input" id="CompanyCheck">
+									<label class="form-check-label" for="CompanyCheck">Not Assigned</label>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<input type="hidden" name="type" value="CompanyComputers">
+								<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>
+								<button type="button" data-dismiss="modal" onclick="assignAssets()" class="btn btn-sm btn-warning" style="color:#fff;">Add</button>
+							</div>
 						</div>
 					</div>
+				</div>
+
+				<div id="deleteAssets" class="modal fade" role="dialog">
+					<div class="modal-dialog modal-md">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="pageAlert_title">Delete Assets</h5>
+							</div>
+							<div class="modal-body">
+								<h6 id="pageAlert_title">Are you sure you would like to delete the selected assets?</h6><hr>		
+							</div>
+							<div class="modal-footer">								
+								<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>
+								<button type="button"  onclick="deleteAssets()" data-dismiss="modal" class="btn btn-sm btn-danger" style="color:#fff;">Delete</button>
+							</div>
+						</div>
 					</div>
+				</div>
 				</form>
 			</div>		
 			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="padding-left:20px;">
@@ -220,7 +266,7 @@
 							</a>
 						<?php } } ?>
 						<?php if($count==0){ ?>
-							<li  class="list-group-item">No Notes</li>
+							<li  class="no_noteList list-group-item">No Notes</li>
 						<?php }else{ ?>
 						<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 						<?php } ?>
@@ -267,3 +313,31 @@
 	} );
 </script>
 <script src="js/tagsinput.js"></script>
+<script type='text/javascript'>
+ $(document).ready(function(){
+   // Check or Uncheck All checkboxes
+   $("#checkall").change(function(){
+     var checked = $(this).is(':checked');
+     if(checked){
+       $(".checkbox").each(function(){
+         $(this).prop("checked",true);
+       });
+     }else{
+       $(".checkbox").each(function(){
+         $(this).prop("checked",false);
+       });
+     }
+   });
+ 
+  // Changing state of CheckAll checkbox 
+  $(".checkbox").click(function(){
+ 
+    if($(".checkbox").length == $(".checkbox:checked").length) {
+      $("#checkall").prop("checked", true);
+    } else {
+      $("#checkall").prop("checked", false);
+    }
+
+  });
+});
+</script>

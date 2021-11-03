@@ -11,7 +11,7 @@ if($_SESSION['userid']==""){
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
-$computerID = (int)clean($_GET['ID']);
+$computerID = (int)base64_decode($_GET['ID']);
 
 $query = "SELECT ID, hostname, online, agent_settings FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);

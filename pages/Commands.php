@@ -11,7 +11,7 @@ if($_SESSION['userid']==""){
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
-$computerID = (int)$_GET['ID'];
+$computerID = (int)base64_decode($_GET['ID']);
 $showDate = $_SESSION['date'];
 
 if($computerID<0){ 
@@ -121,7 +121,7 @@ $error = $json['Product_error'];
 			<div class="card">
 				<div class="card-body">
 					<?php 
-						$query = "SELECT * FROM commands WHERE ComputerID='".$computer['ID']."' ORDER BY ID DESC LIMIT 1000";
+						$query = "SELECT * FROM commands WHERE computer_id='".$computer['ID']."' ORDER BY ID DESC LIMIT 1000";
 						$results = mysqli_query($db, $query);
 						$commandCount = mysqli_num_rows($results);
 					?>
@@ -141,12 +141,15 @@ $error = $json['Product_error'];
 							//Fetch Results
 							while($command = mysqli_fetch_assoc($results)){
 								$count++;
+								$cmd = crypto('decrypt', $command['command'], $command['hex']);
+								$data = computerDecrypt($command['data_received']);
+								if($command['status']=="Deleted"){continue;}
 							?>
 							<tr>
-							<td title="<?php echo substr($command['command'], 0, 400); if(strlen($command['command'])>400){echo '...'; } ?>"><b><?php echo substr($command['command'], 0, 40); if(strlen($command['command'])>40){echo '...'; } ?></b></td>
+							<td title="<?php echo substr($cmd, 0, 400); if(strlen($cmd)>400){echo '...'; } ?>"><b><?php echo substr($cmd, 0, 40); if(strlen($cmd)>40){echo '...'; } ?></b></td>
 							<!--<td><?php echo strtolower($command['expire_after']);?> Minutes</td>-->
 							<td><?php echo $command['time_sent'];?></td>
-							<td title="<?php echo substr($command['data_received'], 0, 400); if(strlen($command['data_received'])>400){echo '...'; } ?>"><b><?php echo substr($command['data_received'], 0, 40); if(strlen($command['data_received'])>40){echo '...'; } ?></b></td>
+							<td title="<?php echo substr($data, 0, 400); if(strlen($data)>400){echo '...'; } ?>"><b><?php echo substr($data, 0, 40); if(strlen($data)>40){echo '...'; } ?></b></td>
 
 								<?php if($command['time_received']!=""){
 											$timer = $command['time_received'];

@@ -11,7 +11,7 @@ if($_SESSION['userid']==""){
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
-$computerID = (int)clean($_GET['ID']);
+$computerID = (int)base64_decode($_GET['ID']);
 
 $query = "SELECT ID, show_alerts, hostname, company_id, phone,hex, email, online, name, comment,computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
@@ -60,7 +60,9 @@ $online = $data['online'];
 						<?php
 							$query = "SELECT ID, name,hex FROM companies WHERE active='1' ORDER BY ID ASC";
 							$results = mysqli_query($db, $query);
-							while($result = mysqli_fetch_assoc($results)){ ?>
+							while($result = mysqli_fetch_assoc($results)){ 
+								if(crypto('decrypt',$result['name'],$result['hex'])==crypto('decrypt',$company['name'],$company['hex'])){continue;}		
+						?>
 								<option value='<?php echo $result['ID'];?>'><?php echo crypto('decrypt',$result['name'],$result['hex']);?></option>
 						<?php }?>
 						<option value="0">Not Assigned</option>
@@ -162,8 +164,8 @@ $online = $data['online'];
 								$data = mysqli_fetch_assoc($results);
 								if($data['hostname']==""){continue;}
 								$count++;
-							?>
-							<a href="javascript:void(0)" class="text-dark" onclick="loadSection('Edit', '<?php echo $data['ID']; ?>');">
+							?> 
+							<a href="javascript:void(0)" class="text-dark" onclick="loadSection('Edit', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo strtoupper($data['hostname']);?>');">
 								<li class="list-group-item">
 									<i class="fas fa-desktop"></i>&nbsp;
 									<?php echo strtoupper($data['hostname']);?>

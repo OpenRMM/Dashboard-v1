@@ -82,11 +82,12 @@
         //edit asset
         if($_POST['type'] == "EditComputer"){
 			$ID = (int)$_POST['ID'];
-			//$salt = getSalt(40);
+			
 			$query = "SELECT ID, hex FROM computers WHERE ID='".$ID."' LIMIT 1";
 			$results = mysqli_query($db, $query);
 			$result = mysqli_fetch_assoc($results);
 			$salt=$result['hex'];
+			if($salt==""){ $salt = getSalt(40); }
 			$name = crypto('encrypt', clean($_POST['name']),$salt);
 			$comment = crypto('encrypt', clean($_POST['comment']),$salt);
 			$phone = crypto('encrypt', clean($_POST['phone']),$salt);
@@ -111,7 +112,7 @@
 				}
 			}
 			//Update Computer Data
-			$query = "UPDATE computers SET show_alerts='".$show_alerts."', computer_type='".$type."', comment='".$comment."', name='".$name."', phone='".$phone."', company_id='".$company."', email='".$email."' WHERE ID='".$ID."';";
+			$query = "UPDATE computers SET hex='".$salt."', show_alerts='".$show_alerts."', computer_type='".$type."', comment='".$comment."', name='".$name."', phone='".$phone."', company_id='".$company."', email='".$email."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
 			header("location: /");
 		}
@@ -131,12 +132,22 @@
     }
 		//Add Computers To Company
 		if($_POST['type'] == "CompanyComputers"){
-			$computers = $_POST['computers'];
-			$companies = $_POST['companies'];
+			$computers = ($_POST['computers']);
+			$companies = clean($_POST['companies']);
+			$companyID=(int)$_POST['companyID'];
+
 			foreach($computers as $computer) {
-				$query = "UPDATE computers SET company_id='".$companies."' WHERE ID='".$computer."';";
+				$query = "UPDATE computers SET company_id='".$companyID."' WHERE ID='".$computer."';";
 				$results = mysqli_query($db, $query);
-				echo $computer;
+			}
+			header("location: /");
+		}
+		//Delete Selected assets
+		if($_POST['type'] == "deleteAssets"){
+			$computers = ($_POST['computers']);
+			foreach($computers as $computer) {
+				$query = "UPDATE computers SET active='0' WHERE ID='".$computer."';";
+				$results = mysqli_query($db, $query);
 			}
 			header("location: /");
 		}
@@ -346,7 +357,7 @@
 			$active = (int)$_POST['commandactive'];
 			$activity = "Technician Deleted A Command: ".$ID;
 			userActivity($activity,$_SESSION['userid']);
-			$query = "UPDATE commands SET command='Deleted' WHERE ID='".$ID."';";
+			$query = "UPDATE commands SET status='Deleted' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
 			header("location: /");
 		}
@@ -377,7 +388,7 @@
 				$query = "SELECT hostname,ID FROM computers WHERE ID='".$ID."'";
 				$results = mysqli_query($db, $query);
 				$computer = mysqli_fetch_assoc($results);
-				$query = "SELECT ID, expire_time FROM commands WHERE computer_id='".$computer['ID']."' AND status='Sent' AND command='".$commands."' AND user_id='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
+				$query = "SELECT ID, expire_time FROM commands WHERE computer_id='".$computer['ID']."' AND status='Sent' AND user_id='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
 				$results = mysqli_query($db, $query);
 				$existing = mysqli_fetch_assoc($results);
 				if($existing['ID'] != ""){
@@ -388,9 +399,9 @@
 				if($exists == 0){
 					//Generate expire time
 					$expire_time = date("Y-m-d h:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("Y-m-d h:i:s"))));
-					
-					$query = "INSERT INTO commands (computer_id, user_id, command, expire_after, expire_time, status)
-							  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
+					$salt=getSalt(40);
+					$query = "INSERT INTO commands (hex,computer_id, user_id, command, expire_after, expire_time, status)
+							  VALUES ('".$salt."','".$computer['ID']."', '".$_SESSION['userid']."', '".crypto('encrypt', $commands, $salt)."', '".$expire_after."', '".$expire_time."', 'Sent')";
 					$results = mysqli_query($db, $query);
 					$insertID = mysqli_insert_id($db);
 					MQTTpublish($computer['ID']."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"commandID": "'.$insertID.'","data":"'.$commands.'"}',$computer['ID'],false);

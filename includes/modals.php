@@ -311,7 +311,7 @@
 									while($count <= $showLast){ $count++;
 									$niceDate = date("l, F jS", strtotime("-".$count." day"));
 									$formatedDate = date("n/j/Y", strtotime("-".$count." day"));
-									$formatedDate2 = date("Y-n-j", strtotime("-".$count." day"));
+									$formatedDate2 = date("Y-m-d", strtotime("-".$count." day"));
 								?>
 								<tr>
 									<td><?php echo $niceDate; ?></td>

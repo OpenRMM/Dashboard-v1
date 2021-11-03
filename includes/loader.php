@@ -3,10 +3,10 @@ include("db.php");
 if($_SESSION['excludedPages']==""){
     $_SESSION['excludedPages'] = explode(",",$excludedPages); //use this to clear pages if an error occurs
 }
-$type = $_POST['type'];
-$date = $_POST['date'];
-
-$thePage=clean(preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['page']));
+$type = clean($_POST['type']);
+$date = clean($_POST['date']);
+$gets = clean(base64_decode($_GET['other']));
+$thePage=clean(preg_replace("/[^a-zA-Z0-9]+/", "", base64_decode($_GET['page'])));
 if($thePage!=""){
     $_SESSION['page'] = $thePage;
 }
@@ -25,16 +25,16 @@ if(!file_exists("config.php") or !$db or $mqttConnect=="timeout" or $result==0){
     include("../pages/Init.php");
 ?>
     <script> 
-        setCookie("section", "Init", 365);	
+        setCookie("section", btoa("Init"), 365);	
     </script>
 <?php 
     exit;
 }
 
-//$query = "UPDATE users SET last_login='".time()."' WHERE ID=".$_SESSION['userid'].";";
-//$results = mysqli_query($db, $query);
+$query = "UPDATE users SET last_login='".time()."' WHERE ID=".$_SESSION['userid'].";";
+$results = mysqli_query($db, $query);
 
-$_SESSION['computerID'] = (int)$_GET['ID'];
+$_SESSION['computerID'] = (int)base64_decode($_GET['ID']);
 //$_SESSION['date']=preg_replace("([^0-9/])", "", $_GET['Date']);
 if($_SESSION['date']==""){ 
     $_SESSION['date']="latest"; 
@@ -63,8 +63,8 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
         <?php
         $results = mysqli_fetch_assoc(mysqli_query($db, $query));
         $lastUpdate=$results['last_update'];
-        $now = strtotime("-2 minutes");
-        if(strtotime($lastUpdate) < $now) {
+        $now = strtotime("-5 minutes");
+        if(strtotime($lastUpdate) < $now or $gets=="force") {
             $page = $_SESSION['page'];
             $retain=false;
             $message='{"userID":'.$_SESSION['userid'].'}';
@@ -72,8 +72,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                 switch ($page) {
                     case "FileManager":
                         $page="Filesystem";
-                        $retain = false;
-                        $gets = clean(base64_decode($_GET['other']));
+                        $retain = false;                     
                         $get = explode("{}",$gets);
                         $drive = $get[0];
                         $getFolder = $get[1];
@@ -113,7 +112,6 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                     case "EventLogs":
                         $page="EventLogs";
                         $retain = false;
-                        $gets = clean($_GET['other']);
                         if($gets==""){$gets="Application";}
                         $message =  '{"userID":'.$_SESSION['userid'].',"data":"'.$gets.'"}';
 
@@ -193,8 +191,8 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
     }
 ?>
 <script>
-    var section = getCookie("section");
-    if(section == "Edit" ||section == "Profile" || section == "Assets" || section == "Dashboard" || section == "AllUsers" || section == "AllCompanies" || section == "NewComputers" || section == "Versions" || section == "Init"){
+    var section = atob(getCookie("section"));
+    if(section == "Profile" || section == "Assets" || section == "Dashboard" || section == "AllUsers" || section == "AllCompanies" || section == "NewComputers" || section == "Versions" || section == "Init"){
         $('#sectionList').slideUp(400);
     }else if($('#sectionList').css("display")=="none"){
         $('#sectionList').slideDown(400);

@@ -179,7 +179,7 @@ if($userID!=$_SESSION['userid']){
 						</a>
 					<?php } } ?>
 					<?php if($count==0){ ?>
-						<li class="list-group-item">No Notes</li>
+						<li class="no_noteList list-group-item">No Notes</li>
 					<?php }else{ ?>
 					<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 					<?php } ?>

@@ -177,7 +177,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 						</a>
 					<?php } } ?>
 					<?php if($count==0){ ?>
-						<li class="list-group-item">No Notes</li>
+						<li class="no_noteList list-group-item">No Notes</li>
 					<?php }else{ ?>
 					<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 					<?php } ?>
@@ -200,6 +200,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 			$companyArray= rtrim($companyArray,',');
 			$companyTotal=rtrim($companyTotal,',');
 			if($count==0){$companyTotal="0,100";}
+			$companyArray= "'Assigned','Not Assigned'";
 			//users
 			$query = "SELECT ID FROM users where active='1'";
 			$users1 = mysqli_num_rows(mysqli_query($db, $query));
@@ -504,11 +505,11 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 <script>
 	var data = {
 	  labels: [
-	    <?php echo $companyArray; ?>
+		<?php echo $companyArray; ?>
 	  ],
 	  datasets: [
 	    {
-	      data: [<?php echo $companyTotal; ?>],
+	      data: [<?php echo $companyTotal;  ?>],
 	      backgroundColor: [
 	        "<?php echo $siteSettings['theme']['Color 2']; ?>"
 	      ],

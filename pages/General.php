@@ -11,7 +11,7 @@
 <?php 
 		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 	}
-	$computerID = (int)$_GET['ID'];
+	$computerID = (int)base64_decode($_GET['ID']);
 	$showDate = $_SESSION['date'];
 	
 	if($computerID<0){ 
@@ -62,15 +62,17 @@
 		//$alert = "This Computer Is Currently Offline";
 		//$alertType = "danger";
 	}
+	//ex. 10-3=7
+	$used2 = $json['General']['Response'][0]['Totalphysicalmemory'] - $json['General']['Response'][0]['FreePhysicalMemory'];
+	//ex. 10-7=3
+	$free2 = $json['General']['Response'][0]['Totalphysicalmemory'] - $used2;
+	$total2 = $json['General']['Response'][0]['Totalphysicalmemory'];
+	$average2 = round(($used2 / $total2) * 100,2);
+	//echo $json['General']['Response'][0]['Totalphysicalmemory']."....".$free2."....".$used2."....".$average2;
 
-	$ram = formatBytes($json['General']['Response'][0]['FreePhysicalMemory'],0);
-	$maxram = formatBytes($json['General']['Response'][0]['Totalphysicalmemory'],0);
-	$ramPercentMin = round(99 - ($ram / $maxram) * 100,0);
-	$ramPercentMax =  round(($ram / $maxram) * 100,0);
-	if((int)$ramPercentMin=="0"){$ramPercentMin=100;}
 
 	$cpuUsage= $json['Processor']['Response'][0]['LoadPercentage'];
-	if($cpuUage==""){
+	if($cpuUsage==""){
 		$cpuUsage="100";
 	}
 	//log user activity
@@ -114,10 +116,17 @@
 					</button>			
 			<?php }?>
 			
-			<div style="float:right;">	
-				<a href="javascript:void(0)" title="Refresh" onclick="loadSection('General');" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
-					<i class="fas fa-sync"></i>
-				</a>
+			<div style="float:right;">			
+				<div class="btn-group">
+					<button onclick="loadSection('General');" type="button" class="btn btn-warning btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+					<button type="button" class="btn btn-warning dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<i class="fas fa-sort-down"></i>
+					</button>
+					<div class="dropdown-menu">
+						<a onclick="loadSection('General','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+
+					</div>
+				</div>
 				<?php if($_SESSION['accountType']=="Admin"){  ?>
 					<a href="javascript:void(0)" title="Agent Configuration" onclick="loadSection('AgentSettings');" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 						<i class="fas fa-cogs"></i>
@@ -176,7 +185,7 @@
     <div class="col-md-<?php echo $size; ?> py-1">
         <div class="card">
             <div class="card-body">
-                <canvas data-centerval="<?php echo (int)round($ramPercentMin,0); ?>%" id="chDonut1"></canvas>
+                <canvas data-centerval="<?php echo $average2; ?>%" id="chDonut1"></canvas>
                 <h6 style="text-align:center">RAM Usage</h6>
             </div>
         </div>
@@ -569,11 +578,11 @@
 	$(".sidebarComputerName").text("<?php echo strtoupper($result['hostname']);?>");
 	var data = {
 	  labels: [
-	    "Ram Usage","Unused"
+	    "Used (bytes)","Unused (bytes)"
 	  ],
 	  datasets: [
 	    {
-	      data: [<?php echo (int)$ramPercentMin .",".(int)$ramPercentMax; ?>],
+	      data: [<?php echo $used2 .",".$free2; ?>],
 	      backgroundColor: [
 	        "<?php echo $siteSettings['theme']['Color 2']; ?>"
 	      ],

@@ -1,6 +1,6 @@
 <?php
 include("../includes/db.php");
-$computerID = $_GET['ID'];
+$computerID = (int)base64_decode($_GET['ID']);
 
 if(!isset($_SESSION['userid'])){
 	http_response_code(404);
@@ -17,7 +17,7 @@ foreach(array_reverse($recent) as $item) {
 	if($data['ID']==""){ continue; }
 	$count++;
 ?>
-	<a href="javascript:void(0)" onclick="loadSection('General', '<?php echo $data['ID']; ?>');">
+	<a href="javascript:void(0)" onclick="loadSection('General', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo strtoupper($data['hostname']);?>');">
 		<li class="secbtn">
 			<i class="fas fa-desktop"></i>&nbsp;&nbsp;&nbsp;
 			<?php echo strtoupper($data['hostname']);?>

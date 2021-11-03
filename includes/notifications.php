@@ -1,7 +1,7 @@
 <?php
 include("db.php");
-//$_SESSION['computerID'] = (int)$_GET['ID'];
-$_SESSION['page'] = clean(preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['page']));
+//$_SESSION['computerID'] = (int)base64_decode($_GET['ID']);
+$_SESSION['page'] = clean(preg_replace("/[^a-zA-Z0-9]+/", "", base64_decode($_GET['page'])));
 
 if($_SESSION['userid']!=""){
     if(!in_array($_SESSION['page'], $_SESSION['excludedPages']) or $_SESSION['page']=="EventLogs" or $_SESSION['page']=="Commands")

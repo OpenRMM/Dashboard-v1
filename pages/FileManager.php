@@ -26,7 +26,7 @@ if($computerID<0){
 	exit;
 }
 
-$computerID = (int)$_GET['ID'];
+$computerID = (int)base64_decode($_GET['ID']);
 $gets = clean(base64_decode($_GET['other']));
 $get = explode("{}",$gets);
 $drive = $get[0];

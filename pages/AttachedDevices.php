@@ -55,9 +55,15 @@ $online = $results['online'];
 		<?php }?>
 	</div>
 	<div class="col-md-2" style="text-align:right;">
-		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('AttachedDevices');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
-			<i class="fas fa-sync"></i>
-		</a>
+		<div class="btn-group">
+			<button onclick="loadSection('AttachedDevices');" type="button" class="btn btn-warning btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+			<button type="button" class="btn btn-warning dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<i class="fas fa-sort-down"></i>
+			</button>
+			<div class="dropdown-menu">
+				<a onclick="loadSection('AttachedDevices','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+			</div>
+		</div>
 		<a href="javascript:void(0)" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
 			<i class="far fa-calendar-alt"></i>
 		</a>

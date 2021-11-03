@@ -11,8 +11,7 @@
 <?php 
 		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 	}
-	$search = $_GET['search'];
-	$computerID = (int)$_GET['ID'];
+	$computerID = (int)base64_decode($_GET['ID']);
 	$showDate = $_SESSION['date'];
 	if($computerID<0){ 
 		?>
@@ -55,9 +54,15 @@
 		<?php }?>
 	</div>
 	<div class="col-md-2" style="text-align:right;">
-		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('OptionalFeatures');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
-			<i class="fas fa-sync"></i>
-		</a>
+		<div class="btn-group">
+			<button onclick="loadSection('OptionalFeatures');" type="button" class="btn btn-warning btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+			<button type="button" class="btn btn-warning dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<i class="fas fa-sort-down"></i>
+			</button>
+			<div class="dropdown-menu">
+				<a onclick="loadSection('OptionalFeatures','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+			</div>
+		</div>
 		<a href="javascript:void(0)" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
 			<i class="far fa-calendar-alt"></i>
 		</a>

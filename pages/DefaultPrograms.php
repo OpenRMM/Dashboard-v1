@@ -11,8 +11,7 @@ if($_SESSION['userid']==""){
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
-$search = $_GET['search'];
-$computerID = (int)$_GET['ID'];
+$computerID = (int)base64_decode($_GET['ID']);
 $showDate = $_SESSION['date'];
 if($computerID<0){ 
 	?>

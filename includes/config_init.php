@@ -25,7 +25,8 @@ $siteSettingsJson = '
         "Color 2": "[color2]",
         "Color 3": "[color3]",
         "Color 4": "[color4]",
-        "Color 5": "[color5]"
+        "Color 5": "[color5]",
+        "MSP": "false"
     },
     "Alert Settings": {
         "Memory": {

@@ -13,7 +13,7 @@ $query = "SELECT hostname,ID FROM computers WHERE ID='".$ID."'";
 $results = mysqli_query($db, $query);
 $computer = mysqli_fetch_assoc($results);
 									
-$query = "SELECT ID, expire_time FROM commands WHERE computer_id='".$computer['ID']."' AND status='Sent' AND command='".$commands."' AND user_id='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
+$query = "SELECT ID, expire_time, hex FROM commands WHERE computer_id='".$computer['ID']."' AND status='Sent' AND user_id='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
 $results = mysqli_query($db, $query);
 $existing = mysqli_fetch_assoc($results);
 
@@ -27,8 +27,9 @@ if($existing['ID'] != ""){
 $expire_time = date("Y-m-d h:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("Y-m-d h:i:s"))));
 
 if($exists == 0){
-	$query = "INSERT INTO commands (computer_id, user_id, command, expire_after, expire_time, status)
-			  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
+	$salt = getSalt(40);
+	$query = "INSERT INTO commands (hex, computer_id, user_id, command, expire_after, expire_time, status)
+			  VALUES ('".$salt."','".$computer['ID']."', '".$_SESSION['userid']."', '".crypto('encrypt', $commands, $salt)."', '".$expire_after."', '".$expire_time."', 'Sent')";
 	$results = mysqli_query($db, $query);
 	$insertID = mysqli_insert_id($db);
 	//echo mysqli_error($db);exit;
@@ -43,13 +44,13 @@ if($exists == 0){
 		$query = "SELECT data_received FROM commands WHERE ID = '".$insertID."';";
 		$results = mysqli_query($db, $query);
 		$result = mysqli_fetch_assoc($results);
-		if(trim($result["data_received"])!=""){break;}
+		if(trim(computerDecrypt($result["data_received"]))!=""){break;}
 		sleep(1);
 		$count++;
 	}
 	
-	if(trim($result["data_received"])!=""){
-		$response = trim($result["data_received"]);
+	if(trim(computerDecrypt($result["data_received"]))!=""){
+		$response = trim(computerDecrypt($result["data_received"]));
 	}else{
 		if($count >= 10){
 			$response = "Response timed out";
@@ -60,5 +61,5 @@ if($exists == 0){
 ?>
 	<pre style="color:#fff;"><?php echo $response;?></pre>
 <?php }else{?>
-	This command has already been sent. Please wait 5 minutes before retrying this command.
+	A command has already been sent and the asset has not proccessed your request. Please wait 5 minutes before retrying a command.
 <?php }?>

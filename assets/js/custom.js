@@ -213,3 +213,47 @@ function deleteActivity(){
         $("#activity").slideUp("slow");
     });
 }
+
+function deleteAssets(){ 
+    var array = []
+    var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+
+    for (var i = 0; i < checkboxes.length; i++) {
+    array.push(checkboxes[i].value)
+    }
+    $.post("index.php", {
+        computers: array,
+        type: "deleteAssets"
+    },
+    function(data, status){
+        array.forEach(function (item) {
+            $("#row"+item).hide();
+        });
+        toastr.options.progressBar = true;
+        toastr.error('The Selected Assets Have Been Deleted');
+        
+    });
+}
+function assignAssets(){ 
+    var array = []
+    var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+    var companyID = $('input[name="companies"]:checked').attr('company')
+    var company = $('input[name="companies"]:checked').val();
+    for (var i = 0; i < checkboxes.length; i++) {
+    array.push(checkboxes[i].value)
+    }
+    $.post("index.php", {
+        computers: array,
+        companies: company,
+        companyID: companyID,
+        type: "CompanyComputers"
+    },
+    function(data, status){
+        array.forEach(function (item) {
+            $("#col"+item).text(company);
+        });
+        toastr.options.progressBar = true;
+        toastr.info('The Selected Assets Have Been Assigned To ' + company);
+        
+    });
+}
