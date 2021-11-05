@@ -4,20 +4,20 @@ if($_SESSION['userid']==""){
 	<script>		
 		toastr.error('Session timed out.');
 		setTimeout(function(){
-			setCookie("section", "Login", 365);	
+			setCookie("section", btoa("Login"), 365);	
 			window.location.replace("..//");
 		}, 3000);		
 	</script>
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
-$computerID = (int)$_GET['ID'];
+$computerID = (int)base64_decode($_GET['ID']);
 $showDate = $_SESSION['date'];
 
 $json = getComputerData($computerID, array("*"), $showDate);
 $lastPing = $json['Ping'];
 
-$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 ?>
@@ -48,8 +48,7 @@ $online = $results['online'];
 				$count++;
 				if($alert['last_run']!=""){ $last_run=$alert['last_run'];}else{ $last_run="Never";}
 				$details=jsonDecode($alert['details'],true);
-				$json = getComputerData($computerID, array("*"), $showDate);
-				
+				$json = getComputerData($computerID, array("*"), 'latest');			
 				switch ($details['json']['Details']['Condition']) {
 					case "Total Alert Count":
 					  $currentValue="0";
@@ -111,7 +110,7 @@ $online = $results['online'];
 			<tr>
 				<td><?php echo $alert['name']; ?></td>
 				<td>If <b><?php echo $details['json']['Details']['Condition']."</b> ".$details['json']['Details']['Comparison']." ".$details['json']['Details']['Value']; ?></td>
-				<td><?php echo $currentValue; ?></td>
+				<td><?php echo textOnNull($currentValue,"unknown"); ?></td>
 				<td style="float:right">
 					<form action="/" method="post" style="display:inline;">
 						<input type="hidden" value="delAlert" name="type">

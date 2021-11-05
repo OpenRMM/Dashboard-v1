@@ -13,13 +13,13 @@ if($_SESSION['userid']!=""){
         $existing = mysqli_fetch_assoc($results);
 
         //duplicate hostname
-        $query = "SELECT * FROM computers WHERE hostname='".$existing['hostname']."' ORDER BY ID DESC";
-        $results = mysqli_query($db, $query);
-        $checkrows=mysqli_num_rows($results);
-        if( $checkrows>1 and $_SESSION['notifReset']==""){
-            echo "<script> toastr.error('Warning! Duplicate Hostnames Detected For This Asset.'); </script>";
-            $_SESSION['notifReset']="1";
-        }
+       // $query = "SELECT * FROM computers WHERE hostname='".$existing['hostname']."' ORDER BY ID DESC";
+       // $results = mysqli_query($db, $query);
+       // $checkrows=mysqli_num_rows($results);
+        //if( $checkrows>1 and $_SESSION['notifReset']==""){
+         //   echo "<script> toastr.error('Warning! Duplicate Hostnames Detected For This Asset.'); </script>";
+         //   $_SESSION['notifReset']="1";
+       // }
 
         //check if command received.
         $query = "SELECT * FROM commands WHERE computer_id='".$_SESSION['computerID']."' and user_id='".$_SESSION['userid']."' and status='Received' ORDER BY ID DESC";

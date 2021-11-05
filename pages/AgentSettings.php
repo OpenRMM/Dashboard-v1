@@ -4,7 +4,7 @@ if($_SESSION['userid']==""){
 	<script>		
 		toastr.error('Session timed out.');
 		setTimeout(function(){
-			setCookie("section", "Login", 365);	
+			setCookie("section", btoa("Login"), 365);	
 			window.location.replace("..//");
 		}, 3000);		
 	</script>
@@ -13,15 +13,16 @@ if($_SESSION['userid']==""){
 }
 $computerID = (int)base64_decode($_GET['ID']);
 
-$query = "SELECT ID, hostname, online, agent_settings FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT ID, online, agent_settings FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $data = mysqli_fetch_assoc($results);
 
 $online = $data['online'];
-$agent_settings = json_decode($data['agent_settings'], true);
-print_r($agent_settings['Response']['Interval']);
+$agent_settings = json_decode($data['agent_settings'], true)['Response'];
+//print_r($agent_settings['Interval']);
+
 ?>
-<?php if($data['hostname']==""){ ?>
+<?php if($data['ID']==""){ ?>
 	<br>
 	<center>
 		<h4>No Asset Selected</h4>
@@ -146,12 +147,12 @@ print_r($agent_settings['Response']['Interval']);
 								</div>
 								<label class="form-label" for="customRange2">Network</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_Network" value="<?php echo $agent_settings['Interval']['getNetwork']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_Network" value="<?php echo $agent_settings['Interval']['getNetworkAdapters']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">PnP Entitys</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_PnP" value="<?php echo $agent_settings['Interval']['getPnPEntitys']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_PnP" value="<?php echo $agent_settings['Interval']['getPnPEntities']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 								<label class="form-label" for="customRange2">SCSI Controller</label>
@@ -166,7 +167,7 @@ print_r($agent_settings['Response']['Interval']);
 								</div>
 								<label class="form-label" for="customRange2">Agent Logs</label>
 								<div class="range">
-									<input class="range-slider__range" type="range" name="agent_logs" value="<?php echo $agent_settings['Interval']['getAgentLogs']; ?>" min="0" max="360">
+									<input class="range-slider__range" type="range" name="agent_logs" value="<?php echo $agent_settings['Interval']['getAgentLog']; ?>" min="0" max="360">
 									<span class="range-slider__value">0</span>
 								</div>
 							</div>

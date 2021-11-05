@@ -2,7 +2,7 @@
 if($_SESSION['userid']!=""){ ?>
 	<script> 
 		loadSection('Dashboard');
-		setCookie("section", "Dashboard", 365);	
+		setCookie("section", btoa("Dashboard"), 365);	
 	</script>
 <?php 
 	exit; 
@@ -10,7 +10,7 @@ if($_SESSION['userid']!=""){ ?>
 ?>
 	<script> 
 		loadSection('Init');
-		setCookie("section", "Init", 365);	
+		setCookie("section", btoa("Init"), 365);	
 	</script>
 <?php 
 	exit;

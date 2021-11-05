@@ -4,7 +4,7 @@
 	<script>		
 		toastr.error('Session timed out.');
 		setTimeout(function(){
-			setCookie("section", "Login", 365);	
+			setCookie("section", btoa("Login"), 365);	
 			window.location.replace("..//");
 		}, 3000);		
 	</script>
@@ -31,21 +31,21 @@
 	</div>	
 	<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;">
-			<div styles="float:right;" class="dropdown">
-				<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right" data-toggle="dropdown">
-					Actions <i class="fas fa-sort-down"></i>
-				</button>
-				<div class="dropdown-menu">
-					<a class="dropdown-item" data-toggle="modal" href="javascript:void(0)" data-target="#companyComputersModal2" >Assign Selected To <?php echo $msp; ?></a>
-					<hr>
-					<a class="dropdown-item bg-danger" data-toggle="modal" href="javascript:void(0)" data-target="#deleteAssets" >Delete Selected Assets</a>
+		<form method="post" action="/">
+			<div class="card table-card" id="printTable" style="marsgin-top:-20px;padding:10px;border-radius:6px;"> 
+				<div styles="float:right;" class="dropdown">
+					<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right" data-toggle="dropdown">
+						Actions <i class="fas fa-sort-down"></i>
+					</button>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" data-toggle="modal" href="javascript:void(0)" data-target="#companyComputersModal2" >Assign Selected To <?php echo $msp; ?></a>
+						<hr>
+						<a class="dropdown-item bg-danger" data-toggle="modal" href="javascript:void(0)" data-target="#deleteAssets" >Delete Selected Assets</a>
+					</div>
 				</div>
-			</div>
-		</div> 
-		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;">
-			<form method="post" action="/">
-				<div class="card table-card" id="printTable" style="marsgin-top:-20px;padding:10px;border-radius:6px;">  
-				   <table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">				
+				<br>
+				<div style="overflow:hidden">
+				   <table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;width:100%" class="table table-hover  table-borderless">				
 							<thead>
 								<tr style="border-bottom:2px solid #d3d3d3;">
 									<th >
@@ -53,11 +53,16 @@
 											<input class="form-check-input" type="checkbox" value="<?php echo $result['ID']; ?>" style="margin-top:-15px" name="computers[]" id="checkall">	
 										</div>
 									</th>
+									
 									<th scope="col">ID</th>		  
 									<th scope="col">Hostname</th>
 									<th scope="col">Logged In</th>
 									<th scope="col">Version</th>
 									<th scope="col"><?php echo $msp; ?></th>
+									<th scope="col">Client Name</th>
+									<th scope="col">Client Phone</th>
+									<th scope="col">Client Email</th>
+									<th scope="col">Domain</th>
 									<th scope="col">Disk</th>
 									<th scope="col">Actions</th>
 								</tr>
@@ -68,17 +73,13 @@
 									$query = "SELECT ID FROM computers where active='1'";
 									$results = mysqli_query($db, $query);
 									$resultCount = mysqli_num_rows($results);							
-									$query = "SELECT * FROM computers WHERE active='1' ORDER BY hostname ASC";
+									$query = "SELECT * FROM computers WHERE active='1' ORDER BY ID ASC";
 									//Fetch Results
 									$count = 0;
 									$results = mysqli_query($db, $query);
 									while($result = mysqli_fetch_assoc($results)){
-										if($search==""){
-											$getWMI = array("LogicalDisk", "General", "Ping");
-										}else{
-											$getWMI = array("*");
-										}
-										$data = getComputerData($result['ID'], $getWMI);
+										$getWMI = array("*");
+										$data = getComputerData($result['ID'], $getWMI,"latest");
 										//Determine Warning Level
 										$freeSpace = $data['LogicalDisk']['Response'][0]['FreeSpace'];
 										$size = $data['LogicalDisk']['Response'][0]['Size'];
@@ -105,12 +106,15 @@
 									</td>
 									<td>
 										<?php
-											$icons = array("desktop","server","laptop");
-											if(in_array(strtolower($result['computer_type']), $icons)){
-												$icon = strtolower($result['computer_type']);
+											$icons = array("desktop","server","laptop","tablet","allinone","other");
+											if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
+												$icon = strtolower(str_replace("-","",$result['computer_type']));
+												if($icon=="allinone")$icon="tv";
+												if($icon=="tablet")$icon="tablet-alt";
+												if($icon=="other")$icon="microchip";
 											}else{
 												$icon = "server";
-											} 
+											}  
 										?>
 										<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
 											<?php if($result['online']=="0") {?>
@@ -118,7 +122,7 @@
 											<?php }else{?>
 												<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
 											<?php }?>
-											&nbsp;<?php echo strtoupper($result['hostname']);?>
+											&nbsp;<?php echo textOnNull(strtoupper($data['General']['Response'][0]['csname']),"Unavailable");?>
 										</a>
 									</td>
 										<?php
@@ -135,6 +139,10 @@
 											<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']), "Not Assigned");?>
 										</a>
 									</td>
+									<td><?php echo textOnNull(crypto('decrypt',$result['name'],$result['hex']), "N/A");?></td>
+									<td><?php echo textOnNull(crypto('decrypt',$result['phone'],$result['hex']), "N/A");?></td>
+									<td><?php echo textOnNull(crypto('decrypt',$result['email'],$result['hex']), "N/A");?></td>
+									<td><?php echo textOnNull($json['General']['Response'][0]['Domain'], "N/A");?></td>
 									<td>
 										<div class="progress" style="margin-top:5px;height:10px;background:#a4b0bd" title="<?php echo $usedPct;?>%">
 											<div class="progress-bar" role="progressbar" style=";background:<?php echo $pbColor;?>;width:<?php echo $usedPct;?>%" aria-valuenow="<?php echo $usedPct;?>" aria-valuemin="0" aria-valuemax="100"></div>
@@ -161,8 +169,8 @@
 							<?php } ?>
 							</tbody>
 						</table>
-						
 					</div>
+				</div>
 				<!------------- Add Company Computers ------------------->
 				<div id="companyComputersModal2" class="modal fade" role="dialog">
 					<div class="modal-dialog modal-md">
@@ -172,22 +180,22 @@
 							</div>
 							<div class="modal-body">
 								<h6 id="pageAlert_title">Select The <?php echo $msp; ?> You Would Like To Add These Assets To</h6><hr>
+								<div class="list-group" style="padding-bottom:10%">
 								<?php							
 									$query = "SELECT ID, name,hex FROM companies ORDER BY ID DESC LIMIT 100";
 									$results = mysqli_query($db, $query);
 									$companyCount = mysqli_num_rows($results);
 									while($company = mysqli_fetch_assoc($results)){		
-								?>
-								<div class="form-check">
-											
-									<input type="radio" company="<?php echo $company['ID']; ?>" required name="companies" value="<?php echo crypto('decrypt', $company['name'], $company['hex']); ?>" class="form-check-input" id="CompanyCheck">
-									<label class="form-check-label" for="CompanyCheck"><?php echo crypto('decrypt', $company['name'], $company['hex']); ?></label>
-								</div>
+								?>		
+									<input type="radio" company="<?php echo $company['ID']; ?>" required name="companies" value="<?php echo crypto('decrypt', $company['name'], $company['hex']); ?>" class="form-check-input" id="CompanyCheck<?php echo $company['ID']; ?>">
+									<label class="list-group-item" for="CompanyCheck<?php echo $company['ID']; ?>">
+										<span style="text-align:left"><?php echo crypto('decrypt', $company['name'], $company['hex']); ?></span>
+                           			 </label>
 								<?php } ?>
-								<div class="form-check">	
-									
-									<input type="radio" company="0" required name="companies" value="Not Assigned" class="form-check-input" id="CompanyCheck">
-									<label class="form-check-label" for="CompanyCheck">Not Assigned</label>
+									<input type="radio" company="0" required name="companies" value="Not Assigned" class="form-check-input" id="CompanyCheck<?php echo $company['ID']; ?>">
+									<label class="list-group-item" for="CompanyCheck<?php echo $company['ID']; ?>">
+										<span style="text-align:left">Not Assigned</span>
+                           			 </label>
 								</div>
 							</div>
 							<div class="modal-footer">
@@ -198,7 +206,6 @@
 						</div>
 					</div>
 				</div>
-
 				<div id="deleteAssets" class="modal fade" role="dialog">
 					<div class="modal-dialog modal-md">
 						<div class="modal-content">
@@ -235,7 +242,6 @@
 							</div>
 						</div>
 					</div>
-					<button onclick="printData();" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" title="Export As CSV File" class="btn btn-warning btn-block p-t-15 p-b-15">Export Table</button>		
 				</div>
 				<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
 					<div style="height:45px" class="panel-heading">
@@ -281,36 +287,50 @@
 
 <!---------------------------------End MODALS------------------------------------->
 <script>
-	function printData(filename) {
-		var csv = [];
-		var rows = document.querySelectorAll("#printTable table tr");
-		for (var i = 0; i < rows.length; i++) {
-			var row = [], cols = rows[i].querySelectorAll("td, th");
-			for (var j = 0; j < cols.length; j++)
-				row.push(cols[j].innerText.replace("Disk Space","").replace("Actions","").replace(/[^\w\s]/gi,"").replace(/\s/g,""));
-			csv.push(row.join(","));
-		}
-		downloadCSV(csv.join("\n"), "page.csv");
-	}
-	function downloadCSV(csv, filename) {
-		var csvFile;
-		var downloadLink;
-		csvFile = new Blob([csv], {type: "text/csv"});
-		downloadLink = document.createElement("a");
-		downloadLink.download = filename;
-		downloadLink.href = window.URL.createObjectURL(csvFile);
-		downloadLink.style.display = "none";
-		document.body.appendChild(downloadLink);
-		downloadLink.click();
-	}
-	</script>
-	<script>
-	$(document).ready(function() {
-		$('#dataTable').DataTable( {
-			"lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
-			colReorder: true
-		} );
-	} );
+$('#dataTable').DataTable( {
+	"lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
+	colReorder: true,
+	dom: 'Bfrtip',
+	columnDefs: [
+        {
+            "targets": [1,6,7,8],
+            "visible": false
+        }],
+	buttons: ['pageLength',
+				{
+					extend: 'colvis',
+					title: 'Column Visibility',
+					text:'Column Visibility',
+					//Columns to export
+					columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  
+				},{
+					extend: 'excelHtml5',
+					title: 'OpenRMM Asset List',
+					text:'Export to excel',
+					//Columns to export
+					exportOptions: {
+						columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+					}
+				},{
+					extend: 'pdfHtml5',
+					title: 'OpenRMM Asset List',
+					text: 'Export to PDF',
+					//Columns to export
+					exportOptions: {
+						columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+					}
+				},{
+					extend: 'csvHtml5',
+					title: 'OpenRMM Asset List',
+					text: 'Export to CSV',
+					//Columns to export
+					exportOptions: {
+						columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+					}
+				}
+	]
+} );	
+
 </script>
 <script src="js/tagsinput.js"></script>
 <script type='text/javascript'>
@@ -341,3 +361,12 @@
   });
 });
 </script>
+<?php if($_GET['other']!=""){
+?>
+<script>
+	$('input[type=search]').val('<?php echo clean(base64_decode($_GET['other'])); ?>');
+	$('input[type=search]').trigger('keyup');
+</script>
+<?php
+}
+?>

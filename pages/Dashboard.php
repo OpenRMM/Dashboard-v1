@@ -4,7 +4,7 @@ if($_SESSION['userid']==""){
 	<script>		
 		toastr.error('Session timed out.');
 		setTimeout(function(){
-			setCookie("section", "Login", 365);	
+			setCookie("section", btoa("Login"), 365);	
 			window.location.replace("../");
 		}, 3000);		
 	</script>
@@ -20,12 +20,12 @@ $results = mysqli_query($db, $query);
 $user = mysqli_fetch_assoc($results);
 $username=$user['username'];
 
-$query = "SELECT ID,hostname,computer_type FROM computers where active='1' and computer_type='OpenRMM Server' and online='1' LIMIT 1";
+$query = "SELECT ID,computer_type FROM computers where active='1' and computer_type='OpenRMM Server' and online='1' LIMIT 1";
 $results = mysqli_query($db, $query);
 $computer = mysqli_fetch_assoc($results);
 $resultCount = mysqli_num_rows($results);
 
-$json = getComputerData($computer['ID'], array("*"), "");
+$json = getComputerData($computer['ID'], array("*"), "latest");
 function welcome(){
 	if(date("H") < 12){
 		return "Good Morning";
@@ -35,9 +35,6 @@ function welcome(){
 		return "Good Evening";
 	}
 }
-
-
-
 if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['server_status']==""){
 	$serverStatus="Offline";
 	$serverStatus_color="danger";
@@ -46,54 +43,6 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 	$serverStatus_color="success";
 } 
 ?>	
-	<?php if($_SESSION['usesrid']!="" ){ ?>
-		<div class="row" style="margin-bottom:20px">
-			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-				<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 2']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
-					<a style="color:#fff;cursor:pointer;" onclick="loadSection('Assets');">
-						<div style="padding:10px 10px 0px 20px;">
-							<i class="fas fa-desktop" style="font-size:28px;float:right;"></i>
-							<span style="font-size:18px;" ><?php echo $resultCount; ?></span><br>
-							<span style="font-size:25px;">Assets</span>
-						</div>							
-					</a>
-				</div>
-			</div>
-			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-				<div style="width:100%; background:<?php echo $siteSettings['theme']['Color 3']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
-					<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllCompanies');">
-						<div style="padding:10px 10px 0px 20px;">
-							<i class="fas fa-building" style="font-size:28px;float:right;"></i>
-							<span style="font-size:18px;"><?php echo $companyCount;?></span><br>
-							<span style="font-size:25px;"><?php echo $msp; ?>s</span>
-						</div>
-					</a>
-				</div>
-			</div>
-			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-				<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 4']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;margin-right:30px;">
-					<a style="color:#fff;cursor:pointer;" onclick="loadSection('AllUsers');">
-						<div style="padding:10px 10px 0px 20px;">
-							<i class="fas fa-user" style="font-size:28px;float:right;"></i>
-							<span style="font-size:18px;"><?php echo $userCount;?></span><br>
-							<span style="font-size:25px;">Technicians</span>
-						</div>
-					</a>
-				</div>
-			</div>
-			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-				<div style="width:100%;background:<?php echo $siteSettings['theme']['Color 5']; ?>;height:100px;color:#fff;font-size:20px;text-align:left;border-radius:6px;">
-					<a style="color:#fff;cursor:pointer;" onclick="loadSection('Tickets');">
-						<div style="padding:10px 10px 0px;">
-							<i class="fas fa-server" style="font-size:28px;float:right;"></i>
-							<span style="font-size:18px;"><?php echo $serverStatus; ?></span><br>
-							<span style="font-size:25px;">Server Status</span>
-						</div>
-					</a>
-				</div>
-			</div>
-		</div>
-	<?php } ?>
 	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>;">Dashboard
 			<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Dashboard');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
@@ -112,36 +61,35 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 				<div class="card-block text-center">
 					<ul class="list-group">	
 						<?php
-								//Get Total Count
-								$query = "SELECT ID FROM computers where active='1'";
-								$results = mysqli_query($db, $query);
-								$resultCount = mysqli_num_rows($results);							
-								$query = "SELECT * FROM computers WHERE active='1'ORDER BY hostname ASC LIMIT 7";
-								//Fetch Results
-								$count = 0;
-								$results = mysqli_query($db, $query);
-								while($result = mysqli_fetch_assoc($results)){
-									if($search==""){
-										$getWMI = array("LogicalDisk", "General", "Ping");
-									}else{
-										$getWMI = array("*");
-									}
-									$data = getComputerData($result['computers.ID'], $getWMI);
-									$count++;
-									$icons = array("desktop","server","laptop");
-									if(in_array(strtolower($result['computer_type']), $icons)){
-										$icon = strtolower($result['computer_type']);
-									}else{
-										$icon = "server";
-									} 
-								?>
+							//Get Total Count
+							$query2 = "SELECT ID FROM computers where active='1'";
+							$results2= mysqli_query($db, $query2);
+							$resultCount = mysqli_num_rows($results2);							
+							$query = "SELECT * FROM computers WHERE active='1'ORDER BY ID DESC LIMIT 7";
+							//Fetch Results
+							$count = 0;
+							$results = mysqli_query($db, $query);
+							while($result = mysqli_fetch_assoc($results)){
+								$getWMI = array("*");
+								$json = getComputerData($result['ID'], $getWMI,"latest");
+								$count++;
+								$icons = array("desktop","server","laptop","tablet","allinone","other");
+								if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
+									$icon = strtolower(str_replace("-","",$result['computer_type']));
+									if($icon=="allinone")$icon="tv";
+									if($icon=="tablet")$icon="tablet-alt";
+									if($icon=="other")$icon="microchip";
+								}else{
+									$icon = "server";
+								}  
+							?>
 						<li onclick="loadSection('General', '<?php echo $result['ID']; ?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
 							<?php if($result['online']=="0") {?>
 								<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
 							<?php }else{?>
 								<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
 							<?php }?>
-							&nbsp;&nbsp;<?php echo $result['hostname']; ?>
+							&nbsp;&nbsp;<?php echo textOnNull($json['General']['Response'][0]['csname'],"Unavailable"); ?>
 						</li>
 						<?php }  ?>
 					</ul>
@@ -199,8 +147,10 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 			}
 			$companyArray= rtrim($companyArray,',');
 			$companyTotal=rtrim($companyTotal,',');
-			if($count==0){$companyTotal="0,100";}
-			$companyArray= "'Assigned','Not Assigned'";
+			if($count==0){
+				$companyTotal="0,100";
+				$companyArray= "'Assigned','Not Assigned'";
+			}
 			//users
 			$query = "SELECT ID FROM users where active='1'";
 			$users1 = mysqli_num_rows(mysqli_query($db, $query));
@@ -320,7 +270,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 									<div class="panel-body" style="height:285px;">
 										<div class="rsow">
 											<ul class="list-group" style="margin-left:20px">
-												<li class="list-group-item" style="padding:6px"><b>Hostname: </b><?php echo textOnNull(basename($computer['hostname']), "Unknown");?></li>
+												<li class="list-group-item" style="padding:6px"><b>Hostname: </b><?php echo textOnNull($json['General']['Response'][0]['csname'], "Unavailable");?></li>
 												<li class="list-group-item" style="padding:6px"><b>Current User: </b><?php echo textOnNull(basename($json['General']['Response'][0]['UserName']), "Unknown");?></li>
 												<li class="list-group-item" style="padding:6px"><b>Domain: </b><?php echo textOnNull($json['General']['Response'][0]['Domain'], "N/A");?></li>
 												<?php
@@ -468,31 +418,6 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 		</div>
 	</div>
 </div>
-
-<script>
-	function printData(filename) {
-		var csv = [];
-		var rows = document.querySelectorAll("#printTable table tr");
-		for (var i = 0; i < rows.length; i++) {
-			var row = [], cols = rows[i].querySelectorAll("td, th");
-			for (var j = 0; j < cols.length; j++)
-				row.push(cols[j].innerText.replace("Disk Space","").replace("Actions","").replace(/[^\w\s]/gi,"").replace(/\s/g,""));
-			csv.push(row.join(","));
-		}
-		downloadCSV(csv.join("\n"), "page.csv");
-	}
-	function downloadCSV(csv, filename) {
-		var csvFile;
-		var downloadLink;
-		csvFile = new Blob([csv], {type: "text/csv"});
-		downloadLink = document.createElement("a");
-		downloadLink.download = filename;
-		downloadLink.href = window.URL.createObjectURL(csvFile);
-		downloadLink.style.display = "none";
-		document.body.appendChild(downloadLink);
-		downloadLink.click();
-	}
-</script>
 <script>
 	$(document).ready(function() {
 		$('#dataTable').dataTable( {

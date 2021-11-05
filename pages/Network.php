@@ -4,7 +4,7 @@ if($_SESSION['userid']==""){
 	<script>		
 		toastr.error('Session timed out.');
 		setTimeout(function(){
-			setCookie("section", "Login", 365);	
+			setCookie("section", btoa("Login"), 365);	
 			window.location.replace("..//");
 		}, 3000);		
 	</script>
@@ -31,7 +31,7 @@ if($computerID<0){
 
 $json = getComputerData($computerID, array("NetworkAdapters"), $showDate);
 
-$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 

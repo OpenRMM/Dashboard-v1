@@ -4,7 +4,7 @@ if($_SESSION['userid']==""){
 <script>		
 	toastr.error('Session timed out.');
 	setTimeout(function(){
-		setCookie("section", "Login", 365);	
+		setCookie("section", btoa("Login"), 365);	
 		window.location.replace("..//");
 	}, 3000);		
 </script>
@@ -14,14 +14,14 @@ if($_SESSION['userid']==""){
 $computerID = (int)base64_decode($_GET['ID']);
 $showDate = $_SESSION['date'];
 $getEvent=clean(base64_decode($_GET['other']));
-if($getEvent==""){
+if($getEvent=="" or $getEvent=="force"){
 	$getEvent="Application";
 }
 //MQTTpublish($computerID."/Commands/getEventLogs",'{"userID":'.$_SESSION['userid'].',"data":"'.$getEvent'"}',getSalt(20),false);
 //sleep(3);
 $json = getComputerData($computerID, array("EventLog_".$getEvent), $showDate);
 	
-$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 
@@ -30,7 +30,8 @@ $error = $json["EventLog_".$getEvent."_error"];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div style="padding:20px" class="col-md-12">
-		<h5>Event Logs
+		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Event Logs<br>
+		<span style="color:#000;font-size:12px">Last Update: <?php echo ago($json['EventLog_'.$getEvent.'_lastUpdate']);?></span>
 			<div style="float:right;">
 				<div class="btn-group">
 					<button onclick="loadSection('EventLogs');" type="button" class="btn btn-warning btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
@@ -43,8 +44,7 @@ $error = $json["EventLog_".$getEvent."_error"];
 					</div>
 				</div>
 			</div>
-		</h5>
-		<p>The Application Event Log May Help You Diagnose Any Issues That May Occur.</p>	
+		</h4>	
 		<hr>
 		<div class="tab-block">
 			<form style="margin-bottom:-10px" method="POST" action="/" style="display:inline">
@@ -122,7 +122,7 @@ $error = $json["EventLog_".$getEvent."_error"];
 					<?php }
 						if(count($events) == 0){ ?>
 							<tr>
-								<td colspan=4><center><h5>No Events found.</h5></center></td>
+								<td colspan=4><center><h6>No events found.</h6></center></td>
 							</tr>
 					<?php }?>
 				</tbody>

@@ -6,14 +6,13 @@ if($_SESSION['excludedPages']==""){
 $type = clean($_POST['type']);
 $date = clean($_POST['date']);
 $gets = clean(base64_decode($_GET['other']));
-$thePage=clean(preg_replace("/[^a-zA-Z0-9]+/", "", base64_decode($_GET['page'])));
+$thePage=(preg_replace("/[^a-zA-Z0-9]+/", "", base64_decode($_GET['page'])));
 if($thePage!=""){
     $_SESSION['page'] = $thePage;
 }
 if(!in_array($_SESSION['page'], $allPages) || $_SESSION['page']==""){ 
     exit("<center><h5>This page could not be found.</h5></center>");
 }
-
 $query = "SELECT * FROM users";
 $result = mysqli_num_rows(mysqli_query($db, $query));
 if(!file_exists("config.php") or !$db or $mqttConnect=="timeout" or $result==0){
@@ -30,32 +29,27 @@ if(!file_exists("config.php") or !$db or $mqttConnect=="timeout" or $result==0){
 <?php 
     exit;
 }
-
 $query = "UPDATE users SET last_login='".time()."' WHERE ID=".$_SESSION['userid'].";";
 $results = mysqli_query($db, $query);
-
 $_SESSION['computerID'] = (int)base64_decode($_GET['ID']);
 //$_SESSION['date']=preg_replace("([^0-9/])", "", $_GET['Date']);
 if($_SESSION['date']==""){ 
     $_SESSION['date']="latest"; 
 }
-
 if($_SESSION['date']!="latest"){
     array_push($_SESSION['excludedPages'],$_SESSION['page']); 
 }
-
 if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
     {
        include("../pages/".$_SESSION['page'].".php");  
        $_SESSION['count']=0;
-       
-       
-      
     }else{
-        $query = "SELECT ID, hostname, online, last_update FROM computers WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
+        $query = "SELECT ID, online, last_update FROM computers WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
         $results = mysqli_query($db, $query);
         $computer = mysqli_fetch_assoc($results);
-        $_SESSION['ComputerHostname']=$computer['hostname'];
+        $json = getComputerData($computer['ID'], array("*"), "");
+        $hostname =  textOnNull($json['General']['Response'][0]['csname'],"Unavailable");
+        $_SESSION['ComputerHostname']=$hostname;
         ?>
         <script>
             $(".sidebarComputerName").text("<?php echo strtoupper($_SESSION['ComputerHostname']);?>");
@@ -67,6 +61,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
         if(strtotime($lastUpdate) < $now or $gets=="force") {
             $page = $_SESSION['page'];
             $retain=false;
+          
             $message='{"userID":'.$_SESSION['userid'].'}';
             if($_SESSION['count']==0){
                 switch ($page) {
@@ -114,7 +109,6 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                         $retain = false;
                         if($gets==""){$gets="Application";}
                         $message =  '{"userID":'.$_SESSION['userid'].',"data":"'.$gets.'"}';
-
                     case "General":
                         $page="General";
                         $retain=false;
@@ -138,7 +132,6 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                         MQTTpublish($_SESSION['computerID']."/Commands/getAgentLog",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),$retain);
                     break;     
                 }
-                
                 MQTTpublish($_SESSION['computerID']."/Commands/get".$page,$message,getSalt(20),$retain);
             }
             sleep(1);
@@ -192,7 +185,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
 ?>
 <script>
     var section = atob(getCookie("section"));
-    if(section == "Profile" || section == "Assets" || section == "Dashboard" || section == "AllUsers" || section == "AllCompanies" || section == "NewComputers" || section == "Versions" || section == "Init"){
+    if(section == "Profile" || section == "Assets" || section == "Dashboard" || section == "AllUsers" || section == "AllCompanies" || section == "Versions" || section == "Init"){
         $('#sectionList').slideUp(400);
     }else if($('#sectionList').css("display")=="none"){
         $('#sectionList').slideDown(400);

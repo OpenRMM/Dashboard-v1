@@ -4,7 +4,7 @@ if($_SESSION['userid']==""){
 	<script>		
 		toastr.error('Session timed out.');
 		setTimeout(function(){
-			setCookie("section", "Login", 365);	
+			setCookie("section", btoa("Login"), 365);	
 			window.location.replace("..//");
 		}, 3000);		
 	</script>
@@ -80,9 +80,9 @@ $companyCount = mysqli_num_rows($results);
 						<td>
 							<?php echo $company['ID'];?>
 						</td>
-						<td>
-								<b><?php echo crypto('decrypt', $company['name'], $company['hex']);?></b>
-								&nbsp;(<?php echo $computerCount;?>)
+						<td style="cursor:pointer" onclick="loadSection('Assets', '','latest','<?php echo crypto('decrypt', $company['name'], $company['hex']); ?>');">
+							<b><?php echo crypto('decrypt', $company['name'], $company['hex']);?></b>
+							&nbsp;(<?php echo $computerCount;?>)
 						</td>
 						<td>
 							<?php if($computersWithAlerts > 0){?>
@@ -140,7 +140,7 @@ $companyCount = mysqli_num_rows($results);
 							<form action="/" method="post" style="display:inline;">
 								<input type="hidden" value="CompanyUpdateAll" name="type">
 								<input type="hidden" value="<?php echo $company['ID'];?>" name="CompanyID">
-								<button type="submit" title="Update <?php echo $msp; ?> Agent" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
+								<button type="submit" title="Update All Agents Assigned To This <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
 									<i class="fas fa-cloud-upload-alt"></i>
 								</button>
 							</form>				

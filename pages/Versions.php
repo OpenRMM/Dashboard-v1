@@ -41,7 +41,7 @@ $nologin=true;
 		</div>
 	</div>
 	<div style="padding:10px;">
-		<table id="dataTable" style="line-height:10px;overflow:hidden;font-size:14px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
+		<table id="dataTable" style="line-height:10px;overflow:hidden;font-size:14px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">
 			<thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">
 				<th scope="col">#</th>

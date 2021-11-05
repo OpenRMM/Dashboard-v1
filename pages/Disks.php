@@ -4,7 +4,7 @@ if($_SESSION['userid']==""){
 	<script>		
 		toastr.error('Session timed out.');
 		setTimeout(function(){
-			setCookie("section", "Login", 365);	
+			setCookie("section", btoa("Login"), 365);	
 			window.location.replace("..//");
 		}, 3000);		
 	</script>
@@ -26,7 +26,7 @@ if($computerID<0){
 	<?php
 	exit;
 }
-$query = "SELECT ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $result = mysqli_fetch_assoc($results);
 
@@ -36,7 +36,7 @@ MQTTpublish($computerID."/Commands/getMappedLogicalDisk","true",getSalt(20),fals
 MQTTpublish($computerID."/Commands/getSharedDrives","true",getSalt(20),false);
 $json = getComputerData($result['ID'], array("MappedLogicalDisk", "LogicalDisk","SharedDrives"), $showDate);
 
-$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 

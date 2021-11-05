@@ -4,7 +4,7 @@
 	<script>		
 		toastr.error('Session timed out.');
 		setTimeout(function(){
-			setCookie("section", "Login", 365);	
+			setCookie("section", btoa("Login"), 365);	
 			window.location.replace("..//");
 		}, 3000);		
 	</script>
@@ -26,15 +26,10 @@
 		<?php
 		exit;
 	}
-	//get update
-	$query = "SELECT hostname FROM computers WHERE ID='".$computerID."'";
-	$results = mysqli_query($db, $query);
-	$computer = mysqli_fetch_assoc($results);
-	//MQTTpublish($computerID."/Commands/getOptionalFeatures","true",getSalt(20));
 
 	$json = getComputerData($computerID, array("OptionalFeatures"), $showDate);
 
-	$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
+	$query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_fetch_assoc(mysqli_query($db, $query));
 	$online = $results['online'];
 ?>

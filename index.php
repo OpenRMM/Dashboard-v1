@@ -51,9 +51,11 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"/>
 		<link rel="stylesheet" href="assets/css/tagsinput.css"/>
 		<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
 		
+		  
 		<link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 		
 		<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
@@ -68,6 +70,16 @@
 		
 		<script src="https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>	
 		<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.0/css/fixedHeader.dataTables.min.css"/>
+
+		<script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+		<link href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.bootstrap4.min.css" rel="stylesheet">
+		<script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.colVis.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 	</head>
 	<style>
 		a { color:#003366; }
@@ -85,6 +97,8 @@
 			background:#282828!important;
 			color:#fff!important;  
 		}
+		.dt-button{box-shadow:none;background:#000;color:#fff;padding:5px}
+		.buttons-columnVisibility{margin-top:10px;}
 	</style>
 	<body style="background-color:<?php echo $siteSettings['theme']['Color 1']; ?>;height:100%; position: relative;min-height: 100vh;">
 		<div style="padding:5px;background-color:#fff;color:#fff;text-align:center;padding-top:4px;padding-left:20px;position:fixed;top:0px;width:100%;z-index:99;box-shadow: 0 0 11px rgba(0,0,0,0.13);">
@@ -100,10 +114,17 @@
 				<?php if($_SESSION['userid']!=""){ ?>
 					<div style="float:right;">
 						<div>
-							<button type="button" style="border:none;box-shadow:none" onclick='pageAlert("<?php echo $messageTitle; ?>", "<?php echo textOnNull($messageText ,"No Messages"); ?>");' class="btn-sm btn" title="Configure Alerts">
+						
+          					<a href="#" class="dropsdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 								<i style="font-size:16px" class="fas fa-bell"></i>
 								<span style="margin-top" class="text-white badge bg-c-pink"><?php if($messageText==""){ echo "0"; }else{ echo "1"; } ?></span>
-							</button>
+							</a>
+          					<div class="dropdown-menu">
+								<ul style="font-size:12px"  class="list-group">
+									<li class="list-group-item">No New Notifications</li>
+								</ul>
+							</div>
+      
 							<?php if(crypto('decrypt',$user['account_type'],$user['hex'])=="Admin"){ ?>
 								<button type="button" onclick="loadSection('Init','true');"style="border:none;box-shadow:none" class="btn-sm btn" title="Configure OpenRMM">
 									<i style="font-size:16px" class="fas fa-cog"></i>
@@ -251,7 +272,7 @@
 		<script>
 		setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
 			$("#notifications").load("includes/notifications.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other));	
-		}, 3000);
+		}, 5000);
 		</script>
 	</body>
 	<script src="assets/js/extra.js" ></script>

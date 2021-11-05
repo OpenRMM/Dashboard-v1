@@ -9,7 +9,7 @@ if($_SESSION['accountType']!="Admin"){
         ?>
         <script> 
             loadSection('Login');
-            setCookie("section", "Login", 365);	
+            setCookie("section", btoa("Login"), 365);	
         </script>
     <?php 
     exit;

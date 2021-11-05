@@ -4,8 +4,8 @@
 	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "Init,Login,Logout,Alerts,Commands,Dashboard,Profile,Edit,AllUsers,AllCompanies,Assets,NewComputers,Versions"; 
-	$allPages = "AgentSettings,FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,NewComputers,OptionalFeatures,Printers,Processes,Profile,Programs,Services,Users,Versions";
+	$excludedPages = "Init,Login,Logout,Alerts,Commands,Dashboard,Profile,Edit,AllUsers,AllCompanies,Assets,Versions"; 
+	$allPages = "AgentSettings,FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,OptionalFeatures,Printers,Processes,Profile,Programs,Services,Users,Versions";
 	$adminPages = "AgentSettings,AllUsers.php,AllCompanies.php";
 	$taskCondtion_max = 5;
 ###########################################################################################################################################
@@ -126,7 +126,7 @@
 				$retResult[$row['name']."_error"] = $decoded['error'];
 			}else{
 				//$retResult[$row['name']] = $row['data'];
-			echo computerDecrypt($row['data']);
+				echo computerDecrypt($row['data']);
 			}
 			$retResult[$row['name']."_lastUpdate"] = $row['last_update'];
 		}
@@ -143,7 +143,7 @@
 		$query = "SELECT * FROM computers WHERE ID='".$ID."'";
         $result = mysqli_query($db, $query);
         $computer = mysqli_fetch_assoc($result);
-        $hostname = $computer['hostname'].": ";
+        $hostname = $computer['ID'].": ";
 
 		$alertArray = array();
 		$alertDelimited = "";
@@ -269,7 +269,10 @@
 	function clean($string) {
 		$remove = array("'");
 		$replaceWith = array("");
-		return strip_tags(str_replace($remove, $replaceWith, $string));
+		$string =  htmlspecialchars($string, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$string = strip_tags($string);
+		//$string = mysqli_real_escape_string($db, $string);
+		return $string;
 	}
 	
 	//Clean Phone
@@ -400,31 +403,31 @@
 		$query = "UPDATE users SET user_activity='".$active."' WHERE ID=".$IDuser.";";
 		$results = mysqli_query($db, $query);	
 	}
-	
-	function computerEncrypt(array $data): string
-	{
-		GLOBAL $passphrase;
-		$data_json_64 = base64_encode(json_encode($data));
-		$secret_key = hex2bin($siteSettings['agentEncryption']['secret']);
-		$iv = random_bytes(openssl_cipher_iv_length('aes-256-gcm'));
-		$tag = '';
-		$encrypted_64 = openssl_encrypt($data_json_64, 'aes-256-gcm', $secret_key, 0, $iv, $tag);
-		$json = new stdClass();
-		$json->iv = base64_encode($iv);
-		$json->data = $encrypted_64;
-		$json->tag = base64_encode($tag);
-		return base64_encode(json_encode($json));
-	}
-	function computerDecrypt($data)
-	{
-		GLOBAL $siteSettings;
-		$secret_key = hex2bin($siteSettings['agentEncryption']['secret']);
-		$json = json_decode(base64_decode($data), true);
-		$iv = base64_decode($json['iv']);
-		$tag = base64_decode($json['tag']);
-		$encrypted_data = base64_decode($json['data']);
-		$decrypted_data = openssl_decrypt($encrypted_data, 'aes-256-gcm', $secret_key, OPENSSL_RAW_DATA, $iv, $tag);
-		return json_decode(base64_decode($decrypted_data),True);
-		
+	if($_SESSION['userid']!=""){
+		function computerEncrypt(array $data): string
+		{
+			GLOBAL $passphrase;
+			$data_json_64 = base64_encode(json_encode($data));
+			$secret_key = hex2bin($siteSettings['agentEncryption']['secret']);
+			$iv = random_bytes(openssl_cipher_iv_length('aes-256-gcm'));
+			$tag = '';
+			$encrypted_64 = openssl_encrypt($data_json_64, 'aes-256-gcm', $secret_key, 0, $iv, $tag);
+			$json = new stdClass();
+			$json->iv = base64_encode($iv);
+			$json->data = $encrypted_64;
+			$json->tag = base64_encode($tag);
+			return base64_encode(json_encode($json));
+		}
+		function computerDecrypt($data)
+		{
+			GLOBAL $siteSettings;
+			$secret_key = hex2bin($siteSettings['agentEncryption']['secret']);
+			$json = json_decode(base64_decode($data), true);
+			$iv = base64_decode($json['iv']);
+			$tag = base64_decode($json['tag']);
+			$encrypted_data = base64_decode($json['data']);
+			$decrypted_data = openssl_decrypt($encrypted_data, 'aes-256-gcm', $secret_key, OPENSSL_RAW_DATA, $iv, $tag);
+			return json_decode(base64_decode($decrypted_data),True);	
+		}
 	}
 ?>

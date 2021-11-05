@@ -44,7 +44,7 @@
 									<input placeholder="Username"  required type="text" name="username" class="form-control" id="editUserModal_username"/>
 								</div>
 								<div class="form-group">
-									<input placeholder="Phone" type="text" name="phone" class="form-control" id="editUserModal_phone"/>
+									<input placeholder="Phone (ex. 1234567890)" type="tel" pattern="[0-9]{10}" name="phone" class="form-control" id="editUserModal_phone"/>
 								</div>
 								<?php if($_SESSION['accountType']=="Admin"){  ?>
 									<div class="form-group">
@@ -57,14 +57,14 @@
 									</div>
 								<?php } ?>
 								<div class="input-group">
-									<input placeholder="Password" style="display:inline" type="password" id="editUserModal_password" name="password" class="form-control"/>
+									<input title="Must contain at least one  number and one uppercase and lowercase letter, and at least 8 or more characters" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" style="display:inline" type="password" id="editUserModal_password" name="password" class="form-control"/>
 									<span class="input-group-btn">
 										<a style="border-radius:0px;padding:6px;pointer:cursor;color:#fff;" class="btn btn-md btn-success" onclick="generate();" >Generate</a>
 									</span>
 								</div>
 								<br>
 								<div class="form-group">
-									<input placeholder="Confirm Password" type="password" id="editUserModal_password2" name="password2" class="form-control"/>
+									<input placeholder="Confirm Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" type="password" id="editUserModal_password2" name="password2" class="form-control"/>
 								</div>
 							</div>
 							<div class="modal-footer">
@@ -179,7 +179,7 @@
 									<input placeholder="Address" type="text" name="address" class="form-control" id="editCompanyModal_address"/>
 								</div>
 								<div class="form-group">
-									<input placeholder="Phone" type="phone" name="phone" class="form-control" id="editCompanyModal_phone"/>
+									<input placeholder="Phone (ex. 1234567890)" pattern="[0-9]{10}" type="tel" name="phone" class="form-control" id="editCompanyModal_phone"/>
 								</div>
 								<div class="form-group">
 									<input placeholder="Email" type="email" name="email" class="form-control" id="editCompanyModal_email"/>
@@ -218,7 +218,7 @@
 								</div>
 							</div>
 							<div style="min-height:50px;">
-								<?php echo strtoupper($data['hostname']);?>> <input type="text" id="terminaltxt" style="outline: none;border:none;background:#000;width:300px;color:#fff;font-family:font-family:monospace;"/>
+								<?php echo strtoupper($hostname);?>> <input type="text" id="terminaltxt" style="outline: none;border:none;background:#000;width:300px;color:#fff;font-family:font-family:monospace;"/>
 							</div>
 						</div>
 					</div>

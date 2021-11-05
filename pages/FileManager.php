@@ -4,7 +4,7 @@ if($_SESSION['userid']==""){
 	<script>		
 		toastr.error('Session timed out.');
 		setTimeout(function(){
-			setCookie("section", "Login", 365);	
+			setCookie("section", btoa("Login"), 365);	
 			window.location.replace("..//");
 		}, 3000);		
 	</script>
@@ -50,7 +50,7 @@ if($getFolder!=""){
 $json = getComputerData($computerID, array("General", "Filesystem", "LogicalDisk"), $showDate);
 
 $disks = $json['LogicalDisk']['Response'];
-$query = "SELECT  online, ID, hostname FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 
@@ -58,10 +58,11 @@ $online = $results['online'];
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 	<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">File Manager
 		<br>
+		<span style="color:#000;font-size:12px">Last Update: <?php echo ago($json['Filesystem_lastUpdate']);?></span>
 		<hr>
 		<span style="font-size:14px">Current Path:</span><br>
-		<a href="javascript:void(0)" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo base64_encode($back2);?>');" style="font-size:22px;margin-left:20px"><?php echo $drive.":".$shownFolder; ?></a>
-		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo base64_encode($drive."{}".$getFolder);?>');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<a href="javascript:void(0)" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo $back2; ?>');" style="font-size:22px;margin-left:20px"><?php echo $drive.":".$shownFolder; ?></a>
+		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo $drive.'{}'.$getFolder; ?>');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>	
 	</h4>
@@ -80,7 +81,7 @@ $online = $results['online'];
 						</div>
 					</div>
 					<?php if($getFolder!=""){ ?>
-						<a href="javascript:void(0)" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo base64_encode($back2);?>');" style="text-align:left" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i>&nbsp; Go back</a><br>
+						<a href="javascript:void(0)" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo $back2;?>');" style="text-align:left" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i>&nbsp; Go back</a><br>
 					<?php } ?>
 					<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">				
 						<thead>
@@ -147,7 +148,7 @@ $online = $results['online'];
 								}	
 								$count++;	
 						?>		
-						<tr <?php if($icon=="folder"){ ?>style="cursor:pointer" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo base64_encode($path);?>');"<?php } ?>>
+						<tr <?php if($icon=="folder"){ ?>style="cursor:pointer" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo ($path);?>');"<?php } ?>>
 							<td>
 								<i style="font-size:18px" class="fas fa-<?php echo $icon; ?> text-secondary"></i>
 							</td>
@@ -166,11 +167,7 @@ $online = $results['online'];
 					<?php
 						if($count==0){ ?>
 						<tr>
-							<td colspan="3">
-								<h6>
-									No files found
-								</h6>
-							</td>
+								<td colspan=4><center><h6>No files found.</h6></center></td>
 						</tr>
 						<?php } ?>
 					</tbody>
@@ -222,7 +219,7 @@ $online = $results['online'];
 							if(strpos($disk["ProviderName"], ".") == false){		
 					?>	
 						<div class="col-md-4" style="padding:5px;">
-							<a href="javascript:void(0)" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo base64_encode(str_replace(":","",$disk['Name'])."{}".$getFolder);?>');">
+							<a href="javascript:void(0)" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo (str_replace(":","",$disk['Name'])."{}".$getFolder);?>');">
 								<div class="card bg-dark" style="height:75%;padding:5px;">
 									<div style="text-align:center;">
 										<h5 class="card-title text-white" style="color:#333;padding-top:5px;padding-bottom:10px;">

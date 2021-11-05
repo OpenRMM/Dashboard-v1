@@ -385,7 +385,7 @@
 			$expire_after = (int)$_POST['expire_after'];
 			$exists = 0;
 			if(trim($commands)!=""){
-				$query = "SELECT hostname,ID FROM computers WHERE ID='".$ID."'";
+				$query = "SELECT ID FROM computers WHERE ID='".$ID."'";
 				$results = mysqli_query($db, $query);
 				$computer = mysqli_fetch_assoc($results);
 				$query = "SELECT ID, expire_time FROM commands WHERE computer_id='".$computer['ID']."' AND status='Sent' AND user_id='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
@@ -464,7 +464,7 @@
 			$agent_WindowsUpdates = clean($_POST['agent_WindowsUpdates']);
 		
 
-			$settings='{"Interval": {"getWindowsUpdates": '.$agent_WindowsUpdates.',"getAgentLogs": '.$agent_Logs.',"getSharedDrives": '.$agent_SharedDrives.',"Heartbeat": '.$agent_Heartbeat.', "getGeneral": '.$agent_General.', "getBIOS": '.$agent_BIOS.', "getStartup": '.$agent_Startup.', "getOptionalFeatures": '.$agent_Features.', "getProcesses": '.$agent_Processes.', "getServices": '.$agent_Services.', "getUsers": '.$agent_Users.', "getVideoConfiguration": '.$agent_Video.', "getLogicalDisk": '.$agent_Disk.', "getMappedLogicalDisk": '.$agent_Mapped.', "getPhysicalMemory": '.$agent_Memory.', "getPointingDevice": '.$agent_Pointing.', "getKeyboard": '.$agent_Keyboard.', "getBaseBoard": '.$agent_Board.', "getDesktopMonitor": '.$agent_Monitor.', "getPrinters": '.$agent_Printers.', "getNetworkLoginProfile": '.$agent_NetworkLogin.', "getNetwork": '.$agent_Network.', "getPnPEntitys": '.$agent_PnP.', "getSoundDevices": '.$agent_Sound.', "getSCSIController": '.$agent_SCSI.', "getProducts": '.$agent_Products.', "getProcessor": '.$agent_Processor.', "getFirewall": '.$agent_Firewall.', "getAgent": '.$agent_Agent.', "getBattery": '.$agent_Battery.', "getFilesystem": '.$agent_Filesystem.', "getEventLogs": '.$agent_Logs.'}}';
+			$settings='{"Interval": {"getWindowsUpdates": '.$agent_WindowsUpdates.',"getAgentLog": '.$agent_Logs.',"getSharedDrives": '.$agent_SharedDrives.',"Heartbeat": '.$agent_Heartbeat.', "getGeneral": '.$agent_General.', "getBIOS": '.$agent_BIOS.', "getStartup": '.$agent_Startup.', "getOptionalFeatures": '.$agent_Features.', "getProcesses": '.$agent_Processes.', "getServices": '.$agent_Services.', "getUsers": '.$agent_Users.', "getVideoConfiguration": '.$agent_Video.', "getLogicalDisk": '.$agent_Disk.', "getMappedLogicalDisk": '.$agent_Mapped.', "getPhysicalMemory": '.$agent_Memory.', "getPointingDevice": '.$agent_Pointing.', "getKeyboard": '.$agent_Keyboard.', "getBaseBoard": '.$agent_Board.', "getDesktopMonitor": '.$agent_Monitor.', "getPrinters": '.$agent_Printers.', "getNetworkLoginProfile": '.$agent_NetworkLogin.', "getNetworkAdapters": '.$agent_Network.', "getPnPEntities": '.$agent_PnP.', "getSoundDevices": '.$agent_Sound.', "getSCSIController": '.$agent_SCSI.', "getProducts": '.$agent_Products.', "getProcessor": '.$agent_Processor.', "getFirewall": '.$agent_Firewall.', "getAgent": '.$agent_Agent.', "getBattery": '.$agent_Battery.', "getFilesystem": '.$agent_Filesystem.', "getEventLogs": '.$agent_Logs.'}}';
 			$query = "UPDATE computers SET agent_settings='".$settings."' WHERE ID=".$ID.";";
 			//$results = mysqli_query($db, $query);
 			//echo mysqli_error($db)."sadsada"; exit;
@@ -477,10 +477,10 @@
 			$commands = "C:\\\\Open_RMM\\\\Update.bat";
 			$expire_after = 5;
 			$exists = 0;
-			$query = "SELECT ID, hostname FROM computers WHERE company_id='".$ID."' AND active='1'";
+			$query = "SELECT ID FROM computers WHERE company_id='".$ID."' AND active='1'";
 			$results = mysqli_query($db, $query);
 			while($computer = mysqli_fetch_assoc($results)){
-				$query = "SELECT ID, expire_time FROM commands WHERE computer_id='".$computer['hostname']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
+				$query = "SELECT ID, expire_time FROM commands WHERE computer_id='".$computer['ID']."' AND status='Sent' AND command='".$commands."' AND userid='".$_SESSION['userid']."' ORDER BY ID DESC LIMIT 1";
 				$results = mysqli_query($db, $query);
 				$existing = mysqli_fetch_assoc($results);
 				if(isset($existing['ID'])){
@@ -492,7 +492,7 @@
 					//Generate expire time
 					$expire_time = date("m/d/Y H:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("m/d/y H:i:s"))));
 					$query = "INSERT INTO commands (computer_id, userid, command,  expire_after, expire_time, status)
-							  VALUES ('".$computer['hostname']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
+							  VALUES ('".$computer['ID']."', '".$_SESSION['userid']."', '".$commands."', '".$expire_after."', '".$expire_time."', 'Sent')";
 					$results = mysqli_query($db, $query);
 				}
 			}

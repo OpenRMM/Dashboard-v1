@@ -5,6 +5,7 @@
 	$_SESSION['AccountType']="";
 	session_unset();
 	session_destroy();
+	mysqli_close($db);
 ?>
 <center>
 	<h5>You will be redirected to the login page in just a moment.</h5>

@@ -6,10 +6,10 @@ if(!isset($_SESSION['userid'])){
 	http_response_code(404);
 	die();
 }
-$expire_after = 5;
+$expire_after = 30;
 $exists = 0;
 
-$query = "SELECT hostname,ID FROM computers WHERE ID='".$ID."'";
+$query = "SELECT ID FROM computers WHERE ID='".$ID."'";
 $results = mysqli_query($db, $query);
 $computer = mysqli_fetch_assoc($results);
 									
@@ -24,7 +24,7 @@ if($existing['ID'] != ""){
 }
 
 //generate expire time
-$expire_time = date("Y-m-d h:i:s", strtotime('+'.$expire_after.' minutes', strtotime(date("Y-m-d h:i:s"))));
+$expire_time = date("Y-m-d h:i:s", strtotime('+'.$expire_after.' seconds', strtotime(date("Y-m-d h:i:s"))));
 
 if($exists == 0){
 	$salt = getSalt(40);

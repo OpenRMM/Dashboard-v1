@@ -4,7 +4,7 @@
 	<script>		
 		toastr.error('Session timed out.');
 		setTimeout(function(){
-			setCookie("section", "Login", 365);	
+			setCookie("section", btoa("Login"), 365);	
 			window.location.replace("..//");
 		}, 3000);		
 	</script>
@@ -28,7 +28,7 @@
 		exit;
 	}
 	
-	$query = "SELECT online, ID, hostname, company_id, name, phone, email,hex, computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
+	$query = "SELECT online, ID, company_id, name, phone, email,hex, computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$result = mysqli_fetch_assoc($results);
 
@@ -37,7 +37,7 @@
 	$company = mysqli_fetch_assoc($companies);
 	
 	$json = getComputerData($computerID, array("*"), $showDate);
-	
+	$hostname = textOnNull($json['General']['Response'][0]['csname'],"Unavailable");
 	//Update Recents
 	if (in_array( $computerID, $_SESSION['recent'])){
 		if (($key = array_search($computerID, $_SESSION['recent'])) !== false) {
@@ -53,15 +53,11 @@
 			$results = mysqli_query($db, $query);
 		}
 	}
-	if($result['hostname']==""){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='/'><u>Dashboard</u></a></p></center><hr>"); }
+	if($result['ID']==""){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='/'><u>Dashboard</u></a></p></center><hr>"); }
 	
 	$online = $result['online'];
 	$lastPing = $json['Ping'];
 	
-	if($online=="0") {
-		//$alert = "This Computer Is Currently Offline";
-		//$alertType = "danger";
-	}
 	//ex. 10-3=7
 	$used2 = $json['General']['Response'][0]['Totalphysicalmemory'] - $json['General']['Response'][0]['FreePhysicalMemory'];
 	//ex. 10-7=3
@@ -76,70 +72,72 @@
 		$cpuUsage="100";
 	}
 	//log user activity
-	$activity = "Technician Viewed Asset: ".$result['hostname'];
+	$activity = "Technician Viewed Asset: ".textOnNull($json['General']['Response'][0]['csname'],"Unavailable");
 	userActivity($activity,$_SESSION['userid']);		
 ?>
 <style>
 	.dataTables_info {margin-top:40px; }
 </style>
-<h4 style="color:#333">
-	Overview of <?php echo $result['hostname']; ?>
-		<a href="javascript:void(0)" title="Edit Asset" onclick="loadSection('Edit');" style="position:absolute;padding-left:15px;font-size:22px">
-			<i class="fas fa-pencil-alt"></i>
-		</a>
-
-	<br>	
-	<?php if($showDate != "latest"){?>
-		<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-			History: <?php echo date("l, F jS", strtotime($showDate));?>
-		</span>
-	<?php }else{ ?>
-		<span style="font-size:12px;color:#333"> Last Updated: <?php echo ago($lastPing);?></span>
-	<?php } ?>
-	<div class="" style="margin-top:-45px">
-		<center>
+<div style="padding:20px;margin-bottom:-1px;" class="card col-md-12">
+	<h5>Overview of <?php echo $json['General']['Response'][0]['csname']; ?>	
+		<center style="display:inline;margin-left:50px;">
 			<?php $alertCount = count($json['Alerts']);?>
 			<?php if($alertCount > 0){?>
-				<button onclick="computerAlertsModal('This PC','<?php echo $json['Alerts_raw'];?>');" data-toggle="modal" data-target="#computerAlerts" style="margin-left:10px;" class="btn btn-sm btn-danger">	
+				<button onclick="computerAlertsModal('This PC','<?php echo $json['Alerts_raw'];?>');" data-toggle="modal" data-target="#computerAlerts"  class="btn btn-sm btn-danger">	
 					<i title="<?php echo $alertCount;?> Issues" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
 			</button>
-			<?php }else{?>
-				<button class="btn btn-sm btn-success" title="No Issues" data-toggle="modal" data-target="#computerAlerts" style="cursor:pointer;padding-left:15px;" onclick="computerAlertsModal('this PC');">
-					<i class="fas fa-thumbs-up"></i> 
-			</button>
-			<?php }?>
-			<?php
-				$agentVersion = $json['Agent'][0]['Version'];
-				if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
-					<button onclick='sendCommand("C:\\\\OpenRMM\\\\Update.bat", "Update Agent", 2);' title="Agent Update Available" style="margin-left:10px;" class="btn btn-sm btn-danger">
-						<i style="color:#fff;" class="fas fa-cloud-upload-alt"></i>		
-					</button>			
-			<?php }?>
-			
-			<div style="float:right;">			
-				<div class="btn-group">
-					<button onclick="loadSection('General');" type="button" class="btn btn-warning btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
-					<button type="button" class="btn btn-warning dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						<i class="fas fa-sort-down"></i>
-					</button>
-					<div class="dropdown-menu">
-						<a onclick="loadSection('General','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
-
-					</div>
-				</div>
-				<?php if($_SESSION['accountType']=="Admin"){  ?>
-					<a href="javascript:void(0)" title="Agent Configuration" onclick="loadSection('AgentSettings');" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
-						<i class="fas fa-cogs"></i>
-					</a>
-				<?php } ?>
-				<a href="javascript:void(0)" title="Select Date" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-					<i class="far fa-calendar-alt"></i>
-				</a>
-			</div>
+			<?php } ?>
 		</center>
+		<div style="float:right;display:inline">			
+			<div class="btn-group">
+				<button onclick="loadSection('General');" type="button" class="btn btn-warning btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+				<button type="button" class="btn btn-warning dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<i class="fas fa-sort-down"></i>
+				</button>
+				<div class="dropdown-menu">
+					<a onclick="loadSection('General','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+				</div>
+			</div>
+			<?php if($_SESSION['accountType']=="Admin"){  ?>
+				<a href="javascript:void(0)" title="Agent Configuration" onclick="loadSection('AgentSettings');" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+					<i class="fas fa-cogs"></i>
+				</a>
+			<?php } ?>
+			<a href="javascript:void(0)" title="Edit Asset Details" class="btn btn-sm" onclick="loadSection('Edit');" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+				<i class="fas fa-pencil-alt"></i>
+			</a>
+			<a href="javascript:void(0)" title="Select Date" class="btn btn-sm" style="margin:3px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
+				<i class="far fa-calendar-alt"></i>
+			</a>
+		</div>
+		<br>
+		<p>	
+			<?php if($showDate != "latest"){?>
+				<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
+					History: <?php echo date("l, F jS", strtotime($showDate));?>
+				</span>
+			<?php }else{ ?>
+				<span style="font-size:12px;color:#333"> Last Updated: <?php echo ago($lastPing);?></span>
+			<?php } ?>
+		</p>
+	</h5>
+</div>
+<?php
+$agentVersion = $json['Agent']['Response'][0]['Version'];
+if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
+	<?php if($agentVersion==""){?>
+		<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
+			<div class="spinner-border spinner-border-sm" style="font-size:12px" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+			&nbsp;&nbsp;&nbsp;The agent is trying to get initial data for this asset		
+		</div>
+	<?php }else{ ?>
+	<div onclick='sendCommand("C:\\\\OpenRMM\\\\Update.bat", "Update Agent", 2);' style="border-radius: 0px 0px 4px 4px;cursor:pointer" class="alert alert-danger" role="alert">
+		<i class="fas fa-cloud-upload-alt"></i>&nbsp;&nbsp;&nbsp;An Update is available for this asset			
 	</div>
-</h4>
-<hr>
+	<?php } ?>
+<?php }?>
 <?php if($alert!=""){ ?>
 	<div class="row alert alert-<?php echo $alertType; ?>" role="alert">
 		<b><?php echo $alert; ?></b>
@@ -319,7 +317,7 @@
 				</h5>
 			</div>
 			<div class="panel-body" style="height:285px;">
-				<div class="rsow">
+				<div class="">
 					<ul class="list-group" style="margin-left:20px">
 						<li class="list-group-item" style="padding:6px"><b>Current User: </b><?php echo textOnNull(basename($json['General']['Response'][0]['UserName']), "Unknown");?></li>
 						<li class="list-group-item" style="padding:6px"><b>Domain: </b><?php echo textOnNull($json['General']['Response'][0]['Domain'], "N/A");?></li>
@@ -575,14 +573,13 @@
 			toastr.success("Your Message Has Been Sent");
 		});  
 	}
-	$(".sidebarComputerName").text("<?php echo strtoupper($result['hostname']);?>");
 	var data = {
 	  labels: [
 	    "Used (bytes)","Unused (bytes)"
 	  ],
 	  datasets: [
 	    {
-	      data: [<?php echo $used2 .",".$free2; ?>],
+	      data: [<?php echo (int)$used2 .",".(int)$free2; ?>],
 	      backgroundColor: [
 	        "<?php echo $siteSettings['theme']['Color 2']; ?>"
 	      ],

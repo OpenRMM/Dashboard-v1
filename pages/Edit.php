@@ -4,7 +4,7 @@ if($_SESSION['userid']==""){
 	<script>		
 		toastr.error('Session timed out.');
 		setTimeout(function(){
-			setCookie("section", "Login", 365);	
+			setCookie("section", btoa("Login"), 365);	
 			window.location.replace("..//");
 		}, 3000);		
 	</script>
@@ -12,8 +12,9 @@ if($_SESSION['userid']==""){
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
 $computerID = (int)base64_decode($_GET['ID']);
-
-$query = "SELECT ID, show_alerts, hostname, company_id, phone,hex, email, online, name, comment,computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$json = getComputerData($computerID, array("*"), "");
+$hostname =  textOnNull($json['General']['Response'][0]['csname'],"Unavailable");
+$query = "SELECT ID, show_alerts, company_id, phone,hex, email, online, name, comment,computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $data = mysqli_fetch_assoc($results);
 
@@ -23,7 +24,7 @@ $company = mysqli_fetch_assoc($companys);
 
 $online = $data['online'];
 ?>
-<?php if($data['hostname']==""){ ?>
+<?php if($data['ID']==""){ ?>
 	<br>
 	<center>
 		<h4>No Asset Selected</h4>
@@ -34,7 +35,7 @@ $online = $data['online'];
 	</center>
 	<hr>
 <?php exit; }?>
-<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Editing Asset: <?php echo $data['hostname']; ?>
+<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Editing Asset: <?php echo $hostname; ?>
 	<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Edit');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 		<i class="fas fa-sync"></i>
 	</a>
@@ -61,7 +62,7 @@ $online = $data['online'];
 							$query = "SELECT ID, name,hex FROM companies WHERE active='1' ORDER BY ID ASC";
 							$results = mysqli_query($db, $query);
 							while($result = mysqli_fetch_assoc($results)){ 
-								if(crypto('decrypt',$result['name'],$result['hex'])==crypto('decrypt',$company['name'],$company['hex'])){continue;}		
+								if($result['ID']==$company['ID']){continue;}		
 						?>
 								<option value='<?php echo $result['ID'];?>'><?php echo crypto('decrypt',$result['name'],$result['hex']);?></option>
 						<?php }?>
@@ -96,15 +97,15 @@ $online = $data['online'];
 				<div class="form-group float-label-control">
 					<textarea rows=12 style="resize:vertical" placeholder="Any Comments?" name="comment" class="form-control"><?php echo crypto('decrypt',$data['comment'],$data['hex']); ?></textarea>
 				</div>
-				<div style="margin-top:30px;" class="form-group float-label-control">
-					<input style="background:#0ac282;color:#fff" type="submit" class="form-control" value="Save Details">
-				</div>
 			</div>				
 			<div class="col-sm-4">
 				<div class="panel panel-default" style="height:auto;color:#fff;color#000;padding:20px;border-radius:6px;margin-bottom:20px;">
 					<center>
-						<a style="width:65%;margin-top:-3px;border:none;" class="btn btn-danger btn-md" data-toggle="modal" data-target="#delModal" href="javascript:void(0)">
-							<i class="fas fa-trash"></i> Delete Asset
+						<button style="width:55%;margin-top:-3px;border:none;" type="submit" class="btn btn-success btn-sm">
+							<i class="fas fa-save"></i> &nbsp; Save Details
+						</button>
+						<a style="width:35%;margin-top:-3px;border:none;" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal" href="javascript:void(0)">
+							<i class="fas fa-trash"></i> &nbsp; Delete Asset
 						</a>
 					</center>
 				</div>
@@ -162,13 +163,15 @@ $online = $data['online'];
 								$query = "SELECT * FROM computers where ID='".$item."'";
 								$results = mysqli_query($db, $query);
 								$data = mysqli_fetch_assoc($results);
-								if($data['hostname']==""){continue;}
+								if($data['ID']==""){continue;}
+								$json = getComputerData($data['ID'], array("*"), "");
+								$hostname =  $json['General']['Response'][0]['csname'];
 								$count++;
 							?> 
-							<a href="javascript:void(0)" class="text-dark" onclick="loadSection('Edit', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo strtoupper($data['hostname']);?>');">
+							<a href="javascript:void(0)" class="text-dark" onclick="loadSection('Edit', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo strtoupper($hostname);?>');">
 								<li class="list-group-item">
 									<i class="fas fa-desktop"></i>&nbsp;
-									<?php echo strtoupper($data['hostname']);?>
+									<?php echo strtoupper($hostname);?>
 								</li>
 							</a>
 							<?php } ?>
@@ -197,7 +200,7 @@ $online = $data['online'];
 		  <form action="/" method="POST">
 			<input type="hidden" name="type" value="DeleteComputer"/>
 			<input type="hidden" name="ID" value="<?php echo $data['ID'];?>"/>
-			<input type="hidden" name="hostname" value="<?php echo $data['hostname'];?>"/>
+			<input type="hidden" name="hostname" value="<?php echo $hostname;?>"/>
 			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 			<button type="submit" class="btn btn-danger">Confirm</button>
 		  <form>
@@ -213,16 +216,6 @@ $online = $data['online'];
 	</div>
   </div>
 </div>
-<script>
-    tinymce.init({
-      selector: 'textarea',
-      plugins: 'a11ychecker advcode casechange formatpainter linkchecker autolink lists checklist media mediaembed pageembed permanentpen powerpaste table advtable tinycomments',
-      toolbar: 'a11ycheck addcomment showcomments casechange checklist code formatpainter pageembed permanentpen table',
-      toolbar_mode: 'floating',
-      tinycomments_mode: 'embedded',
-      tinycomments_author: 'SMG_RMM',
-    });
-</script>
 <script>
 	<?php if($online=="0"){ ?>
 		toastr.remove()

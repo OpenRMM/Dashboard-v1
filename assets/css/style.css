@@ -15155,12 +15155,14 @@ div.dt-button:active:not(.disabled),
 div.dt-button.active:not(.disabled),
 a.dt-button:active:not(.disabled),
 a.dt-button.active:not(.disabled) {
-    background-color: #01a9ac;
-    border-color: #01a9ac;
-    border-radius: 2px;
+    background-color: #343a40;
+    border-color: #343a40;
+    border:none;
+    padding:6px;
+    border-radius: 3px;
     color: #fff;
     background-image: none;
-    font-size: 14px;
+    font-size: 11px;
 }
 button.dt-button.btn-warning,
 div.dt-button.btn-warning,
@@ -15193,8 +15195,8 @@ button.dt-button:hover:not(.disabled),
 div.dt-button:hover:not(.disabled),
 a.dt-button:hover:not(.disabled) {
     background-image: none;
-    background-color: #01c2c5;
-    border-color: #01a9ac;
+    background-color: #000;
+    border-color: #000;
 }
 button.dt-button.btn-warning:hover:not(.disabled),
 div.dt-button.btn-warning:hover:not(.disabled),
@@ -15223,8 +15225,9 @@ div.dt-button-collection div.dt-button:active:not(.disabled),
 div.dt-button-collection div.dt-button.active:not(.disabled),
 div.dt-button-collection a.dt-button:active:not(.disabled),
 div.dt-button-collection a.dt-button.active:not(.disabled) {
-    background-color: #01a9ac;
-    border-color: #01a9ac;
+    background-color: #fe6f33;
+    margin-top:10px;
+    border-color: #fe6f33;
     background-image: none;
 }
 div.dt-buttons {
