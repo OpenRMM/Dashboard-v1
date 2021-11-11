@@ -3,6 +3,12 @@ include("db.php");
 if($_SESSION['excludedPages']==""){
     $_SESSION['excludedPages'] = explode(",",$excludedPages); //use this to clear pages if an error occurs
 }
+if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+  // do nothing
+}else {
+    // if page is not called via ajax
+   exit("<html><head><title>OpenRMM console</title></head><body style='background:#000'><div style='margin-top:20px;color:#fff;font-family: \"Lucida Console\", \"Courier New\", monospace;font-size:14px'><h3>OpenRMM console > An error has occurred</h3></div></body></html>");
+}
 $type = clean($_POST['type']);
 $date = clean($_POST['date']);
 $gets = clean(base64_decode($_GET['other']));
@@ -67,7 +73,8 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                 switch ($page) {
                     case "FileManager":
                         $page="Filesystem";
-                        $retain = false;                     
+                        $retain = false;   
+                        if($gets=="force"){ $gets=""; }                  
                         $get = explode("{}",$gets);
                         $drive = $get[0];
                         $getFolder = $get[1];
@@ -107,7 +114,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                     case "EventLogs":
                         $page="EventLogs";
                         $retain = false;
-                        if($gets==""){$gets="Application";}
+                        if($gets=="" or $gets=="force"){$gets="Application";}
                         $message =  '{"userID":'.$_SESSION['userid'].',"data":"'.$gets.'"}';
                     case "General":
                         $page="General";
@@ -183,14 +190,6 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
         } 
     }
 ?>
-<script>
-    var section = atob(getCookie("section"));
-    if(section == "Profile" || section == "Assets" || section == "Dashboard" || section == "AllUsers" || section == "AllCompanies" || section == "Versions" || section == "Init"){
-        $('#sectionList').slideUp(400);
-    }else if($('#sectionList').css("display")=="none"){
-        $('#sectionList').slideDown(400);
-    }
-</script>
 <script>
 	<?php if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['server_status']==""){ ?>
 		toastr.remove()

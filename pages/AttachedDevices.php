@@ -221,7 +221,7 @@ $online = $results['online'];
 </div>
 	<hr>
 	<h6 style="color:#000"><b>Plug And Play Devices (<?php echo count($json['PnPEntities']['Response']); ?>)</b></h6>
-	<div style="padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;margin-top:20px;">
+	<div style="overflow-x:auto;padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;margin-top:20px;">
 		<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 			<thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">

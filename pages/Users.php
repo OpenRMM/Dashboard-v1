@@ -66,7 +66,7 @@
 	</div>
 </div>
 	<div class="col-md-12" style="margin-left:-15px;">
-		<div style="padding:20px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;margin-top:20px;">
+		<div style="overflow-x:auto;padding:20px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;margin-top:20px;">
 			<table id="dataTable" style="line-height:10px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 				<thead>
 					<tr style="border-bottom:2px solid #d3d3d3;">

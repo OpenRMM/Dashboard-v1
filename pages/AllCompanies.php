@@ -42,7 +42,7 @@ $companyCount = mysqli_num_rows($results);
 			</ul>
 		</div>
 	</div>
-	<div style="padding:10px;">
+	<div style="padding:10px;overflow-x:auto">
 		<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">
 			<thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">

@@ -38,7 +38,7 @@ if($_SESSION['userid']!=""){
         if($alertResponse!="" and $alertUser==$_SESSION['userid']){
             $query = "UPDATE computer_data SET name='Alerted' WHERE computer_id='".$_SESSION['computerID']."' and name='Alert';";
             $results = mysqli_query($db, $query);
-            echo "<script>toastr.info('".$existing['hostname']." Replied to Message: ".$alertResponse."','',{timeOut:0,extendedTimeOut: 0}); </script>";
+            echo "<script>toastr.info('".$existing['hostname']." replied to message: ".$alertResponse."','',{timeOut:0,extendedTimeOut: 0}); </script>";
         }
         $_SESSION['notifReset2']="";
     }else{
@@ -53,7 +53,7 @@ if($_SESSION['userid']!=""){
     $existing = mysqli_fetch_assoc($results);
     $checkrows=mysqli_num_rows($results);
     if($checkrows>1 and $_SESSION['notifReset2']==""){
-        echo "<script>toastr.error('Two OpenRMM Servers have been detcted. We recommend using one server to avoid conflict.','',{timeOut:0,extendedTimeOut: 0}); </script>";
+        echo "<script>toastr.error('Two OpenRMM Servers have been detected. We recommend using one server to avoid conflicts.','',{timeOut:0,extendedTimeOut: 0}); </script>";
         $_SESSION['notifReset2']="1";
     }
 }

@@ -11,7 +11,7 @@ if($_SESSION['userid']==""){
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
-$query = "SELECT ID,username,last_login,active,email,nicename,hex,phone,account_type FROM users ORDER BY nicename ASC";
+$query = "SELECT ID,username,last_login,active,email,nicename,hex,phone,account_type,user_color FROM users ORDER BY nicename ASC";
 $results = mysqli_query($db, $query);
 $userCount = mysqli_num_rows($results);
 ?>
@@ -42,7 +42,7 @@ $userCount = mysqli_num_rows($results);
 				</ul>
 			</div>
 		</div>
-	<div style="padding:10px;">	
+	<div style="padding:10px;overflow-x:auto">	
 		<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">
 			<thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">
@@ -70,7 +70,18 @@ $userCount = mysqli_num_rows($results);
 				?>
 				<tr>
 					<td><?php echo $user['ID'];?></td>
-					<td><a style="font-size:12px" href="javascript:void(0)" onclick="loadSection('Profile','<?php echo $user['ID']; ?>');"><?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex']));?></a></td>
+					<td>
+						<a style="font-size:12px" href="javascript:void(0)" onclick="loadSection('Profile','<?php echo $user['ID']; ?>');">
+						<?php
+							list($first, $last) = explode(' ', ucwords(crypto('decrypt',$user['nicename'],$user['hex'])), 2);
+							$name = strtoupper("$first[0]{$last[0]}"); 
+						?>
+						<div style="font-size:12px;margin-right:10px;float:left;display:inline;background:<?php echo $user['user_color']; ?>;color:#fff;padding:5px;border-radius:100px;text-align:center;width:30px;height:30px;padding-top:5px">
+							<?php echo $name; ?>
+						</div>
+							<?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex']));?>
+						</a>
+					</td>
 					<td><a style="font-size:12px" href="mailto:<?php echo strtolower(crypto('decrypt', $user['email'], $user['hex']));?>"><?php echo textOnNull(strtolower(crypto('decrypt', $user['email'], $user['hex'])),"No Email");?></a></td>
 					<td><a style="font-size:12px" href="tel:<?php echo strtolower(crypto('decrypt', $user['phone'], $user['hex']));?>"><?php echo textOnNull(phone(crypto('decrypt', $user['phone'], $user['hex'])),"No Phone");?></a></td>
 					<td><?php echo strtolower($user['username']);?></td>
@@ -83,7 +94,7 @@ $userCount = mysqli_num_rows($results);
 								<button onclick="deleteUser('<?php echo $user['ID']; ?>','0')" id="delUser<?php echo $user['ID']; ?>" <?php if($user['ID']=="1") echo "disabled"; ?> type="button" title="Deactivate User" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm">
 									<i class="fas fa-trash" ></i>				
 								</button>
-								<button id="actUser<?php echo $user['ID']; ?>" onclick="deleteUser('<?php echo $user['ID']; ?>','1')" type="button" title="Activate User" style="display:none;margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="display:none;btn btn-success btn-sm">
+								<button id="actUser<?php echo $user['ID']; ?>" onclick="deleteUser('<?php echo $user['ID']; ?>','1')" type="button" title="Activate User" style="display:none;margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-success btn-sm">
 									<i class="fas fa-plus" ></i>
 								</button>
 							<?php }else{ ?>
@@ -94,7 +105,7 @@ $userCount = mysqli_num_rows($results);
 									<i class="fas fa-trash" ></i>				
 								</button>
 							<?php } ?>
-							<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>')" title="Edit User" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
+							<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>')" title="Edit User" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
 								<i class="fas fa-pencil-alt"></i>
 							</a>
 						</form>
@@ -107,11 +118,12 @@ $userCount = mysqli_num_rows($results);
 </div>
 <script>
 	//Edit User
-	function editUser(ID, username, name, email, phone, type){
+	function editUser(ID, username, name, email, phone, type, color){
 		$("#editUserModal_ID").val(ID);
 		$("#editUserModal_username").val(username);
 		$("#editUserModal_name").val(name);
 		$("#editUserModal_email").val(email);
+		$("#editUserModal_color").val(color);
 		$("#editUserModal_phone").val(phone);
 		$("#editUserModal_type").val(type.toLowerCase());
 		$("#editUserModal_type").text(type)

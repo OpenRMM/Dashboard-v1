@@ -4,8 +4,8 @@
 	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "Init,Login,Logout,Alerts,Commands,Dashboard,Profile,Edit,AllUsers,AllCompanies,Assets,Versions"; 
-	$allPages = "AgentSettings,FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,OptionalFeatures,Printers,Processes,Profile,Programs,Services,Users,Versions";
+	$excludedPages = "NewTicket,Ticket,ServiceDesk,Init,Login,Logout,Alerts,Commands,Dashboard,Profile,Edit,AllUsers,AllCompanies,Assets,Versions"; 
+	$allPages = "NewTicket,Ticket,ServiceDesk,AgentSettings,FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,OptionalFeatures,Printers,Processes,Profile,Programs,Services,Users,Versions";
 	$adminPages = "AgentSettings,AllUsers.php,AllCompanies.php";
 	$taskCondtion_max = 5;
 ###########################################################################################################################################
@@ -83,11 +83,11 @@
         }
     }
 	//redirect standard users
-	if($_SESSION['accountType']=="Standard"){
+	if($_SESSION['accountType']=="Standard" or $_SESSION['accountType']==""){
 		if(in_array(basename($_SERVER['SCRIPT_NAME']), $allAdminPages)){
 			$activity="Technician Attempted Access To: ".basename($_SERVER['SCRIPT_NAME']);
 			userActivity($activity);
-			exit("<center><br><br><h4>Sorry, You Do Not Have Permission To Access This Page!</h4><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' class='btn btn-warning btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");	
+			exit("<center><br><br><h4>Sorry, you do not have permission to access this page!</h4><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' class='btn btn-warning btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");	
 		}
 	}
 	if($siteSettings['theme']['MSP']=="true"){
@@ -271,7 +271,7 @@
 		$replaceWith = array("");
 		$string =  htmlspecialchars($string, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 		$string = strip_tags($string);
-		//$string = mysqli_real_escape_string($db, $string);
+		//$string = filter_input($string, FILTER_SANITIZE_STRING);
 		return $string;
 	}
 	

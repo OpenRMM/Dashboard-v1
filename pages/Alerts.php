@@ -22,7 +22,7 @@ $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 ?>
 <div style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
-	<div style="padding:20px" class="col-md-12">
+	<div style="padding:20px;overflow:auto" class="col-md-12">
 		<h5>Alert Configuration
 			<div style="float:right;">
 				<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Alerts');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">

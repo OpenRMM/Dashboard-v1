@@ -48,6 +48,7 @@ $siteSettingsJson = '
             "Warning": 70
 		}
     },
-	"Max_History_Days": 7
+	"Max_History_Days": 7,
+    "Service_Desk": "Enabled"
 }';
  

@@ -28,6 +28,7 @@ if($computerID<0){
 
 $computerID = (int)base64_decode($_GET['ID']);
 $gets = clean(base64_decode($_GET['other']));
+if($gets=="force"){ $gets=""; }
 $get = explode("{}",$gets);
 $drive = $get[0];
 $getFolder = $get[1];
@@ -62,15 +63,24 @@ $online = $results['online'];
 		<hr>
 		<span style="font-size:14px">Current Path:</span><br>
 		<a href="javascript:void(0)" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo $back2; ?>');" style="font-size:22px;margin-left:20px"><?php echo $drive.":".$shownFolder; ?></a>
-		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo $drive.'{}'.$getFolder; ?>');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
-			<i class="fas fa-sync"></i>
-		</a>	
+		<div style="float:right;">
+			<div class="btn-group">
+				<button onclick="loadSection('FileManager');" type="button" class="btn btn-warning btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+				<button type="button" class="btn btn-warning dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<i class="fas fa-sort-down"></i>
+				</button>
+				<div class="dropdown-menu">
+					<a onclick="loadSection('FileManager','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+
+				</div>
+			</div>
+		</div>	
 	</h4>
 </div>
 <div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 	<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;border-radius:6px;">			 
 			<form method="post" action="/">
-				<div class="card table-card" id="printTable" style="margin-top:-40px;padding:10px">  
+				<div class="card table-card" id="printTable" style="margin-top:-40px;padding:10px;overflow-x:auto">  
 					<div class="card-header">
 						<div class="card-header-right">
 							<ul class="list-unstyled card-option">
@@ -83,7 +93,7 @@ $online = $results['online'];
 					<?php if($getFolder!=""){ ?>
 						<a href="javascript:void(0)" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo $back2;?>');" style="text-align:left" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i>&nbsp; Go back</a><br>
 					<?php } ?>
-					<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">				
+					<table id="dataTable" style="line-height:20px;overflow:auto;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">				
 						<thead>
 							<tr style="border-bottom:2px solid #d3d3d3;">			  
 								<th scope="col">Type</th>
@@ -156,11 +166,11 @@ $online = $results['online'];
 								<?php echo $info; ?>	
 							</td>
 							<td style="float:right">
-								<a title="Rename" class="btn btn-sm btn-success" onclick="fileActionsModal('rename','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-pen"></i></a>
-								<a title="Move" class="btn btn-sm btn-secondary" onclick="fileActionsModal('move','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-arrows-alt"></i></a>
-								<a title="Copy" class="btn btn-sm btn-primary" onclick="fileActionsModal('copy','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-copy"></i></a>
-								<a title="Download" class="btn btn-sm btn-warning" onclick="fileActionsModal('download','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-download"></i></a>
-								<a title="Delete" class="btn btn-sm btn-danger" onclick="fileActionsModal('delete','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-trash"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" title="Rename" class="btn btn-sm btn-success" onclick="fileActionsModal('rename','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-pen"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Move" class="btn btn-sm btn-secondary" onclick="fileActionsModal('move','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-arrows-alt"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Copy" class="btn btn-sm btn-primary" onclick="fileActionsModal('copy','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-copy"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Download" class="btn btn-sm btn-warning" onclick="fileActionsModal('download','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-download"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Delete" class="btn btn-sm btn-danger" onclick="fileActionsModal('delete','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-trash"></i></a>
 							</td>
 						</tr>
 					<?php } ?>

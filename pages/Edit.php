@@ -104,9 +104,11 @@ $online = $data['online'];
 						<button style="width:55%;margin-top:-3px;border:none;" type="submit" class="btn btn-success btn-sm">
 							<i class="fas fa-save"></i> &nbsp; Save Details
 						</button>
-						<a style="width:35%;margin-top:-3px;border:none;" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal" href="javascript:void(0)">
-							<i class="fas fa-trash"></i> &nbsp; Delete Asset
-						</a>
+						<?php if($_SESSION['accountType']=="Admin"){ ?>
+							<a style="width:35%;margin-top:-3px;border:none;" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal" href="javascript:void(0)">
+								<i class="fas fa-trash"></i> &nbsp; Delete Asset
+							</a>
+						<?php } ?>
 					</center>
 				</div>
 				<hr>

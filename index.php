@@ -19,7 +19,7 @@
 	}
 
 	//Get user data
-	$query = "SELECT username,nicename,account_type,hex FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+	$query = "SELECT username,nicename,account_type,hex,user_color FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
@@ -55,7 +55,8 @@
   		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 
 		
-		  
+		  <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/trumbowyg.min.js"></script>
+		  <link href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/ui/trumbowyg.min.css" rel="stylesheet">
 		<link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 		
 		<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
@@ -113,7 +114,7 @@
 				</div>
 				<?php if($_SESSION['userid']!=""){ ?>
 					<div style="float:right;">
-						<div>
+						<div class="btn-group">
 						
           					<a href="#" class="dropsdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 								<i style="font-size:16px" class="fas fa-bell"></i>
@@ -124,12 +125,27 @@
 									<li class="list-group-item">No New Notifications</li>
 								</ul>
 							</div>
-      
-							<?php if(crypto('decrypt',$user['account_type'],$user['hex'])=="Admin"){ ?>
-								<button type="button" onclick="loadSection('Init','true');"style="border:none;box-shadow:none" class="btn-sm btn" title="Configure OpenRMM">
-									<i style="font-size:16px" class="fas fa-cog"></i>
-								</button>
-							<?php } ?>
+						</div>
+						<div class="btn-group">
+							&nbsp;
+							<a href="#" class="dropsdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								<i style="font-size:16px" class="fas fa-plus"></i>
+							</a>
+          					<div class="dropdown-menu">
+								<ul style="font-size:12px"  class="list-group">
+									<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
+										<li style="cursor:pointer" onclick="loadSection('NewTicket');" class="list-group-item secbtn">Create New Ticket</li>
+									<?php } 
+									if($_SESSION['accountType']=="Admin"){ ?>
+										<li style="cursor:pointer" data-toggle="modal" data-target="#companyModal" class="list-group-item secbtn">Add New <?php echo $msp; ?></li>
+										<li style="cursor:pointer" data-toggle="modal" data-target="#userModal" class="list-group-item secbtn">Add New User</li>
+									<?php } ?>
+								</ul>
+							</div>
+						</div>
+							<button type="button" onclick="loadSection('Init','true');" style="border:none;box-shadow:none" class="btn-sm btn" title="Configure OpenRMM">
+								<i style="font-size:16px" class="fas fa-cog"></i>
+							</button>
 						</div>
 					</div>
 				<?php } ?>
@@ -140,9 +156,15 @@
 			<?php if($_SESSION['userid']!=""){ ?>
 				<nav style="background:#35384e" id="sidebar">
 					<ul class="list-unstyled components" style="padding:20px;margin-top:25px;">
-						<div style="text-align:center;width:100%">
+						<div style="text-align:left;width:100%">
 							<a style="cursor:pointer" onclick="loadSection('Profile','<?php echo $_SESSION['userid']; ?>');">
-								<i style="color:#282828;font-size:68px;text-align:center" class="fa fa-user" ></i>
+								<?php
+									list($first, $last) = explode(' ', ucwords(crypto('decrypt',$user['nicename'],$user['hex'])), 2);
+									$name = strtoupper("$first[0]{$last[0]}"); 
+								?>
+								<div style="margin-top:-5px;font-size:22px;margin-right:10px;float:left;display:inline;background:<?php echo $user['user_color']; ?>;color:#fff;padding:5px;border-radius:100px;text-align:center;width:50px;height:50px;padding-top:9px">
+									<?php echo $name; ?>
+								</div>
 								<h6 style="color:#fff;margin-top:10px"><?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex'])); ?></h6>
 							</a>
 							<a onclick="loadSection('Profile','<?php echo $_SESSION['userid']; ?>');"  style="cursor:pointer;color:#d3d3d3">Profile</a>
@@ -154,8 +176,13 @@
 							<i class="fas fa-home"></i>&nbsp;&nbsp;&nbsp; Dashboard
 						</li>
 						<li onclick="loadSection('Assets');" id="secbtnAssets" class="secbtn">
-							<i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Asset List
+							<i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Assets
 						</li>
+						<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
+						<li id="secbtnServiceDesk" onclick="loadSection('ServiceDesk');" class="secbtn">
+							<i class="fa fa-ticket-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Service Desk
+						</li>
+						<?php } ?>
 						<li class="secbtn">
 							<h6 style="color:#d3d3d3" data-toggle="collapse" data-target="#navConfig"><i class="fa fa-cog" aria-hidden="true"></i>&nbsp;&nbsp;Configuration <i class="fa fa-angle-down" aria-hidden="true"></i></h6>
 						</li>
@@ -244,8 +271,7 @@
 				</nav>
 			<?php } ?>
 			<!-- Page Content -->
-			<div id="content" style="margin-top:15px;padding:30px;width:100%;">
-			
+			<div id="content" class="contaiener containerLeft" style="margin-top:15px;padding:10px;width:100%;">	
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top:20px;">
 						<div class="loadSection">
@@ -267,13 +293,17 @@
 				</div>
 			</div>
 		</div>
-		<?php require("includes/modals.php"); ?>
-		<div id="notifications"> </div>
-		<script>
-		setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
-			$("#notifications").load("includes/notifications.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other));	
-		}, 5000);
-		</script>
+		<?php 
+		if($_SESSION['userid']!=""){
+			require("includes/modals.php"); 
+		?>
+			<div id="notifications"> </div>
+			<script>
+			setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
+				$("#notifications").load("includes/notifications.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other));	
+			}, 5000);
+			</script>
+		<?php } ?>
 	</body>
 	<script src="assets/js/extra.js" ></script>
 	<script src="assets/js/toastr.js"></script>
@@ -310,7 +340,7 @@
 				location.reload(true);
 			}, 5000);
 		}else{
-			if(section!="Logout" && section!="Dashboard"  && section!="Assets"  && section!="Dashboard"  && section!="Profile"  && section!="AllUsers"  && section!="AllCompanies" && section!="Versions" && section!="Init"){
+			if(section!="ServiceDesk" && section!="NewTicket" && section!="Ticket" && section!="Logout" && section!="Dashboard"  && section!="Assets"  && section!="Dashboard"  && section!="Profile"  && section!="AllUsers"  && section!="AllCompanies" && section!="Versions" && section!="Init"){
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>We are getting the latest information for this asset</h5><br><h6>Instead of waiting, would you like to display the outdated assset data?</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;' type='submit'>View Older Asset Information <i class='fas fa-arrow-right'></i></button></form> <center></div></div>");
 			}else{
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
@@ -327,6 +357,11 @@
 			});
 			var item = '#secbtn'+section;
 			$(item).addClass('secActive');	
+		}
+		if(section == "NewTicket" || section == "Ticket" || section == "ServiceDesk" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "AllUsers" || section == "AllCompanies" || section == "Versions" || section == "Init"){
+			$('#sectionList').slideUp(400);
+		}else if($('#sectionList').css("display")=="none"){
+			$('#sectionList').slideDown(400);
 		}
 		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 			$('#sidebar').removeClass('active');

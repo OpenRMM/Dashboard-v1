@@ -29,7 +29,7 @@ $events = $json["EventLog_".$getEvent]['Response'];
 $error = $json["EventLog_".$getEvent."_error"];
 ?>
 <div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
-	<div style="padding:20px" class="col-md-12">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-bottom:20px;padding-top:0px;border-radius:6px;">
 		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Event Logs<br>
 		<span style="color:#000;font-size:12px">Last Update: <?php echo ago($json['EventLog_'.$getEvent.'_lastUpdate']);?></span>
 			<div style="float:right;">
@@ -68,7 +68,7 @@ $error = $json["EventLog_".$getEvent."_error"];
 	
 				</ul>
 			</form>
-		<div class="tab-content p30" style="padding:0px;margin-top:5px">
+		<div class="tab-contsent p3s0" style="padding:0px;margin-top:5px;overflow:auto">
 			<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 				<thead>
 					<tr style="border-bottom:2px solid #d3d3d3;">

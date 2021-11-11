@@ -18,7 +18,7 @@ if($_SESSION['userid']!=""){ ?>
 	
 }	
 ?>
-<div class="row" style="text-align:center;margin-bottom:10px;margin-top:10px;border-radius:3px;overflow:hidden;padding:5px;">
+<div class="row" style="margin-left:-70px;text-align:center;margin-bottom:10px;margin-top:10px;border-radius:3px;overflow:hidden;padding:5px;">
 	<div style="background:#35384e;margin-bottom:100px" class="sidenav col-xs-3 col-sm-3 col-md-3 col-lg-3">
 		<div class="login-main-text">
 			<h2>Remote Monitoring & Management Platform</h2>
@@ -37,12 +37,12 @@ if($_SESSION['userid']!=""){ ?>
 			<form method="post" action="/" class="form-signin">
 				<div style="text-align:left" class="form-label-group">
 					<label  for="inputEmail"><b>Username:</b></label>
-					<input maxlength="25" minlength="4" type="text" name="loginusername" id="inputEmail" class="form-control" placeholder="Username" required autofocus>
+					<input maxlength="25" minlength="4" type="text" value="<?php echo clean($_SESSION['loginusername']); ?>" name="loginusername" id="inputEmail" class="form-control" placeholder="Username" required <?php if($_SESSION['loginusername']==""){ echo"autofocus"; } ?>>
 				</div>
 				<br>
 				<div style="text-align:left" class="form-label-group">
 					<label for="inputPassword"><b>Password:</b></label>
-					<input maxlength="25" minlength="4" type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+					<input <?php if($_SESSION['loginusername']!=""){ echo"autofocus"; } ?> maxlength="25" minlength="4" type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
 				</div>					
 				<br>
 				<button style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#fff" class="btn btn-lg btn-block text-uppercase" type="submit">
@@ -71,4 +71,5 @@ if($_SESSION['userid']!=""){ ?>
 		}
 		$_SESSION['loginCount']++;
 	} 
+	$_SESSION['loginusername']="";
 ?>

@@ -8,10 +8,10 @@ if(!isset($_SESSION['userid'])){
 }
 //show recents on sidebar
 $recent = array_slice($_SESSION['recent'], -8, 8, true);
-echo "<h6>Recently Viewed</h6>";	
+echo "<h6>Recently Viewed Assets</h6>";	
 $count = 0;
 foreach(array_reverse($recent) as $item) {
-	$query = "SELECT ID, computer_type FROM computers where ID='".$item."'";
+	$query = "SELECT ID, computer_type, online FROM computers where ID='".$item."'";
 	$results = mysqli_query($db, $query);
 	$data = mysqli_fetch_assoc($results);
 	if($data['ID']==""){ continue; }
@@ -28,14 +28,21 @@ foreach(array_reverse($recent) as $item) {
 	}else{
 		$icon = "server";
 	} 
+	if($data['online']=="1"){
+		$color="color:green";
+		$title="Online";
+	}else{
+		$color="color:#DCDCDC";
+		$title="Offline";
+	}
 ?>
 	<a href="javascript:void(0)" onclick="loadSection('General', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo textOnNull(strtoupper($hostname),'Unavailable');?>');">
 		<li class="secbtn">
-			<i class="fas fa-<?php echo $icon; ?>"></i>&nbsp;&nbsp;&nbsp;
+			<i title="<?php echo $title; ?>" style="<?php echo $color; ?>" class="fas fa-<?php echo $icon; ?>"></i>&nbsp;&nbsp;&nbsp;
 			<?php echo textOnNull(strtoupper($hostname),"Unavailable");?>
 		</li>
 	</a>
 <?php } 
  if($count==0){ ?>
-	<li>No Recent Computers</li> 
+	<li>No recent computers</li> 
 <?php } ?>

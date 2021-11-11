@@ -166,13 +166,13 @@ if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
 </style>
 <div class="row py-2">
 	<?php if($size=="3"){ ?>
-	<div class="col-md-3 py-1">
-        <div style="padding:0px;cursor:zoom-in;overflow:hidden;height:58%" class="zoom2 card shadow-md">
+	<div style="z-index:9999;overflow:hidden;" class="col-md-3 py-1 marginTop">
+        <div style=";padding:0px;cursor:zoom-in;overflow:hidden;" class=" zoom2 card shadow-md">
             <img class="zoom" style="background-position: 50% 50%; background-size: 100vw" src="data:image/jpeg;base64,<?php echo base64_encode($computer['image']);?>"/>              
         </div>
     </div>
 	<?php } ?>
-    <div class="col-md-<?php echo $size; ?> py-1">
+    <div style="z-index:1" class=" col-md-<?php echo $size; ?> py-1">
         <div class="card">
             <div class="card-body">
                 <canvas data-centerval="<?php echo $cpuUsage; ?>%" id="chDonut2"></canvas>
@@ -211,8 +211,8 @@ if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
             </div>
         </div>
     </div>
- <?php } ?>
 </div>
+<?php } ?>
 <div <?php if($size=="3"){ echo 'style="margin-top:-10%"'; } ?> class="row">
 	<div class="col-xs-6 col-sm-6 col-md-3 col-lg-4" style="padding:5px;">
 		<div class="panel panel-default">
@@ -342,7 +342,7 @@ if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
 						?>
 							<li class="list-group-item" style="padding:6px"><b>Firewall Status: </b><br>
 								<center>
-									<span style="margin-left:40px">Public: <span style="padding-right:20px" class="<?php echo $color1; ?>"><?php echo $public; ?></span></span>
+									<span style="margin-left:20px">Public: <span style="padding-right:20px" class="<?php echo $color1; ?>"><?php echo $public; ?></span></span>
 									Private: <span style="padding-right:20px" class="<?php echo $color2; ?>"><?php echo $private; ?></span>
 									Domain: <span class="<?php echo $color3; ?>"><?php echo $domain; ?></span>
 								</center>
@@ -362,6 +362,7 @@ if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
 		  </div>
 		</div>
 	</div>
+	<?php  if($online=="1"){  ?>
 	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -381,6 +382,8 @@ if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
 		  </div>
 		</div>
 	</div>
+	<?php }
+	 ?>
 	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -443,6 +446,7 @@ if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
 		  	</div>
 		</div>
 	</div>
+	<?php  if($online=="1"){  ?>
 	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -470,6 +474,7 @@ if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
 		 	 </div>
 		</div>
 	</div>
+	<?php } ?>
 </div>
 <!-------------------------------MODALS------------------------------------>
 <div id="companyMoreInfo" class="modal fade" role="dialog">
@@ -513,49 +518,7 @@ if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
 	</div>
   </div>
 </div>
-<!-- onne way message -->
-<div id="agentMessageModal" class="modal fade" role="dialog">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">One-way Message to Agent: <?php echo $_SESSION['ComputerHostname']; ?></h5>
-			</div>
-			<form method="post" action="/">
-				<div class="modal-body">
-					<input type="hidden" name="type" value="assetOneWayMessage"/>
-					<input type="hidden" name="ID" value="<?php echo $computerID; ?>">
-					<div class="form-group">
-						<label>Title</label>
-						<input type="text" placeholder="What should the title be?" id="#inputTitle" class="form-control" name="alertTitle"/>
-					</div>
-					<div class="form-group">
-						<textarea id="inputMessage" placeholder="What is your message?" name="alertMessage" class="form-control"></textarea>
-					</div>
-					<center>
-						<label class="radio-inline">
-							<input type="radio" id="#inputType" class="form-control" name="alertType" value="alert" checked>Alert
-						</label>
-						<label class="radio-inline">
-							<input type="radio" id="#inputType" class="form-control" name="alertType" value="confirm" >Confirm
-						</label>
-						<label class="radio-inline">
-							<input type="radio" id="#inputType" class="form-control" name="alertType" value="password" >Password
-						</label>
-						<label class="radio-inline">
-							<input type="radio" id="#inputType" class="form-control" name="alertType" value="prompt" >Prompt
-						</label>
-					<center>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-sm btn-default"  data-dismiss="modal">Close</button>
-					<button type="button" onclick='sendMessage()' data-dismiss="modal" class="btn btn-primary btn-sm">
-						Send <i class="fas fa-paper-plane" ></i>
-					</button>
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
+
 <script>
 	function sendMessage(){  
 		var alertType = $("input[name='alertType']:checked").val();

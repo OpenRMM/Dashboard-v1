@@ -5,6 +5,7 @@ background:#eee;
     font-size: 35px !important;
 }
 
+.zoom2 {height:58%;}
 .mw50 {
     max-width: 50px !important;
 }
@@ -1602,6 +1603,9 @@ background:#eee;
     }
 }
 @media only screen and (max-width: 576px) {
+    .containerLeft {margin-left:50px;}
+    .zoom2 {height:30%;}
+    .marginTop{margin-bottom:-550px;}
     .header-navbar .navbar-wrapper .navbar-container .header-notification .show-notification,
     .header-navbar .navbar-wrapper .navbar-container .header-notification .profile-notification {
         min-width: 280px;
@@ -3643,7 +3647,7 @@ background:#eee;
     background-color: #2dcee3;
 }
 .bootstrap-tagsinput {
-    border: 1px solid #01a9ac;
+    border: 1px solid #ccc;
     line-height: 30px;
     border-radius: 2px;
 }
@@ -5140,6 +5144,9 @@ span.badge {
     .header-navbar .navbar-wrapper .navbar-container .nav-right li {
         padding: 0 5px;
     }
+    .containerLeft {margin-left:50px;}
+    .zoom2 {height:30%;}
+    .marginTop{margin-bottom:-550px;}
 }
 .header-navbar .navbar-wrapper .navbar-container .nav-left li .sidebar_toggle a,
 .header-navbar .navbar-wrapper .navbar-container .nav-right li .sidebar_toggle a {
@@ -19662,6 +19669,7 @@ tr:first-child > td > .fc-day-grid-event {
     bottom: 0;
     border-left: 1px solid #01a9ac;
 }
+
 .note-card .note-write:after {
     content: "";
     position: absolute;

@@ -20,10 +20,10 @@ $results = mysqli_query($db, $query);
 $user = mysqli_fetch_assoc($results);
 $username=$user['username'];
 
-$query = "SELECT ID,computer_type FROM computers where active='1' and computer_type='OpenRMM Server' and online='1' LIMIT 1";
+$query = "SELECT ID,computer_type FROM computers where active='1' and computer_type='OpenRMM Server' and online='1' ORDER BY ID DESC LIMIT 1";
 $results = mysqli_query($db, $query);
 $computer = mysqli_fetch_assoc($results);
-$resultCount = mysqli_num_rows($results);
+
 
 $json = getComputerData($computer['ID'], array("*"), "latest");
 function welcome(){
@@ -65,13 +65,13 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 							$query2 = "SELECT ID FROM computers where active='1'";
 							$results2= mysqli_query($db, $query2);
 							$resultCount = mysqli_num_rows($results2);							
-							$query = "SELECT * FROM computers WHERE active='1'ORDER BY ID DESC LIMIT 7";
+							$query = "SELECT * FROM computers WHERE active='1' ORDER BY ID DESC LIMIT 3";
 							//Fetch Results
 							$count = 0;
 							$results = mysqli_query($db, $query);
 							while($result = mysqli_fetch_assoc($results)){
 								$getWMI = array("*");
-								$json = getComputerData($result['ID'], $getWMI,"latest");
+								$data = getComputerData($result['ID'], $getWMI,"latest");
 								$count++;
 								$icons = array("desktop","server","laptop","tablet","allinone","other");
 								if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
@@ -89,13 +89,37 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 							<?php }else{?>
 								<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
 							<?php }?>
-							&nbsp;&nbsp;<?php echo textOnNull($json['General']['Response'][0]['csname'],"Unavailable"); ?>
+							&nbsp;&nbsp;<?php echo textOnNull($data['General']['Response'][0]['csname'],"Unavailable"); ?>
 						</li>
 						<?php }  ?>
 					</ul>
 				</div>
 			</div>	
-							
+			<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
+			<div class="card user-card2" style="heigsht:100%;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+				<div style="height:45px" class="panel-heading">
+					<h5 class="panel-title">Recent Tickets</h5>
+				</div>			
+				<div class="card-block text-center">
+					<ul class="list-group">	
+					<?php
+							//Get Total Count							
+							$query = "SELECT * FROM tickets WHERE active='1' ORDER BY ID DESC LIMIT 3";
+							//Fetch Results
+							$count = 0;
+							$results = mysqli_query($db, $query);
+							while($result = mysqli_fetch_assoc($results)){
+								$count++;	
+							?>
+						<li onclick="loadSection('Ticket', '<?php echo $result['ID']; ?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
+							<i class="fas fa-ticket-alt" style="color:#666;font-size:12px;" title="Ticket"></i>
+							&nbsp;&nbsp;<?php echo $result['title']; ?>
+						</li>
+						<?php }  ?>
+					</ul>
+				</div>
+			</div>
+			<?php } ?>				
 			<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
 				<div style="height:45px" class="panel-heading">
 					<h5 class="panel-title">Notes
@@ -211,11 +235,13 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 							<h6 style="display:inline;margin-left:25px;margin-top:3px;position:absolute">
 								<span style="color:#000" class="badge badge-<?php echo $serverStatus_color; ?>"><?php echo $serverStatus; ?></span>
 							</h6>
-							<form method="post" style="display:inline">
-								<input type="hidden" name="type" value="stopServer">
-								<button type="submit" title="Stop Server" style="float:right;margin-top:-10px" class="btn btn-sm btn-danger"><i class="fas fa-power-off"></i></button>
-								<!--<button title="Restart Server" style="float:right;margin-right:10px" class="btn btn-sm btn-warning"><i class="fas fa-sync"></i></button>-->
-							</form>	
+							<?php if($_SESSION['accountType']=="Admin"){ ?>
+								<form method="post" style="display:inline">
+									<input type="hidden" name="type" value="stopServer">
+									<button type="submit" title="Stop Server" style="float:right;margin-top:-10px" class="btn btn-sm btn-danger"><i class="fas fa-power-off"></i></button>
+									<!--<button title="Restart Server" style="float:right;margin-right:10px" class="btn btn-sm btn-warning"><i class="fas fa-sync"></i></button>-->
+								</form>	
+							<?php } ?>
 						</h5>
 						<hr>
 						<div class="row">
@@ -520,4 +546,3 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 	  }
 	});
 </script>
-<script src="js/tagsinput.js"></script>

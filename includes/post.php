@@ -129,7 +129,60 @@
 				userActivity($activity,$_SESSION['userid']);
 				header("location: /");
 			}
-    }
+    	}
+		//new ticket
+		if($_POST['type'] == "NewTicket"){
+			$ID = (int)$_POST['ID'];
+			$title = clean($_POST['title']);
+			$description = clean($_POST['description']);
+			$requester = clean($_POST['requester']);
+			$category = clean($_POST['category']);
+			$subcategory = clean($_POST['subcategory']);
+			$assigned = (int)clean($_POST['assigned']);
+			$priority = clean($_POST['priority']);
+			$due = clean($_POST['due']);
+			$cc = clean($_POST['cc']);
+			$asset = (int)clean($_POST['asset']);
+			$tags = clean($_POST['tags']);
+			$customer = (int)clean($_POST['company']);
+			
+			$query = "INSERT INTO tickets (tags,user_id, title, description, requester, category, subcategory, assignee, priority, due, cc, computer_id, company_id)
+			VALUES ('".$tags."','".$_SESSION['userid']."','".$title."','".$description."','".$requester."', '".$category."','".$subcategory."','".$assigned."','".$priority."','".$due."','".$cc."','".$asset."','".$customer."')";
+			$results = mysqli_query($db, $query);
+		//	echo mysqli_error($db); exit;
+			$ID = mysqli_insert_id($db);
+			$activity = "Technician Created Ticket: ".$ID;
+			userActivity($activity,$_SESSION['userid']);
+		
+			header("location: /");
+			
+    	}	
+		if($_POST['type']=="updateTicket"){
+			$ID = (int)$_POST['ID'];
+			$type = strtolower(clean($_POST['tkttype']));
+			$data = clean($_POST['tktdata']);
+		
+			$query = "UPDATE tickets SET ".$type."='".$data."' WHERE ID='".$ID."';";
+			$results = mysqli_query($db, $query);
+
+			header("location: /");
+		}
+		//ticket message
+		if(isset($_POST['messageType'])){
+			$ID = (int)$_POST['ID'];
+			$message = clean($_POST['message']);
+			$type = clean($_POST['messageType']);
+		
+
+			
+			$query = "INSERT INTO ticket_messages (ticket_id, user_id, message, type)
+			VALUES ('".$ID."','".$_SESSION['userid']."','".$message."','".$type."')";
+			$results = mysqli_query($db, $query);
+		//	echo mysqli_error($db); exit;
+			$activity = "Technician Sent Message On Ticket: ".$ID;
+			userActivity($activity,$_SESSION['userid']);		
+			header("location: /");				
+		}
 		//Add Computers To Company
 		if($_POST['type'] == "CompanyComputers"){
 			$computers = ($_POST['computers']);
@@ -151,6 +204,24 @@
 			}
 			header("location: /");
 		}
+		//general settings
+		if($_POST['type'] == "initGeneral"){
+			$msp = '"MSP": "'.clean($_POST['msp']).'"';
+			$history = '"Max_History_Days": '.clean($_POST['history']);
+			$serviceDesk = '"Service_Desk": "'.clean($_POST['serviceDesk']).'"';
+
+			$data = $siteSettingsJson;
+			$data = str_replace('"Max_History_Days": '.$siteSettings['Max_History_Days'],$history,$data);
+			$data = str_replace('"Service_Desk": "'.$siteSettings['Service_Desk'].'"',$serviceDesk,$data);
+			$data = str_replace('"MSP": "'.$siteSettings['theme']['MSP'].'"',$msp,$data);
+        
+
+            unlink("includes/config.php");
+            $_SESSION['excludedPages'] = explode(",",$excludedPages);
+            file_put_contents("includes/config.php","<?php \$siteSettingsJson = '".$data."';");
+
+			header("location: /");
+		}
 		//Add Edit/User
 		if($_POST['type'] == "AddEditUser"){
 			if(isset($_POST['username'])){
@@ -167,6 +238,7 @@
 				}
 				$username = clean($_POST['username']);
 				$name2 = clean($_POST['name']);
+				$color = clean($_POST['color']);
 				$name = crypto('encrypt', $name2, $salt);
 				$phone = clean($_POST['phone']);
 				$type = ucwords(clean($_POST['accountType']));
@@ -181,8 +253,8 @@
 				$type = crypto('encrypt', $type, $salt);
 				if($password == $password2){
 					if($user_ID == 0){
-						$query = "INSERT INTO users (account_type, phone, username, password, hex, nicename , email)
-								  VALUES ('".$type."','".$encryptedPhone."','".$username."', '".$encryptedPassword."','".$salt."','".$name."','".$email."')";
+						$query = "INSERT INTO users (user_color,account_type, phone, username, password, hex, nicename , email)
+								  VALUES ('".$color."','".$type."','".$encryptedPhone."','".$username."', '".$encryptedPassword."','".$salt."','".$name."','".$email."')";
                                  
 						$activity = "Technician Added Another Technician: ".ucwords($name);
 					//	userActivity($activity,$_SESSION['userid']);
@@ -192,7 +264,7 @@
 							$encryptedPassword = $result['password'];
 							//$encryptedPassword = crypto('encrypt', $encryptedPassword, $salt);
 						}
-						$query = "UPDATE users SET account_type='".$type."',phone='".$encryptedPhone."',username='".$username."',nicename='".$name."', email='".$email."', password='".$encryptedPassword."', hex='".$salt."' WHERE ID='".$user_ID."'";
+						$query = "UPDATE users SET user_color='".$color."',account_type='".$type."',phone='".$encryptedPhone."',username='".$username."',nicename='".$name."', email='".$email."', password='".$encryptedPassword."', hex='".$salt."' WHERE ID='".$user_ID."'";
 						$activity = "Technician Edited Another Technician: ".ucwords($name2);
 						userActivity($activity,$_SESSION['userid']);
 					}
@@ -201,7 +273,7 @@
 				}else{ //passwords do not match
 					echo '<script>window.onload = function() { pageAlert("User Settings", "Password change failed, passwords do not match.","Danger"); };</script>';
 				}
-				//header("location: /?page=AllUsers&danger=".base64_encode($error));
+				//header("location: /");
 			}
 		}
 		//delete note
@@ -541,8 +613,9 @@
 		}
 		//login
 		if(isset($_POST['loginusername'], $_POST['password'])){
-			$username = $_POST['loginusername'];
+			$username = clean($_POST['loginusername']);
 			$password = $_POST['password'];
+			$_SESSION['loginusername']="";
 			$query = "SELECT * FROM users where active='1' and username='".$username."'";
 			$results= mysqli_query($db, $query);
 			$count = mysqli_num_rows($results);
@@ -563,6 +636,8 @@
 					
 			    	header("location: /");
 				}else{
+					$_SESSION['loginusername'] = $username;
+
 					$_SESSION['loginMessage'] = "Incorrect Login Details";
 					header("location: /");
 				}

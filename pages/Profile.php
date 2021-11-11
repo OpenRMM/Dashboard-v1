@@ -11,7 +11,7 @@ if($_SESSION['userid']==""){
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
-$userID = (int)$_GET['ID'];
+$userID = (int)base64_decode($_GET['ID']);
 if($userID==0 or $userID==""){
 		$userID=$_SESSION['userid'];
 }
@@ -45,9 +45,13 @@ if($userID!=$_SESSION['userid']){
 		<div style="margin-top:-20px;background:#35384e;padding:20px;color:#fff;border-radius:6px;margin-bottom:30px" class="page-heading">
 			<div class="media clearfix">
 				<div class="media-left pr30">
-					<a style="color:#fff" href="javascript:void(0)">
-					<i style="font-size:100px;text-align:center" class="fa fa-user" ></i>
-					</a>
+					<?php
+						list($first, $last) = explode(' ', ucwords(crypto('decrypt',$user['nicename'],$user['hex'])), 2);
+						$name = strtoupper("$first[0]{$last[0]}"); 
+					?>
+					<div style="margin-top:20px;font-size:36px;margin-right:10px;float:left;display:inline;background:<?php echo $user['user_color']; ?>;color:#fff;padding:5px;border-radius:100px;text-align:center;width:100px;height:100px;padding-top:24px">
+						<?php echo $name; ?>
+					</div>
 				</div>                      
 				<div style="margin-top:20px" class="media-body va-m">
 					<h4 style="color:#fff" class="media-heading"><?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex'])); ?> 
@@ -74,7 +78,7 @@ if($userID!=$_SESSION['userid']){
 							</button>
 						<?php } ?>
 					<?php } ?>
-					<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
+					<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
 						<i class="fas fa-pencil-alt"></i> Edit
 					</a>
 					
@@ -82,7 +86,7 @@ if($userID!=$_SESSION['userid']){
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-8">
+			<div class="col-md-9">
 				<div class="tab-block">
 						<ul class="nav nav-tabs">
 							<li class="active">
@@ -131,7 +135,7 @@ if($userID!=$_SESSION['userid']){
 					</div>
 				</div>
 			</div>
-			<div class="col-md-4">  
+			<div class="col-md-3">  
 				<div class="panel">
 					<div class="panel-heading">
 					<span class="panel-title">Contact Information</span>
@@ -206,11 +210,12 @@ table
 </script>
 <script>
 //Edit User
-function editUser(ID, username, name, email, phone, type){
+function editUser(ID, username, name, email, phone, type,color){
 	$("#editUserModal_ID").val(ID);
 	$("#editUserModal_username").val(username);
 	$("#editUserModal_name").val(name);
 	$("#editUserModal_email").val(email);
+	$("#editUserModal_color").val(color);
 	$("#editUserModal_phone").val(phone);
 	$("#editUserModal_type").val(type.toLowerCase());
 	$("#editUserModal_type").text(type)

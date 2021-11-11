@@ -39,12 +39,14 @@
 					</button>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" data-toggle="modal" href="javascript:void(0)" data-target="#companyComputersModal2" >Assign Selected To <?php echo $msp; ?></a>
-						<hr>
-						<a class="dropdown-item bg-danger" data-toggle="modal" href="javascript:void(0)" data-target="#deleteAssets" >Delete Selected Assets</a>
+						<?php if($_SESSION['accountType']=="Admin"){ ?>
+							<hr>
+							<a class="dropdown-item bg-danger" data-toggle="modal" href="javascript:void(0)" data-target="#deleteAssets" >Delete Selected Assets</a>
+						<?php } ?>
 					</div>
 				</div>
 				<br>
-				<div style="overflow:hidden">
+				<div style="overflow-x:auto">
 				   <table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;width:100%" class="table table-hover  table-borderless">				
 							<thead>
 								<tr style="border-bottom:2px solid #d3d3d3;">
@@ -319,18 +321,9 @@ $('#dataTable').DataTable( {
 					exportOptions: {
 						columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
 					}
-				},{
-					extend: 'csvHtml5',
-					title: 'OpenRMM Asset List',
-					text: 'Export to CSV',
-					//Columns to export
-					exportOptions: {
-						columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-					}
 				}
 	]
 } );	
-
 </script>
 <script src="js/tagsinput.js"></script>
 <script type='text/javascript'>

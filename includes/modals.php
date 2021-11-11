@@ -35,16 +35,24 @@
 							<div class="modal-body">
 								<p>This will configure a new user and will allow them access to this platform.</p>
 								<div class="form-group">
+									<label for="editUserModal_type">Name</label>
 									<input placeholder="Name" type="text" name="name" class="form-control" id="editUserModal_name"/>
 								</div>
 								<div class="form-group">
+									<label for="editUserModal_type">Email</label>
 									<input placeholder="Email"  type="email" name="email" class="form-control" id="editUserModal_email"/>
 								</div>
 								<div class="form-group">
+									<label for="editUserModal_type">Username</label>
 									<input placeholder="Username"  required type="text" name="username" class="form-control" id="editUserModal_username"/>
 								</div>
 								<div class="form-group">
+									<label for="editUserModal_type">Phone</label>
 									<input placeholder="Phone (ex. 1234567890)" type="tel" pattern="[0-9]{10}" name="phone" class="form-control" id="editUserModal_phone"/>
+								</div>
+								<div class="form-group">
+									<label for="editUserModal_type">User Color</label>
+									<input placeholder="User Color" type="color" name="color" class="form-control" id="editUserModal_color"/>
 								</div>
 								<?php if($_SESSION['accountType']=="Admin"){  ?>
 									<div class="form-group">
@@ -62,7 +70,7 @@
 										<a style="border-radius:0px;padding:6px;pointer:cursor;color:#fff;" class="btn btn-md btn-success" onclick="generate();" >Generate</a>
 									</span>
 								</div>
-								<br>
+								
 								<div class="form-group">
 									<input placeholder="Confirm Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" type="password" id="editUserModal_password2" name="password2" class="form-control"/>
 								</div>
@@ -209,7 +217,7 @@
 								</b>
 							</h6>
 						</div>
-						<div class="modal-body" style="background-color:#000;color:#fff;font-family: 'Courier New', Courier, monospacepadding:20px;">
+						<div class="modal-body" style="background-color:#000;color:#fff;font-family: 'Courier New', Courier, monospace;padding:20px;">
 							<div style="max-height:400px;margin-bottom:10px;min-height:100px;overflow:auto;">
 								<div id="terminalResponse" style="color:#fff;font-family:font-family:monospace;">
 									Microsoft Windows [Version 10.0.<?php echo rand(100000,9999999);?>]<br/>
@@ -307,7 +315,7 @@
 								</tr>
 								<?php
 									$showLast = $siteSettings['Max_History_Days']; //Show last 31 days
-									$count = 0;
+									$count = 1;
 									while($count <= $showLast){ $count++;
 									$niceDate = date("l, F jS", strtotime("-".$count." day"));
 									$formatedDate = date("n/j/Y", strtotime("-".$count." day"));
@@ -543,6 +551,49 @@
 						</form>
 					</div>
 				</div>
-			</div>						
+			</div>	
+			<!-- one way message -->
+			<div id="agentMessageModal" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">One-way Message to Agent: <?php echo $_SESSION['ComputerHostname']; ?></h5>
+						</div>
+						<form method="post" action="/">
+							<div class="modal-body">
+								<input type="hidden" name="type" value="assetOneWayMessage"/>
+								<input type="hidden" name="ID" value="<?php echo $computerID; ?>">
+								<div class="form-group">
+									<label>Title</label>
+									<input type="text" placeholder="What should the title be?" id="#inputTitle" class="form-control" name="alertTitle"/>
+								</div>
+								<div class="form-group">
+									<textarea id="inputMessage" placeholder="What is your message?" name="alertMessage" class="form-control"></textarea>
+								</div>
+								<center>
+									<label class="radio-inline">
+										<input type="radio" id="#inputType" class="form-control" name="alertType" value="alert" checked>Alert
+									</label>
+									<label class="radio-inline">
+										<input type="radio" id="#inputType" class="form-control" name="alertType" value="confirm" >Confirm
+									</label>
+									<label class="radio-inline">
+										<input type="radio" id="#inputType" class="form-control" name="alertType" value="password" >Password
+									</label>
+									<label class="radio-inline">
+										<input type="radio" id="#inputType" class="form-control" name="alertType" value="prompt" >Prompt
+									</label>
+								<center>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-sm btn-default"  data-dismiss="modal">Close</button>
+								<button type="button" onclick='sendMessage()' data-dismiss="modal" class="btn btn-primary btn-sm">
+									Send <i class="fas fa-paper-plane" ></i>
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>					
 		<!---------------------------------End MODALS------------------------------------->	
 		<?php } ?>

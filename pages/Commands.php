@@ -59,55 +59,47 @@ $error = $json['Product_error'];
 			<div class="card">
 				<div class="card-body">
 					<?php if($online=="1"){ ?>
-						<div class="row" style="margin-top:10px;margin-left:50px;padding-bottom:10px">		
+						<div class="row" style="margin-top:10px;margin-left:30px;padding-bottom:10px">		
 							
-							<div class="col-md-3 secbtn" onclick='$("#terminaltxt").focus();' data-dismiss="modal" style="cursor:pointer;color:#fff;background:#333;height:80px;border-radius:5px;margin-right:10px" data-toggle="modal" data-target="#terminalModal">	
+							<div class="col-md-5 secbtn bg-dark" onclick='$("#terminaltxt").focus();' data-dismiss="modal" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" data-toggle="modal" data-target="#terminalModal">	
 								<center>
 									<i class="fas fa-terminal" style="margin-top:15px;"></i>
 									<br>Terminal
 								</center>
 							</div>
-							<div data-toggle="modal" data-target="#agentAlertModal" class="col-md-3 bg-success text-white secbtn" style="cursor:pointer;height:80px;border-radius:5px;margin-right:10px">
+							<div data-toggle="modal" data-target="#agentMessageModal" class="col-md-5 bg-success text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;">
 								<center>
 									<i class="fas fa-comment" style="margin-top:10px;"></i>
 									<br>One-way <br>Message	
 								</center>
 							</div>
-							<div  data-dismiss="modal" class="bg-primary col-md-3 text-white secbtn" style="cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
+							<div  data-dismiss="modal" class="bg-primary col-md-5 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
 								<center>
 									<i class="fas fa-desktop" style="margin-top:15px"></i><br> Enable RDP
 								<center>
 							</div>
-							<div  data-dismiss="modal" class="bg-warning col-md-3 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
+							<div  data-dismiss="modal" class="bg-warning col-md-5 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
 								<center>
 								<i class="fas fa-desktop" style="margin-top:15px"></i><br> Disable RDP
 								<center>
 							</div>
-							<div  data-dismiss="modal" class="bg-primary col-md-3 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick="sendCommand('Netsh Advfirewall set allprofiles state on', 'Enable Firewall');">
+							<div  data-dismiss="modal" class="bg-primary col-md-5 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick="sendCommand('Netsh Advfirewall set allprofiles state on', 'Enable Firewall');">
 								<center>
 								<i class="fas fa-fire-alt" style="margin-top:15px"></i><br> Enable Firewall
 								<center>
 							</div>
-							<div  data-dismiss="modal" class="bg-warning col-md-3 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('Netsh Advfirewall set allprofiles state off', 'Disable Firewall');">
+							<div  data-dismiss="modal" class="bg-warning col-md-5 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('Netsh Advfirewall set allprofiles state off', 'Disable Firewall');">
 								<center>	
 								<i class="fas fa-fire-alt" style="margin-top:15px"></i><br> Disable Firewall
 								<center>
 							</div>
-							<div  data-dismiss="modal" class="bg-secondary col-md-3 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('ipconfig /flushdns', 'Clear DNS Cache');">
+							<div  data-dismiss="modal" class="bg-secondary col-md-5 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('ipconfig /flushdns', 'Clear DNS Cache');">
 								<center>	
 									<i class="fas fa-network-wired" style="margin-top:15px"></i><br> Flush DNS
 								<center>
 							</div>
-							<div data-dismiss="modal" class="bg-secondary col-md-3 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('sfc /scannow', 'Repair File System');">
-								<center>
-									<i class="fas fa-file" style="margin-top:15px"></i><br> Repair System
-								<center>
-							</div>
-							<div data-dismiss="modal" class="bg-secondary col-md-3 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;">
-								<center>
-									<i class="fas fa-keyboard" style="margin-top:15px"></i><br> Send Keyboard
-								<center>
-							</div>
+
+						
 						</div>
 					
 						<?php }else{ ?>
@@ -117,8 +109,8 @@ $error = $json['Product_error'];
 				</div>
 			</div>
 		</div>	
-		<div class="col-md-8 " style="">
-			<div class="card">
+		<div class="col-md-8 " >
+			<div class="card" style="overflow-x:auto">
 				<div class="card-body">
 					<?php 
 						$query = "SELECT * FROM commands WHERE computer_id='".$computer['ID']."' ORDER BY ID DESC LIMIT 1000";
@@ -179,54 +171,6 @@ $error = $json['Product_error'];
 			</div>
 		</div>
 	</div>
-		
-<!-------modal----->
-<div id="agentAlertModal" class="modal fade" role="dialog">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">One-way Message to Agent: <?php echo $_SESSION['ComputerHostname']; ?></h5>
-			</div>
-			<form method="post" action="/">
-				<div class="modal-body">
-					<input type="hidden" name="type" value="assetOneWayMessage"/>
-					<input type="hidden" name="ID" value="<?php echo $computerID; ?>">
-					<div class="form-group">
-						<label><b>Title</b></label>
-						<input type="text" id="inputTitle" placeholder="What should the title be?" class="form-control" name="alertTitle"/>
-					</div>
-					<div class="form-group">
-						<label><b>Message</b></label>
-						<textarea id="inputMessage" placeholder="What is your message?" name="alertMessage" class="form-control"></textarea>
-					</div>
-					<label><b>Alert Type</b></label>
-					<center>
-						<div class="form-group">							
-							<label class="radio-inline">
-								<input type="radio" id="#inputType" class="form-control" name="alertType" value="alert" checked>Alert
-							</label>
-							<label class="radio-inline">
-								<input type="radio" id="#inputType" class="form-control" name="alertType" value="confirm" >Confirm
-							</label>
-							<label class="radio-inline">
-								<input type="radio" id="#inputType" class="form-control" name="alertType" value="password" >Password
-							</label>
-							<label class="radio-inline">
-								<input type="radio" id="#inputType" class="form-control" name="alertType" value="prompt" >Prompt
-							</label>
-						</div>
-					<center>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
-					<button type="button" onclick='sendMessage($("#inputMessage").val());' data-dismiss="modal" class="btn btn-primary btn-sm">
-						Send <i class="fas fa-paper-plane" ></i>
-					</button>
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
 <script>
 	function sendMessage(){  
 		var alertType = $("input[name='alertType']:checked").val();

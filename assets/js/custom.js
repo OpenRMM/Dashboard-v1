@@ -257,3 +257,31 @@ function assignAssets(){
         
     });
 }
+
+function updateTicket(type,data2,ticket,id=0){  
+	if(type=="category"){
+		$('#category').html(data2);
+	}
+	if(type=="priority"){
+		$('#priority').html(data2);
+	}
+	if(type=="status"){
+		$('#status').html(data2);
+        $('#status' + ticket).html(data2);
+	}
+	if(type=="assignee"){
+		$('#assignee').html(data2);
+		data2 = id;
+	}
+	
+	$.post("/", {
+	type: "updateTicket",
+	ID: ticket,
+	tkttype: type,
+	tktdata: data2
+	},
+	function(data, status){
+		toastr.options.progressBar = true;
+		toastr.success("Your Changes Have Been Saved");
+	});  
+}
