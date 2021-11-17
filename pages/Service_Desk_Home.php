@@ -1,37 +1,28 @@
 <?php 
-	if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-	}
-	$get = clean(base64_decode($_GET['other']));
-	$query = "SELECT username,nicename FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
-	$results = mysqli_query($db, $query);
-	$user = mysqli_fetch_assoc($results);
-	$username=$user['username'];
+$computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page']);
 
-	//counts
-	$query = "SELECT ID FROM tickets where status<>'Closed' and active='1'";
-	$ticketCount = mysqli_num_rows(mysqli_query($db, $query));
-	$query = "SELECT ID FROM tickets where active='1'";
-	$ticketCountAll = mysqli_num_rows(mysqli_query($db, $query));
-	$query = "SELECT ID FROM tickets where status='Closed' and active='1'";
-	$ticketCount2 = mysqli_num_rows(mysqli_query($db, $query));
-	$query = "SELECT ID FROM tickets where assignee='".$_SESSION['userid']."' and active='1'";
-	$ticketCount3 = mysqli_num_rows(mysqli_query($db, $query));
-	$query = "SELECT ID FROM tickets where assignee='0' and active='1'";
-	$ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
+$get = clean(base64_decode($_GET['other']));
+$query = "SELECT username,nicename FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+$results = mysqli_query($db, $query);
+$user = mysqli_fetch_assoc($results);
+$username=$user['username'];
+
+//counts
+$query = "SELECT ID FROM tickets where status<>'Closed' and active='1'";
+$ticketCount = mysqli_num_rows(mysqli_query($db, $query));
+$query = "SELECT ID FROM tickets where active='1'";
+$ticketCountAll = mysqli_num_rows(mysqli_query($db, $query));
+$query = "SELECT ID FROM tickets where status='Closed' and active='1'";
+$ticketCount2 = mysqli_num_rows(mysqli_query($db, $query));
+$query = "SELECT ID FROM tickets where assignee='".$_SESSION['userid']."' and active='1'";
+$ticketCount3 = mysqli_num_rows(mysqli_query($db, $query));
+$query = "SELECT ID FROM tickets where assignee='0' and active='1'";
+$ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 ?>
 	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 		<h5 style="color:#0c5460">Service Desk <span style="color:#707070;font-size:16px">(<?php echo $ticketCount; ?> Open Tickets)</span>
-			<button title="Refresh" onclick="loadSection('Service_Desk');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+			<button title="Refresh" onclick="loadSection('Service_Desk_Home');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-sync"></i>
 			</button>	
 		</h5>
@@ -44,25 +35,25 @@
 						</h5>
 					</div>
 					<ul class="list-group">
-						<li onclick="loadSection('Service_Desk','','','all');" style="cursor:pointer;<?php if($get=="all" or $get==""){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+						<li onclick="loadSection('Service_Desk_Home','','','all');" style="cursor:pointer;<?php if($get=="all" or $get==""){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
 							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
 								<?php echo $ticketCountAll; ?>
 							</div>
 							All Tickets
 						</li>
-						<li onclick="loadSection('Service_Desk','','','me');" style="cursor:pointer;<?php if($get=="me"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+						<li onclick="loadSection('Service_Desk_Home','','','me');" style="cursor:pointer;<?php if($get=="me"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
 							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
 								<?php echo $ticketCount3; ?>
 							</div>
 							Assigned to me
 						</li>
-						<li onclick="loadSection('Service_Desk','','','noone');" style="cursor:pointer;<?php if($get=="noone"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+						<li onclick="loadSection('Service_Desk_Home','','','noone');" style="cursor:pointer;<?php if($get=="noone"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
 							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
 								<?php echo $ticketCount4; ?>
 							</div>
 							Unassigned
 						</li>
-						<li onclick="loadSection('Service_Desk','','','closed');" style="cursor:pointer;<?php if($get=="closed"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+						<li onclick="loadSection('Service_Desk_Home','','','closed');" style="cursor:pointer;<?php if($get=="closed"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
 							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
 								<?php echo $ticketCount2; ?>
 							</div>
@@ -123,7 +114,7 @@
 							<a class="dropdown-item bg-danger" data-toggle="modal" href="javascript:void(0)" data-target="#deleteTickets" >Delete Selected Tickets</a>
 						<?php } ?>
 					</div>
-					<button title="Create New Ticket" onclick="loadSection('NewTicket');" type="button" class="btn btn-sm" style="float:right;background:#0c5460;color:#d1ecf1">
+					<button title="Create New Ticket" onclick="loadSection('Service_Desk_New_Ticket');" type="button" class="btn btn-sm" style="float:right;background:#0c5460;color:#d1ecf1">
 						<i class="fas fa-plus"></i>
 					</button>
 				</div>
@@ -150,7 +141,7 @@
 							</thead>
 							<tbody>
 								<?php
-									if($get=="all"){$where="";}
+									if($get=="all" or $get==""){$where="";}
 									if($get=="me"){$where=" and assignee='".$_SESSION['userid']."'";}
 									if($get=="closed"){$where=" and status='closed'";}
 									if($get=="noone"){$where=" and assignee='0'";}
@@ -176,7 +167,7 @@
 											<input class="form-check-input checkbox" type="checkbox" value="<?php echo $result['ID']; ?>" name="computers[]" id="flexCheckDefault">	
 										</div>
 									</td>
-									<td onclick="loadSection('Ticket', '<?php echo $result['ID']; ?>');" id="row<?php echo $result['ID']; ?>">
+									<td onclick="loadSection('Service_Desk_Ticket', '<?php echo $result['ID']; ?>');" id="row<?php echo $result['ID']; ?>">
 										TKT<?php echo $result['ID']; ?>
 									</td>
 									<td style="min-width:80px">
@@ -196,7 +187,7 @@
 											</div>
 										</div>
 									</td>
-									<td onclick="loadSection('Ticket', '<?php echo $result['ID']; ?>');" id="row<?php echo $result['ID']; ?>" style="cursor:pointer" onclick="$('input[type=search]').val(''); $('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
+									<td onclick="loadSection('Service_Desk_Ticket', '<?php echo $result['ID']; ?>');" id="row<?php echo $result['ID']; ?>" style="cursor:pointer" onclick="$('input[type=search]').val(''); $('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
 										<a style="font-size:14px;color:#17a2b8" href="javascript:void(0)"><?php echo $result['title']; ?></a>
 										<p style="font-size:12px">
 											<?php 

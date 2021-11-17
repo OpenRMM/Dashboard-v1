@@ -1,32 +1,24 @@
 <?php 
-	if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-	}
-	$query = "SELECT username,nicename FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
-	$results = mysqli_query($db, $query);
-	$user = mysqli_fetch_assoc($results);
-	$username=$user['username'];
+$computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page']);
 
-	//assets
-	$query = "SELECT ID FROM computers where active='1' and online='1'";
-	$assets1 = mysqli_num_rows(mysqli_query($db, $query));
-	$query = "SELECT ID FROM computers where active='1' and online='0'";
-	$assets2 = mysqli_num_rows(mysqli_query($db, $query));
+$query = "SELECT username,nicename FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+$results = mysqli_query($db, $query);
+$user = mysqli_fetch_assoc($results);
+$username=$user['username'];
+
+//assets
+$query = "SELECT ID FROM computers where active='1' and online='1'";
+$assets1 = mysqli_num_rows(mysqli_query($db, $query));
+$query = "SELECT ID FROM computers where active='1' and online='0'";
+$assets2 = mysqli_num_rows(mysqli_query($db, $query));
 ?>
 	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 		<h5 style="color:#0c5460">Asset List 
 			<button title="Refresh" onclick="loadSection('Assets');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-sync"></i>
 			</button>	
+			<p>View, Sort, Assign or Export all of the assets. </p>
 		</h5>
 	</div>	
 	<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
@@ -105,7 +97,7 @@
 										<span title="ID"><?php echo $result['ID']; ?></span>
 										<span style="display:none" ><?php if($result['online']=="1"){echo"Online";}else{echo "Offline";} ?></span>
 									</td>
-									<td onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
+									<td onclick="loadSection('Asset_General', '<?php echo $result['ID']; ?>');">
 										<?php
 											$icons = array("desktop","server","laptop","tablet","allinone","other");
 											if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
@@ -150,10 +142,10 @@
 										</div>
 									</td>
 									<td>
-										<button onclick="loadSection('Edit', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
+										<button onclick="loadSection('Edit_Asset', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
 											<i class="fas fa-pencil-alt"></i>
 										</button>
-										<button title="View Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('General', '<?php echo $result['ID']; ?>');" class="form-inline btn btn-warning btn-sm">
+										<button title="View Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('Asset_General', '<?php echo $result['ID']; ?>');" class="form-inline btn btn-warning btn-sm">
 											<i class="fas fa-eye"></i>
 										</button>
 									</td>

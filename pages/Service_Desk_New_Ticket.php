@@ -1,26 +1,17 @@
 <?php 
-	if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-	}
-	$query = "SELECT username,nicename,hex FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
-	$results = mysqli_query($db, $query);
-	$user = mysqli_fetch_assoc($results);
-	$username=$user['username'];
+$computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page']);
 
-	//assets
-	$query = "SELECT ID FROM computers where active='1' and online='1'";
-	$assets1 = mysqli_num_rows(mysqli_query($db, $query));
-	$query = "SELECT ID FROM computers where active='1' and online='0'";
-	$assets2 = mysqli_num_rows(mysqli_query($db, $query));
+$query = "SELECT username,nicename,hex FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+$results = mysqli_query($db, $query);
+$user = mysqli_fetch_assoc($results);
+$username=$user['username'];
+
+//assets
+$query = "SELECT ID FROM computers where active='1' and online='1'";
+$assets1 = mysqli_num_rows(mysqli_query($db, $query));
+$query = "SELECT ID FROM computers where active='1' and online='0'";
+$assets2 = mysqli_num_rows(mysqli_query($db, $query));
 ?>
 <style>
 	.grid-divider {
@@ -183,7 +174,7 @@
 	</div>	
 	<div style="bottom:0;position:fixed;float:right;width:100%;background:#fff;border-top:1px solid #d3d3d3d3;padding:10px;margin-left:-15px;z-index:1;overflow:hidden">
 		<center>
-			<button onclick="loadSection('ServiceDesk');" style="width:100px" class="btn btn-light btn-sm">Cancel</button>
+			<button onclick="loadSection('Service_Desk_Home');" style="width:100px" class="btn btn-light btn-sm">Cancel</button>
 			<button type="submit" style="width:100px" class="btn btn-primary btn-sm">Create</button>
 		</center>
 	</div>	

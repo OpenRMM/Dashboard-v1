@@ -29,9 +29,9 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
 ?>
 <?php if($_SESSION['accountType']=="Admin"){ ?>
 <h5 style="color:#333;?>">OpenRMM Initialization <?php if(!$show){ echo "<span style='color:green'>(completed)</span>"; }?>
-	<button title="Refresh" onclick="loadSection('Init');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:#333;">
+	<button title="Refresh" onclick="loadSection('Init');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 		<i class="fas fa-sync"></i>
-    <button>
+    </button>
     <?php if(!$show){ ?>
         <center>
             <button class="btn btn-light btn-sm" id="initButton"onclick="showInit();" style="margin-top:5px;min-width:10%;text-align:center">Show more &nbsp;<i class="fas fa-chevron-down"></i></button>
@@ -53,7 +53,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
     <form method="POST">
 	<div class="row">
         <?php $host = explode(":",$siteSettings['MySQL']['host']); ?>
-		<div class="col-sm-3 mx-auto">	
+		<div class="col-sm-4 mx-auto">	
              <div class="panel panel-default">
                 <div class="panel-heading">
 					<h4 class="panel-title">
@@ -84,7 +84,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                 </div>		
 		    </div>
         </div>       
-        <div class="col-sm-3 mx-auto">	
+        <div class="col-sm-4 mx-auto">	
              <div class="panel panel-default">
                 <div class="panel-heading">
 					<h4 class="panel-title">
@@ -110,55 +110,8 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                     </div>                 
                 </div>		
 		    </div>
-        </div>
-        <div class="col-sm-3 mx-auto">
-			<div class="panel panel-default">
-			   <div class="panel-heading">
-					<h4 class="panel-title">
-						Color Scheme
-					</h4>
-				</div>
-				<div class="panel-body">
-                        <div class="list-group" style="padding-bottom:10%">
-                            <input type="radio" name="theme" value="theme1" checked id="Radio1" required />
-                            <label class="list-group-item" for="Radio1">
-                                <span style="text-align:left">Default</span>
-                                <center>
-                                    <p style="background:#f0f0f0;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#fe6f33;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#0ac282;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#eb3422;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#01a9ac;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                </center>
-                            </label>
-                            <input type="radio" name="theme" value="theme2" id="Radio2" required />
-                            <label class="list-group-item" for="Radio2"> 
-                                <span style="text-align:left">Bland</span> 
-                                <center>
-                                    <p style="background:#fff;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#333;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#a4b0bd;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#696969;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#595f69;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                </center>
-                            </label>
-
-                            <input type="radio" name="theme" value="theme3" required id="Radio3" />
-                            <label class="list-group-item" for="Radio3">
-                                <span style="text-align:left">Greenly</span>
-                                <center>
-                                    <p style="background:#f3f3f3;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#0ac282;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#a4b0bd;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#333;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                    <p style="background:#595f69;border-radius:5px;display:inline;border:1px solid #d3d3d3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                </center>
-                            </label>
-                        </div>
-				</div>
-			</div>
-        </div>       
-        <div class="col-sm-3 mx-auto">
+        </div>      
+        <div class="col-sm-4 mx-auto">
 			<div class="panel panel-default">
 			   <div class="panel-heading">
 					<h4 class="panel-title">

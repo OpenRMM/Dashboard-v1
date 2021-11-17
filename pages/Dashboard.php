@@ -1,18 +1,7 @@
 
 <?php 
-ini_set('display_errors', '0');
-if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("../");
-		}, 3000);		
-	</script>
-<?php 
-	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-}	
+$computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page']);
 
 $query = "SELECT username,nicename,user_color FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 $results = mysqli_query($db, $query);
@@ -27,15 +16,6 @@ $computerID= $computer['ID'];
 $getWMI = array("general","logical_disk","bios","processor","agent","battery","windows_activation","antivirus","firewall");
 $json = getComputerData($computer['ID'], $getWMI);
 //print_r(getComputerData($computer['ID'], array("*")));
-function welcome(){
-	if(date("H") < 12){
-		return "Good Morning";
-	}elseif(date("H") > 11 && date("H") < 18){
-		return "Good Afternoon";
-	}elseif(date("H") > 17){
-		return "Good Evening";
-	}
-}
 if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['server_status']==""){
 	$serverStatus="Offline";
 	$serverStatus_color="danger";
@@ -45,149 +25,149 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 } 
 
 ?>	
-	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
-		<h5 style="color:#0c5460;">Dashboard
-			<button title="Refresh" onclick="loadSection('Dashboard');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
-				<i class="fas fa-sync"></i>
-			</button>
-			<br>
-			<span style="font-size:14px;color:#999"><?php echo welcome().", ".$user['username']."!"; ?></span>
-		</h5>
-	</div>	
-	<div class="row" style="margin-bottom:10px;margin-top:20px;border-radius:3px;overflow:hidden;padding:0px;">
-		<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 " style="padding-left:20px;">
-			<div class="card user-card2" style="heigsht:100%;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
-				<div style="height:45px" class="panel-heading">
-					<h5 class="panel-title">New Assets</h5>
-				</div>			
-				<div class="card-block text-center">
-					<ul class="list-group">	
-						<?php
-							//Get Total Count					
-							$query = "SELECT * FROM computers WHERE active='1' ORDER BY ID DESC LIMIT 3";
-							//Fetch Results
-							$count = 0;
-							$results = mysqli_query($db, $query);
-							$resultCount = mysqli_num_rows($results);
-							while($result = mysqli_fetch_assoc($results)){
-								$getWMI = array("general");
-								$data = getComputerData($result['ID'], $getWMI);
-								$count++;
-								$icons = array("desktop","server","laptop","tablet","allinone","other");
-								if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
-									$icon = strtolower(str_replace("-","",$result['computer_type']));
-									if($icon=="allinone")$icon="tv";
-									if($icon=="tablet")$icon="tablet-alt";
-									if($icon=="other")$icon="microchip";
-								}else{
-									$icon = "server";
-								}  
-						?>
-						<li onclick="loadSection('General', '<?php echo $result['ID']; ?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
-							<?php if($result['online']=="0") {?>
-								<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
-							<?php }else{?>
-								<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
-							<?php }?>
-							&nbsp;&nbsp;<?php echo textOnNull($data['general']['Response'][0]['csname'],"Unavailable"); ?>
-						</li>
-						<?php }  ?>
-					</ul>
-				</div>
-			</div>	
-			<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
-			<div class="card user-card2" style="heigsht:100%;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
-				<div style="height:45px" class="panel-heading">
-					<h5 class="panel-title">Recent Tickets</h5>
-				</div>			
-				<div class="card-block text-center">
-					<ul class="list-group">	
+<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
+	<h5 style="color:#0c5460;">Dashboard
+		<button title="Refresh" onclick="loadSection('Dashboard');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+			<i class="fas fa-sync"></i>
+		</button>
+		<br>
+		<span style="font-size:14px;color:#999"><?php echo welcome().", ".$user['username']."!"; ?></span>
+	</h5>
+</div>	
+<div class="row" style="margin-bottom:10px;margin-top:20px;border-radius:3px;overflow:hidden;padding:0px;">
+	<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 " style="padding-left:20px;">
+		<div class="card user-card2" style="heigsht:100%;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+			<div style="height:45px" class="panel-heading">
+				<h5 class="panel-title">New Assets</h5>
+			</div>			
+			<div class="card-block text-center">
+				<ul class="list-group">	
 					<?php
-							//Get Total Count							
-							$query = "SELECT * FROM tickets WHERE active='1' ORDER BY ID DESC LIMIT 3";
-							//Fetch Results
-							$count = 0;
-							$results = mysqli_query($db, $query);
-							while($result = mysqli_fetch_assoc($results)){
-								$count++;	
-							?>
-						<li onclick="loadSection('Ticket', '<?php echo $result['ID']; ?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
-							<i class="fas fa-ticket-alt" style="color:#666;font-size:12px;" title="Ticket"></i>
-							&nbsp;&nbsp;<?php echo $result['title']; ?>
-						</li>
-						<?php }  ?>
-					</ul>
-				</div>
-			</div>
-			<?php } ?>				
-			<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
-				<div style="height:45px" class="panel-heading">
-					<h5 class="panel-title">Notes
-						<button id="delNote" type="button" onclick="deleteNote('1');" class="delNote btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
-					</h5>
-				</div>
-				<div id="TextBoxesGroup" class="card-block">
-					<?php
-					$count = 0;
-					$query = "SELECT ID, notes,hex FROM users where ID='".$_SESSION['userid']."'";
-					$results = mysqli_query($db, $query);
-					$data = mysqli_fetch_assoc($results);
-					$notes = crypto('decrypt', $data['notes'],$data['hex']);
-					if($notes!=""){
-						$allnotes = explode("|",$notes);
-						foreach(array_reverse($allnotes) as $note) {
-							if($note==""){ continue; }
-							if($count>=5){ break; }
-							$note = explode("^",$note);
+						//Get Total Count					
+						$query = "SELECT * FROM computers WHERE active='1' ORDER BY ID DESC LIMIT 3";
+						//Fetch Results
+						$count = 0;
+						$results = mysqli_query($db, $query);
+						$resultCount = mysqli_num_rows($results);
+						while($result = mysqli_fetch_assoc($results)){
+							$getWMI = array("general");
+							$data = getComputerData($result['ID'], $getWMI);
 							$count++;
+							$icons = array("desktop","server","laptop","tablet","allinone","other");
+							if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
+								$icon = strtolower(str_replace("-","",$result['computer_type']));
+								if($icon=="allinone")$icon="tv";
+								if($icon=="tablet")$icon="tablet-alt";
+								if($icon=="other")$icon="microchip";
+							}else{
+								$icon = "server";
+							}  
 					?>
-						<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
-							<li  style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
-								<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
-								<?php echo ucwords($note[0]);?>
-							</li>
-						</a>
-					<?php } } ?>
-					<?php if($count==0){ ?>
-						<li class="no_noteList list-group-item">No Notes</li>
-					<?php }else{ ?>
-					<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
-					<?php } ?>
-				</div>
-				<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" data-toggle="modal" data-target="#noteModal" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
+					<li onclick="loadSection('Asset_General', '<?php echo $result['ID']; ?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
+						<?php if($result['online']=="0") {?>
+							<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
+						<?php }else{?>
+							<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
+						<?php }?>
+						&nbsp;&nbsp;<?php echo textOnNull($data['general']['Response'][0]['csname'],"Unavailable"); ?>
+					</li>
+					<?php }  ?>
+				</ul>
 			</div>
-		</div>			
-		<?php 	
-		//Get stats
-			//companies
-			$query = "SELECT ID, name,hex FROM companies where active='1'";
-			$companyArray= "";
-			$companys = mysqli_query($db, $query);
-			while($result = mysqli_fetch_assoc($companys)){
-				$companyArray.= "'".crypto('decrypt', $result['name'],$result['hex'])."',";
-				$query = "SELECT ID FROM computers where active='1' and company_id='".$result['ID']."'";
-				$count = mysqli_num_rows(mysqli_query($db, $query));
-				$companyTotal.=$count.",";
-			}
-			$companyArray= rtrim($companyArray,',');
-			$companyTotal=rtrim($companyTotal,',');
-			if($count==0){
-				$companyTotal="0,100";
-				$companyArray= "'Assigned','Not Assigned'";
-			}
-			//users
-			$query = "SELECT ID FROM users where active='1'";
-			$users1 = mysqli_num_rows(mysqli_query($db, $query));
-			$query = "SELECT ID FROM users where active='0'";
-			$users2 = mysqli_num_rows(mysqli_query($db, $query));
+		</div>	
+		<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
+		<div class="card user-card2" style="heigsht:100%;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+			<div style="height:45px" class="panel-heading">
+				<h5 class="panel-title">Recent Tickets</h5>
+			</div>			
+			<div class="card-block text-center">
+				<ul class="list-group">	
+				<?php
+						//Get Total Count							
+						$query = "SELECT * FROM tickets WHERE active='1' ORDER BY ID DESC LIMIT 3";
+						//Fetch Results
+						$count = 0;
+						$results = mysqli_query($db, $query);
+						while($result = mysqli_fetch_assoc($results)){
+							$count++;	
+						?>
+					<li onclick="loadSection('Ticket', '<?php echo $result['ID']; ?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
+						<i class="fas fa-ticket-alt" style="color:#666;font-size:12px;" title="Ticket"></i>
+						&nbsp;&nbsp;<?php echo $result['title']; ?>
+					</li>
+					<?php }  ?>
+				</ul>
+			</div>
+		</div>
+		<?php } ?>				
+		<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+			<div style="height:45px" class="panel-heading">
+				<h5 class="panel-title">Notes
+					<button id="delNote" type="button" onclick="deleteNote('1');" class="delNote btn btn-danger btn-sm" style="float:right;padding:5px;"><i class="fas fa-trash"></i>&nbsp;&nbsp;&nbsp;Clear All</button>
+				</h5>
+			</div>
+			<div id="TextBoxesGroup" class="card-block">
+				<?php
+				$count = 0;
+				$query = "SELECT ID, notes,hex FROM users where ID='".$_SESSION['userid']."'";
+				$results = mysqli_query($db, $query);
+				$data = mysqli_fetch_assoc($results);
+				$notes = crypto('decrypt', $data['notes'],$data['hex']);
+				if($notes!=""){
+					$allnotes = explode("|",$notes);
+					foreach(array_reverse($allnotes) as $note) {
+						if($note==""){ continue; }
+						if($count>=5){ break; }
+						$note = explode("^",$note);
+						$count++;
+				?>
+					<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+						<li  style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
+							<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
+							<?php echo ucwords($note[0]);?>
+						</li>
+					</a>
+				<?php } } ?>
+				<?php if($count==0){ ?>
+					<li class="no_noteList list-group-item">No Notes</li>
+				<?php }else{ ?>
+				<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
+				<?php } ?>
+			</div>
+			<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" data-toggle="modal" data-target="#noteModal" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
+		</div>
+	</div>			
+	<?php 	
+	//Get stats
+		//companies
+		$query = "SELECT ID, name,hex FROM companies where active='1'";
+		$companyArray= "";
+		$companys = mysqli_query($db, $query);
+		while($result = mysqli_fetch_assoc($companys)){
+			$companyArray.= "'".crypto('decrypt', $result['name'],$result['hex'])."',";
+			$query = "SELECT ID FROM computers where active='1' and company_id='".$result['ID']."'";
+			$count = mysqli_num_rows(mysqli_query($db, $query));
+			$companyTotal.=$count.",";
+		}
+		$companyArray= rtrim($companyArray,',');
+		$companyTotal=rtrim($companyTotal,',');
+		if($count==0){
+			$companyTotal="0,100";
+			$companyArray= "'Assigned','Not Assigned'";
+		}
+		//users
+		$query = "SELECT ID FROM users where active='1'";
+		$users1 = mysqli_num_rows(mysqli_query($db, $query));
+		$query = "SELECT ID FROM users where active='0'";
+		$users2 = mysqli_num_rows(mysqli_query($db, $query));
 
-			//assets
-			$query = "SELECT ID FROM computers where active='1' and online='1'";
-			$assets1 = mysqli_num_rows(mysqli_query($db, $query));
-			$query = "SELECT ID FROM computers where active='1' and online='0'";
-			$assets2 = mysqli_num_rows(mysqli_query($db, $query));
-		
-		?>
+		//assets
+		$query = "SELECT ID FROM computers where active='1' and online='1'";
+		$assets1 = mysqli_num_rows(mysqli_query($db, $query));
+		$query = "SELECT ID FROM computers where active='1' and online='0'";
+		$assets2 = mysqli_num_rows(mysqli_query($db, $query));
+	
+	?>
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mh-40" style="heidght:260px;">
 			<div class="row" style="heighst:200px">
 				<div class="col-md-4 py-1">
@@ -236,11 +216,8 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 								<span style="color:#000" class="badge badge-<?php echo $serverStatus_color; ?>"><?php echo $serverStatus; ?></span>
 							</h6>
 							<?php if($_SESSION['accountType']=="Admin"){ ?>
-								<form method="post" style="display:inline">
-									<input type="hidden" name="type" value="stopServer">
-									<button type="submit" title="Stop Server" style="float:right;margin-top:-10px" class="btn btn-sm btn-danger"><i class="fas fa-power-off"></i></button>
-									<!--<button title="Restart Server" style="float:right;margin-right:10px" class="btn btn-sm btn-warning"><i class="fas fa-sync"></i></button>-->
-								</form>	
+									<button onclick="serverStatus('stop');" title="Stop Server" style="float:right;margin-top:-10px" class="btn btn-sm btn-danger"><i class="fas fa-power-off"></i></button>
+									<button onclick="serverStatus('restart');" title="Restart Server" style="float:right;margin-right:10px;margin-top:-10px" class="btn btn-sm btn-warning"><i class="fas fa-redo"></i></button>
 							<?php } ?>
 						</h5>
 						<br>
@@ -354,12 +331,12 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 								<div class="panel panel-default">
 									<div class="panel-heading">
 										<h5 style="padding:7px" class="panel-title">
-											Error Log
+											Server Error Log
 										</h5>
 									</div>
 									<div class="panel-body" style="height:285px;">
-										<div class="row">
-											<table id="datsaTable" style="width:125%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
+										<div class="rosw">
+											<table id="dataTable" style="width:125%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
 												<thead>
 													<tr style="border-bottom:2px solid #d3d3d3;">
 														<th scope="col">Details</th>

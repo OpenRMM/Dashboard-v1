@@ -1,17 +1,8 @@
 <?php 
-if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-}
 $computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page'],"null");
+
+
 $json = getComputerData($computerID, array("general"));
 $query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
@@ -21,10 +12,11 @@ $online = $results['online'];
 	<div style="padding:20px;overflow:auto" class="col-md-12">
 		<h5 style="color:#0c5460">Alert Configuration
 			<div style="float:right;">
-				<button title="Refresh" onclick="loadSection('Alerts');" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+				<button title="Refresh" onclick="loadSection('Asset_Alerts');" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-sync"></i>
 				</button>
-			</div><br>
+			</div>
+			<br>
 			<p>Configure Notifications For This Asset.</p>
 		</h5>
 		<hr>
@@ -97,8 +89,7 @@ $online = $results['online'];
 					case "Last Update":
 						$currentValue=$json['Ping'];
 					break;
-					  
-				
+
 					default:
 					 $currentValue="unknown";
 				  }

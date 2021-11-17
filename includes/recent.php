@@ -1,5 +1,5 @@
 <?php
-include("../includes/db.php");
+include("db.php");
 $computerID = (int)base64_decode($_GET['ID']);
 
 if(!isset($_SESSION['userid'])){
@@ -35,9 +35,17 @@ foreach(array_reverse($recent) as $item) {
 		$color="color:#DCDCDC";
 		$title="Offline";
 	}
+	if($data['ID']==$_SESSION['computerID'] and $_SESSION['computerID']!=""){
+		$style="secActive";
+		if($data['online']=="0"){
+			$color="color:#333";
+		}
+	}else{
+		$style="secbtn";
+	}
 ?>
-	<a href="javascript:void(0)" onclick="loadSection('General', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo textOnNull(strtoupper($hostname),'Unavailable');?>');">
-		<li class="secbtn">
+	<a href="javascript:void(0)" onclick="loadSection('Asset_General', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo textOnNull(strtoupper($hostname),'Unavailable');?>');">
+		<li class="<?php echo $style; ?>">
 			<i title="<?php echo $title; ?>" style="<?php echo $color; ?>" class="fas fa-<?php echo $icon; ?>"></i>&nbsp;&nbsp;&nbsp;
 			<?php echo textOnNull(strtoupper($hostname),"Unavailable");?>
 		</li>
@@ -60,7 +68,7 @@ foreach(array_reverse($recent2) as $item2) {
 	if($data2['ID']==""){ continue; }
 	$count2++;
 ?>
-	<a href="javascript:void(0)" onclick="loadSection('Ticket', '<?php echo $data2['ID']; ?>');">
+	<a href="javascript:void(0)" onclick="loadSection('Service_Desk_Ticket', '<?php echo $data2['ID']; ?>');">
 		<li class="secbtn">
 			<i title="<?php echo $data2['title']; ?>" style="color:#fff" class="fas fa-ticket-alt"></i>&nbsp;&nbsp;&nbsp;
 			<?php echo textOnNull($data2['title'],"Unavailable");?>

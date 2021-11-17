@@ -1,30 +1,7 @@
 <?php 
-if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-}
 $computerID = (int)base64_decode($_GET['ID']);
-if($computerID<0){ 
-	?>
-	<br>
-	<center>
-		<h4>No Asset Selected</h4>
-		<p>
-			To Select An Asset, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
-		</p>
-	</center>
-	<hr>
-	<?php
-	exit;
-}
+checkAccess($_SESSION['page'],$computerID);
+
 $query = "SELECT online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $computer = mysqli_fetch_assoc($results);
@@ -39,7 +16,7 @@ $hostname = $json['general']['Response'][0]['csname'];
 		<div class="card" style="padding:20px;margin-bottom:-1px">					
 			<h5 style="color:#0c5460">Commands
 				<div style="float:right;">
-					<button href="javascript:void(0)" title="Refresh" onclick="loadSection('Commands');" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+					<button href="javascript:void(0)" title="Refresh" onclick="loadSection('Asset_Commands');" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 						<i class="fas fa-sync"></i>
 					</button>
 				</div>
@@ -146,13 +123,15 @@ $hostname = $json['general']['Response'][0]['csname'];
 								} ?>
 						<td title="<?php echo $timer; ?>" ><b><?php echo $command['status'];?></b></td>
 						<td>
-							<form action="/" method="POST">
+							<?php if(($_SESSION['accountType']=="Standard" and $command['status']=="Sent") or $_SESSION['accountType']=="Admin" ){ ?>
+								<form action="/" method="POST">
 									<input type="hidden" name="type" value="DeleteCommand"/>
 									<input type="hidden" name="ID" value="<?php echo $command['ID']; ?>"/>
 										<button type="submit" title="Delete Command" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm">
 											<i class="fas fa-trash" ></i>
 										</button>
 								</form>
+								<?php } ?>
 							</td>
 						</tr>
 					<?php }?>

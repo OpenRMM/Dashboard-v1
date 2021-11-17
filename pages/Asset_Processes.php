@@ -1,42 +1,15 @@
 <?php 
-	if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-	}
-	$computerID = (int)base64_decode($_GET['ID']);
-	if($computerID<0){ 
-		?>
-		<br>
-		<center>
-			<h4>No Asset Selected</h4>
-			<p>
-				To Select An Asset, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
-			</p>
-		</center>
-		<hr>
-		<?php
-		exit;
-	}
+$computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page'],$computerID);
 
-	//get update
-	//MQTTpublish($computerID."/Commands/getProcesses","true",getSalt(20));
+$json = getComputerData($computerID, array("processes"));
 
-	$json = getComputerData($computerID, array("processes"));
+$query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$results = mysqli_fetch_assoc(mysqli_query($db, $query));
+$online = $results['online'];
 
-	$query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
-	$results = mysqli_fetch_assoc(mysqli_query($db, $query));
-	$online = $results['online'];
-
-	$procs = $json['processes']['Response'];
-	$error = $json['processes_error'];
+$procs = $json['processes']['Response'];
+$error = $json['processes_error'];
 ?>
 <div style="padding:20px;margin-bottom:-1px;" class="card">
 	<div class="row" style="padding:15px;">
@@ -50,12 +23,12 @@
 		</div>
 		<div style="text-align:right;" class="col-md-2">
 			<div class="btn-group">
-				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Processes');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Asset_Processes');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
 				<button style="background:#0c5460;color:#d1ecf1" type="button" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-sort-down"></i>
 				</button>
 				<div class="dropdown-menu">
-					<a onclick="loadSection('Processes','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+					<a onclick="force='true'; loadSection('Asset_Processes','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 				</div>
 			</div>
 			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','Processes','null');">
@@ -68,7 +41,11 @@
 	<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
 		&nbsp;&nbsp;&nbsp;This Agent is offline		
 	</div>
-<?php }?>
+<?php 
+}else{
+	echo"<br>";
+}
+?>
 <div style="overflow-x:auto;padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;">
 	<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 		<thead>

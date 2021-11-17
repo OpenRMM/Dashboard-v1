@@ -1,88 +1,60 @@
 <?php 
-ini_set('display_errors', '0');
-	if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-	}
-	$computerID = (int)base64_decode($_GET['ID']);
-	if($computerID<0){ 
-		?>
-		<br>
-		<center>
-			<h4>No Asset Selected</h4>
-			<p>
-				To Select An Asset, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
-			</p>
-		</center>
-		<hr>
-		<?php
-		exit;
-	}
+$computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page'],$computerID);
 	
-	$query = "SELECT online, ID, company_id, name, phone, email,hex, computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT online, ID, company_id, name, phone, email,hex, computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$results = mysqli_query($db, $query);
+$result = mysqli_fetch_assoc($results);
+
+$query = "SELECT name, phone, email,address,comments,date_added,hex FROM companies WHERE ID='".$result['company_id']."' LIMIT 1";
+$companies = mysqli_query($db, $query);
+$company = mysqli_fetch_assoc($companies);
+
+$getWMI = array("general","screenshot","logical_disk","bios","processor","agent","battery","windows_activation","agent_log","firewall");
+$json = getComputerData($computerID, $getWMI);
+//print_r($json['agent_log']);
+$hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
+
+//Update Recents
+if (in_array( $computerID, $_SESSION['recent'])){
+	if (($key = array_search($computerID, $_SESSION['recent'])) !== false) {
+		unset($_SESSION['recent'][$key]);
+	}
+	array_push($_SESSION['recent'], $result['ID']);
+	$query = "UPDATE users SET recents='".implode(",", $_SESSION['recent'])."' WHERE ID=".$_SESSION['userid'].";";
 	$results = mysqli_query($db, $query);
-	$result = mysqli_fetch_assoc($results);
-
-	$query = "SELECT name, phone, email,address,comments,date_added,hex FROM companies WHERE ID='".$result['company_id']."' LIMIT 1";
-	$companies = mysqli_query($db, $query);
-	$company = mysqli_fetch_assoc($companies);
-
-	$getWMI = array("general","screenshot","logical_disk","bios","processor","agent","battery","windows_activation","agent_log","firewall");
-	$json = getComputerData($computerID, $getWMI);
-
-	$hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
-	if($computerID!="0" and $result['ID']!=""){
-		//Update Recents
-		if (in_array( $computerID, $_SESSION['recent'])){
-			if (($key = array_search($computerID, $_SESSION['recent'])) !== false) {
-				unset($_SESSION['recent'][$key]);
-			}
-			array_push($_SESSION['recent'], $result['ID']);
-			$query = "UPDATE users SET recents='".implode(",", $_SESSION['recent'])."' WHERE ID=".$_SESSION['userid'].";";
-			$results = mysqli_query($db, $query);
-		}else{
-			if(end($_SESSION['recent']) != $computerID){
-				array_push($_SESSION['recent'], $result['ID']);
-				$query = "UPDATE users SET recents='".implode(",", $_SESSION['recent'])."' WHERE ID=".$_SESSION['userid'].";";
-				$results = mysqli_query($db, $query);
-			}
-		}
+}else{
+	if(end($_SESSION['recent']) != $computerID){
+		array_push($_SESSION['recent'], $result['ID']);
+		$query = "UPDATE users SET recents='".implode(",", $_SESSION['recent'])."' WHERE ID=".$_SESSION['userid'].";";
+		$results = mysqli_query($db, $query);
 	}
-	if($result['ID']==""){ exit("<br><center><h4>No Computer Selected</h4><p>To Select A Computer, Please Visit The <a class='text-dark' href='/'><u>Dashboard</u></a></p></center><hr>"); }
-	
-	$online = $result['online'];
-	
-	//ex. 10-3=7
-	$used2 = $json['general']['Response'][0]['Totalphysicalmemory'] - $json['general']['Response'][0]['FreePhysicalMemory'];
+}
+$online = $result['online'];
 
-	//ex. 10-7=3
-	$free2 = $json['general']['Response'][0]['Totalphysicalmemory'] - $used2;
-	if($used2==0){
-		$used2=100;
-	}
-	$total2 = $json['general']['Response'][0]['Totalphysicalmemory'];
-	$average2 = (int)round(($used2 / $total2) * 100,2);
-	if($average2==0){
-		$average2=100;
-	}
-	//echo $json['general']['Response'][0]['Totalphysicalmemory']."....".$free2."....".$used2."....".$average2;
+//ex. 10-3=7
+$used2 = $json['general']['Response'][0]['Totalphysicalmemory'] - $json['general']['Response'][0]['FreePhysicalMemory'];
+
+//ex. 10-7=3
+$free2 = $json['general']['Response'][0]['Totalphysicalmemory'] - $used2;
+if($used2==0){
+	$used2=100;
+}
+$total2 = $json['general']['Response'][0]['Totalphysicalmemory'];
+$average2 = (int)round(($used2 / $total2) * 100,2);
+if($average2==0){
+	$average2=100;
+}
+//echo $json['general']['Response'][0]['Totalphysicalmemory']."....".$free2."....".$used2."....".$average2;
 
 
-	$cpuUsage= $json['processor']['Response'][0]['LoadPercentage'];
-	if($cpuUsage==""){
-		$cpuUsage="100";
-	}
-	//log user activity
-	$activity = "Technician Viewed Asset: ".textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
-	userActivity($activity,$_SESSION['userid']);		
+$cpuUsage= $json['processor']['Response'][0]['LoadPercentage'];
+if($cpuUsage==""){
+	$cpuUsage="100";
+}
+//log user activity
+$activity = "Technician Viewed Asset: ".textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
+userActivity($activity,$_SESSION['userid']);		
 ?>
 <?php //print_r($json['Screenshot']); ?>
 <style>
@@ -98,24 +70,24 @@ ini_set('display_errors', '0');
 				</button>
 			<?php } ?>
 		</center>
-		<div style="float:right;display:inline">			
+		<div style="float:right;display:inline">
 			<div class="btn-group">
-				<button onclick="loadSection('General');" style="background:#0c5460;color:#fff" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+				<button onclick="loadSection('Asset_General');" style="background:#0c5460;color:#fff" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
 				<button type="button" style="background:#0c5460;color:#fff" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-sort-down"></i>
 				</button>
 				<div class="dropdown-menu">
-					<a onclick="loadSection('General','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+					<a onclick="force='true'; loadSection('Asset_General','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 				</div>
 			</div>
 			<?php if($_SESSION['accountType']=="Admin"){  ?>
-				<a href="javascript:void(0)" title="Agent Configuration" onclick="loadSection('Agent_Settings');" class="btn btn-sm" style="margin:3px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+				<button title="Agent Configuration" onclick="loadSection('Asset_Agent_Settings');" class="btn btn-sm" style="margin:3px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-cogs"></i>
-				</a>
+				</button>
 			<?php } ?>
-			<a href="javascript:void(0)" title="Edit Asset Details" class="btn btn-sm" onclick="loadSection('Edit');" style="margin:3px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
-				<i class="fas fa-pencil-alt"></i>
-			</a>
+			<button title="Edit Asset Details" class="btn btn-sm" onclick="loadSection('Asset_Edit');" style="margin:3px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+			<i class="fas fa-pencil-alt"></i>
+			</button>
 		</div>
 		<br>
 		<p>	
@@ -124,24 +96,24 @@ ini_set('display_errors', '0');
 	</h5>
 </div>
 <?php
-$agentVersion = $json['agent']['Response'][0]['Version'];
-if($agentVersion < $siteSettings['general']['agent_latest_version']){ ?>
+$agentVersion = preg_replace('/\D/', '', $json['agent']['Response'][0]['Version']);
+if($agentVersion != preg_replace('/\D/', '', $siteSettings['general']['agent_latest_version']) and $online=="1"){ ?>
 	<?php if($agentVersion==""){?>
 		<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
 			<div class="spinner-border spinner-border-sm" style="font-size:12px" role="status">
 				<span class="sr-only">Loading...</span>
 			</div>
-			&nbsp;&nbsp;&nbsp;The agent is trying to get initial data for this asset		
+			&nbsp;&nbsp;&nbsp;The agent is trying to get initial data for this asset.		
 		</div>
 	<?php }else{ ?>
-		<div onclick='sendCommand("C:\\\\OpenRMM\\\\Update.bat", "Update Agent", 2);' style="border-radius: 0px 0px 4px 4px;cursor:pointer" class="alert alert-danger" role="alert">
-			<i class="fas fa-cloud-upload-alt"></i>&nbsp;&nbsp;&nbsp;An Update is available for this asset			
+		<div onclick="updateAgent('<?php echo $computerID; ?>')" style="border-radius: 0px 0px 4px 4px;cursor:pointer" class="alert alert-danger" role="alert">
+			<i class="fas fa-cloud-upload-alt"></i>&nbsp;&nbsp;&nbsp;An update is available for this asset. <span style="color:#333;font-weigh:bold"><u>Update to v.<?php echo $siteSettings['general']['agent_latest_version']; ?></u></span>			
 		</div>
 	<?php } ?>
 <?php }
 if($online=="0"){ ?>
 	<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
-		&nbsp;&nbsp;&nbsp;This Agent is offline		
+		<i class="fas fa-ban"></i>&nbsp;&nbsp;&nbsp;This agent is offline.		
 	</div>
 <?php }?>
 
@@ -395,7 +367,7 @@ if($online=="0"){ ?>
 				</h5>
 			</div>
 			<div class="panel-body" style="height:285px;overflow:hidden">
-				<div class="row">
+				<div class="rows">
 					<table id="dataTable" style="width:125%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
 						<thead>
 							<tr style="border-bottom:2px solid #d3d3d3;">
@@ -514,7 +486,7 @@ if($online=="0"){ ?>
 		</span>
 	  </div>
 	  <div class="modal-footer">
-		<button type="button" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#fff;" data-dismiss="modal">Close</button>
+		<button type="button" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#0c5460;" data-dismiss="modal">Close</button>
 	  </div>
 	</div>
   </div>

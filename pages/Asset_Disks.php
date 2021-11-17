@@ -1,36 +1,11 @@
 <?php 
-if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-}
 $computerID = (int)base64_decode($_GET['ID']);
-if($computerID<0){ 
-	?>
-	<br>
-	<center>
-		<h4>No Asset Selected</h4>
-		<p>
-			To Select An Asset, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
-		</p>
-	</center>
-	<hr>
-	<?php
-	exit;
-}
+checkAccess($_SESSION['page'],$computerID);
+
 $query = "SELECT ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $result = mysqli_fetch_assoc($results);
 
-//get update
-//MQTTpublish($computerID."/Commands/getLogicalDisk","true",getSalt(20));
 $json = getComputerData($result['ID'], array("mapped_logical_disk", "logical_disk","shared_drives"));
 
 $query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
@@ -40,9 +15,6 @@ $online = $results['online'];
 $mappedDisks = $json['mapped_logical_disk']['Response'];
 $disks = $json['logical_disk']['Response'];
 $shared = $json['shared_drives']['Response'];
-
-$error1 = $json['mapped_logical_disk_error'];
-$error2 = $json['logical_disk_error'];
 ?>
 <div style="padding:20px;margin-bottom:-1px;" class="card">
 	<div class="row" style="padding:15px;">
@@ -53,12 +25,12 @@ $error2 = $json['logical_disk_error'];
 		</div>
 		<div class="col-md-2" style="text-align:right;">
 			<div class="btn-group">
-				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Disks');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Asset_Disks');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
 				<button type="button" style="background:#0c5460;color:#d1ecf1" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-sort-down"></i>
 				</button>
 				<div class="dropdown-menu">
-					<a onclick="loadSection('Disks','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+					<a onclick="force='true'; loadSection('Asset_Disks','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 				</div>
 			</div>
 		</div>	

@@ -11,6 +11,20 @@
             // echo '<script>window.onload = function() { pageAlert("User Settings", "User settings changed successfully.","Success"); };</script>';
             header("location: /");
         }
+		//stop server
+		if($_POST['type'] == "serverStatus"){
+			if($_SESSION['accountType']=="Admin"){
+				$ID = (int)$_POST['ID'];
+				$action = clean($_POST['action']);
+				if($action=="stop"){
+					MQTTpublish("OpenRMMServer/Commands/State","stop",getSalt(20),false);
+				}
+				if($action=="restart"){
+					MQTTpublish("OpenRMMServer/Commands/State","restart",getSalt(20),false);
+				}
+			}
+			header("location: /");
+		}
         //init.php
         if($_POST['type'] == "init"){
             $mysqlHost = clean($_POST['mysqlHost']);
@@ -18,28 +32,6 @@
             $mysqlUsername = clean($_POST['mysqlUsername']);
             $mysqlPassword = clean($_POST['mysqlPassword']);
             $mysqlDatabase = clean($_POST['mysqlDatabase']);
-            $theme = clean($_POST['theme']);
-            if($theme=="theme1"){
-                    $color1="#f0f0f0";
-                    $color2="#fe6f33";
-                    $color3="#0ac282";
-                    $color4="#eb3422";
-                    $color5="#01a9ac";
-            }
-            if($theme=="theme2"){
-                $color1="#fff";
-                $color2="#333";
-                $color3="#a4b0bd";
-                $color4="#696969";
-                $color5="#595f69";
-            }
-            if($theme=="theme3"){
-                $color1="#f3f3f3";
-                $color2="#0ac282";
-                $color3="#a4b0bd";
-                $color4="#333";
-                $color5="#595f69";
-            }
 			$rand = random_bytes(32); // chiper = AES-256-CBC ? 32 : 16
 			$agentSecret='base64:'.base64_encode($rand);
 			$mqttHost = clean($_POST['mqttHost']);
@@ -64,12 +56,6 @@
             $data = str_replace("[mqttPort]",$mqttPort,$data);
             $data = str_replace("[mqttUsername]",$mqttUsername,$data);
             $data = str_replace("[mqttPassword]",$mqttPassword,$data);
-
-            $data = str_replace("[color1]",$color1,$data);
-            $data = str_replace("[color2]",$color2,$data);
-            $data = str_replace("[color3]",$color3,$data);
-            $data = str_replace("[color4]",$color4,$data);
-            $data = str_replace("[color5]",$color5,$data);
 
 			$data = str_replace("[secret]",$encryptionSecret,$data);
 			$data = str_replace("[salt]",$encryptionSalt,$data);
@@ -589,6 +575,11 @@
 			$configFile = "includes/config.php";
 			file_put_contents($configFile, $settings);
 			exit();
+		}
+		if($_POST['type'] == "updateAgent"){
+			$ID = (int)$_POST['ID'];
+			$message='{"data": {"update_url":"https://raw.githubusercontent.com/OpenRMM/Agent/main/Source/OpenRMM.py"}}';
+			MQTTpublish($ID."/Commands/set_update_agent",$message,getSalt(20),false);
 		}
 		//login
 		if(isset($_POST['loginusername'], $_POST['password'])){

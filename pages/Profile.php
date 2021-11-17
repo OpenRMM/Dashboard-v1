@@ -1,16 +1,7 @@
 <?php 
-if($_SESSION['userid']==""){ 
-?>
-<script>		
-	toastr.error('Session timed out.');
-	setTimeout(function(){
-		setCookie("section", btoa("Login"), 365);	
-		window.location.replace("..//");
-	}, 3000);		
-</script>
-<?php 
-	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-}
+$computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page']);
+
 $userID = (int)base64_decode($_GET['ID']);
 if($userID==0 or $userID==""){
 		$userID=$_SESSION['userid'];
@@ -54,7 +45,9 @@ if($userID!=$_SESSION['userid']){
 				</div>                      
 				<div style="margin-top:20px" class="media-body va-m">
 					<h4 style="color:#fff" class="media-heading"><?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex'])); ?> 
-					<span style="float:right;font-size:12px">User ID: <?php echo $user['ID']; ?></span>
+					<?php if($_SESSION['accountType']=="Admin"){ ?>
+						<span style="float:right;font-size:12px">User ID: <?php echo $user['ID']; ?></span>
+					<?php } ?>
 					<span style="font-size:14px" ><small>Last Seen: <?php if($user['last_login']==""){ echo "never"; }else{ echo ago(date('m/d/Y H:i:s',$user['last_login'])); } ?></small></span>
 					</h4>
 					<p style="color:#dedede">View All Assets Added By This User. You Can Also Access Contact Information And Recent Activity. </p>

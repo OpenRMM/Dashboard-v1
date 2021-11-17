@@ -10,7 +10,7 @@ $('#terminaltxt').keypress(function(event){
     var keycode = (event.keyCode ? event.keyCode : event.which);
     if(keycode == '13'){
         $("#terminalResponse").html("Sending Command: "+$('#terminaltxt').val()+" <i class='fas fa-spinner fa-spin'></i>");
-        $.post("pages/terminal.php", {
+        $.post("includes/terminal.php", {
             id: computerID,
             command: $('#terminaltxt').val()
         },
@@ -211,6 +211,33 @@ function deleteActivity(){
         toastr.options.progressBar = true;
         toastr.info('The Activity has been cleared for this user');
         $("#activity").slideUp("slow");
+    });
+}
+
+function serverStatus(action){ 
+    $.post("index.php", {
+        type: "serverStatus",
+        action: action
+    },
+    function(data, status){
+        toastr.options.progressBar = true;
+        if(action=="stop"){
+            toastr.error('The request to stop the server has been sent.');
+        }
+        if(action=="restart"){
+            toastr.warning('The request to restart the server has been sent.');
+        }
+    });
+}
+
+function updateAgent(ID2){ 
+    $.post("index.php", {
+       type: "updateAgent",
+       ID: ID2
+    },
+    function(data, status){
+        toastr.options.progressBar = true;
+        toastr.info('The update request has been sent. Please allow up to 5 minutes for the update to complete.');
     });
 }
 

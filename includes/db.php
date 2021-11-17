@@ -4,9 +4,9 @@
 	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "New_Ticket,Ticket,Service_Desk,Init,Login,Logout,Alerts,Commands,Dashboard,Profile,Edit,All_Users,All_Companies,Assets,Versions"; 
-	$allPages = "New_Ticket,Ticket,Service_Desk,Agent_Settings,File_Manager,Init,Alerts,All_Companies,All_Users,Assets,Attached_Devices,Commands,Dashboard,Disks,Edit,Event_Logs,General,Login,Logout,Memory,Network,Optional_Features,Printers,Processes,Profile,Programs,Services,Users,Versions";
-	$adminPages = "Agent_Settings,All_Users.php,All_Companies.php";
+	$excludedPages = "Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Init,Login,Logout,Asset_Alerts,Asset_Commands,Dashboard,Profile,Asset_Edit,Technicians,Customers,Assets,Versions"; 
+	$allPages = "Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Asset_Agent_Settings,Asset_File_Manager,Init,Asset_Alerts,Customers,Technicians,Assets,Asset_Attached_Devices,Asset_Commands,Dashboard,Asset_Disks,Asset_Edit,Asset_Event_Logs,Asset_General,Login,Logout,Asset_Memory,Asset_Network,Asset_Optional_Features,Asset_Printers,Asset_Processes,Profile,Asset_Programs,Asset_Services,Asset_Users,Versions";
+	$adminPages = "Asset_Agent_Settings,Technicians,Customers";
 	$taskCondtion_max = 5;
 ###########################################################################################################################################
 ######################################################## DEV ONLY DO NOT PASS #############################################################
@@ -22,7 +22,7 @@
 		$_SESSION['excludedPages'] = explode(",", $excludedPages);
 	}
 	$allPages = explode(",", $allPages);
-	$adminPages = explode(",", $adminPages);
+	$allAdminPages = explode(",", $adminPages);
 	if(!in_array(basename($_SERVER['SCRIPT_NAME']), $serverPages)){
 		ini_set('session.gc_maxlifetime', 3600);
 		ini_set('display_errors', 0);
@@ -31,7 +31,6 @@
 		$secure = false;
 		$httponly = true;
 		if (ini_set('session.use_only_cookies', 1) === FALSE) {
-			//header("Location: ../error.php?err=");
 			exit("Could not initiate a safe session (ini_set)");
 		}
 		$cookieParams = session_get_cookie_params();
@@ -86,12 +85,36 @@
             }
         }
     }
+
 	//redirect standard users
-	if($_SESSION['accountType']=="Standard" or $_SESSION['accountType']==""){
-		if(in_array(basename($_SERVER['SCRIPT_NAME']), $allAdminPages)){
-			$activity="Technician Attempted Access To: ".basename($_SERVER['SCRIPT_NAME']);
-			userActivity($activity);
-			exit("<center><br><br><h4>Sorry, you do not have permission to access this page!</h4><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' class='btn btn-warning btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");	
+	function checkAccess($page,$computerID="null"){
+		GLOBAL $allAdminPages,$siteSettings, $db;
+		if($_SESSION['userid']==""){ 
+			return exit("
+			<script>		
+				toastr.error('Session timed out.');
+				setTimeout(function(){
+					setCookie('section', btoa('Login'), 365);	
+					window.location.replace('..//');
+				}, 3000);		
+			</script>
+			<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
+		}else{
+			if($_SESSION['accountType']=="Standard" or $_SESSION['accountType']==""){
+				if(in_array($page, $allAdminPages)){
+					$activity="Technician Attempted Access To: ".$page;
+					userActivity($activity,$_SESSION['userid']);
+					return exit("<center><br><br><h5>Sorry, you do not have permission to access this page!</h5><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' style='background:#0c5460;color:".$siteSettings['theme']['Color 2']."' class='btn btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");					
+				}
+			}
+			if(!in_array($page,$_SESSION['excludedPages'])){ 
+				$query = "SELECT ID FROM computers WHERE ID='".$computerID."'";
+				$results =  mysqli_num_rows(mysqli_query($db, $query));
+				if($results<1){
+					return exit("
+					<br><center><h4>No Asset Selected</h4><p>To Select An Asset, Please Visit The <a class='text-dark' style='cursor:pointer' onclick='loadSection(\'Assets\');'><u>Assets page</u></a></p></center><hr>");
+				}
+			}
 		}
 	}
 	if($siteSettings['theme']['MSP']=="true"){
@@ -203,7 +226,7 @@
 			$alertDelimited .= implode("|", $newAlert).",";
 		}*/
 		//Disk Space
-		$disks = $json['WMI_LogicalDisk'];
+		$disks = $json['logical_disk'];
 		foreach($disks as $disk){
 			$freeSpace = $disk['FreeSpace'];
 			$size = $disk['Size'];
@@ -235,11 +258,11 @@
 		}
 		
 		//Check agent version
-		if($siteSettings['general']['agent_latest_version'] != $json['Agent']['Response'][0]['Version']){
+		if(preg_replace('/\D/', '', $siteSettings['general']['agent_latest_version']) != preg_replace('/\D/', '', $json['agent']['Response'][0]['Version'])){
 			$alertName = "agent_version";
 			$newAlert = array(
 				"subject"=>"Agent Version",
-				"message"=>"Agent is out of date. Currently installed: ".textOnNull($json['Agent']['Response'][0]['Version'], "Unknown"),
+				"message"=>"Agent is out of date. Currently installed: ".textOnNull($json['agent']['Response'][0]['Version'], "Unknown"),
 				"type"=>"warning",
 				"hostname"=>$hostname,
 				"alertName"=>$alertName
@@ -384,6 +407,16 @@
 		return array("json"=>$ret, "error"=>$err);
 	}  
 	
+	function welcome(){
+		if(date("H") < 12){
+			return "Good Morning";
+		}elseif(date("H") > 11 && date("H") < 18){
+			return "Good Afternoon";
+		}elseif(date("H") > 17){
+			return "Good Evening";
+		}
+	}
+
 	//log user activity	
 	function userActivity($activity2,$IDuser){
 		global $db, $siteSettings, $userActivityLimit;	

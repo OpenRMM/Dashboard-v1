@@ -1,23 +1,14 @@
 <?php 
-if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-}
+$computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page']);
+
 $query = "SELECT hex,ID,name,phone,email,address,comments,active FROM companies where ID<>'1' ORDER BY active,name ASC";
 $results = mysqli_query($db, $query);
 $companyCount = mysqli_num_rows($results);
 ?>
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 	<h5 style="color:#0c5460">All  <?php echo $msp; ?>s (<?php echo $companyCount;?>)	
-		<button title="Refresh" onclick="loadSection('All_Companies');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<button title="Refresh" onclick="loadSection('Customers');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</button>
 		<button type="button" style="float:right;margin:5px;background:#0ac282;;color:#fff" data-toggle="modal" data-target="#companyModal" class="btn-sm btn btn-light" title="Add User" onclick="editCompany('','','','','','')">

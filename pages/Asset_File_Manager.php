@@ -1,31 +1,6 @@
 <?php 
-if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-}
-if($computerID<0){ 
-	?>
-	<br>
-	<center>
-		<h4>No Asset Selected</h4>
-		<p>
-			To Select An Asset, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
-		</p>
-	</center>
-	<hr>
-<?php
-	exit;
-}
-
 $computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page'],$computerID);
 	
 $gets = clean(base64_decode($_GET['other']));
 if($gets=="force"){ $gets=""; }
@@ -65,15 +40,15 @@ $online = $results['online'];
 		<span style="color:#000;font-size:12px">Last Update: <?php echo ago($json['filesystem_lastUpdate']);?></span>
 		<hr>
 		<span style="font-size:14px">Current Path:</span><br>
-		<a href="javascript:void(0)" onclick="loadSection('File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $back2; ?>');" style="font-size:22px;margin-left:20px"><?php echo $drive.":".$shownFolder; ?></a>
+		<a href="javascript:void(0)" onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $back2; ?>');" style="font-size:22px;margin-left:20px"><?php echo $drive.":".$shownFolder; ?></a>
 		<div style="float:right;">
 			<div class="btn-group">
-				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $current; ?>');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $current; ?>');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
 				<button type="button" style="background:#0c5460;color:#d1ecf1" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-sort-down"></i>
 				</button>
 				<div class="dropdown-menu">
-					<a onclick="loadSection('File_Manager','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+					<a onclick="force='true'; loadSection('Asset_File_Manager','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 				</div>
 			</div>
 		</div>	
@@ -101,7 +76,7 @@ $online = $results['online'];
 						</div>
 					</div>
 					<?php if($getFolder!=""){ ?>
-						<a href="javascript:void(0)" onclick="loadSection('File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $back2;?>');" style="text-align:left" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i>&nbsp; Go back</a><br>
+						<a href="javascript:void(0)" onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $back2;?>');" style="text-align:left" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i>&nbsp; Go back</a><br>
 					<?php } ?>
 					<table id="dataTable" style="line-height:20px;overflow:auto;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">				
 						<thead>
@@ -168,7 +143,7 @@ $online = $results['online'];
 								}	
 								$count++;	
 						?>		
-						<tr <?php if($icon=="folder"){ ?>style="cursor:pointer" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo ($path);?>');"<?php } ?>>
+						<tr <?php if($icon=="folder"){ ?>style="cursor:pointer" onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo ($path);?>');"<?php } ?>>
 							<td>
 								<i style="font-size:18px" class="fas fa-<?php echo $icon; ?> text-secondary"></i>
 							</td>

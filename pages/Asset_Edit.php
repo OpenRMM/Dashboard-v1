@@ -1,17 +1,7 @@
 <?php 
-if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-}
 $computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page'],$computerID);
+
 $json = getComputerData($computerID, array("general"));
 $hostname =  textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 $query = "SELECT ID, show_alerts, company_id, phone,hex, email, online, name, comment,computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
@@ -45,10 +35,10 @@ $online = $data['online'];
 			</h5>
 		</div>
 		<div class="col-md-2" style="text-align:right;">
-			<button title="Refresh" onclick="loadSection('Edit');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+			<button title="Refresh" onclick="loadSection('Asset_Edit');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-sync"></i>
 			</button>
-			<button title="Agent Configuration" onclick="loadSection('AgentSettings');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+			<button title="Agent Configuration" onclick="loadSection('Asset_Agent_Settings');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-cogs"></i>
 			</button>
 		</div>
@@ -185,7 +175,7 @@ $online = $data['online'];
 									$icon = "server";
 								}  
 							?> 
-							<a href="javascript:void(0)" class="text-dark" onclick="loadSection('Edit', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo strtoupper($hostname);?>');">
+							<a href="javascript:void(0)" class="text-dark" onclick="loadSection('Asset_Edit', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo strtoupper($hostname);?>');">
 								<li class="list-group-item secbtn">
 									<?php if($data['online']=="0") {?>
 										<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>

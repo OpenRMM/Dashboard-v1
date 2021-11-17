@@ -1,17 +1,7 @@
 <?php 
-if($_SESSION['userid']==""){ 
-?>
-<script>		
-	toastr.error('Session timed out.');
-	setTimeout(function(){
-		setCookie("section", btoa("Login"), 365);	
-		window.location.replace("..//");
-	}, 3000);		
-</script>
-<?php 
-	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-}
 $computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page'],$computerID);
+
 $getEvent=clean(base64_decode($_GET['other']));
 if($getEvent=="" or $getEvent=="force"){
 	$getEvent="application";
@@ -34,12 +24,12 @@ $error = $json["event_log_".$getEvent."_error"];
 				<span style="color:#000;font-size:12px">Last Update: <?php echo ago($json['event_log_'.$getEvent.'_lastUpdate']);?></span>
 				<div style="float:right;">
 					<div class="btn-group">
-						<button onclick="loadSection('Event_Logs');" style="background:#0c5460;color:#d1ecf1" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+						<button onclick="loadSection('Asset_Event_Logs');" style="background:#0c5460;color:#d1ecf1" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
 						<button type="button" style="background:#0c5460;color:#d1ecf1" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<i class="fas fa-sort-down"></i>
 						</button>
 						<div class="dropdown-menu">
-							<a onclick="loadSection('Event_Logs','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+							<a onclick="force='true'; loadSection('Asset_Event_Logs','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 						</div>
 					</div>
 				</div>

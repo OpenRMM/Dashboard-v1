@@ -1,17 +1,6 @@
 <?php 
-if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-}
 $computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page'],$computerID);
 
 $query = "SELECT ID, online FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
@@ -23,7 +12,6 @@ $getWMI = array("agent_settings","general");
 $json = getComputerData($computerID, $getWMI);
 $agent_settings = $json['agent_settings']['Response']["Interval"];
 $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
-//print_r($agent_settings);
 ?>
 <?php if($data['ID']==""){ ?>
 	<br>
@@ -118,31 +106,26 @@ $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 		toastr.error('This computer appears to be offline. Some data shown may not be up-to-date or available.');
 	<?php } ?>
 	var rangeSlider = function(){
-	var slider = $('.range'),
-		range = $('.range-slider__range'),
-		value = $('.range-slider__value');
-	
-	slider.each(function(){
-
-		value.each(function(){
-		var value = $(this).prev().attr('value');
-		
-		if(this.value==0){
-			$(this).html("Disabled");
-		}else{
-			$(this).html(value+" minutes");
-		}
-		});
-
-		range.on('input', function(){
+		var slider = $('.range'),
+			range = $('.range-slider__range'),
+			value = $('.range-slider__value');
+		slider.each(function(){
+			value.each(function(){
+			var value = $(this).prev().attr('value');		
 			if(this.value==0){
-				$(this).next(value).html("Disabled");
+				$(this).html("Disabled");
 			}else{
-				$(this).next(value).html(this.value+" minutes");
+				$(this).html(value+" minutes");
 			}
+			});
+			range.on('input', function(){
+				if(this.value==0){
+					$(this).next(value).html("Disabled");
+				}else{
+					$(this).next(value).html(this.value+" minutes");
+				}
+			});
 		});
-	});
 	};
-
 	rangeSlider();
 </script>

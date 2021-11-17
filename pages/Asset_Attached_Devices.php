@@ -1,33 +1,6 @@
 <?php 
-if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-}
 $computerID = (int)base64_decode($_GET['ID']);
-if($computerID<0){ 
-	?>
-	<br>
-	<center>
-		<h4>No Asset Selected</h4>
-		<p>
-			To Select An Asset, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
-		</p>
-	</center>
-	<hr>
-	<?php
-	exit;
-}
-//get update
-
-//MQTTpublish($computerID."/Commands/getPnPEntitys","true",getSalt(20));
+checkAccess($_SESSION['page'],$computerID);
 
 $json = getComputerData($computerID, array("usbhub", "desktop_monitor", "keyboard", "pointing_device", "sound_devices", "serial_port", "pnp_entities"));
 
@@ -44,12 +17,12 @@ $online = $results['online'];
 		</div>
 		<div class="col-md-2" style="text-align:right;">
 			<div class="btn-group">
-				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Attached_Devices');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Asset_Attached_Devices');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
 				<button type="button" style="background:#0c5460;color:#d1ecf1" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-sort-down"></i>
 				</button>
 				<div class="dropdown-menu">
-					<a onclick="loadSection('Attached_Devices','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+					<a onclick="force='true'; loadSection('Asset_Attached_Devices','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 				</div>
 			</div>
 		</div>

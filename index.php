@@ -87,6 +87,9 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 	</head>
+	<script>
+		var force="";
+	</script>
 	<style>
 		a { color:#003366; }
 		.calert { margin-left:5px;font-size:12px;width:44%;margin-right:5px;float:left;min-height:60px }
@@ -185,7 +188,7 @@
 							<i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Assets <span id="assetCount" style="float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$assetCount; ?></span>
 						</li>
 						<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
-						<li id="secbtnService_Desk" onclick="loadSection('Service_Desk');" class="secbtn">
+						<li id="secbtnService_Desk_Home" onclick="loadSection('Service_Desk_Home');" class="secbtn">
 							<i class="fa fa-ticket-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Service Desk <span id="ticketCount" style="float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$ticketCountAll; ?></span>
 						</li>
 						<?php } ?>
@@ -194,10 +197,10 @@
 						</li>
 						<ul style="margin-left:20px" class="nav nav-list collapse" id="navConfig">
 							<?php if($_SESSION['accountType']=="Admin"){ ?>
-								<li onclick="loadSection('All_Companies');" id="secbtnAll_Companies" style="width:100%" class="secbtn">
+								<li onclick="loadSection('Customers');" id="secbtnCustomers" style="width:100%" class="secbtn">
 									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<?php echo $msp; ?>s
 								</li>
-								<li onclick="loadSection('All_Users');" id="secbtnAll_Users" style="width:100%" class="secbtn">
+								<li onclick="loadSection('Technicians');" id="secbtnTechnicians" style="width:100%" class="secbtn">
 									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Technicians
 								</li>
 							<?php } ?>
@@ -214,59 +217,59 @@
 						<div id="sectionList" style="display:none;">
 							<h5 class="sidebarComputerName"></h5>
 							<hr>
-							<li onclick="loadSection('General');" id="secbtnGeneral" class="secbtn">
+							<li onclick="loadSection('Asset_General');" id="secbtnAsset_General" class="secbtn">
 								<i class="fas fa-stream"></i>&nbsp;&nbsp;&nbsp; Asset Overview
 							</li>
 							<hr>
 							<h6 class="">Tools</h6>
-							<li onclick="loadSection('Commands');" id="secbtnCommands" class="secbtn">
+							<li onclick="loadSection('Asset_Commands');" id="secbtnAsset_Commands" class="secbtn">
 								<i class="fas fa-terminal"></i>&nbsp;&nbsp;&nbsp; Commands
 							</li>
-							<li onclick="loadSection('Alerts');" id="secbtnAlerts" class="secbtn">
+							<li onclick="loadSection('Asset_Alerts');" id="secbtnAsset_Alerts" class="secbtn">
 								<i class="fas fa-bell"></i>&nbsp;&nbsp;&nbsp; Alerts
 							</li>
-							<li onclick="loadSection('Event_Logs');" id="secbtnEvent_Logs" class="secbtn">
+							<li onclick="loadSection('Asset_Event_Logs');" id="secbtnAsset_Event_Logs" class="secbtn">
 								<i class="fas fa-file-code"></i>&nbsp;&nbsp;&nbsp; Event Logs
 							</li>
 							<!-- li onclick="loadSection('Registry');" id="secbtnRegistry" class="secbtn">
 								<i class="fas fa-cubes"></i>&nbsp;&nbsp;&nbsp; Registry
 							</li -->
-							<li onclick="loadSection('File_Manager');" id="secbtnFile_Manager" class="secbtn">
+							<li onclick="loadSection('Asset_File_Manager');" id="secbtnAsset_File_Manager" class="secbtn">
 								<i class="fas fa-folder"></i>&nbsp;&nbsp;&nbsp; File Manager
 							</li>
 							<hr>
 							<h6 class="">Asset Details</h6>
-							<li onclick="loadSection('Network');" id="secbtnNetwork" class="secbtn">
+							<li onclick="loadSection('Asset_Network');" id="secbtnAsset_Network" class="secbtn">
 								<i class="fas fa-network-wired"></i>&nbsp;&nbsp;&nbsp; Network
 							</li>
-							<li onclick="loadSection('Programs');" id="secbtnPrograms" class="secbtn">
+							<li onclick="loadSection('Asset_Programs');" id="secbtnAsset_Programs" class="secbtn">
 								<i class="fab fa-app-store-ios"></i>&nbsp;&nbsp;&nbsp; Programs
 							</li>
 							<!--li onclick="loadSection('DefaultPrograms');" id="secbtnDefaultPrograms" class="secbtn">
 								<i class="fab fa-app-store-ios"></i>&nbsp;&nbsp;&nbsp; Default Programs
 							</li-->
-							<li onclick="loadSection('Services');" id="secbtnServices" class="secbtn">
+							<li onclick="loadSection('Asset_Services');" id="secbtnAsset_Services" class="secbtn">
 								<i class="fas fa-cogs"></i>&nbsp;&nbsp;&nbsp; Services
 							</li>
-							<li onclick="loadSection('Processes');" id="secbtnProcesses" class="secbtn">
+							<li onclick="loadSection('Asset_Processes');" id="secbtnAsset_Processes" class="secbtn">
 								<i class="fas fa-microchip"></i>&nbsp;&nbsp;&nbsp; Processes
 							</li>
-							<li onclick="loadSection('Printers');" id="secbtnPrinters" class="secbtn">
+							<li onclick="loadSection('Asset_Printers');" id="secbtnAsset_Printers" class="secbtn">
 								<i class="fas fa-edit"></i>&nbsp;&nbsp;&nbsp; Printers
 							</li>
-							<li onclick="loadSection('Disks');" id="secbtnDisks" class="secbtn">
+							<li onclick="loadSection('Asset_Disks');" id="secbtnAsset_Disks" class="secbtn">
 								<i class="fas fa-hdd"></i>&nbsp;&nbsp;&nbsp; Disks
 							</li>
-							<li onclick="loadSection('Memory');" id="secbtnMemory" class="secbtn">
+							<li onclick="loadSection('Asset_Memory');" id="secbtnAsset_Memory" class="secbtn">
 								<i class="fas fa-memory"></i>&nbsp;&nbsp;&nbsp; Memory
 							</li>
-							<li onclick="loadSection('Attached_Devices');" id="secbtnAttached_Devices" class="secbtn">
+							<li onclick="loadSection('Asset_Attached_Devices');" id="secbtnAsset_Attached_Devices" class="secbtn">
 								<i class="fab fa-usb"></i>&nbsp;&nbsp;&nbsp; Attached Devices
 							</li>
-							<li onclick="loadSection('Optional_Features');" id="secbtnOptional_Features" class="secbtn">
+							<li onclick="loadSection('Asset_Optional_Features');" id="secbtnAsset_Optional_Features" class="secbtn">
 								<i class="fas fa-list"></i>&nbsp;&nbsp;&nbsp; Optional Features
 							</li>
-							<li onclick="loadSection('Users');" id="secbtnUsers" class="secbtn">
+							<li onclick="loadSection('Asset_Users');" id="secbtnAsset_Users" class="secbtn">
 								<i class="fas fa-users"></i>&nbsp;&nbsp;&nbsp; User Accounts
 							</li>
 							<li></li>
@@ -339,6 +342,7 @@
 		document.cookie = "section=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		document.cookie = "ID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		var loadSection="";
+		
 		setCookie("section", btoa(section), 365);
 		$('.secbtn').removeClass('secActive');
 		setCookie("ID", btoa(ID), 365);
@@ -353,11 +357,12 @@
 				location.reload(true);
 			}, 5000);
 		}else{
-			if(section=="File_Manager"){
+			if(section=="Asset_File_Manager" || force=="true"){
 				$(".sidebarComputerName").text("");
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>We are getting the latest information for this asset</h5><br><h6>Instead of waiting, would you like to display the outdated assset data?</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460' type='submit'>View Older Asset Information <i class='fas fa-arrow-right'></i></button></form> <center></div></div>");
 			}else{
-				$(".sidebarComputerName").text("");
+			
+				//$(".sidebarComputerName").text("<?php echo $_SESSION['ComputerHostname']; ?>");
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
 			}
 		
@@ -370,18 +375,14 @@
 					$(".loadSection").hide().html(data).fadeIn("fast");
 				},
 				error: function (error) {
-					$(".loadSection").hide().html("<center><h5 style='margin-top:100px'>There is a problem loading the page sometimes. I'm working on a fix.</h5><br><h6>Seems to be corrupted data for Asset ID: 59<br><br>Reason: " + error.status + " " + error.statusText + "</h6> <br><button onclick='location.reload();' class='btn btn-sm btn-primary' type='button' >Retry <i class='fas fa-sync'></i></button></center>").fadeIn("fast");
-
-					$(".loadSection").hide().html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>Uh oh! There seems to be a problem on our end.</h5><br><h6>Reason: " + error.status + " " + error.statusText +"</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460' onclick='location.reload();'>Retry &nbsp;<i class='fas fa-sync'></i></button></form> <center></div></div>").fadeIn("fast");
-
-					
+					$(".loadSection").hide().html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>Uh oh! There seems to be a problem on our end.</h5><br><h6>Reason: " + error.status + " " + error.statusText +"</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460' onclick='location.reload();'>Retry &nbsp;<i class='fas fa-sync'></i></button></form> <center></div></div>").fadeIn("fast");				
     			}
 				
 			});
 			var item = '#secbtn'+section;
 			$(item).addClass('secActive');	
 		}
-		if(section == "New_Ticket" || section == "Ticket" || section == "Service_Desk" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "All_Users" || section == "All_Companies" || section == "Versions" || section == "Init"){
+		if(section == "Service_Desk_New_Ticket" || section == "Service_Desk_Ticket" || section == "Service_Desk_Home" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "Technicains" || section == "Customers" || section == "Versions" || section == "Init"){
 			$('#sectionList').slideUp(400);
 			$('#navConfig').collapse('show');
 		}else if($('#sectionList').css("display")=="none"){

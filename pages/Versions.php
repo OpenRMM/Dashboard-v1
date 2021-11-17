@@ -1,10 +1,6 @@
 <?php
-$nologin=true;
-	if($_SERVER['HTTP_REFERER']==""){
-		$user = true;
-		echo "<title>Agent Download</title>";
-		$url = "../";
-	}
+$computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page']);
 ?>
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 	<h5 style="color:#0c5460">Downloads

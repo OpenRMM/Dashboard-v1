@@ -1,57 +1,48 @@
 <?php 
-	if($_SESSION['userid']==""){ 
-?>
-	<script>		
-		toastr.error('Session timed out.');
-		setTimeout(function(){
-			setCookie("section", btoa("Login"), 365);	
-			window.location.replace("..//");
-		}, 3000);		
-	</script>
-<?php 
-		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
-	}
-	$ticketID = (int)base64_decode($_GET['ID']);
-	$query = "SELECT * FROM tickets WHERE ID='".$ticketID."' LIMIT 1";
-	$results = mysqli_query($db, $query);
-	$ticket = mysqli_fetch_assoc($results);
+$computerID = (int)base64_decode($_GET['ID']);
+checkAccess($_SESSION['page']);
 
-	//Update Recents
-	if(in_array($ticket['ID'], $_SESSION['recentTickets'])){
-		if (($key = array_search($ticket['ID'], $_SESSION['recentTickets'])) !== false) {
-			unset($_SESSION['recentTickets'][$key]);
-		}
+$ticketID = (int)base64_decode($_GET['ID']);
+$query = "SELECT * FROM tickets WHERE ID='".$ticketID."' LIMIT 1";
+$results = mysqli_query($db, $query);
+$ticket = mysqli_fetch_assoc($results);
+
+//Update Recents
+if(in_array($ticket['ID'], $_SESSION['recentTickets'])){
+	if (($key = array_search($ticket['ID'], $_SESSION['recentTickets'])) !== false) {
+		unset($_SESSION['recentTickets'][$key]);
+	}
+	array_push($_SESSION['recentTickets'], $ticket['ID']);
+	$query = "UPDATE users SET recentTickets='".implode(",", $_SESSION['recentTickets'])."' WHERE ID=".$_SESSION['userid'].";";
+	$results = mysqli_query($db, $query);
+}else{
+	if(end($_SESSION['recentTickets']) != $ticket['ID']){
 		array_push($_SESSION['recentTickets'], $ticket['ID']);
 		$query = "UPDATE users SET recentTickets='".implode(",", $_SESSION['recentTickets'])."' WHERE ID=".$_SESSION['userid'].";";
 		$results = mysqli_query($db, $query);
-	}else{
-		if(end($_SESSION['recentTickets']) != $ticket['ID']){
-			array_push($_SESSION['recentTickets'], $ticket['ID']);
-			$query = "UPDATE users SET recentTickets='".implode(",", $_SESSION['recentTickets'])."' WHERE ID=".$_SESSION['userid'].";";
-			$results = mysqli_query($db, $query);
-		}
 	}
+}
 
 
-	$query = "SELECT username,nicename,hex,user_color FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
-	$results = mysqli_query($db, $query);
-	$user = mysqli_fetch_assoc($results);
-	$username=$user['username'];
+$query = "SELECT username,nicename,hex,user_color FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+$results = mysqli_query($db, $query);
+$user = mysqli_fetch_assoc($results);
+$username=$user['username'];
 
-	$query = "SELECT username,nicename,hex FROM users WHERE ID='".$ticket['user_id']."' LIMIT 1";
-	$results2 = mysqli_query($db, $query);
-	$user2 = mysqli_fetch_assoc($results2);
-	$name5 =  ucwords(crypto('decrypt',$user2['nicename'],$user2['hex'])); 
+$query = "SELECT username,nicename,hex FROM users WHERE ID='".$ticket['user_id']."' LIMIT 1";
+$results2 = mysqli_query($db, $query);
+$user2 = mysqli_fetch_assoc($results2);
+$name5 =  ucwords(crypto('decrypt',$user2['nicename'],$user2['hex'])); 
 
-	$query = "SELECT username,nicename,hex,user_color FROM users WHERE ID='".$ticket['assignee']."' LIMIT 1";
-	$results = mysqli_query($db, $query);
-	$user3 = mysqli_fetch_assoc($results);
-	$name2 =  ucwords(crypto('decrypt',$user3['nicename'],$user3['hex']));
+$query = "SELECT username,nicename,hex,user_color FROM users WHERE ID='".$ticket['assignee']."' LIMIT 1";
+$results = mysqli_query($db, $query);
+$user3 = mysqli_fetch_assoc($results);
+$name2 =  ucwords(crypto('decrypt',$user3['nicename'],$user3['hex']));
 
-	
-	//log user activity
-	$activity = "Technician Viewed Ticket: TKT".$ticket['ID'];
-	userActivity($activity,$_SESSION['userid'])
+
+//log user activity
+$activity = "Technician Viewed Ticket: TKT".$ticket['ID'];
+userActivity($activity,$_SESSION['userid'])
 ?>
 <style>
 	.grid-divider {
@@ -64,7 +55,7 @@
 	<div class="casrd carsd-sm">
 		<div style="overflow:visible;z-index:99999" class="row grid-divider">
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
-			<div style="cursor:pointer" onclick="loadSection('Service_Desk');" class="card secbtn">
+			<div style="cursor:pointer" onclick="loadSection('Service_Desk_Home');" class="card secbtn">
 			<div class="card-body"><i class="fas fa-arrow-left"></i> Ticket #TKT<?php echo $ticket['ID']; ?><br><br></div>
 			</div>
 		</div>
@@ -354,7 +345,7 @@
 								$result = mysqli_fetch_assoc($results);
 								if($result['ID']!=""){
 							?>
-							<li onclick="loadSection('General', '<?php echo $result['ID']; ?>');$('.sidebarComputerName').text('<?php echo textOnNull(strtoupper($hostname),'Unavailable');?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
+							<li onclick="loadSection('Asset_General', '<?php echo $result['ID']; ?>');$('.sidebarComputerName').text('<?php echo textOnNull(strtoupper($hostname),'Unavailable');?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
 								<?php if($result['online']=="0") {?>
 									<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
 								<?php }else{?>
