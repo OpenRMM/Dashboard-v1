@@ -285,3 +285,22 @@ function updateTicket(type,data2,ticket,id=0){
 		toastr.success("Your Changes Have Been Saved");
 	});  
 }
+function olderData(ID, name, key){
+    $("#olderData_content").load("includes/olderData.php?ID="+btoa(ID)+"&name="+btoa(name)+"&key="+btoa(key));
+    $(".olderdata").css({"z-index": "2"});
+    key = key.replace(".", "");
+
+    if(key=="null"){
+        $("#olderDataModalDialog").removeClass("modal-md");
+        $("#olderDataModalDialog").addClass("modal-lg");
+    }else{
+        $("#olderDataModalDialog").addClass("modal-md");
+        $("#olderDataModalDialog").removeClass("modal-lg");
+         
+    }
+    if(name=="Firewall"){
+        $("#" + name).css({"z-index": "99999"});
+    }else{
+        $("#" + name + "_" + key).css({"z-index": "99999"});
+    }
+}

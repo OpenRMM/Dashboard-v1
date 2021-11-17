@@ -24,19 +24,17 @@
 ?>
 <style>
 	.grid-divider {
-  overflow-x: hidden; //quickfix to hide divider on left side
+  overflow-x: hidden;
   position: relative;
 }
-
-
 </style>
 <form method="post" action="/">
 	<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mx-auto" style="padding-bottom:20px;padding-top:0px;">
 			
 				<input type="hidden" name="type" value="NewTicket">
-				<div class="card table-card" id="printTable" style="marsgin-top:-20px;padding:30px;border-radius:6px;"> 
-				<h4 style="display:inline">New Ticket</h4>
+				<div class="card table-card" style="marsgin-top:-20px;padding:30px;border-radius:6px;"> 
+				<h5 style="display:inline">New Ticket</h5>
 				<br>
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
@@ -110,13 +108,13 @@
 							<select type="text"  name="assigned" class="form-control" id="pwd">
 								<option></option>
 								<?php
-										$query = "SELECT ID,hex,nicename FROM users WHERE active='1' ORDER BY ID ASC";
-										$results = mysqli_query($db, $query);
-										while($result = mysqli_fetch_assoc($results)){ 
-											$json = getComputerData($result['ID'], array("*"), $showDate);
-											$hostname = textOnNull($json['General']['Response'][0]['csname'],"Unavailable");		
+									$query = "SELECT ID,hex,nicename FROM users WHERE active='1' ORDER BY ID ASC";
+									$results = mysqli_query($db, $query);
+									while($result = mysqli_fetch_assoc($results)){ 
+										$json = getComputerData($result['ID'], array("general"));
+										$hostname = textOnNull($json['General']['Response'][0]['csname'],"Unavailable");		
 									?>
-											<option value='<?php echo $result['ID'];?>'><?php echo crypto('decrypt',$result['nicename'],$result['hex']);?></option>
+										<option value='<?php echo $result['ID'];?>'><?php echo crypto('decrypt',$result['nicename'],$result['hex']);?></option>
 									<?php }?>
 							</select>
 						</div>
@@ -152,13 +150,13 @@
 							<label for="email">Asset </label>
 							<select type="text"  name="asset" class="form-control" id="pwd">
 								<option></option>
-							<?php
+								<?php
 									$query = "SELECT ID FROM computers WHERE active='1' ORDER BY ID ASC";
 									$results = mysqli_query($db, $query);
 									while($result = mysqli_fetch_assoc($results)){ 
-										$json = getComputerData($result['ID'], array("*"), $showDate);
-										$hostname = textOnNull($json['General']['Response'][0]['csname'],"Unavailable");		
-								?>
+										$json = getComputerData($result['ID'], array("general"));
+										$hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");		
+									?>
 										<option value='<?php echo $result['ID'];?>'><?php echo $hostname;?></option>
 								<?php }?>
 							</select>
@@ -181,22 +179,15 @@
 						</div>
 					</div>
 				</div>
-				
-					
-					
-			
-
-		</div>	
-		
+		</div>		
 	</div>	
-	<div style="bottom:0;position:fixed;float:right;width:90%;background:#fff;border-top:1px solid #d3d3d3d3;padding:10px;margin-left:-15px">
+	<div style="bottom:0;position:fixed;float:right;width:100%;background:#fff;border-top:1px solid #d3d3d3d3;padding:10px;margin-left:-15px;z-index:1;overflow:hidden">
 		<center>
 			<button onclick="loadSection('ServiceDesk');" style="width:100px" class="btn btn-light btn-sm">Cancel</button>
 			<button type="submit" style="width:100px" class="btn btn-primary btn-sm">Create</button>
 		</center>
 	</div>	
-	</form>
-
+</form>
 
 <script>
 $('#dataTable').DataTable( {
@@ -208,7 +199,6 @@ $('#dataTable').DataTable( {
 } );	
 
 </script>
-<script src="js/tagsinput.js"></script>
 <script type='text/javascript'>
  $(document).ready(function(){
    // Check or Uncheck All checkboxes

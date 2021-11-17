@@ -16,14 +16,14 @@ $results = mysqli_query($db, $query);
 $companyCount = mysqli_num_rows($results);
 ?>
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
-	<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">All  <?php echo $msp; ?>s (<?php echo $companyCount;?>)	
-		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('AllCompanies');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+	<h5 style="color:#0c5460">All  <?php echo $msp; ?>s (<?php echo $companyCount;?>)	
+		<button title="Refresh" onclick="loadSection('All_Companies');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
-		</a>
+		</button>
 		<button type="button" style="float:right;margin:5px;background:#0ac282;;color:#fff" data-toggle="modal" data-target="#companyModal" class="btn-sm btn btn-light" title="Add User" onclick="editCompany('','','','','','')">
 			<i class="fas fa-plus"></i> Add  <?php echo $msp; ?> 
 		</button>	
-	</h4>
+	</h5>
 </div>	
 <div class="card table-card">
 	<div class="card-header">
@@ -86,14 +86,14 @@ $companyCount = mysqli_num_rows($results);
 						</td>
 						<td>
 							<?php if($computersWithAlerts > 0){?>
-								<a href="javascript:void(0)" class="text-danger" data-toggle="modal" data-target="#computerAlerts" onclick="computerAlertsModal('<?php echo $company['name'];?>','<?php echo $aggrigateAlerts;?>', true);">
-									<i title="Priority" class="text-danger fa fa-exclamation-triangle" aria-hidden="true"></i> 
+								<button style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#computerAlerts" onclick="computerAlertsModal('<?php echo $company['name'];?>','<?php echo $aggrigateAlerts;?>', true);">
+									<i title="Priority" class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
 									<?php echo $computersWithAlerts;?>
-								</a>
+							</button>
 							<?php }else{?>
-								<span class="text-success" data-toggle="modal" data-target="#computerAlerts" style="cursor:pointer;" onclick="computerAlertsModal('<?php echo strtoupper($company['name']);?>');">
+								<button data-toggle="modal" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" data-target="#computerAlerts" class="btn btn-success btn-sm" onclick="computerAlertsModal('<?php echo strtoupper($company['name']);?>');">
 									<i class="fas fa-thumbs-up"></i>
-								</span>
+							</button>
 							<?php }?>
 						</td>
 						<td>
@@ -125,9 +125,8 @@ $companyCount = mysqli_num_rows($results);
 									<button type="button" id="delCompany<?php echo $company['ID']; ?>" onclick="deleteCompany(<?php echo $company['ID']; ?>,'0')" title="Remove <?php echo $msp; ?>" style="display:none;margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm">
 										<i class="fas fa-trash"></i>				
 									</button>
-								<?php }?>
-								
-								<a href="javascript:void(0)" data-toggle="modal" data-target="#companyModal" onclick="editCompany('<?php echo $company['ID'];?>','<?php echo crypto('decrypt',$company['name'],$company['hex']);?>','<?php echo crypto('decrypt',$company['address'],$company['hex']);?>','<?php echo phone(crypto('decrypt',$company['phone'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['email'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['comments'],$company['hex']));?>')" title="Edit <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
+								<?php }?>								
+								<a href="javascript:void(0)" data-toggle="modal" data-target="#companyModal" onclick="editCompany('<?php echo $company['ID'];?>','<?php echo crypto('decrypt',$company['name'],$company['hex']);?>','<?php echo crypto('decrypt',$company['address'],$company['hex']);?>','<?php echo (crypto('decrypt',$company['phone'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['email'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['comments'],$company['hex']));?>')" title="Edit <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
 									<i class="fas fa-pencil-alt"></i>
 								</a>
 							</form>

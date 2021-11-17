@@ -13,19 +13,19 @@
 							</ul>
 						</div>
 						<div class="modal-footer">
-							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-warning btn-sm" data-dismiss="modal">Close</button>
+							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-warning btn-sm" data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
 			</div>
 			<!--------------- User Modal ------------->
 			<div id="userModal" class="modal fade" role="dialog">
-				<div class="modal-dialog">
+				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h6>
 								<b>
-									Add/Edit User
+									Add/Edit Technician
 								</b>
 							</h6>
 						</div>
@@ -33,52 +33,61 @@
 							<input type="hidden" name="type" value="AddEditUser"/>
 							<input type="hidden" name="ID" id="editUserModal_ID"/>
 							<div class="modal-body">
-								<p>This will configure a new user and will allow them access to this platform.</p>
-								<div class="form-group">
-									<label for="editUserModal_type">Name</label>
-									<input placeholder="Name" type="text" name="name" class="form-control" id="editUserModal_name"/>
-								</div>
-								<div class="form-group">
-									<label for="editUserModal_type">Email</label>
-									<input placeholder="Email"  type="email" name="email" class="form-control" id="editUserModal_email"/>
-								</div>
-								<div class="form-group">
-									<label for="editUserModal_type">Username</label>
-									<input placeholder="Username"  required type="text" name="username" class="form-control" id="editUserModal_username"/>
-								</div>
-								<div class="form-group">
-									<label for="editUserModal_type">Phone</label>
-									<input placeholder="Phone (ex. 1234567890)" type="tel" pattern="[0-9]{10}" name="phone" class="form-control" id="editUserModal_phone"/>
-								</div>
-								<div class="form-group">
-									<label for="editUserModal_type">User Color</label>
-									<input placeholder="User Color" type="color" name="color" class="form-control" id="editUserModal_color"/>
-								</div>
-								<?php if($_SESSION['accountType']=="Admin"){  ?>
-									<div class="form-group">
-										<label for="editUserModal_type">Access Type</label>
-										<select required name="accountType" class="form-control">
-											<option id="editUserModal_type" value="">Select Option</option>
-											<option value="Standard">Standard</option>
-											<option value="Admin">Admin</option>
-										</select>
+								<p>This will configure a new technician and will allow them access to this platform.</p>
+								<div class="row">
+									<div class="col-md-4 form-group">
+										<label for="editUserModal_type">Name</label>
+										<input placeholder="Name" minlength="4" required pattern="[[A-Z]+[\\s]?]+" type="text" name="name" class="form-control" id="editUserModal_name"/>
 									</div>
-								<?php } ?>
-								<div class="input-group">
-									<input title="Must contain at least one  number and one uppercase and lowercase letter, and at least 8 or more characters" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" style="display:inline" type="password" id="editUserModal_password" name="password" class="form-control"/>
-									<span class="input-group-btn">
-										<a style="border-radius:0px;padding:6px;pointer:cursor;color:#fff;" class="btn btn-md btn-success" onclick="generate();" >Generate</a>
-									</span>
+									<div class="col-md-4 form-group">
+										<label for="editUserModal_type">Email</label>
+										<input placeholder="Email"  type="email" name="email" class="form-control" id="editUserModal_email"/>
+									</div>
+									<div class="col-md-4 form-group">
+										<label for="editUserModal_type">Username</label>
+										<input placeholder="Username"  required type="text" minlength="4" name="username" class="form-control" id="editUserModal_username"/>
+									</div>
+									<div class="col-md-4 form-group">
+										<label for="editUserModal_type">Phone</label>
+										<input placeholder="Phone (ex. 1234567890)" type="tel"  pattern="[0-9]{10}" name="phone" class="form-control" id="editUserModal_phone"/>
+									</div>
+									<div class="col-md-4 form-group">
+										<label for="editUserModal_type">Technician Color</label>
+										<input placeholder="User Color" type="color" name="color" class="form-control" id="editUserModal_color"/>
+									</div>
+									<?php if($_SESSION['accountType']=="Admin"){  ?>
+										<div class="col-md-4 form-group">
+											<label for="editUserModal_type">Access Type</label>
+											<select required name="accountType" class="form-control">
+												<option id="editUserModal_type" value="">Select Option</option>
+												<option value="Standard">Standard</option>
+												<option value="Admin">Admin</option>
+											</select>
+										</div>
+									<?php } ?>
 								</div>
-								
-								<div class="form-group">
-									<input placeholder="Confirm Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" type="password" id="editUserModal_password2" name="password2" class="form-control"/>
+								<br><hr>
+								<div class="row">
+									<div class="col-md-6">
+										<label for="editUserModal_type">Password</label>
+										<div class="input-group">
+											<input title="Must contain at least one  number and one uppercase and lowercase letter, and at least 8 or more characters" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" style="display:inline" type="password" id="editUserModal_password" name="password" class="form-control"/>
+											<span class="input-group-btn">
+												<a style="border-radius:0px;padding:6px;pointer:cursor;color:#fff;" class="btn btn-md btn-success" onclick="generate();" >Generate</a>
+											</span>
+										</div>
+									</div>
+									
+									<div class="col-md-6 form-group">
+										<label for="editUserModal_type">Confirm Password</label>
+										<input placeholder="Confirm Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" type="password" id="editUserModal_password2" name="password2" class="form-control"/>
+									</div>
 								</div>
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning">
-									<i class="fas fa-check"></i> Save
+								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning">
+									<i class="fas fa-check"></i> Create
 								</button>
 							</div>
 						</form>
@@ -136,7 +145,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
-								<button data-dismiss="modal" type="button" onclick="newNote()"  style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning">
+								<button data-dismiss="modal" type="button" onclick="newNote()"  style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning">
 									<i class="fas fa-save"></i> Save
 								</button>
 							</div>
@@ -146,7 +155,7 @@
 			</div>
 			<!--------------- View note Modal ------------->
 			<div id="viewNoteModal" class="modal fade" role="dialog">
-				<div class="modal-dialog">
+				<div class="modal-dialog modal-sm">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h4 id="notetitle">
@@ -159,14 +168,14 @@
 								<h6 style="margin-top:20px"><span id="notedesc"></span></h6>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-sm btn-primary" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
 			</div>
 			<!---------- Company Modal ------------>
 			<div id="companyModal" class="modal fade" role="dialog">
-				<div class="modal-dialog">
+				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h6>
@@ -180,25 +189,32 @@
 							<input type="hidden" name="ID" value="" id="editCompanyModal_ID"/>
 							<div class="modal-body">
 								<p>This Will Add <?php echo $msp; ?> Information. To Better Assist And Organize Content.</p>
-								<div class="form-group">
-									<input placeholder="Name" type="text" name="name" class="form-control" id="editCompanyModal_name"/>
-								</div>
-								<div class="form-group">
-									<input placeholder="Address" type="text" name="address" class="form-control" id="editCompanyModal_address"/>
-								</div>
-								<div class="form-group">
-									<input placeholder="Phone (ex. 1234567890)" pattern="[0-9]{10}" type="tel" name="phone" class="form-control" id="editCompanyModal_phone"/>
-								</div>
-								<div class="form-group">
-									<input placeholder="Email" type="email" name="email" class="form-control" id="editCompanyModal_email"/>
-								</div>
-								<div class="form-group">
-									<textarea placeholder="Additional Info" style="resize:vertical" name="comments" class="form-control" placeholder="Optional" id="editCompanyModal_comments"></textarea>
+								<div class="row">
+									<div class="col-md-4 form-group">
+										<label for="editUserModal_type">Name</label>
+										<input placeholder="Name" type="text" name="name" class="form-control" id="editCompanyModal_name"/>
+									</div>
+									<div class="col-md-4 form-group">
+										<label for="editUserModal_type">Address</label>
+										<input placeholder="Address" type="text" name="address" class="form-control" id="editCompanyModal_address"/>
+									</div>
+									<div class="col-md-4 form-group">
+										<label for="editUserModal_type">Phone (ex. 1234567890)</label>
+										<input placeholder="Phone" pattern="[0-9]{10}" type="tel" name="phone" class="form-control" id="editCompanyModal_phone"/>
+									</div>
+									<div class="col-md-6 form-group">
+										<label for="editUserModal_type">Email</label>
+										<input placeholder="Email" type="email" name="email" class="form-control" id="editCompanyModal_email"/>
+									</div>
+									<div class="col-md-12 form-group">
+										<label for="editUserModal_type">Additional Information</label>
+										<textarea placeholder="Additional Info" style="resize:vertical" name="comments" class="form-control" placeholder="Optional" id="editCompanyModal_comments"></textarea>
+									</div>
 								</div>
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning">
+								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning">
 									<i class="fas fa-check"></i> Save
 								</button>
 							</div>
@@ -248,7 +264,7 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 4']; ?>;color:#fff;" data-dismiss="modal">Close</button>
-							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning"  data-dismiss="modal">Confirm</button>
+							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning"  data-dismiss="modal">Confirm</button>
 						</div>
 					</div>
 				</div>
@@ -268,11 +284,31 @@
 							<div id="computerAlertsModalList"></div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning" data-dismiss="modal">Close</button>
+							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning" data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
 			</div>
+			<!------------- Older Data ------------------->
+			<div id="olderDataModal" class="modal fade" role="dialog">
+				<div id="olderDataModalDialog" class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">
+								Change Log
+							</h5>
+						</div>
+						<div class="modal-body">
+							<div id="olderData_content" style="overflow-x:hidden;overflow-y:auto;max-height:400px;"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<?php if($siteSettings['general']['asset_history']=="1"){ ?>
 			<!------------- Historical ------------------->
 			<div id="historicalData_modal" class="modal fade" role="dialog">
 				<div class="modal-dialog">
@@ -286,7 +322,7 @@
 							<div id="historicalData" style="overflow:auto;max-height:400px;"></div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
+							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
@@ -326,7 +362,7 @@
 									<td>
 										<form method="post">
 											<input type="hidden" value="<?php echo $formatedDate2; ?>" name="historyDate"> 
-											<button type="submit" class="btn btn-sm btn-warning">Select</button>
+											<button style="background:#0c5460;color:#d1ecf1" type="submit" class="btn btn-sm">Select</button>
 										</form>
 										</td>
 								</tr>
@@ -339,6 +375,7 @@
 					</div>
 				</div>
 			</div>
+			<?php } ?>
 			<!------------- Upload .exe File ------------------->
 			<div id="agentUpload" class="modal fade" role="dialog">
 				<div class="modal-dialog modal-lg">
@@ -366,7 +403,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-sm"  data-dismiss="modal">Close</button>
-								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning" >Upload</button>
+								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning" >Upload</button>
 							</div>
 						</form>
 					</div>
@@ -572,16 +609,16 @@
 								</div>
 								<center>
 									<label class="radio-inline">
-										<input type="radio" id="#inputType" class="form-control" name="alertType" value="alert" checked>Alert
+										<input type="radio" id="#inputType1" class="form-control" name="alertType" value="alert" checked>Alert
 									</label>
 									<label class="radio-inline">
-										<input type="radio" id="#inputType" class="form-control" name="alertType" value="confirm" >Confirm
+										<input type="radio" id="#inputType2" class="form-control" name="alertType" value="confirm" >Confirm
 									</label>
 									<label class="radio-inline">
-										<input type="radio" id="#inputType" class="form-control" name="alertType" value="password" >Password
+										<input type="radio" id="#inputType3" class="form-control" name="alertType" value="password" >Password
 									</label>
 									<label class="radio-inline">
-										<input type="radio" id="#inputType" class="form-control" name="alertType" value="prompt" >Prompt
+										<input type="radio" id="#inputType4" class="form-control" name="alertType" value="prompt" >Prompt
 									</label>
 								<center>
 							</div>

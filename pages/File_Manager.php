@@ -11,14 +11,13 @@ if($_SESSION['userid']==""){
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
-$showDate = $_SESSION['date'];
 if($computerID<0){ 
 	?>
 	<br>
 	<center>
-		<h4>No Computer Selected</h4>
+		<h4>No Asset Selected</h4>
 		<p>
-			To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+			To Select An Asset, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
 		</p>
 	</center>
 	<hr>
@@ -27,6 +26,7 @@ if($computerID<0){
 }
 
 $computerID = (int)base64_decode($_GET['ID']);
+	
 $gets = clean(base64_decode($_GET['other']));
 if($gets=="force"){ $gets=""; }
 $get = explode("{}",$gets);
@@ -46,41 +46,51 @@ if($getFolder!=""){
 	array_pop($back2);
 	$back2 = $drive."{}".implode("/",$back2);
 	$len3 = substr($info,1);
+	$current = $drive."{}".$back;
 }
 
-$json = getComputerData($computerID, array("General", "Filesystem", "LogicalDisk"), $showDate);
+$json = getComputerData($computerID, array("general", "filesystem", "logical_disk"));
 
-$disks = $json['LogicalDisk']['Response'];
+$disks = $json['logical_disk']['Response'];
 $query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 
+
 ?>
-<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
-	<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">File Manager
+
+<div style="margin-top:0px;padding:15px;margin-bottom:-1px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
+	<h5 style="color:0c5460">File Manager
 		<br>
-		<span style="color:#000;font-size:12px">Last Update: <?php echo ago($json['Filesystem_lastUpdate']);?></span>
+		<span style="color:#000;font-size:12px">Last Update: <?php echo ago($json['filesystem_lastUpdate']);?></span>
 		<hr>
 		<span style="font-size:14px">Current Path:</span><br>
-		<a href="javascript:void(0)" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo $back2; ?>');" style="font-size:22px;margin-left:20px"><?php echo $drive.":".$shownFolder; ?></a>
+		<a href="javascript:void(0)" onclick="loadSection('File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $back2; ?>');" style="font-size:22px;margin-left:20px"><?php echo $drive.":".$shownFolder; ?></a>
 		<div style="float:right;">
 			<div class="btn-group">
-				<button onclick="loadSection('FileManager');" type="button" class="btn btn-warning btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
-				<button type="button" class="btn btn-warning dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $current; ?>');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+				<button type="button" style="background:#0c5460;color:#d1ecf1" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-sort-down"></i>
 				</button>
 				<div class="dropdown-menu">
-					<a onclick="loadSection('FileManager','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
-
+					<a onclick="loadSection('File_Manager','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 				</div>
 			</div>
 		</div>	
-	</h4>
+	</h5>
 </div>
+<?php if($online=="0"){ ?>
+	<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
+		&nbsp;&nbsp;&nbsp;This Agent is offline		
+	</div>
+<?php }else{
+		echo "<br>";	
+	}
+?>
 <div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 	<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;border-radius:6px;">			 
 			<form method="post" action="/">
-				<div class="card table-card" id="printTable" style="margin-top:-40px;padding:10px;overflow-x:auto">  
+				<div class="card table-card" style="margin-top:-40px;padding:10px;overflow-x:auto">  
 					<div class="card-header">
 						<div class="card-header-right">
 							<ul class="list-unstyled card-option">
@@ -91,19 +101,19 @@ $online = $results['online'];
 						</div>
 					</div>
 					<?php if($getFolder!=""){ ?>
-						<a href="javascript:void(0)" onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','<?php echo $back2;?>');" style="text-align:left" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i>&nbsp; Go back</a><br>
+						<a href="javascript:void(0)" onclick="loadSection('File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $back2;?>');" style="text-align:left" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i>&nbsp; Go back</a><br>
 					<?php } ?>
 					<table id="dataTable" style="line-height:20px;overflow:auto;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">				
 						<thead>
 							<tr style="border-bottom:2px solid #d3d3d3;">			  
 								<th scope="col">Type</th>
 								<th scope="col">Filename</th>
-								<th style="float:right" scope="col">Actions</th>
+								<th scope="col"></th>
 							</tr>
 						</thead>
 						<tbody>
 						<?php	
-							$slots = $json['Filesystem']['Response'][0];
+							$slots = $json['filesystem']['Response'][0];
 							$files=array();
 							//print_r($slots);
 							$folders=array();
@@ -111,7 +121,7 @@ $online = $results['online'];
 							$folderCount=0;	
 							$fileCount=0;	
 							$slots = str_replace("//","/",$slots);
-							$error = $json['Filesystem_error'];
+							$error = $json['filesystem_error'];
 							$getFolder2 = $getFolder;
 							foreach($slots as $slot=>$info){ 
 								$info = str_replace("C:","",$info);
@@ -199,7 +209,7 @@ $online = $results['online'];
 						</div>
 					</div>
 				</div>
-				<button onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','');" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-warning btn-block p-t-15 p-b-15">Go to home directory root</button>		
+				<button onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','');" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-warning btn-block p-t-15 p-b-15">Go to home directory root</button>		
 			</div>
 			<div class="card user-card2" style="width:100%;box-shadow:none;background:<?php echo $siteSettings['theme']['Color 1'];?>">				
 				<div class="card-block row">
@@ -297,8 +307,8 @@ $online = $results['online'];
 						<input type="text" placeholder="ex. C:/Demos/test" value="<?php echo $getFolder; ?>" class="form-control" name="filePath">
 					</div>
 					<div class="modal-footer">
-						<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
-						<input type="submit" id="actions_btnText" value="Save" class="btn btn-primary btn-sm">
+						<button type="button"  class="btn btn-sm btn-default"  data-dismiss="modal">Close</button>
+						<input type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460;" id="actions_btnText" value="Save" class="btn btn-primary btn-sm">
 					</div>			
 				</div>
 			</form>
@@ -362,3 +372,4 @@ function fileActionsModal(action, filename){
 	}
 }
 </script>
+

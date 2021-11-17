@@ -16,15 +16,32 @@
 	$results = mysqli_query($db, $query);
 	$ticket = mysqli_fetch_assoc($results);
 
-	$query = "SELECT username,nicename,hex FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+	//Update Recents
+	if(in_array($ticket['ID'], $_SESSION['recentTickets'])){
+		if (($key = array_search($ticket['ID'], $_SESSION['recentTickets'])) !== false) {
+			unset($_SESSION['recentTickets'][$key]);
+		}
+		array_push($_SESSION['recentTickets'], $ticket['ID']);
+		$query = "UPDATE users SET recentTickets='".implode(",", $_SESSION['recentTickets'])."' WHERE ID=".$_SESSION['userid'].";";
+		$results = mysqli_query($db, $query);
+	}else{
+		if(end($_SESSION['recentTickets']) != $ticket['ID']){
+			array_push($_SESSION['recentTickets'], $ticket['ID']);
+			$query = "UPDATE users SET recentTickets='".implode(",", $_SESSION['recentTickets'])."' WHERE ID=".$_SESSION['userid'].";";
+			$results = mysqli_query($db, $query);
+		}
+	}
+
+
+	$query = "SELECT username,nicename,hex,user_color FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
 
 	$query = "SELECT username,nicename,hex FROM users WHERE ID='".$ticket['user_id']."' LIMIT 1";
-	$results = mysqli_query($db, $query);
-	$user2 = mysqli_fetch_assoc($results);
-	$name =  ucwords(crypto('decrypt',$user2['nicename'],$user2['hex'])); 
+	$results2 = mysqli_query($db, $query);
+	$user2 = mysqli_fetch_assoc($results2);
+	$name5 =  ucwords(crypto('decrypt',$user2['nicename'],$user2['hex'])); 
 
 	$query = "SELECT username,nicename,hex,user_color FROM users WHERE ID='".$ticket['assignee']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
@@ -32,7 +49,9 @@
 	$name2 =  ucwords(crypto('decrypt',$user3['nicename'],$user3['hex']));
 
 	
-
+	//log user activity
+	$activity = "Technician Viewed Ticket: TKT".$ticket['ID'];
+	userActivity($activity,$_SESSION['userid'])
 ?>
 <style>
 	.grid-divider {
@@ -45,7 +64,7 @@
 	<div class="casrd carsd-sm">
 		<div style="overflow:visible;z-index:99999" class="row grid-divider">
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
-			<div style="cursor:pointer" onclick="loadSection('ServiceDesk');" class="card secbtn">
+			<div style="cursor:pointer" onclick="loadSection('Service_Desk');" class="card secbtn">
 			<div class="card-body"><i class="fas fa-arrow-left"></i> Ticket #TKT<?php echo $ticket['ID']; ?><br><br></div>
 			</div>
 		</div>
@@ -66,7 +85,6 @@
 				</div>	
 			</div>
 		</div>
-
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
 			<div style="height:82px" class="card secbtn">
 				<div data-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Assignee</b><br>
@@ -84,12 +102,9 @@
 								$query = "SELECT ID,hex,nicename,user_color FROM users WHERE active='1' ORDER BY ID ASC";
 								$results = mysqli_query($db, $query);
 								while($result = mysqli_fetch_assoc($results)){ 
-									
 									$name2 = textOnNull(ucwords(crypto('decrypt',$result['nicename'],$result['hex'])),"Unavailable"); 
-									
 									list($first, $last) = explode(' ', $name2, 2);
 									$name = strtoupper("$first[0]{$last[0]}"); 
-						
 							?>
 								<li onclick="updateTicket('assignee','<?php echo $name2; ?>','<?php echo $ticketID; ?>','<?php echo $result['ID']; ?>');" style="cursor:pointer" class="list-group-item secbtn">
 								<div style="font-size:9px;margin-right:10px;float:left;display:inline;background:<?php echo $result['user_color']; ?>;color:#fff;padding:5px;border-radius:100px;text-align:center;width:25px;height:25px;padding-top:6px"><?php echo $name; ?></div>
@@ -116,29 +131,29 @@
 			</div>
 		</div>
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
-			<div class="card sewcbtn">
-				<div class="card-body"><b>Created</b><br><span style="margin-left:10px"><?php echo ago($ticket['time']); ?></span></div>
-			</div>
-		</div>
-		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
 			<div class="card secbtn">
 				<div data-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Category</b><br><span id="category" style="margin-left:10px"><?php echo $ticket['category']; ?></span>
-				<div class="dropdown-menu">
-						<ul style="font-size:12px;"  class="list-group">
-							<li onclick="updateTicket('category','Account Management','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Account Management</li>
-							<li onclick="updateTicket('category','Applications','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Applications</li>
-							<li onclick="updateTicket('category','Facilities','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Facilities</li>
-							<li onclick="updateTicket('category','Finance','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Finance</li>
-							<li onclick="updateTicket('category','General Inquiries','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">General Inquiries</li>
-							<li onclick="updateTicket('category','Hardware','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Hardware</li>
-							<li onclick="updateTicket('category','Human Resources','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Human Resources</li>
-							<li onclick="updateTicket('category','Networking','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Networking</li>
-							<li onclick="updateTicket('category','Other','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Other</li>
-						</ul>
+					<div class="dropdown-menu">
+							<ul style="font-size:12px;"  class="list-group">
+								<li onclick="updateTicket('category','Account Management','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Account Management</li>
+								<li onclick="updateTicket('category','Applications','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Applications</li>
+								<li onclick="updateTicket('category','Facilities','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Facilities</li>
+								<li onclick="updateTicket('category','Finance','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Finance</li>
+								<li onclick="updateTicket('category','General Inquiries','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">General Inquiries</li>
+								<li onclick="updateTicket('category','Hardware','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Hardware</li>
+								<li onclick="updateTicket('category','Human Resources','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Human Resources</li>
+								<li onclick="updateTicket('category','Networking','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Networking</li>
+								<li onclick="updateTicket('category','Other','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Other</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+			<div class="col-sm-12 col-md-6 col-lg-2 my-1">
+				<div class="card sewcbtn">
+					<div class="card-body"><b>Created</b><br><span style="margin-left:10px"><?php echo ago($ticket['time']); ?></span></div>
+				</div>
+			</div>
 		</div>
 	</div>	
 	<div class="row" style="z-index:1;margin-bottom:10px;margin-top:0px;border-radius:3px;ovesrflow:hidden;padding:0px">
@@ -147,7 +162,7 @@
 				<div class="card table-card" id="printTable" style="z-index:1;marsgin-top:-20px;padding:30px;border-radius:6px;"> 
 					<h4 style="display:inline"><?php echo $ticket['title']; ?>
 						<div styles="float:right;display:inline" class="dropdown">
-							<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Ticket');" class="btn btn-sm" style="float:right;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+							<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Ticket');" class="btn btn-sm" style="float:right;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 								<i class="fas fa-sync"></i>
 							</a>
 							<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right;margin-right:5px" data-toggle="dropdown">
@@ -159,10 +174,9 @@
 								<a class="dropdown-item" data-toggle="modal" href="javascript:void(0)" data-target="#companyComputersModal2" >Merge</a>
 								<hr>
 								<a class="dropdown-item bg-danger" data-toggle="modal" href="javascript:void(0)" data-target="#deleteAssets" >Delete</a>
-							</div>
-							
+							</div>	
 						</div>	
-						<span style="color:#707070;font-size:12px">Created: <?php echo date("m/d/Y h:i A", strtotime($ticket['time'])); ?> by <?php echo $name; ?></span><br><br>
+						<span style="color:#707070;font-size:12px">Created: <?php echo date("m/d/Y h:i A", strtotime($ticket['time'])); ?> by <?php echo $name5; ?></span><br><br>
 						<div style="margin-left:20px">
 							<span style="font-size:14px;"><?php echo $ticket['description']; ?></span>
 							<br>
@@ -176,11 +190,9 @@
 							<?php } ?>
 							</div>
 						</div>
-
-						
 					</h4>
-			<hr>
-			<br>
+					<hr>
+					<br>
 			</form>
 			<div class="tab-block">
 					<ul class="nav nav-pills">
@@ -201,7 +213,7 @@
 				?>
 				<div class="tab-content" style="padding-top:10px;overflow:hidden" >
 					<div id="home" class="tab-pane fade-in active">
-						<div style="margin-right:20px;float:left;display:inline;background:#fe6f33;color:#fff;padding:5px;border-radius:100px;text-align:center;width:40px;height:40px;padding-top:10px"><?php echo $name; ?></div>
+						<div style="margin-right:20px;float:left;display:inline;background:<?php echo $user['user_color']; ?>;color:#fff;padding:5px;border-radius:100px;text-align:center;width:40px;height:40px;padding-top:10px"><?php echo $name; ?></div>
 						<div style="width:90%;margin-left:50px;">
 							<textarea id="trumbowyg-demo" name="message" style="height:200px" ></textarea>
 							<div id="msg_private" style="border:1px solid #d7e0e2;border-top:none;background:#ecf0f1;height:35px;padding:8px;cursor:pointer"><i class="fas fa-lock"></i>&nbsp;Private</div>
@@ -221,8 +233,7 @@
 										['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
 										['unorderedList', 'orderedList'],
 										['horizontalRule'],
-										['removeformat'],
-										['fullscreen']
+										['removeformat']
 									]
 								});
 								$("#msg_private").click(function(){
@@ -242,10 +253,8 @@
 						$query = "SELECT * FROM ticket_messages where ticket_id='".$ticketID."' ORDER BY ID DESC";
 						$results = mysqli_query($db, $query);
 						$resultCount = mysqli_num_rows($results);							
-						
 						//Fetch Results
-						$count = 0;
-						
+						$count = 0;	
 						while($result = mysqli_fetch_assoc($results)){
 						
 							$count++;
@@ -270,8 +279,7 @@
 								<?php echo date("m/d/Y h:i A", strtotime($result['time'])); ?>
 								<br>
 								<?php echo clean($result['message']); ?>
-								<br><br>
-								
+								<br><br>	
 						<?php } ?>
 					</div>
 					<div id="menu1" class="tab-pane fade-in">
@@ -339,11 +347,12 @@
 					<div class="panel-body">
 						<ul class="list-group">
 							<?php
-								$json = getComputerData($ticket['computer_id'], array("*"), $showDate);
-								$hostname = textOnNull($json['General']['Response'][0]['csname'],"Unavailable");
+								$json = getComputerData($ticket['computer_id'], array("general"));
+								$hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 								$query = "SELECT online, ID, company_id, name, phone, email,hex, computer_type FROM computers WHERE ID='".$ticket['computer_id']."' LIMIT 1";
 								$results = mysqli_query($db, $query);
 								$result = mysqli_fetch_assoc($results);
+								if($result['ID']!=""){
 							?>
 							<li onclick="loadSection('General', '<?php echo $result['ID']; ?>');$('.sidebarComputerName').text('<?php echo textOnNull(strtoupper($hostname),'Unavailable');?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
 								<?php if($result['online']=="0") {?>
@@ -353,6 +362,7 @@
 								<?php }?>
 								&nbsp;&nbsp;<?php echo $hostname; ?>
 							</li>
+							<?php }else{ echo "<center><h6>This ticket does not include an asset</h6></center>"; } ?>
 						</ul>
 					</div>
 				</div>
@@ -419,20 +429,13 @@
 		</div>
 	</div>
 </div>
-<!--------------------------------------modals---------------------------------------------->
-
-<!---------------------------------End MODALS------------------------------------->
 <script>
 $('#dataTable').DataTable( {
 	"lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
 	colReorder: true,
 	dom: 'Bfrtip'
-
-
 } );	
-
 </script>
-<script src="js/tagsinput.js"></script>
 <script type='text/javascript'>
  $(document).ready(function(){
    // Check or Uncheck All checkboxes
@@ -461,12 +464,3 @@ $('#dataTable').DataTable( {
   });
 });
 </script>
-<?php if($_GET['other']!=""){
-?>
-<script>
-	$('input[type=search]').val('<?php echo clean(base64_decode($_GET['other'])); ?>');
-	$('input[type=search]').trigger('keyup');
-</script>
-<?php
-}
-?>

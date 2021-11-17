@@ -30,11 +30,11 @@
 	$ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 ?>
 	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
-		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Service Desk <span style="color:#707070;font-size:16px">(<?php echo $ticketCount; ?> Open Tickets)</span>
-			<a href="javascript:void(0)" title="Refresh" onclick="loadSection('ServiceDesk');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<h5 style="color:#0c5460">Service Desk <span style="color:#707070;font-size:16px">(<?php echo $ticketCount; ?> Open Tickets)</span>
+			<button title="Refresh" onclick="loadSection('Service_Desk');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-sync"></i>
-			</a>	
-		</h4>
+			</button>	
+		</h5>
 	</div>	
 	<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 		<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="padding-left:20px;">
@@ -44,35 +44,32 @@
 						</h5>
 					</div>
 					<ul class="list-group">
-							<li onclick="loadSection('ServiceDesk','','','all');" style="cursor:pointer;<?php if($get=="all" or $get==""){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
-								<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
-									<?php echo $ticketCountAll; ?>
-								</div>
-								All Tickets
-							</li>
-							<li onclick="loadSection('ServiceDesk','','','me');" style="cursor:pointer;<?php if($get=="me"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
-								<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
-									<?php echo $ticketCount3; ?>
-								</div>
-								Assigned to me
-							</li>
-							<li onclick="loadSection('ServiceDesk','','','noone');" style="cursor:pointer;<?php if($get=="noone"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
-								<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
-									<?php echo $ticketCount3; ?>
-								</div>
-								Unassigned
-							</li>
-							<li onclick="loadSection('ServiceDesk','','','closed');" style="cursor:pointer;<?php if($get=="closed"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
-								<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
-									<?php echo $ticketCount4; ?>
-								</div>
-								Closed
-							</li>
-						</ul>
+						<li onclick="loadSection('Service_Desk','','','all');" style="cursor:pointer;<?php if($get=="all" or $get==""){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
+								<?php echo $ticketCountAll; ?>
+							</div>
+							All Tickets
+						</li>
+						<li onclick="loadSection('Service_Desk','','','me');" style="cursor:pointer;<?php if($get=="me"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
+								<?php echo $ticketCount3; ?>
+							</div>
+							Assigned to me
+						</li>
+						<li onclick="loadSection('Service_Desk','','','noone');" style="cursor:pointer;<?php if($get=="noone"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
+								<?php echo $ticketCount4; ?>
+							</div>
+							Unassigned
+						</li>
+						<li onclick="loadSection('Service_Desk','','','closed');" style="cursor:pointer;<?php if($get=="closed"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
+								<?php echo $ticketCount2; ?>
+							</div>
+							Closed
+						</li>
+					</ul>
 				</div>	
-						
-				
-				
 				<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
 					<div style="height:45px" class="panel-heading">
 						<h5 class="panel-title">Notes
@@ -126,7 +123,7 @@
 							<a class="dropdown-item bg-danger" data-toggle="modal" href="javascript:void(0)" data-target="#deleteTickets" >Delete Selected Tickets</a>
 						<?php } ?>
 					</div>
-					<button title="Create New Ticket" onclick="loadSection('NewTicket');" type="button" class="btn btn-warning btn-sm" style="float:right">
+					<button title="Create New Ticket" onclick="loadSection('NewTicket');" type="button" class="btn btn-sm" style="float:right;background:#0c5460;color:#d1ecf1">
 						<i class="fas fa-plus"></i>
 					</button>
 				</div>
@@ -166,14 +163,14 @@
 									
 									while($result = mysqli_fetch_assoc($results)){
 										$getWMI = array("*");
-										$data = getComputerData($result['ID'], $getWMI,"latest");
+										$data = getComputerData($result['ID'], $getWMI);
 										$count++;
 										$query = "SELECT username,nicename,hex,user_color FROM users WHERE ID='".$result['assignee']."' LIMIT 1";
 										$results2 = mysqli_query($db, $query);
 										$user3 = mysqli_fetch_assoc($results2);
 										$name2 =  ucwords(crypto('decrypt',$user3['nicename'],$user3['hex']));
 								?>
-								<tr >
+								<tr>
 									<td>
 										<div class="form-check">
 											<input class="form-check-input checkbox" type="checkbox" value="<?php echo $result['ID']; ?>" name="computers[]" id="flexCheckDefault">	
@@ -200,7 +197,7 @@
 										</div>
 									</td>
 									<td onclick="loadSection('Ticket', '<?php echo $result['ID']; ?>');" id="row<?php echo $result['ID']; ?>" style="cursor:pointer" onclick="$('input[type=search]').val(''); $('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
-										<a style="font-size:14px;color:#17a2b8" href=""><?php echo $result['title']; ?></a>
+										<a style="font-size:14px;color:#17a2b8" href="javascript:void(0)"><?php echo $result['title']; ?></a>
 										<p style="font-size:12px">
 											<?php 
 											if(strlen($result['description']) > 30) {
@@ -333,7 +330,6 @@ $('#dataTable').DataTable( {
 	]
 } );	
 </script>
-<script src="js/tagsinput.js"></script>
 <script type='text/javascript'>
  $(document).ready(function(){
    // Check or Uncheck All checkboxes

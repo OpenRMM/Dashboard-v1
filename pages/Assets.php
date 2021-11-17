@@ -23,11 +23,11 @@
 	$assets2 = mysqli_num_rows(mysqli_query($db, $query));
 ?>
 	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
-		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Asset List 
-			<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Assets');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<h5 style="color:#0c5460">Asset List 
+			<button title="Refresh" onclick="loadSection('Assets');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-sync"></i>
-			</a>	
-		</h4>
+			</button>	
+		</h5>
 	</div>	
 	<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;">
@@ -71,20 +71,18 @@
 							</thead>
 							<tbody>
 								<?php
-									//Get Total Count
-									$query = "SELECT ID FROM computers where active='1'";
-									$results = mysqli_query($db, $query);
-									$resultCount = mysqli_num_rows($results);							
+									//Get Total Count					
 									$query = "SELECT * FROM computers WHERE active='1' ORDER BY ID ASC";
 									//Fetch Results
 									$count = 0;
 									$results = mysqli_query($db, $query);
+									$resultCount = mysqli_num_rows($results);	
 									while($result = mysqli_fetch_assoc($results)){
-										$getWMI = array("*");
-										$data = getComputerData($result['ID'], $getWMI,"latest");
+										$getWMI = array("logical_disk","general");
+										$data = getComputerData($result['ID'], $getWMI);
 										//Determine Warning Level
-										$freeSpace = $data['LogicalDisk']['Response'][0]['FreeSpace'];
-										$size = $data['LogicalDisk']['Response'][0]['Size'];
+										$freeSpace = $data['logical_disk']['Response']['C:']['FreeSpace'];
+										$size = $data['logical_disk']['Response']['C:']['Size'];
 										$used = $size - $freeSpace;
 										$usedPct = round(($used/$size) * 100);
 										if($usedPct > $siteSettings['Alert Settings']['Disk']['Danger'] ){
@@ -105,8 +103,9 @@
 									</td>
 									<td>
 										<span title="ID"><?php echo $result['ID']; ?></span>
+										<span style="display:none" ><?php if($result['online']=="1"){echo"Online";}else{echo "Offline";} ?></span>
 									</td>
-									<td>
+									<td onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
 										<?php
 											$icons = array("desktop","server","laptop","tablet","allinone","other");
 											if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
@@ -118,45 +117,45 @@
 												$icon = "server";
 											}  
 										?>
-										<a style="color:#000;font-size:12px" href="javascript:void(0)" onclick="loadSection('General', '<?php echo $result['ID']; ?>');">
+										<span style="color:#000;font-size:12px;cursor:pointer" >
 											<?php if($result['online']=="0") {?>
 												<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
 											<?php }else{?>
 												<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
 											<?php }?>
-											&nbsp;<?php echo textOnNull(strtoupper($data['General']['Response'][0]['csname']),"Unavailable");?>
-										</a>
+											&nbsp;<?php echo textOnNull(strtoupper($data['general']['Response'][0]['csname']),"Unavailable");?>
+										</span>
 									</td>
 										<?php
-											$username = textOnNull($data['General']['Response'][0]['UserName'], "Unknown");
+											$username = textOnNull($data['general']['Response'][0]['UserName'], "Unknown");
 										?>
 									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username)); ?>'); $('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
 										<?php
 											echo ucwords((strpos($username, "\\")!==false ? explode("\\", $username)[1] : $username));
 										?>
 									</td>
-									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo textOnNull(str_replace('Microsoft', '',$data['General']['Response'][0]['Caption']), "Windows");?>'); $('input[type=search]').trigger('keyup'); "><?php echo textOnNull(str_replace('Microsoft', '',$data['General']['Response'][0]['Caption']), "Windows");?></td>
-									<td>
-										<a id="col<?php echo $result['ID']; ?>" style="color:#000;font-size:12px" href="javascript:void(0)" onclick="$('input[type=search]').val('<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']), "N/A");?>');$('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
+									<td style="cursor:pointer" onclick="$('input[type=search]').val('<?php echo textOnNull(str_replace('Microsoft', '',$data['general']['Response'][0]['Caption']), "Windows");?>'); $('input[type=search]').trigger('keyup'); "><?php echo textOnNull(str_replace('Microsoft', '',$data['general']['Response'][0]['Caption']), "Windows");?></td>
+									<td onclick="$('input[type=search]').val('<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']), "N/A");?>');$('input[type=search]').trigger('keyup'); $('#dataTable').animate({ scrollTop: 0 }, 'slow');">
+										<span id="col<?php echo $result['ID']; ?>" style="color:#000;font-size:12px;cursor:pointer">
 											<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']), "Not Assigned");?>
-										</a>
+										</span>
 									</td>
 									<td><?php echo textOnNull(crypto('decrypt',$result['name'],$result['hex']), "N/A");?></td>
 									<td><?php echo textOnNull(crypto('decrypt',$result['phone'],$result['hex']), "N/A");?></td>
 									<td><?php echo textOnNull(crypto('decrypt',$result['email'],$result['hex']), "N/A");?></td>
-									<td><?php echo textOnNull($json['General']['Response'][0]['Domain'], "N/A");?></td>
+									<td><?php echo textOnNull($data['general']['Response'][0]['Domain'], "N/A");?></td>
 									<td>
 										<div class="progress" style="margin-top:5px;height:10px;background:#a4b0bd" title="<?php echo $usedPct;?>%">
 											<div class="progress-bar" role="progressbar" style=";background:<?php echo $pbColor;?>;width:<?php echo $usedPct;?>%" aria-valuenow="<?php echo $usedPct;?>" aria-valuemin="0" aria-valuemax="100"></div>
 										</div>
 									</td>
 									<td>
-										<a href="javascript:void(0)" onclick="loadSection('Edit', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
+										<button onclick="loadSection('Edit', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
 											<i class="fas fa-pencil-alt"></i>
-										</a>
-										<a title="View Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('General', '<?php echo $result['ID']; ?>');" href="javascript:void(0)" class="form-inline btn btn-warning btn-sm">
+										</button>
+										<button title="View Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('General', '<?php echo $result['ID']; ?>');" class="form-inline btn btn-warning btn-sm">
 											<i class="fas fa-eye"></i>
-										</a>
+										</button>
 									</td>
 								</tr>
 							<?php }?>
@@ -229,18 +228,16 @@
 			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="padding-left:20px;">
 				<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">			
 					<div class="card-block text-center">
-						<h6 class="m-b-15">Assets</h6>
-						<div class="risk-rate">
-							<span><b><?php echo $resultCount; ?></b></span>
-						</div>
+						<h6 style="cursor:pointer;font-weight:bold" onclick="$('input[type=search]').val(''); $('input[type=search]').trigger('keyup');" class="m-b-15"><?php echo $resultCount; ?> Total Assets</h6>
+					
 						<div class="row justify-content-center m-t-10 b-t-default m-l-0 m-r-0">
-							<div class="col m-t-15 b-r-default">
-								<h6 class="text-muted">Online</h6>
-								<h6><?php echo $assets1; ?></h6>
+							<div style="cursor:pointer;padding:7px;border-radius:4px" onclick="$('input[type=search]').val('Online'); $('input[type=search]').trigger('keyup');" class="col m-t-15 secbtn">
+								<h6 class="text-muted"><b>Online</b></h6>
+								<h6><?php echo $assets1; ?> Asset</h6>
 							</div>
-							<div class="col m-t-15">
-								<h6 class="text-muted">Offline</h6>
-								<h6><?php echo $assets2; ?></h6>
+							<div style="cursor:pointer;padding:7px;border-radius:4px" onclick="$('input[type=search]').val('Offline'); $('input[type=search]').trigger('keyup');" class="col m-t-15 secbtn">
+								<h6 class="text-muted"><b>Offline</b></h6>
+								<h6><?php echo $assets2; ?> Asset</h6>
 							</div>
 						</div>
 					</div>
@@ -325,7 +322,6 @@ $('#dataTable').DataTable( {
 	]
 } );	
 </script>
-<script src="js/tagsinput.js"></script>
 <script type='text/javascript'>
  $(document).ready(function(){
    // Check or Uncheck All checkboxes

@@ -1,4 +1,6 @@
+
 <?php 
+ini_set('display_errors', '0');
 if($_SESSION['userid']==""){ 
 ?>
 	<script>		
@@ -11,21 +13,20 @@ if($_SESSION['userid']==""){
 <?php 
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }	
-$limit = intval($_GET['limit']);
-if($limit == 0){
-	$limit = 20;
-}
-$query = "SELECT username,nicename FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+
+$query = "SELECT username,nicename,user_color FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $user = mysqli_fetch_assoc($results);
 $username=$user['username'];
 
-$query = "SELECT ID,computer_type FROM computers where active='1' and computer_type='OpenRMM Server' and online='1' ORDER BY ID DESC LIMIT 1";
+$query = "SELECT * FROM computers where active='1' and computer_type='OpenRMM Server' ORDER BY ID DESC LIMIT 1";
 $results = mysqli_query($db, $query);
 $computer = mysqli_fetch_assoc($results);
+$computerID= $computer['ID'];
 
-
-$json = getComputerData($computer['ID'], array("*"), "latest");
+$getWMI = array("general","logical_disk","bios","processor","agent","battery","windows_activation","antivirus","firewall");
+$json = getComputerData($computer['ID'], $getWMI);
+//print_r(getComputerData($computer['ID'], array("*")));
 function welcome(){
 	if(date("H") < 12){
 		return "Good Morning";
@@ -42,36 +43,35 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 	$serverStatus="Online";
 	$serverStatus_color="success";
 } 
+
 ?>	
 	<div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
-		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>;">Dashboard
-			<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Dashboard');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+		<h5 style="color:#0c5460;">Dashboard
+			<button title="Refresh" onclick="loadSection('Dashboard');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-sync"></i>
-			</a>
+			</button>
 			<br>
 			<span style="font-size:14px;color:#999"><?php echo welcome().", ".$user['username']."!"; ?></span>
-		</h4>
+		</h5>
 	</div>	
 	<div class="row" style="margin-bottom:10px;margin-top:20px;border-radius:3px;overflow:hidden;padding:0px;">
 		<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 " style="padding-left:20px;">
 			<div class="card user-card2" style="heigsht:100%;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
 				<div style="height:45px" class="panel-heading">
-					<h5 class="panel-title">Recently Added Assets</h5>
+					<h5 class="panel-title">New Assets</h5>
 				</div>			
 				<div class="card-block text-center">
 					<ul class="list-group">	
 						<?php
-							//Get Total Count
-							$query2 = "SELECT ID FROM computers where active='1'";
-							$results2= mysqli_query($db, $query2);
-							$resultCount = mysqli_num_rows($results2);							
+							//Get Total Count					
 							$query = "SELECT * FROM computers WHERE active='1' ORDER BY ID DESC LIMIT 3";
 							//Fetch Results
 							$count = 0;
 							$results = mysqli_query($db, $query);
+							$resultCount = mysqli_num_rows($results);
 							while($result = mysqli_fetch_assoc($results)){
-								$getWMI = array("*");
-								$data = getComputerData($result['ID'], $getWMI,"latest");
+								$getWMI = array("general");
+								$data = getComputerData($result['ID'], $getWMI);
 								$count++;
 								$icons = array("desktop","server","laptop","tablet","allinone","other");
 								if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
@@ -82,14 +82,14 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 								}else{
 									$icon = "server";
 								}  
-							?>
+						?>
 						<li onclick="loadSection('General', '<?php echo $result['ID']; ?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
 							<?php if($result['online']=="0") {?>
 								<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
 							<?php }else{?>
 								<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
 							<?php }?>
-							&nbsp;&nbsp;<?php echo textOnNull($data['General']['Response'][0]['csname'],"Unavailable"); ?>
+							&nbsp;&nbsp;<?php echo textOnNull($data['general']['Response'][0]['csname'],"Unavailable"); ?>
 						</li>
 						<?php }  ?>
 					</ul>
@@ -219,18 +219,18 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 				<div class="tab-block">
 					<ul class="nav nav-pills">
 						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center;" class="nav-item">
-							<a data-toggle="pill" class="nav-link active" data-toggle="tab" href="#home">Summary</a>
+							<a data-toggle="pill" class="nav-link active" data-toggle="tab" href="#Summary">Summary</a>
 						</li>
 						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
-							<a data-toggle="pill" class="nav-link"  data-toggle="tab" href="#menu1">Alerts</a>
+							<a data-toggle="pill" class="nav-link"  data-toggle="tab" href="#Alerts">Alerts</a>
 						</li>
 						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
-							<a data-toggle="pill" class="nav-link"  data-toggle="tab" href="#menu2">Tasks</a>
+							<a data-toggle="pill" class="nav-link"  data-toggle="tab" href="#Tasks">Tasks</a>
 						</li>
 					</ul>
 				</div>
 				<div class="tab-content" style="padding-top:10px;overflow:hidden" >
-					<div id="home" class="tab-pane fade-in active">
+					<div id="Summary" class="tab-pane fade-in active">
 						<h5 style="margin-left:15px;display:inline;">Server Information Summary
 							<h6 style="display:inline;margin-left:25px;margin-top:3px;position:absolute">
 								<span style="color:#000" class="badge badge-<?php echo $serverStatus_color; ?>"><?php echo $serverStatus; ?></span>
@@ -243,9 +243,9 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 								</form>	
 							<?php } ?>
 						</h5>
-						<hr>
+						<br>
 						<div class="row">
-							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
+							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-6" style="padding:3px;">
 								<div class="panel panel-default">
 									<div class="panel-heading">
 										<h5  style="padding:7px;" class="panel-title">
@@ -254,39 +254,40 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 									</div>
 									<div class="panel-body" style="height:285px;">	
 										<div class="roaw">
-											<ul class="list-group" style="margin-left:20px">
-												<li class="list-group-item" style="padding:6px"><b>Processor: </b><?php echo textOnNull(str_replace(" 0 ", " ",str_replace("CPU", "",str_replace("(R)","",str_replace("(TM)","",$json['Processor']['Response'][0]['Name'])))), "N/A");?></li>
-												<li class="list-group-item" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['General']['Response'][0]['Caption']), "N/A");?></li>
-												<li class="list-group-item" style="padding:6px"><b>Architecture: </b><?php echo textOnNull(str_replace("PC", "",$json['General']['Response'][0]['SystemType']), "N/A");?></li>
-												<li class="list-group-item" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['BIOS']['Response'][0]['Version'], "N/A");?></li>
-												<li class="list-group-item" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['General']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
-												<li class="list-group-item" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['General']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
-												<?php if((int)$json['Battery']['Response'][0]['BatteryStatus']>0){ ?>
-												<li class="list-group-item" style="padding:6px"><b>Battery Status: </b><?php 								
-													$statusArray = [
-													"1" => ["Text" => "Discharging", "Color" => "red"],
-													"2" => ["Text" => "Unknown", "Color" => "red"],
-													"3" => ["Text" => "Fully Charged", "Color" => "green"],
-													"4" => ["Text" => "Low", "Color" => "red"],
-													"5" => ["Text" => "Critical", "Color" => "red"],
-													"6" => ["Text" => "Charging", "Color" => "green"],
-													"7" => ["Text" => "Charging And High", "Color" => "green"],
-													"8" => ["Text" => "Charging And Low", "Color" => "green"],
-													"9" => ["Text" => "Charging And Critical", "Color" => "yellow"],
-													"10" =>["Text" => "Undefined", "Color" => "red"],
-													"11" =>["Text" => "Partially Charged", "Color"=>"yellow"]];
-													$statusInt = $json['Battery'][0]['BatteryStatus'];						
-												?>
-												<?php echo textOnNull($json['Battery']['Response'][0]['EstimatedChargeRemaining'], "Unknown");?>%
-												(<span style="color:<?php echo $statusArray[$statusInt]['Color']; ?>"><?php echo $statusArray[$statusInt]['Text']; ?></span>)	
-												</li>
-												<?php } ?>
-											</ul>
+										<ul class="list-group" style="margin-left:10px">
+											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.Name');" id="processor_LoadPercentage" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Processor: </b><?php echo textOnNull(str_replace(" 0 ", " ",str_replace("CPU", "",str_replace("(R)","",str_replace("(TM)","",$json['processor']['Response'][0]['Name'])))), "N/A");?></li>
+											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Caption');" id="general_Caption" class="list-group-item secbtn olderdata" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['general']['Response'][0]['Caption']), "N/A");?></li>
+											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.SystemType');" id="general_SystemType" class="list-group-item secbtn olderdata" style="padding:6px"><b>Architecture: </b><?php echo textOnNull(str_replace("PC", "",$json['general']['Response'][0]['SystemType']), "N/A");?></li>
+											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','bios','0.Version');" id="bios_Version" class="list-group-item secbtn olderdata" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['bios']['Response'][0]['Version'], "N/A");?></li>
+											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','ExternalIP.ip');" id="general_ip" class="list-group-item secbtn olderdata" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
+											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.');" id="general_PrimaryLocalIP" class="list-group-item secbtn olderdata" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
+											<?php 
+											if((int)$json['battery']['Response'][0]['BatteryStatus']>0){ ?>
+											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','battery','0.BatteryStatus');" id="battery_BatteryStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Battery Status: </b><?php 								
+												$statusArray = [
+												"1" => ["Text" => "Discharging", "Color" => "red"],
+												"2" => ["Text" => "Unknown", "Color" => "red"],
+												"3" => ["Text" => "Fully Charged", "Color" => "green"],
+												"4" => ["Text" => "Low", "Color" => "red"],
+												"5" => ["Text" => "Critical", "Color" => "red"],
+												"6" => ["Text" => "Charging", "Color" => "green"],
+												"7" => ["Text" => "Charging And High", "Color" => "green"],
+												"8" => ["Text" => "Charging And Low", "Color" => "green"],
+												"9" => ["Text" => "Charging And Critical", "Color" => "yellow"],
+												"10" =>["Text" => "Undefined", "Color" => "red"],
+												"11" =>["Text" => "Partially Charged", "Color"=>"yellow"]];
+												$statusInt = $json['battery']['Response'][0]['BatteryStatus'];						
+											?>
+											<?php echo textOnNull($json['battery']['Response'][0]['EstimatedChargeRemaining'], "Unknown");?>%
+											(<span style="color:<?php echo $statusArray[$statusInt]['Color']; ?>"><?php echo $statusArray[$statusInt]['Text']; ?></span>)	
+											</li>
+											<?php } ?>
+										</ul>
 										</div>
 									</div>
 								</div>
 							</div>
-							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
+							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-6" style="padding:3px;">
 								<div class="panel panel-default">
 									<div class="panel-heading">
 										<h5 style="padding:7px" class="panel-title">
@@ -295,36 +296,61 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 									</div>
 									<div class="panel-body" style="height:285px;">
 										<div class="rsow">
-											<ul class="list-group" style="margin-left:20px">
-												<li class="list-group-item" style="padding:6px"><b>Hostname: </b><?php echo textOnNull($json['General']['Response'][0]['csname'], "Unavailable");?></li>
-												<li class="list-group-item" style="padding:6px"><b>Current User: </b><?php echo textOnNull(basename($json['General']['Response'][0]['UserName']), "Unknown");?></li>
-												<li class="list-group-item" style="padding:6px"><b>Domain: </b><?php echo textOnNull($json['General']['Response'][0]['Domain'], "N/A");?></li>
-												<?php
-													$lastBoot = explode(".", $json['General']['Response'][0]['LastBootUpTime'])[0];
-													$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
-												?>
-												<li class="list-group-item" style="padding:6px"><b>Uptime: </b><?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
-												<?php  
-												if(count($json['WindowsActivation']['Response']) > 0) {
-													$status = $json['WindowsActivation']['Response'][0]['LicenseStatus'];
-													if($status!="Licensed")$status="Not activated";
-													$color = ($status == "Licensed" ? "text-success" : "text-danger");
-												?>
-													<li class="list-group-item" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
-												<?php } 
-												if(count($json['Antivirus']) > 0) {
-													$status = $json['Antivirus']['Response']['Value'];
-													$color = ($status == "No Antivirus" ? "text-danger" : "text-success");
-												?>
-													<li class="list-group-item" style="padding:6px"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
-												<?php } ?>
-												<li class="list-group-item" title="Path: <?php echo $json['Agent']['Response'][0]['Path']; ?>" style="padding:6px"><b>Server Version: </b><?php echo $json['Agent']['Response'][0]['Version']; ?></li>
-											</ul>
+										<ul class="list-group" style="margin-left:20px">
+											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.csname');" id="general_0csname" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Hostname: </b><?php echo textOnNull($json['general']['Response'][0]['csname'], "Unavailable");?></li>
+											<?php
+												$lastBoot = explode(".", $json['general']['Response'][0]['LastBootUpTime'])[0];
+												$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
+											?>
+											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.LastBootUpTime');" id="general_0LastBootUpTime" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Uptime: </b><?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
+											<?php if(count($json['firewall']) > 0) {
+
+												$public = $json['firewall']['Response'][0]['publicProfile'];
+												//if($public=="OFF"){ $public="Disabled"; }else{ $public="Enabled"; }
+												$color1 = (($public == "Enabled") ? "text-success" : "text-danger");
+
+												$private = $json['firewall']['Response'][0]['privateProfile'];
+												//if($private=="OFF"){ $private="Disabled"; }else{ $private="Enabled"; }
+												$color2 = (($private == "Enabled") ? "text-success" : "text-danger");
+
+												$domain = $json['firewall']['Response'][0]['domainProfile'];
+												//if($domain=="OFF"){ $domain="Disabled"; }else{ $domain="Enabled"; }
+												$color3 = (($domain == "Enabled") ? "text-success" : "text-danger");
+											?>
+												<li id="Firewall" class="list-group-item olderdata" style="z-index:2;padding:6px;width:100%"><b>Firewall Status: </b><br>
+													<center>
+														<span data-toggle="modal" data-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.publicProfile');"  style="margin-left:20px">
+															Public: <span style="padding-right:20px" class="<?php echo $color1; ?>"><?php echo $public; ?></span>
+														</span>
+														<span data-toggle="modal" data-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.privateProfile');">
+															Private: <span style="padding-right:20px" class="<?php echo $color2; ?>"><?php echo $private; ?></span>
+														</span>
+														<span data-toggle="modal" data-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.domainProfile');">
+															Domain: <span class="<?php echo $color3; ?>"><?php echo $domain; ?></span>
+													</span>
+													</center>
+												</li>		
+											<?php } 
+											if(count($json['general']['Response'][0]['Antivirus']) > 0) {
+												$status = $json['general']['Response'][0]['Antivirus'];
+												$color = ($status == "No Antivirus" ? "text-danger" : "text-success");
+											?>
+												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Antivirus');" id="general_0Antivirus" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
+											<?php } ?>
+											<?php if(count($json['windows_activation']['Response']) > 0) {
+												$status = $json['windows_activation']['Response'][0]['LicenseStatus'];
+												if($status!="Licensed")$status="Not activated";
+												$color = ($status == "Licensed" ? "text-success" : "text-danger");
+											?>
+											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','windows_activation','0.LicenseStatus');" id="WindowsActivation_0LicenseStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
+											<?php } ?>
+											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','agent','0.Version');" id="agent_0Version" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%" title="Path: <?php echo $json['agent']['Response'][0]['Path']; ?>"><b>Server Version: </b><?php echo textOnNull($json['agent']['Response'][0]['Version'],"N/A"); ?></li>
+										</ul>
 										</div>
 									</div>
 								</div>
 							</div>
-							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
+							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-12" style="padding:3px;">
 								<div class="panel panel-default">
 									<div class="panel-heading">
 										<h5 style="padding:7px" class="panel-title">
@@ -353,7 +379,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 							</div>
 						</div>
 					</div>
-					<div id="menu1" class="tab-pane fade">
+					<div id="Alerts" class="tab-pane fade">
 						<button data-toggle="modal" data-target="#editAlert" onclick="$('#alertCompany').show();$('#alertID').val('');" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</button><hr>
 						<table class="table table-hover table-borderless" id="datatable">
 							<tr>
@@ -399,7 +425,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 						<?php }?>
 						</table>
 					</div>
-					<div id="menu2" class="tab-pane fade">
+					<div id="Tasks" class="tab-pane fade">
 						<button data-toggle="modal" data-target="#editTrigger" class="btn btn-sm btn-warning"><i class="fas fa-plus"></i> &nbsp;Add Task</button><hr>
 						<table class="table table-hover table-borderless" id="datatable">
 							<tr>
@@ -462,7 +488,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 	    {
 	      data: [<?php echo $companyTotal;  ?>],
 	      backgroundColor: [
-	        "<?php echo $siteSettings['theme']['Color 2']; ?>"
+	        "#0c5460"
 	      ],
 	      hoverBackgroundColor: [
 	        "#696969"

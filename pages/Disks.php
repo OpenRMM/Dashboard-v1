@@ -12,14 +12,13 @@ if($_SESSION['userid']==""){
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
 $computerID = (int)base64_decode($_GET['ID']);
-$showDate = $_SESSION['date'];
 if($computerID<0){ 
 	?>
 	<br>
 	<center>
-		<h4>No Computer Selected</h4>
+		<h4>No Asset Selected</h4>
 		<p>
-			To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+			To Select An Asset, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
 		</p>
 	</center>
 	<hr>
@@ -32,52 +31,66 @@ $result = mysqli_fetch_assoc($results);
 
 //get update
 //MQTTpublish($computerID."/Commands/getLogicalDisk","true",getSalt(20));
-MQTTpublish($computerID."/Commands/getMappedLogicalDisk","true",getSalt(20),false);
-MQTTpublish($computerID."/Commands/getSharedDrives","true",getSalt(20),false);
-$json = getComputerData($result['ID'], array("MappedLogicalDisk", "LogicalDisk","SharedDrives"), $showDate);
+$json = getComputerData($result['ID'], array("mapped_logical_disk", "logical_disk","shared_drives"));
 
 $query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 
-$mappedDisks = $json['MappedLogicalDisk']['Response'];
-$disks = $json['LogicalDisk']['Response'];
-$shared = $json['SharedDrives']['Response'];
+$mappedDisks = $json['mapped_logical_disk']['Response'];
+$disks = $json['logical_disk']['Response'];
+$shared = $json['shared_drives']['Response'];
 
-$error1 = $json['MappedLogicalDisk_error'];
-$error2 = $json['LogicalDisk_error'];
+$error1 = $json['mapped_logical_disk_error'];
+$error2 = $json['logical_disk_error'];
 ?>
-<div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
-	<div class="col-md-10">
-		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
-			Physical Drives
-		</h4>	
-		<?php if($showDate == "latest"){?>
-			<span style="font-size:12px;color:#666;"> 
-				Last Update: <?php echo ago($json['LogicalDisk_lastUpdate']);?>
-			</span>
-		<?php }else{?>
-			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-				History: <?php echo date("l, F jS", strtotime($showDate));?>
-			</span>
-		<?php }?>
-	</div>
-	<div class="col-md-2" style="text-align:right;">
-		<div class="btn-group">
-			<button onclick="loadSection('Disks');" type="button" class="btn btn-warning btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
-			<button type="button" class="btn btn-warning dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				<i class="fas fa-sort-down"></i>
-			</button>
-			<div class="dropdown-menu">
-				<a onclick="loadSection('Disks,'<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
-			</div>
+<div style="padding:20px;margin-bottom:-1px;" class="card">
+	<div class="row" style="padding:15px;">
+		<div class="col-md-10">
+			<h4 style="color:#0c5460">
+				Disks
+			</h4>
 		</div>
-		<a href="javascript:void(0)" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-			<i class="far fa-calendar-alt"></i>
-		</a>
+		<div class="col-md-2" style="text-align:right;">
+			<div class="btn-group">
+				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Disks');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+				<button type="button" style="background:#0c5460;color:#d1ecf1" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<i class="fas fa-sort-down"></i>
+				</button>
+				<div class="dropdown-menu">
+					<a onclick="loadSection('Disks','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+				</div>
+			</div>
+		</div>	
 	</div>
 </div>
-<div class="row">
+<?php if($online=="0"){ ?>
+	<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
+		&nbsp;&nbsp;&nbsp;This Agent is offline		
+	</div>
+	<?php 
+}else{
+	echo"<br>";
+}
+?>
+<div class="card" style="margin-left:20px">
+	<div class="row" style="padding:15px;">
+		<div class="col-md-10">
+			<h5 style="color:#0c5460">
+				Physical Drives
+			</h5>	
+			<span style="font-size:12px;color:#666;"> 
+				Last Update: <?php echo ago($json['logical_disk_lastUpdate']);?>
+			</span>
+		</div>
+		<div class="col-md-2" style="text-align:right;">
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','logical_disk','null');">
+				<i class="fas fa-scroll"></i>
+			</button>
+		</div>
+	</div>
+</div>
+<div style="margin-left:30px;margin-bottom:20px;" class="row">
 	<?php
 		foreach($disks as $disk){
 			$freeSpace = $disk['FreeSpace'];
@@ -129,23 +142,24 @@ $error2 = $json['LogicalDisk_error'];
 		</div>
 	<?php } ?>
 </div>
-<div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
-	<div class="col-md-10">
-		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
-			Network Drives
-		</h4>
-		<?php if($showDate == "latest"){?>
+<div class="card" style="margin-left:20px">
+	<div class="row" style="padding:15px;">
+		<div class="col-md-10">
+			<h5 style="color:#0c5460">
+				Network Drives
+			</h5>
 			<span style="font-size:12px;color:#666;"> 
-				Last Update: <?php echo ago($json['LogicalDisk_lastUpdate']);?>
+				Last Update: <?php echo ago($json['mapped_logical_disk_lastUpdate']);?>
 			</span>
-		<?php }else{?>
-			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-				History: <?php echo date("l, F jS", strtotime($showDate));?>
-			</span>
-		<?php }?>	
-	</div>
+		</div>
+		<div class="col-md-2" style="text-align:right;">
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','mapped_logical_disk','null');">
+				<i class="fas fa-scroll"></i>
+			</button>
+		</div>
+	 </div>
 </div>
-<div class="row" style="margin-bottom:20px;">
+<div class="row" style="margin-left:25px;margin-bottom:20px;">
 <?php
 	$count = 0;
 	foreach($disks as $disk){
@@ -192,28 +206,29 @@ $error2 = $json['LogicalDisk_error'];
 	</div>
 <?php } } ?>
 <?php if($count == 0){ ?>
-	<div class="col-md-12" style="padding:5px;margin-left:30px;">
+	<div class="col-md-12" style="padding:5px;margin-left:25px;">
 		<h6>No network drives found.</h6>
 	</div>
 <?php } ?>
 </div>
-<div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
-	<div class="col-md-10">
-		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
-			Shared Drives
-		</h4>
-		<?php if($showDate == "latest"){?>
+<div class="card" style="margin-left:20px">
+	<div class="row" style="padding:15px;">
+		<div class="col-md-10">
+			<h5 style="color:#0c5460">
+				Shared Drives
+			</h5>
 			<span style="font-size:12px;color:#666;"> 
-				Last Update: <?php echo ago($json['SharedDrives_lastUpdate']);?>
-			</span>
-		<?php }else{?>
-			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-				History: <?php echo date("l, F jS", strtotime($showDate));?>
-			</span>
-		<?php }?>	
+				Last Update: <?php echo ago($json['shared_drives_lastUpdate']);?>
+			</span>	
+			</div>
+		<div class="col-md-2" style="text-align:right;">
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','shared_drives','null');">
+				<i class="fas fa-scroll"></i>
+			</button>
+		</div>
 	</div>
 </div>
-<div class="row" style="margin-bottom:20px;">
+<div class="row" style="margin-left:30px;margin-bottom:20px;">
 <?php
 	$count = 0;
 	foreach($shared as $disk){

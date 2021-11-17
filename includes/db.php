@@ -4,16 +4,19 @@
 	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "NewTicket,Ticket,ServiceDesk,Init,Login,Logout,Alerts,Commands,Dashboard,Profile,Edit,AllUsers,AllCompanies,Assets,Versions"; 
-	$allPages = "NewTicket,Ticket,ServiceDesk,AgentSettings,FileManager,Init,Alerts,AllCompanies,AllUsers,Assets,AttachedDevices,Commands,Dashboard,Disks,Edit,EventLogs,General,Login,Logout,Memory,Network,OptionalFeatures,Printers,Processes,Profile,Programs,Services,Users,Versions";
-	$adminPages = "AgentSettings,AllUsers.php,AllCompanies.php";
+	$excludedPages = "New_Ticket,Ticket,Service_Desk,Init,Login,Logout,Alerts,Commands,Dashboard,Profile,Edit,All_Users,All_Companies,Assets,Versions"; 
+	$allPages = "New_Ticket,Ticket,Service_Desk,Agent_Settings,File_Manager,Init,Alerts,All_Companies,All_Users,Assets,Attached_Devices,Commands,Dashboard,Disks,Edit,Event_Logs,General,Login,Logout,Memory,Network,Optional_Features,Printers,Processes,Profile,Programs,Services,Users,Versions";
+	$adminPages = "Agent_Settings,All_Users.php,All_Companies.php";
 	$taskCondtion_max = 5;
 ###########################################################################################################################################
 ######################################################## DEV ONLY DO NOT PASS #############################################################
 ###########################################################################################################################################
 	//Set Timezone
 	date_default_timezone_set("America/Chicago");
-
+	if($siteSettings==""){
+		session_write_close();
+		exit("There is a problem with you config.json file");
+	}
 	$serverPages = array("cron.php", "LoadHistorical.php");
 	if(!isset($_SESSION['excludedPages'])){
 		$_SESSION['excludedPages'] = explode(",", $excludedPages);
@@ -23,12 +26,13 @@
 	if(!in_array(basename($_SERVER['SCRIPT_NAME']), $serverPages)){
 		ini_set('session.gc_maxlifetime', 3600);
 		ini_set('display_errors', 0);
+	
 		$session_name = 'sec_session_id'; 
 		$secure = false;
 		$httponly = true;
 		if (ini_set('session.use_only_cookies', 1) === FALSE) {
-			header("Location: ../error.php?err=Could not initiate a safe session (ini_set)");
-			exit();
+			//header("Location: ../error.php?err=");
+			exit("Could not initiate a safe session (ini_set)");
 		}
 		$cookieParams = session_get_cookie_params();
 		session_set_cookie_params($cookieParams["lifetime"],
@@ -37,7 +41,7 @@
 			$secure,
 			$httponly);
 		session_name($session_name);
-		session_start(); 
+		session_start();
 	}
 
 	//Connect to MQTT
@@ -105,36 +109,37 @@
 	}
 	
 	$siteSettings['general'] = loadGeneralFromDB();
+	
 	//Function to aggrigate data from pc
-	function getComputerData($ID, $fields = array("*"), $date = "latest"){
+	function getComputerData($ID, $fields = array("*")){
 		global $db, $siteSettings;
 		$retResult = array();
-			$query = "SELECT name, data, last_update FROM computer_data WHERE computer_id='".$ID."'";
-			if($_SESSION['date']!="latest" and $_SESSION['date']!=""){
-				$query .= " and last_update LIKE '%".$_SESSION['date']."%'";
-			}
-		$query .= " ORDER BY ID DESC";
+		$fields2 = implode("','",$fields);
+		$query = "SELECT name, data, last_update FROM computer_data WHERE computer_id='".$ID."' AND name IN('".$fields2."') ORDER BY ID DESC";
 		$results = mysqli_query($db, $query);
+	
 		while($row = mysqli_fetch_assoc($results)){
-		
+			//$row = mysqli_real_escape_string($db,$row);
 			if(isset($retResult[$row['name']])){continue;}
-			if($row['name']!="Ping"){
+			if(!in_array($row['name'], $fields)){
+				continue;
+			}
+			if($row['name']=="screenshot"){
+				$decoded = $row['data'];
+				$retResult[$row['name']] = $decoded;
+			}else{
 				$decoded = jsonDecode(computerDecrypt($row['data']), true);
 				$retResult[$row['name']] = $decoded['json'];
-				//$retResult[$row['name']."_raw"] = $row['data'];
 				$retResult[$row['name']."_raw"] = computerDecrypt($row['data']);
 				$retResult[$row['name']."_error"] = $decoded['error'];
-			}else{
-				//$retResult[$row['name']] = $row['data'];
-				echo computerDecrypt($row['data']);
-			}
-			$retResult[$row['name']."_lastUpdate"] = $row['last_update'];
+				$retResult[$row['name']."_lastUpdate"] = $row['last_update'];	
+			}	
 		}
-   
 		$getAlerts = getComputerAlerts($ID, $retResult);
 		$retResult["Alerts"] = $getAlerts[0];
 		$retResult["Alerts_raw"] = $getAlerts[1];
-		return $retResult;
+
+		return $retResult;	
 	}
 
 	//Alerts

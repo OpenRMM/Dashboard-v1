@@ -21,25 +21,24 @@ if($_SESSION['accountType']!="Admin"){
     */
 }
 
-if(!$db and $mqttConnect=="timeout" and $results==0){ 
+if(!$db or $mqttConnect=="timeout" or $results==0){ 
     $show=true;
 }else{
     $show=false;
 }
 ?>
 <?php if($_SESSION['accountType']=="Admin"){ ?>
-<h4 style="color:#333;?>">OpenRMM Initialization <?php if(!$show){ echo "<span style='color:green'>(completed)</span>"; }?>
-	<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Init');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:#333;">
+<h5 style="color:#333;?>">OpenRMM Initialization <?php if(!$show){ echo "<span style='color:green'>(completed)</span>"; }?>
+	<button title="Refresh" onclick="loadSection('Init');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:#333;">
 		<i class="fas fa-sync"></i>
-	</a>
+    <button>
     <?php if(!$show){ ?>
         <center>
             <button class="btn btn-light btn-sm" id="initButton"onclick="showInit();" style="margin-top:5px;min-width:10%;text-align:center">Show more &nbsp;<i class="fas fa-chevron-down"></i></button>
         </center>
     <?php } ?>
-</h4>
+</h5>
 <hr>
-
 <div id="init" style="width:100%;backgrdound:#fff;padding:15px;<?php if(!$show){ echo "display:none"; } ?>">
 	<p style="font-size:16px">
 	   Welcome to OpenRMM. You first need to configure a few settings before you get started. 
@@ -188,14 +187,15 @@ if(!$db and $mqttConnect=="timeout" and $results==0){
 	</div>
 </div>
 <?php } ?>
+<?php if(!$show){ ?>
 <div style="width:100%;padding:15px;">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="padding-left:20px;">
             <div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
                     <div style="height:45px" class="panel-heading">
-                        <h5 class="panel-title">
+                        <h6 class="panel-title">
                             OpenRMM Configuration 
-                        </h5>
+                        </h6>
                     </div>
                     <ul class="list-group">
                     <?php if($_SESSION['accountType']=="Admin"){ ?>
@@ -211,12 +211,12 @@ if(!$db and $mqttConnect=="timeout" and $results==0){
             </div>
             
             <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-left:20px;">
-                <div class="card user-card2" style="min-height:500px;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+                <div class="card user-card2" style="min-height:200px;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
                     <div class="card-body">
                          <?php if($get=="general" or $get==""){  ?>
-                            <h4>General Settings</h4>
+                            <h5>General Settings</h5>
                         <?php }else{ ?>
-                            <h4>User Settings</h4>
+                            <h5>User Settings</h5>
                         <?php } ?>
                         <hr>
                         <?php if($get=="profile"){  ?>
@@ -250,24 +250,7 @@ if(!$db and $mqttConnect=="timeout" and $results==0){
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                                        <div style="display:inline" class="form-group">
-                                            <label for="pwd">Max History (days) <span style="color:red">*</span></label>
-                                            <select required type="text"  name="history" class="form-control" id="pwd">
-                                                <option value="<?php echo $siteSettings['Max_History_Days']; ?>"><?php echo $siteSettings['Max_History_Days']; ?></option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
-                                                <option value="6">6</option>
-                                                <option value="7">7</option>
-                                                <option value="8">8</option>
-                                                <option value="9">9</option>
-                                                <option value="10">10</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    
                                     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                                         <div style="display:inline" class="form-group">
                                             <label for="pwd">Service Desk <span style="color:red">*</span></label>
@@ -279,7 +262,8 @@ if(!$db and $mqttConnect=="timeout" and $results==0){
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" style="float:right;margin-top:300px" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> &nbsp;Save Changes</button>  
+                               
+                                <button type="submit" style="float:right;margin-top:20px" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> &nbsp;Save Changes</button>  
                             </form> 
                         <?php } ?>
                      </div>
@@ -288,6 +272,7 @@ if(!$db and $mqttConnect=="timeout" and $results==0){
         </div>
     </div>
 </div>
+<?php } ?>
 <footer style="z-index:999;padding:5px;height:30px;position: fixed;left: 0;bottom: 0;width: 100%;color:#fff;text-align: center;background:<?php echo $siteSettings['theme']['Color 1'];?>" class="page-footer font-small black">
     <div class="footer-copyright text-center ">© <?php echo date('Y');?> Copyright
         <a style="color:#fff" href="https://github.com/OpenRMM"> OpenRMM</a>

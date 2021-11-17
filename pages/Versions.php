@@ -7,17 +7,17 @@ $nologin=true;
 	}
 ?>
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
-	<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Downloads
-		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Versions');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+	<h5 style="color:#0c5460">Downloads
+		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Versions');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
-		<a href="javascript:void(0)"  data-toggle="modal" data-target="#agentUpload" style="margin:5px;float:right;background:#fe9365;color:#fff;" class="btn btn-sm">
+		<a href="javascript:void(0)"  data-toggle="modal" data-target="#agentUpload" style="margin:5px;float:right;background:#0c5460;color:#d1ecf1;" class="btn btn-sm">
 			<i class="fas fa-upload"></i> Upload Agent
 		</a>		
-	</h4>
+	</h5>
 	<p>Downloading Older Agent Versions May Expose The Client To Bugs Or Have Less Features Available. However, Older Versions May Help With Compatibility.
 		<br><br>
-		<span style="color:red">Note: This will download a generic agent. It will not be assigned to a company.</span>
+		<span style="color:red">Note: This will download a generic agent. It will not be assigned to a <?php echo strtolower($msp); ?>.</span>
 	</p>
 	<hr>
 	<h6 style="font-size:16px;">

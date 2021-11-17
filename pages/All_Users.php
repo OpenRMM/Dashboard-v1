@@ -16,14 +16,14 @@ $results = mysqli_query($db, $query);
 $userCount = mysqli_num_rows($results);
 ?>
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
-	<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">All Technicians (<?php echo $userCount;?>)
-		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('AllUsers');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+	<h5 style="color:#0c5460">All Technicians (<?php echo $userCount;?>)
+		<button href="javascript:void(0)" title="Refresh" onclick="loadSection('All_Users');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
-		</a>
+		</button>
 		<button type="button" style="margin:5px;background:#0ac282;;float:right;color:#fff" data-toggle="modal" data-target="#userModal" class="btn-sm btn btn-light" title="Add User">
 			 <i class="fas fa-plus"></i> Add Technician
 		</button>
-	</h4>	
+	</h5>	
 </div>
 	<div class="card table-card">
 	   <div class="card-header">

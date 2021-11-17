@@ -1,4 +1,7 @@
 <?php
+//ini_set('display_errors', '1');
+//ini_set('display_startup_errors', '1');
+
 	require("includes/db.php");
 
 	//$messageTitle = "New Ideas/Bug Fixes";
@@ -24,6 +27,8 @@
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
 
+	
+
 	if($nologin==false){
 		if($_SESSION['userid']=="" && !in_array(basename($_SERVER['SCRIPT_NAME']), $serverPages)){
 			if(strpos(strtolower($_SERVER['SCRIPT_NAME']),"/pages/")!==false){ //fix for ajax pages
@@ -36,7 +41,7 @@
 <html>
 	<head>
 		<title>OpenRMM | Remote Management</title>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!--- Font Awesome --->
 		<link rel="stylesheet" href="assets/css/all.min.css"/>
@@ -44,10 +49,10 @@
 		<link rel="icon" href="assets/images/favicon.ico" type="image/ico" sizes="16x16">
 		<!-- jquery-->
 		<script src="assets/js/tagsinput.js"></script>
-		<script src="assets/js/jquery.js" ></script>
+
 		<!--- Bootstap --->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"/>
 		<link rel="stylesheet" href="assets/css/tagsinput.css"/>
 		<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
@@ -90,10 +95,11 @@
 			.headall { display: none; }
 		}
 		.secActive {
-			background:<?php echo $siteSettings['theme']['Color 2']; ?>!important;
-			color:#fff!important;
+			background:#d1ecf1!important;
+			color:#0c5460!important;
 			border-radius:3px;
 		}
+		.toast{ z-index:999999; }
 		.secbtn:hover{
 			background:#282828!important;
 			color:#fff!important;  
@@ -101,23 +107,23 @@
 		.dt-button{box-shadow:none;background:#000;color:#fff;padding:5px}
 		.buttons-columnVisibility{margin-top:10px;}
 	</style>
-	<body style="background-color:<?php echo $siteSettings['theme']['Color 1']; ?>;height:100%; position: relative;min-height: 100vh;">
-		<div style="padding:5px;background-color:#fff;color:#fff;text-align:center;padding-top:4px;padding-left:20px;position:fixed;top:0px;width:100%;z-index:99;box-shadow: 0 0 11px rgba(0,0,0,0.13);">
+	<body style="background-color:#E8E8E8;height:100%; position: relative;min-height: 100vh;">
+		<div style="z-index:99999;padding:5px;background-color:#fff;color:#fff;text-align:center;padding-top:4px;padding-left:20px;position:fixed;top:0px;width:100%;box-shadow: 0 0 11px rgba(0,0,0,0.13);">
 			<h5>
 				<div style="float:left;">
 					<button type="button" style="display:inline-block;margin-top:2px;border:none;box-shadow:none" class="btn-sm sidebarCollapse btn" title="Show/Hide Sidebar">
 						<i style="font-size:16px" class="fas fa-align-left"></i>
 					</button>		
 					<div style="display:inline-block;">
-						<a style="color:#333;font-size:22px;cursor:pointer" onclick="loadSection('<?php if($_SESSION['userid']!=""){ echo "Dashboard"; }else{ echo "Login"; } ?>');" >Open<span style="color:<?php echo $siteSettings['theme']['Color 2']; ?>">RMM</span></a>
+						<a style="color:#333;font-size:22px;cursor:pointer" onclick="loadSection('<?php if($_SESSION['userid']!=""){ echo "Dashboard"; }else{ echo "Login"; } ?>');" >Open<span style="color:#0c5460">RMM</span></a>
 					</div>
 				</div>
 				<?php if($_SESSION['userid']!=""){ ?>
 					<div style="float:right;">
 						<div class="btn-group">
 						
-          					<a href="#" class="dropsdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-								<i style="font-size:16px" class="fas fa-bell"></i>
+          					<a href="javascript:void(0)" style="border:none;box-shadow:none" class="dropsdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								<i style="font-size:16px;color:#000" class="fas fa-bell"></i>
 								<span style="margin-top" class="text-white badge bg-c-pink"><?php if($messageText==""){ echo "0"; }else{ echo "1"; } ?></span>
 							</a>
           					<div class="dropdown-menu">
@@ -128,8 +134,8 @@
 						</div>
 						<div class="btn-group">
 							&nbsp;
-							<a href="#" class="dropsdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-								<i style="font-size:16px" class="fas fa-plus"></i>
+							<a href="javascript:void(0)" class="dropsdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								<i style="font-size:16px;color:#000" class="fas fa-plus"></i>
 							</a>
           					<div class="dropdown-menu">
 								<ul style="font-size:12px"  class="list-group">
@@ -138,12 +144,12 @@
 									<?php } 
 									if($_SESSION['accountType']=="Admin"){ ?>
 										<li style="cursor:pointer" data-toggle="modal" data-target="#companyModal" class="list-group-item secbtn">Add New <?php echo $msp; ?></li>
-										<li style="cursor:pointer" data-toggle="modal" data-target="#userModal" class="list-group-item secbtn">Add New User</li>
+										<li style="cursor:pointer" data-toggle="modal" data-target="#userModal" class="list-group-item secbtn">Add New Technician</li>
 									<?php } ?>
 								</ul>
 							</div>
 						</div>
-							<button type="button" onclick="loadSection('Init','true');" style="border:none;box-shadow:none" class="btn-sm btn" title="Configure OpenRMM">
+							<button type="button" onclick="loadSection('Init','true');" style="border:none;box-shadow:none;margin-top:4px" class="btn-sm btn" title="Configure OpenRMM">
 								<i style="font-size:16px" class="fas fa-cog"></i>
 							</button>
 						</div>
@@ -154,7 +160,7 @@
 		<div class="wrapper">
 			<!-- Sidebar -->
 			<?php if($_SESSION['userid']!=""){ ?>
-				<nav style="background:#35384e" id="sidebar">
+				<nav style="background:#343a40;z-index:99998;padding-bottom:5%" id="sidebar">
 					<ul class="list-unstyled components" style="padding:20px;margin-top:25px;">
 						<div style="text-align:left;width:100%">
 							<a style="cursor:pointer" onclick="loadSection('Profile','<?php echo $_SESSION['userid']; ?>');">
@@ -176,11 +182,11 @@
 							<i class="fas fa-home"></i>&nbsp;&nbsp;&nbsp; Dashboard
 						</li>
 						<li onclick="loadSection('Assets');" id="secbtnAssets" class="secbtn">
-							<i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Assets
+							<i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Assets <span id="assetCount" style="float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$assetCount; ?></span>
 						</li>
 						<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
-						<li id="secbtnServiceDesk" onclick="loadSection('ServiceDesk');" class="secbtn">
-							<i class="fa fa-ticket-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Service Desk
+						<li id="secbtnService_Desk" onclick="loadSection('Service_Desk');" class="secbtn">
+							<i class="fa fa-ticket-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Service Desk <span id="ticketCount" style="float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$ticketCountAll; ?></span>
 						</li>
 						<?php } ?>
 						<li class="secbtn">
@@ -188,10 +194,10 @@
 						</li>
 						<ul style="margin-left:20px" class="nav nav-list collapse" id="navConfig">
 							<?php if($_SESSION['accountType']=="Admin"){ ?>
-								<li onclick="loadSection('AllCompanies');" id="secbtnAllCompanies" style="width:100%" class="secbtn">
+								<li onclick="loadSection('All_Companies');" id="secbtnAll_Companies" style="width:100%" class="secbtn">
 									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<?php echo $msp; ?>s
 								</li>
-								<li onclick="loadSection('AllUsers');" id="secbtnAllUsers" style="width:100%" class="secbtn">
+								<li onclick="loadSection('All_Users');" id="secbtnAll_Users" style="width:100%" class="secbtn">
 									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Technicians
 								</li>
 							<?php } ?>
@@ -219,13 +225,13 @@
 							<li onclick="loadSection('Alerts');" id="secbtnAlerts" class="secbtn">
 								<i class="fas fa-bell"></i>&nbsp;&nbsp;&nbsp; Alerts
 							</li>
-							<li onclick="loadSection('EventLogs');" id="secbtnEventLogs" class="secbtn">
+							<li onclick="loadSection('Event_Logs');" id="secbtnEvent_Logs" class="secbtn">
 								<i class="fas fa-file-code"></i>&nbsp;&nbsp;&nbsp; Event Logs
 							</li>
 							<!-- li onclick="loadSection('Registry');" id="secbtnRegistry" class="secbtn">
 								<i class="fas fa-cubes"></i>&nbsp;&nbsp;&nbsp; Registry
 							</li -->
-							<li onclick="loadSection('FileManager');" id="secbtnFileManager" class="secbtn">
+							<li onclick="loadSection('File_Manager');" id="secbtnFile_Manager" class="secbtn">
 								<i class="fas fa-folder"></i>&nbsp;&nbsp;&nbsp; File Manager
 							</li>
 							<hr>
@@ -254,10 +260,10 @@
 							<li onclick="loadSection('Memory');" id="secbtnMemory" class="secbtn">
 								<i class="fas fa-memory"></i>&nbsp;&nbsp;&nbsp; Memory
 							</li>
-							<li onclick="loadSection('AttachedDevices');" id="secbtnAttachedDevices" class="secbtn">
+							<li onclick="loadSection('Attached_Devices');" id="secbtnAttached_Devices" class="secbtn">
 								<i class="fab fa-usb"></i>&nbsp;&nbsp;&nbsp; Attached Devices
 							</li>
-							<li onclick="loadSection('OptionalFeatures');" id="secbtnOptionalFeatures" class="secbtn">
+							<li onclick="loadSection('Optional_Features');" id="secbtnOptional_Features" class="secbtn">
 								<i class="fas fa-list"></i>&nbsp;&nbsp;&nbsp; Optional Features
 							</li>
 							<li onclick="loadSection('Users');" id="secbtnUsers" class="secbtn">
@@ -271,16 +277,23 @@
 				</nav>
 			<?php } ?>
 			<!-- Page Content -->
-			<div id="content" class="contaiener containerLeft" style="margin-top:15px;padding:10px;width:100%;">	
+			<div id="content" class="containerLeft" style="margin-top:15px;padding:10px;width:100%;">	
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top:20px;">
 						<div class="loadSection">
 							<!------ Loads main data from jquery ------>
 							<center>
-								<h1 style="margin-top:40px;">
-									<i class="fas fa-spinner fa-spin"></i>
-								</h1>
+								<h3 style='margin-top:40px;'>
+									<div class='spinner-grow text-muted'></div>
+									<div class='spinner-grow' style='color:#0c5460'></div>
+									<div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div>
+									<div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div>
+									<div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div>
+									<div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div>
+									<div class='spinner-grow text-light'></div>
+								</h3>
 							</center>
+							
 						</div>
 						<div style="height:50px;" class="clearfix">&nbsp;</div>						
 					</div>
@@ -313,8 +326,8 @@
 		var currentSection = atob(getCookie("section"));
 		var sectionHistoryDate = "latest";
 		$( document ).ready(function() {
-        	$("#sortable").sortable();
-        	$("#sortable").disableSelection();
+        	//$("#sortable").sortable();
+        	//$("#sortable").disableSelection();
 		});
 		//Load Page
 		if (document.cookie.indexOf('section') === -1 ) {
@@ -340,31 +353,44 @@
 				location.reload(true);
 			}, 5000);
 		}else{
-			if(section!="ServiceDesk" && section!="NewTicket" && section!="Ticket" && section!="Logout" && section!="Dashboard"  && section!="Assets"  && section!="Dashboard"  && section!="Profile"  && section!="AllUsers"  && section!="AllCompanies" && section!="Versions" && section!="Init"){
-				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>We are getting the latest information for this asset</h5><br><h6>Instead of waiting, would you like to display the outdated assset data?</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;' type='submit'>View Older Asset Information <i class='fas fa-arrow-right'></i></button></form> <center></div></div>");
+			if(section=="File_Manager"){
+				$(".sidebarComputerName").text("");
+				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>We are getting the latest information for this asset</h5><br><h6>Instead of waiting, would you like to display the outdated assset data?</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460' type='submit'>View Older Asset Information <i class='fas fa-arrow-right'></i></button></form> <center></div></div>");
 			}else{
-				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 2']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
+				$(".sidebarComputerName").text("");
+				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
 			}
-			$(".recents").load("pages/recent.php?ID="+btoa(ID));
+		
 			$("html, body").animate({ scrollTop: 0 }, "slow"); 
-			//$(".loadSection").load("includes/loader.php?ID="+ID+"&Date="+date+"&page="+section+"&other="+other);
-			loadSection = $.ajax({
+			//$(".loadSection").load("includes/loader.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other));
+			$.ajax({
 				url: "includes/loader.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other),
+				timeout: 60000,
 				success: function(data) {
-				$(".loadSection").hide().html(data).fadeIn("fast");
-				request.transport.abort();
-				}
+					$(".loadSection").hide().html(data).fadeIn("fast");
+				},
+				error: function (error) {
+					$(".loadSection").hide().html("<center><h5 style='margin-top:100px'>There is a problem loading the page sometimes. I'm working on a fix.</h5><br><h6>Seems to be corrupted data for Asset ID: 59<br><br>Reason: " + error.status + " " + error.statusText + "</h6> <br><button onclick='location.reload();' class='btn btn-sm btn-primary' type='button' >Retry <i class='fas fa-sync'></i></button></center>").fadeIn("fast");
+
+					$(".loadSection").hide().html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>Uh oh! There seems to be a problem on our end.</h5><br><h6>Reason: " + error.status + " " + error.statusText +"</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460' onclick='location.reload();'>Retry &nbsp;<i class='fas fa-sync'></i></button></form> <center></div></div>").fadeIn("fast");
+
+					
+    			}
+				
 			});
 			var item = '#secbtn'+section;
 			$(item).addClass('secActive');	
 		}
-		if(section == "NewTicket" || section == "Ticket" || section == "ServiceDesk" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "AllUsers" || section == "AllCompanies" || section == "Versions" || section == "Init"){
+		if(section == "New_Ticket" || section == "Ticket" || section == "Service_Desk" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "All_Users" || section == "All_Companies" || section == "Versions" || section == "Init"){
 			$('#sectionList').slideUp(400);
+			$('#navConfig').collapse('show');
 		}else if($('#sectionList').css("display")=="none"){
 			$('#sectionList').slideDown(400);
+			$('#navConfig').collapse('hide');
 		}
 		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 			$('#sidebar').removeClass('active');
+			
 		}
 	}
 		<?php if($_GET['page']==""){ ?>

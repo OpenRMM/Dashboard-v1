@@ -12,22 +12,18 @@ if($_SESSION['userid']==""){
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
 $computerID = (int)base64_decode($_GET['ID']);
-$showDate = $_SESSION['date'];
-
-$json = getComputerData($computerID, array("*"), $showDate);
-$lastPing = $json['Ping'];
-
+$json = getComputerData($computerID, array("general"));
 $query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 ?>
 <div style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
 	<div style="padding:20px;overflow:auto" class="col-md-12">
-		<h5>Alert Configuration
+		<h5 style="color:#0c5460">Alert Configuration
 			<div style="float:right;">
-				<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Alerts');" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+				<button title="Refresh" onclick="loadSection('Alerts');" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-sync"></i>
-				</a>
+				</button>
 			</div><br>
 			<p>Configure Notifications For This Asset.</p>
 		</h5>
@@ -48,31 +44,31 @@ $online = $results['online'];
 				$count++;
 				if($alert['last_run']!=""){ $last_run=$alert['last_run'];}else{ $last_run="Never";}
 				$details=jsonDecode($alert['details'],true);
-				$json = getComputerData($computerID, array("*"), 'latest');			
+				$json = getComputerData($computerID, array("general","logical_disk","agent","windows_activation"));			
 				switch ($details['json']['Details']['Condition']) {
 					case "Total Alert Count":
 					  $currentValue="0";
 					break;
 					case "Total Ram/Memory":
-					$currentValue=formatBytes($json['General']['Response'][0]['Totalphysicalmemory'],0);
+					$currentValue=formatBytes($json['general']['Response'][0]['Totalphysicalmemory'],0);
 					break;
 					case "Available Disk Space":
-						$currentValue=formatBytes($json['LogicalDisk']['Response'][0]['FreeSpace']);
+						$currentValue=formatBytes($json['logical_disk']['Response'][0]['FreeSpace']);
 					break;
 					case "Total Disk Space":
-						$currentValue=formatBytes($json['LogicalDisk']['Response'][0]['Size']);
+						$currentValue=formatBytes($json['logical_disk']['Response'][0]['Size']);
 					break;
 					case "Domain":
-						$currentValue=$json['General']['Response'][0]['Domain'];
+						$currentValue=$json['general']['Response'][0]['Domain'];
 					break;
 					case "Public IP Address":
-						$currentValue=$json['General']['Response'][0]['ExternalIP']["ip"];
+						$currentValue=$json['general']['Response'][0]['ExternalIP']["ip"];
 					break;
 					case "Antivirus":
-						$currentValue=$json['General']['Response'][0]['Antivirus'];
+						$currentValue=$json['general']['Response'][0]['Antivirus'];
 					break;
 					case "Agent Version":
-						$currentValue=$json['Agent']['Response'][0]['Version'];
+						$currentValue=$json['agent']['Response'][0]['Version'];
 					break;
 					case "Total User Accounts":
 						$currentValue="0";
@@ -91,12 +87,12 @@ $online = $results['online'];
 						$currentValue=$status;
 					break;
 					case "Windows Activation":
-						$status = $json['WindowsActivation']['Response'][0]['LicenseStatus'];
+						$status = $json['windows_activation']['Response'][0]['LicenseStatus'];
 						if($status!="Licensed")$status="Not activated";
 						$currentValue=$status;
 					break;
 					case "Local IP Address":
-						$currentValue=$json['General']['Response'][0]['PrimaryLocalIP'];
+						$currentValue=$json['general']['Response'][0]['PrimaryLocalIP'];
 					break;
 					case "Last Update":
 						$currentValue=$json['Ping'];

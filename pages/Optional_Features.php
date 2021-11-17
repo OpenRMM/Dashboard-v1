@@ -12,14 +12,13 @@
 		exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 	}
 	$computerID = (int)base64_decode($_GET['ID']);
-	$showDate = $_SESSION['date'];
 	if($computerID<0){ 
 		?>
 		<br>
 		<center>
-			<h4>No Computer Selected</h4>
+			<h4>No Asset Selected</h4>
 			<p>
-				To Select A Computer, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
+				To Select An Asset, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
 			</p>
 		</center>
 		<hr>
@@ -27,42 +26,47 @@
 		exit;
 	}
 
-	$json = getComputerData($computerID, array("OptionalFeatures"), $showDate);
+	$json = getComputerData($computerID, array("optional_features"));
 
 	$query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 	$results = mysqli_fetch_assoc(mysqli_query($db, $query));
 	$online = $results['online'];
 ?>
-<div class="row" style="background:#fff;padding:15px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;border-radius:6px;margin-bottom:20px;">
-	<div class="col-md-10">
-		<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">
-			Optional Features (<?php echo count($json['OptionalFeatures']['Response']); ?>)
-		</h4>
-		<?php if($showDate == "latest"){?>
+<div style="padding:20px;margin-bottom:-1px;" class="card">
+	<div class="row" style="padding:15px;">	
+		<div class="col-md-10">
+			<h5 style="color:#0c5460">
+				Optional Features (<?php echo count($json['optional_features']['Response']); ?>)
+			</h5>
 			<span style="font-size:12px;color:#666;"> 
-				Last Update: <?php echo ago($json['OptionalFeatures_lastUpdate']);?>
+				Last Update: <?php echo ago($json['optional_features_lastUpdate']);?>
 			</span>
-		<?php }else{?>
-			<span class="badge badge-warning" style="font-size:12px;cursor:pointer;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-				History: <?php echo date("l, F jS", strtotime($showDate));?>
-			</span>
-		<?php }?>
-	</div>
-	<div class="col-md-2" style="text-align:right;">
-		<div class="btn-group">
-			<button onclick="loadSection('OptionalFeatures');" type="button" class="btn btn-warning btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
-			<button type="button" class="btn btn-warning dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				<i class="fas fa-sort-down"></i>
-			</button>
-			<div class="dropdown-menu">
-				<a onclick="loadSection('OptionalFeatures','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
-			</div>
 		</div>
-		<a href="javascript:void(0)" title="Select Date" class="btn btn-sm" style="margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#historicalDateSelection_modal">
-			<i class="far fa-calendar-alt"></i>
-		</a>
+		<div class="col-md-2" style="text-align:right;">
+			<div class="btn-group">
+				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Optional_Features');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
+				<button style="background:#0c5460;color:#d1ecf1" type="button" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<i class="fas fa-sort-down"></i>
+				</button>
+				<div class="dropdown-menu">
+					<a onclick="loadSection('Optional_Features','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
+				</div>
+			</div>
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','optional_features','null');">
+				<i class="fas fa-scroll"></i>
+			</button>
+		</div>
 	</div>
 </div>
+<?php if($online=="0"){ ?>
+	<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
+		&nbsp;&nbsp;&nbsp;This Agent is offline		
+	</div>
+<?php 
+}else{
+	echo"<br>";
+}
+?>
 <div style="overflow-x:auto;padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;">
 	<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 		<thead>
@@ -82,8 +86,8 @@
 				"3"=>array("state"=>"Absent", "color"=>"gray"),
 				"4"=>array("state"=>"Unknown", "color"=>"gray")
 			);
-			$OptionalFeatures = $json['OptionalFeatures']['Response'];
-			$error = $json['OptionalFeatures_error'];
+			$OptionalFeatures = $json['optional_features']['Response'];
+			$error = $json['optional_features_error'];
 			//Sort The array by Name ASC
 			usort($OptionalFeatures, function($a, $b) {
 				return $a['Name'] <=> $b['Name'];

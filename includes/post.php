@@ -207,14 +207,11 @@
 		//general settings
 		if($_POST['type'] == "initGeneral"){
 			$msp = '"MSP": "'.clean($_POST['msp']).'"';
-			$history = '"Max_History_Days": '.clean($_POST['history']);
 			$serviceDesk = '"Service_Desk": "'.clean($_POST['serviceDesk']).'"';
 
 			$data = $siteSettingsJson;
-			$data = str_replace('"Max_History_Days": '.$siteSettings['Max_History_Days'],$history,$data);
 			$data = str_replace('"Service_Desk": "'.$siteSettings['Service_Desk'].'"',$serviceDesk,$data);
-			$data = str_replace('"MSP": "'.$siteSettings['theme']['MSP'].'"',$msp,$data);
-        
+			$data = str_replace('"MSP": "'.$siteSettings['theme']['MSP'].'"',$msp,$data);    
 
             unlink("includes/config.php");
             $_SESSION['excludedPages'] = explode(",",$excludedPages);
@@ -253,8 +250,13 @@
 				$type = crypto('encrypt', $type, $salt);
 				if($password == $password2){
 					if($user_ID == 0){
-						$query = "INSERT INTO users (user_color,account_type, phone, username, password, hex, nicename , email)
-								  VALUES ('".$color."','".$type."','".$encryptedPhone."','".$username."', '".$encryptedPassword."','".$salt."','".$name."','".$email."')";
+						if($password==""){
+							$active="0";
+						}else{
+							$active="1";
+						}
+						$query = "INSERT INTO users (active,user_color,account_type, phone, username, password, hex, nicename , email)
+								  VALUES ('".$active."','".$color."','".$type."','".$encryptedPhone."','".$username."', '".$encryptedPassword."','".$salt."','".$name."','".$email."')";
                                  
 						$activity = "Technician Added Another Technician: ".ucwords($name);
 					//	userActivity($activity,$_SESSION['userid']);
@@ -269,9 +271,9 @@
 						userActivity($activity,$_SESSION['userid']);
 					}
 					if(!$results = mysqli_query($db, $query)){  }
-					echo '<script>window.onload = function() { pageAlert("User Settings", "User settings changed successfully.","Success"); };</script>';
+					echo '<script>window.onload = function() { pageAlert("Technician Settings", "Technician settings changed successfully.","Success"); };</script>';
 				}else{ //passwords do not match
-					echo '<script>window.onload = function() { pageAlert("User Settings", "Password change failed, passwords do not match.","Danger"); };</script>';
+					echo '<script>window.onload = function() { pageAlert("Technician Settings", "Password change failed, passwords do not match.","Danger"); };</script>';
 				}
 				//header("location: /");
 			}
@@ -291,7 +293,7 @@
 			$query = "UPDATE users SET user_activity='' WHERE ID='".$delActivity."';";
 			$results = mysqli_query($db, $query);
 			if($delActivity!=$_SESSION['userid']){
-				$activity="Technician Deleted User: ".$delActivity." Activity Logs";		
+				$activity="Technician Deleted Activity Logs";		
 				userActivity($activity,$_SESSION['userid']);
 			}
 			$activity="Admin Deleted All Activity Logs For This Technician";		
@@ -336,7 +338,7 @@
 			$query = "INSERT INTO tasks (user_id,name,details)VALUES ('".$_SESSION['userid']."','".$name."','".$taskDetails."')";
   			$results = mysqli_query($db, $query);
 			 // echo mysqli_error($db); exit;
-			$activity="User Created task: ".mysqli_insert_id($db);		
+			$activity="Technician created task: ".mysqli_insert_id($db);		
 			userActivity($activity,$_SESSION['userid']);	
 			header("location: /");
 		}
@@ -355,7 +357,7 @@
 			$query = "INSERT INTO alerts (computer_id,company_id,user_id,name,details)VALUES ('".$id."','".$alertCompany."','".$_SESSION['userid']."','".$name."','".$alertDetails."')";
   			$results = mysqli_query($db, $query);
 			//echo mysqli_error($db); exit;
-			$activity="User Created alert: ".mysqli_insert_id($db);		
+			$activity="Technician created alert: ".mysqli_insert_id($db);		
 			userActivity($activity,$_SESSION['userid']);	
 			header("location: /");
 		}
@@ -367,7 +369,7 @@
 			$title=clean($_POST['alertTitle']);
 			$type=clean($_POST['alertType']);
 			$script = '{"userID":"'.$_SESSION['userid'].'","data": {"Title": "'.$title.'", "Message": "'.$message.'", "Type":"'.$type.'"}}';
-			MQTTpublish($ID."/Commands/setAlert",$script,$ID,false);	
+			MQTTpublish($ID."/Commands/set_alert",$script,$ID,false);	
 			$activity="Technician Sent Asset: ".$ID." A One-way Message";		
 			userActivity($activity,$_SESSION['userid']);
 			header("location: /");
@@ -494,53 +496,30 @@
 		//Get speedtest
 		if($_POST['type'] == "refreshSpeedtest"){
 			$ID = (int)$_POST['CompanyID'];
-			MQTTpublish($ID."/Commands/getOklaSpeedtest",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),false);
+			MQTTpublish($ID."/Commands/get_okla_speedtest",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),false);
 			header("location: /");
 		}
+
 		//Save agent config
 		if($_POST['type'] == "agentConfig"){
 			$ID = (int)$_POST['ID'];
-			$agent_Heartbeat = clean($_POST['agent_Heartbeat']);
-			$agent_BIOS = clean($_POST['agent_BIOS']);
-			$agent_Features = clean($_POST['agent_Features']);
-			$agent_Processes = clean($_POST['agent_Processes']);
-			$agent_Services = clean($_POST['agent_Services']);
-			$agent_Users = clean($_POST['agent_Users']);
-			$agent_Video = clean($_POST['agent_Video']);
-			$agent_Disk = clean($_POST['agent_Disk']);
-			$agent_Sound = clean($_POST['agent_Sound']);
-			$agent_General = clean($_POST['agent_General']);
-
-			$agent_Pointing = clean($_POST['agent_Pointing']);
-			$agent_Keyboard = clean($_POST['agent_Keyboard']);
-			$agent_Board = clean($_POST['agent_Board']);
-			$agent_Monitor = clean($_POST['agent_Monitor']);
-			$agent_Printers = clean($_POST['agent_Printers']);
-			$agent_NetworkLogin = clean($_POST['agent_NetworkLogin']);
-			$agent_Network = clean($_POST['agent_Network']);
-			$agent_PnP = clean($_POST['agent_PnP']);
-			$agent_SCSI = clean($_POST['agent_SCSI']);
-
-			$agent_Products = clean($_POST['agent_Products']);
-			$agent_Processor = clean($_POST['agent_Processor']);
-			$agent_Firewall = clean($_POST['agent_Firewall']);
-			$agent_Agent = clean($_POST['agent_Agent']);
-			$agent_Battery = clean($_POST['agent_Battery']);
-			$agent_Filesystem = clean($_POST['agent_Filesystem']);
-			$agent_Mapped = clean($_POST['agent_Mapped']);
-			$agent_Memory = clean($_POST['agent_Memory']);
-			$agent_Startup = clean($_POST['agent_Startup']);
-			$agent_Logs = clean($_POST['agent_Logs']);
-			$agent_SharedDrives = clean($_POST['agent_SharedDrives']);
-			$agent_Logs = clean($_POST['agent_logs']);
-			$agent_WindowsUpdates = clean($_POST['agent_WindowsUpdates']);
-		
-
-			$settings='{"Interval": {"getWindowsUpdates": '.$agent_WindowsUpdates.',"getAgentLog": '.$agent_Logs.',"getSharedDrives": '.$agent_SharedDrives.',"Heartbeat": '.$agent_Heartbeat.', "getGeneral": '.$agent_General.', "getBIOS": '.$agent_BIOS.', "getStartup": '.$agent_Startup.', "getOptionalFeatures": '.$agent_Features.', "getProcesses": '.$agent_Processes.', "getServices": '.$agent_Services.', "getUsers": '.$agent_Users.', "getVideoConfiguration": '.$agent_Video.', "getLogicalDisk": '.$agent_Disk.', "getMappedLogicalDisk": '.$agent_Mapped.', "getPhysicalMemory": '.$agent_Memory.', "getPointingDevice": '.$agent_Pointing.', "getKeyboard": '.$agent_Keyboard.', "getBaseBoard": '.$agent_Board.', "getDesktopMonitor": '.$agent_Monitor.', "getPrinters": '.$agent_Printers.', "getNetworkLoginProfile": '.$agent_NetworkLogin.', "getNetworkAdapters": '.$agent_Network.', "getPnPEntities": '.$agent_PnP.', "getSoundDevices": '.$agent_Sound.', "getSCSIController": '.$agent_SCSI.', "getProducts": '.$agent_Products.', "getProcessor": '.$agent_Processor.', "getFirewall": '.$agent_Firewall.', "getAgent": '.$agent_Agent.', "getBattery": '.$agent_Battery.', "getFilesystem": '.$agent_Filesystem.', "getEventLogs": '.$agent_Logs.'}}';
-			$query = "UPDATE computers SET agent_settings='".$settings."' WHERE ID=".$ID.";";
+			$getWMI = array("agent_settings");
+			$json = getComputerData($ID, $getWMI);
+			$agent_settings = $json['agent_settings']['Response']["Interval"];
+			$settings='{"Interval": {';
+			$count=0;
+			foreach ($agent_settings as $setting => $val) {
+				$value = (int)$_POST["agent_$setting"];
+				if($count>0){
+					$settings .= ',';
+				}
+				$settings .= '"'.$setting.'": '.$value;
+				$count++;
+			}
+			$settings .= '}}';
+			//$query = "UPDATE computers SET agent_settings='".$settings."' WHERE ID=".$ID.";";
 			//$results = mysqli_query($db, $query);
-			//echo mysqli_error($db)."sadsada"; exit;
-			MQTTpublish($ID."/Commands/setAgentSettings",$settings,getSalt(20),true);
+			MQTTpublish($ID."/Commands/set_agent_settings",$settings,getSalt(20),false);
 			header("location: /");
 		}
 		//Update Company Agents
@@ -631,6 +610,8 @@
 					$_SESSION['showModal']="true";	
 					$_SESSION['recent']=explode(",",$data['recents']);
 					if($data['recents']==""){ $_SESSION['recent']=array(); }
+					$_SESSION['recentTickets']=explode(",",$data['recentTickets']);
+					if($data['recentTickets']==""){ $_SESSION['recentTickets']=array(); }
 					$_SESSION['recentedit']=explode(",",$data['recent_edit']);
 					if($data['recent_edit']==""){ $_SESSION['recentedit']=array(); }
 					

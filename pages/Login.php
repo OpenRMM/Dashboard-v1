@@ -45,16 +45,16 @@ if($_SESSION['userid']!=""){ ?>
 					<input <?php if($_SESSION['loginusername']!=""){ echo"autofocus"; } ?> maxlength="25" minlength="4" type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
 				</div>					
 				<br>
-				<button style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#fff" class="btn btn-lg btn-block text-uppercase" type="submit">
+				<button style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#0c5460" class="btn btn-sm btn-block text-uppercase" type="submit">
 				 Sign in &nbsp;<i class="fas fa-sign-in-alt"></i>
 				</button>
 			</form>
 		</div>
 	</div>
 </div>	
-<footer style="z-index:999;padding:5px;height:30px;position: fixed;left: 0;bottom: 0;width: 100%;color:#fff;text-align: center;background:<?php echo $siteSettings['theme']['Color 2'];?>" class="page-footer font-small black">
+<footer style="z-index:999;padding:5px;height:30px;position: fixed;left: 0;bottom: 0;width: 100%;color:#0c5460;text-align: center;background:<?php echo $siteSettings['theme']['Color 2'];?>" class="page-footer font-small black">
 	<div class="footer-copyright text-center ">© Copyright <?php echo date('Y');?> 
-		<a style="color:#fff" href="https://github.com/OpenRMM"> OpenRMM</a>
+		<a style="color:#333" href="https://github.com/OpenRMM"> OpenRMM</a>
 	</div>
 </footer>
 <?php 	

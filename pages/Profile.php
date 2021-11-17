@@ -25,7 +25,6 @@ if($_SESSION['accountType']=="Standard" & $userID!=$_SESSION['userid']){
 	userActivity($activity,$_SESSION['userid']);
 	exit("<center><br><br><h4>Sorry, You Do Not Have Permission To Access This Page!</h4><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' class='btn btn-warning btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");	
 }
-//echo $_SESSION['accountType'];
 $userActivity2 = explode("|",crypto('decrypt',$user['user_activity'],$user['hex']));
 $userActivity = array_reverse($userActivity2,true);
 if($userID!=$_SESSION['userid']){
@@ -34,15 +33,15 @@ if($userID!=$_SESSION['userid']){
 }
 ?>
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
-	<h4 style="color:#333">Technician Profile
-		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Profile');" class="btn btn-sm" style="float:right;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+	<h5 style="color:#0c5460">Technician Profile
+		<button title="Refresh" onclick="loadSection('Profile');" class="btn btn-sm" style="float:right;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
-		</a>
-	</h4>
+		</button>
+	</h5>
 </div>
 <div id="printTable"style="padding:15px" >
 	<section id="content">
-		<div style="margin-top:-20px;background:#35384e;padding:20px;color:#fff;border-radius:6px;margin-bottom:30px" class="page-heading">
+		<div style="margin-top:-20px;background:#343a40;padding:20px;color:#fff;border-radius:6px;margin-bottom:30px" class="page-heading">
 			<div class="media clearfix">
 				<div class="media-left pr30">
 					<?php
@@ -78,9 +77,9 @@ if($userID!=$_SESSION['userid']){
 							</button>
 						<?php } ?>
 					<?php } ?>
-					<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
+					<button  data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
 						<i class="fas fa-pencil-alt"></i> Edit
-					</a>
+					</button>
 					
 				</div>
 			</div>
@@ -93,9 +92,9 @@ if($userID!=$_SESSION['userid']){
 								<a href="#tab1" data-toggle="tab">Activity</a>
 							</li>
 							<?php if($_SESSION['accountType']=="Admin"){  ?>
-								<li>    
+								<li onclick="deleteActivity()" class="active bg-danger text-white" style="cursor:pointer" >    
 									<input type="hidden" id="delActivity" name="delActivity" value="<?php echo $userID; ?>">        
-									<button style="display:inline;margin-top:-10px;border:none;box-shadow:none" onclick="deleteActivity()" class="btn btn-sm" type="button" >Clear Activity</button>
+									<a href="javascript:void(0)" style="background:#0c5460;color:#d1ecf1;cursor:pointer" data-toggle="tab">Clear Activity</a>
 								</li>
 							<?php } ?>
 						</ul>
@@ -199,13 +198,10 @@ if($userID!=$_SESSION['userid']){
 </div>
 <script>
 $(document).ready(function() {
-		var table = $('#dataTable').DataTable();
-
-// Sort by column 1 and then re-draw
-table
-.order( [ 0, 'asc' ] )
-.draw();
-		
+	var table = $('#dataTable').DataTable();
+	table
+	.order( [ 0, 'asc' ] )
+	.draw();		
 });
 </script>
 <script>

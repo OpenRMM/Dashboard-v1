@@ -6,7 +6,7 @@ $_SESSION['page'] = clean(preg_replace("/[^a-zA-Z0-9]+/", "", base64_decode($_GE
 if($_SESSION['userid']!=""){
     if(!in_array($_SESSION['page'], $_SESSION['excludedPages']) or $_SESSION['page']=="EventLogs" or $_SESSION['page']=="Commands")
     {  //on agent page
-        $json = getComputerData($_SESSION['computerID'], array("*"), "latest");
+        $json = getComputerData($_SESSION['computerID'], array("alert","general"));
 
         $query = "SELECT * FROM computers WHERE ID='".$_SESSION['computerID']."' ORDER BY ID DESC";
         $results = mysqli_query($db, $query);
@@ -33,17 +33,17 @@ if($_SESSION['userid']!=""){
         }
 
         //get alert response
-        $alertResponse = $json['Alert']['Response'];
-        $alertUser = $json['Alert']['Request']['userID'];
+        $alertResponse = $json['alert'];
+        $alertUser = $json['alert']['Request']['userID'];
         if($alertResponse!="" and $alertUser==$_SESSION['userid']){
             $query = "UPDATE computer_data SET name='Alerted' WHERE computer_id='".$_SESSION['computerID']."' and name='Alert';";
             $results = mysqli_query($db, $query);
-            echo "<script>toastr.info('".$existing['hostname']." replied to message: ".$alertResponse."','',{timeOut:0,extendedTimeOut: 0}); </script>";
+            echo "<script>toastr.info('".$existing['hostname']." replied to message: ".print_r($alertResponse)."','',{timeOut:0,extendedTimeOut: 0}); </script>";
         }
         $_SESSION['notifReset2']="";
     }else{
         //not on agent page
-        echo "<script>toastr.clear(); </script>";
+        //echo "<script>toastr.clear(); </script>";
         $_SESSION['notifReset']="";
     }
 

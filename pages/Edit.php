@@ -12,8 +12,8 @@ if($_SESSION['userid']==""){
 	exit("<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 }
 $computerID = (int)base64_decode($_GET['ID']);
-$json = getComputerData($computerID, array("*"), "");
-$hostname =  textOnNull($json['General']['Response'][0]['csname'],"Unavailable");
+$json = getComputerData($computerID, array("general"));
+$hostname =  textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 $query = "SELECT ID, show_alerts, company_id, phone,hex, email, online, name, comment,computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_query($db, $query);
 $data = mysqli_fetch_assoc($results);
@@ -29,26 +29,32 @@ $online = $data['online'];
 	<center>
 		<h4>No Asset Selected</h4>
 		<p>
-			To Select A Asset, Please Visit The
-			<a class='text-dark' style="cursor:pointer" onclick="loadSection('Assets');" ><u>Assets Page</u></a>
+			To Select An Asset, Please Visit The <a class='text-dark' style="cursor:pointer" onclick='loadSection("Assets");'><u>Assets page</u></a>
 		</p>
 	</center>
 	<hr>
 <?php exit; }?>
-<h4 style="color:<?php echo $siteSettings['theme']['Color 2'];?>">Editing Asset: <?php echo $hostname; ?>
-	<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Edit');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
-		<i class="fas fa-sync"></i>
-	</a>
-	<a href="javascript:void(0)" title="Agent Configuration" onclick="loadSection('AgentSettings');" class="btn btn-sm" style="float:right;margin:5px;color:#fff;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
-		<i class="fas fa-cogs"></i>
-	</a>
-</h4>
-<hr>
+<div class="card">
+	<div class="row" style="padding:15px;">
+		<div class="col-md-10">
+			<h5 style="color:#0c5460">Editing Asset: <span style="color:#333"><?php echo $hostname; ?></span>
+				<br>
+				<p>
+					Here You Can Add Information About The Asset, Client And The <?php echo $msp; ?> It's Assigned To
+				</p>
+			</h5>
+		</div>
+		<div class="col-md-2" style="text-align:right;">
+			<button title="Refresh" onclick="loadSection('Edit');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+				<i class="fas fa-sync"></i>
+			</button>
+			<button title="Agent Configuration" onclick="loadSection('AgentSettings');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+				<i class="fas fa-cogs"></i>
+			</button>
+		</div>
+	</div>
+</div>
 <div style="width:100%;backgrdound:#fff;padding:15px;">
-	<p class="lead">
-	   <small class="text-muted"> Here You Can Add Information About The Asset, Client And The <?php echo $msp; ?> It's Assigned To.</small>
-	</p>
-	<hr />
 	<form method="POST" action="/">
 		<div class="row">
 			<div style="padding:20px;border-radius:6px" class="card card-sm col-sm-8">
@@ -166,19 +172,32 @@ $online = $data['online'];
 								$results = mysqli_query($db, $query);
 								$data = mysqli_fetch_assoc($results);
 								if($data['ID']==""){continue;}
-								$json = getComputerData($data['ID'], array("*"), "");
-								$hostname =  $json['General']['Response'][0]['csname'];
+								$json = getComputerData($data['ID'], array("general"));
+								$hostname =  $json['general']['Response'][0]['csname'];
 								$count++;
+								$icons = array("desktop","server","laptop","tablet","allinone","other");
+								if(in_array(strtolower(str_replace("-","",$data['computer_type'])), $icons)){
+									$icon = strtolower(str_replace("-","",$data['computer_type']));
+									if($icon=="allinone")$icon="tv";
+									if($icon=="tablet")$icon="tablet-alt";
+									if($icon=="other")$icon="microchip";
+								}else{
+									$icon = "server";
+								}  
 							?> 
 							<a href="javascript:void(0)" class="text-dark" onclick="loadSection('Edit', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo strtoupper($hostname);?>');">
-								<li class="list-group-item">
-									<i class="fas fa-desktop"></i>&nbsp;
-									<?php echo strtoupper($hostname);?>
+								<li class="list-group-item secbtn">
+									<?php if($data['online']=="0") {?>
+										<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
+									<?php }else{?>
+										<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
+									<?php }?>
+									&nbsp;&nbsp;<?php echo strtoupper($hostname);?>
 								</li>
 							</a>
 							<?php } ?>
 							<?php if($count==0){ ?>
-								<li class="list-group-item">No Recently Edited Assets</li>
+								<li class="list-group-item">No recently edited assets</li>
 							<?php } ?>
 						</ul>
 					</div>
