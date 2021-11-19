@@ -41,6 +41,7 @@ if(!file_exists("config.php") or !$db or $mqttConnect=="timeout" or $result==0){
 <?php 
     exit;
 }
+
 $query = "UPDATE users SET last_login='".time()."' WHERE ID=".$_SESSION['userid'].";";
 $results = mysqli_query($db, $query);
 $_SESSION['computerID'] = (int)base64_decode($_GET['ID']);
@@ -50,12 +51,10 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
        $_SESSION['count']=0;
     }else{
        
-        $query = "SELECT ID, online, last_update FROM computers WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
+        $query = "SELECT ID, online FROM computers WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
         $results = mysqli_query($db, $query);
         $computer = mysqli_fetch_assoc($results);
-
-        $lastUpdate=$computer['last_update'];
-        
+   
         $json = getComputerData($computer['ID'], array("general"));
         $hostname =  textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
         $_SESSION['ComputerHostname']=$hostname;
@@ -66,13 +65,13 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
         <?php
         $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 
-        $page = str_replace("Asset_","",$_SESSION['page']);
-        if($gets=="force" or $page=="File_Manager") {       
+        $page = strtolower(str_replace("Asset_","",$_SESSION['page']));
+        if($gets=="force" or $page=="file_manager") {       
             $retain=false;       
             $message='{"userID":'.$_SESSION['userid'].'}';
             if($_SESSION['count']==0){
                 switch ($page) {
-                    case "File_Manager":
+                    case "file_manager":
                         $page="filesystem";
                         $retain = false;   
                         if($gets=="force"){ $gets=""; }                  
@@ -87,12 +86,12 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                         if($message==""){ $message=$drive.":/"; }
                         $message = '{"userID":'.$_SESSION['userid'].',"data":"'.$message.'"}';
                     break;
-                    case "Disks":
+                    case "disks":
                         $page="logical_disk";
                         $retain = false;
                         $message = '{"userID":'.$_SESSION['userid'].'}';
                     break;
-                    case "Attached_Devices":
+                    case "attached_devices":
                         $page="pnp_entities";
                         $retain = false;
                         $message = '{"userID":'.$_SESSION['userid'].'}';
@@ -101,27 +100,27 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                         MQTTpublish($_SESSION['computerID']."/Commands/get_desktop_monitor",$message,getSalt(20),$retain);
                         MQTTpublish($_SESSION['computerID']."/Commands/get_keyboard",$message,getSalt(20),$retain);
                     break;
-                    case "Memory":
+                    case "memory":
                         $page="physical_memory";
                         $retain = false;
                         $message = '{"userID":'.$_SESSION['userid'].'}';
                     break;
-                    case "Network":
+                    case "network":
                         $page="network_adapters";
                         $retain = false;
                         $message = '{"userID":'.$_SESSION['userid'].'}';
                     break;
-                    case "Programs":
+                    case "programs":
                         $page="products";
                         $retain = false;
                         $message =  '{"userID":'.$_SESSION['userid'].'}';
                     break;   
-                    case "Event_Logs":
+                    case "event_logs":
                         $page="event_logs";
                         $retain = false;
                         if($gets=="" or $gets=="force"){$gets="Application";}
                         $message =  '{"userID":'.$_SESSION['userid'].',"data":"'.$gets.'"}';
-                    case "General":
+                    case "general":
                         $page="general";
                         $retain=false;
                         $retain=false;
@@ -144,18 +143,19 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                         MQTTpublish($_SESSION['computerID']."/Commands/get_agent_log",$message,getSalt(20),$retain);
                     break;     
                 }
+                $json2 = getComputerData($computer['ID'], array("$page"));
+                $lastUpdate = $json2[$page.'_lastUpdate'];
                 MQTTpublish($_SESSION['computerID']."/Commands/get_".$page,$message,getSalt(20),$retain);
-            }
-            
+            }       
             sleep(1);
-            $results = mysqli_fetch_assoc(mysqli_query($db, $query));
-            $lastUpdate_new=$results['last_update'];
+            $json2 = getComputerData($computer['ID'], array("$page"));
+            $lastUpdate_new = $json2[$page.'_lastUpdate'];
         }else{
             $lastUpdate_new = "1"; 
             $lastUpdate = "2"; 
         }      
         if($lastUpdate!=$lastUpdate_new or $computer['online']=="0"){
-            $query = "SELECT ID, online, last_update FROM computers WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
+            $query = "SELECT ID, online FROM computers WHERE ID='".$_SESSION['computerID']."' LIMIT 1";
             $results = mysqli_query($db, $query);
             $computer = mysqli_fetch_assoc($results);
             

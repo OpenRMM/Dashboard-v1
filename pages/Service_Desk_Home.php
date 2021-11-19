@@ -95,7 +95,7 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 						<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 						<?php } ?>
 					</div>
-					<button data-toggle="modal" data-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
+					<button data-toggle="modal" data-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" title="Create New Note" class="btn btn-sm">Create New Note</button>
 				</div>	
 			</div>
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;">

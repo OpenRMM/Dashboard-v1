@@ -69,10 +69,7 @@ $error = $json['network_adapters_error'];
 			<?php }
 				if(count($adapters) == 0){ ?>
 					<tr>
-						<td><h6>No Network Adapters found.</h6></td>
-						<td></td>
-						<td></td>
-						<td></td>
+						<td colspan=4><center><h6>No network adapters found.</h6></center></td>
 					</tr>
 			<?php }?>
 			</tbody>

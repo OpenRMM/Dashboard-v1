@@ -65,9 +65,9 @@ $online = $results['online'];
 	<?php if(count($slots) == 0){ ?>
 		<div class="col-md-12" style="padding:5px;">
 			<center>
-				<h5>
-					No Memory found.
-				</h5>
+				<h6>
+					No memory found.
+				</h6>
 			</center>
 		</div>
 	<?php }?>

@@ -75,6 +75,7 @@ while($result = mysqli_fetch_assoc($results)){
 <script>
     $('#dataTable4').DataTable({
         "pageLength": 5,
+        "order": [],
         colReorder: false,
         "lengthChange": false,
         "searching": false

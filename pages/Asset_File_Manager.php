@@ -31,7 +31,7 @@ $query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 
-
+//print_r($json);
 ?>
 
 <div style="margin-top:0px;padding:15px;margin-bottom:-1px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
@@ -184,7 +184,7 @@ $online = $results['online'];
 						</div>
 					</div>
 				</div>
-				<button onclick="loadSection('FileManager', '<?php echo $computerID; ?>','latest','');" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-warning btn-block p-t-15 p-b-15">Go to home directory root</button>		
+				<button onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','');" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-warning btn-block p-t-15 p-b-15">Go to home directory root</button>		
 			</div>
 			<div class="card user-card2" style="width:100%;box-shadow:none;background:<?php echo $siteSettings['theme']['Color 1'];?>">				
 				<div class="card-block row">

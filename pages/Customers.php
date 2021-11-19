@@ -59,7 +59,7 @@ $companyCount = mysqli_num_rows($results);
 						$computerCount = mysqli_num_rows($computerResults);
 						
 						while($computerData = mysqli_fetch_assoc($computerResults)){
-							$getWMI = array("WMI_LogicalDisk", "WMI_OS", "WMI_ComputerSystem");
+							$getWMI = array("logical_disk", "general","agent");
 							$data = getComputerData($computerData['ID'], $getWMI);
 							if(count($data['Alerts'])>0){
 								$computersWithAlerts++;
@@ -127,13 +127,11 @@ $companyCount = mysqli_num_rows($results);
 									<i class="fas fa-download"></i>
 								</button>
 							</form>
-							<form action="/" method="post" style="display:inline;">
-								<input type="hidden" value="CompanyUpdateAll" name="type">
-								<input type="hidden" value="<?php echo $company['ID'];?>" name="CompanyID">
-								<button type="submit" title="Update All Agents Assigned To This <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
-									<i class="fas fa-cloud-upload-alt"></i>
-								</button>
-							</form>				
+							<?php if($computerCount>0){ ?>
+							<button type="button" onclick="updateCompanyAgent(<?php echo $company['ID'];?>);" title="Update All Agents Assigned To This <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
+								<i class="fas fa-cloud-upload-alt"></i>
+							</button>	
+							<?php } ?>			
 						</td>
 					</tr>
 				<?php }?>

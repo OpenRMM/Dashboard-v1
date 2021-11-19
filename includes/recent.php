@@ -44,12 +44,10 @@ foreach(array_reverse($recent) as $item) {
 		$style="secbtn";
 	}
 ?>
-	<a href="javascript:void(0)" onclick="loadSection('Asset_General', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo textOnNull(strtoupper($hostname),'Unavailable');?>');">
-		<li class="<?php echo $style; ?>">
-			<i title="<?php echo $title; ?>" style="<?php echo $color; ?>" class="fas fa-<?php echo $icon; ?>"></i>&nbsp;&nbsp;&nbsp;
-			<?php echo textOnNull(strtoupper($hostname),"Unavailable");?>
-		</li>
-	</a>
+	<li style="cursor:pointer" onclick="loadSection('Asset_General', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo textOnNull(strtoupper($hostname),'Unavailable');?>');" class="<?php echo $style; ?>">
+		<i title="<?php echo $title; ?>" style="<?php echo $color; ?>" class="fas fa-<?php echo $icon; ?>"></i>&nbsp;&nbsp;&nbsp;
+		<?php echo textOnNull(strtoupper($hostname),"Unavailable");?>
+	</li>
 <?php } 
  if($count==0){ ?>
 	<li>No recent computers</li> 
@@ -68,12 +66,10 @@ foreach(array_reverse($recent2) as $item2) {
 	if($data2['ID']==""){ continue; }
 	$count2++;
 ?>
-	<a href="javascript:void(0)" onclick="loadSection('Service_Desk_Ticket', '<?php echo $data2['ID']; ?>');">
-		<li class="secbtn">
-			<i title="<?php echo $data2['title']; ?>" style="color:#fff" class="fas fa-ticket-alt"></i>&nbsp;&nbsp;&nbsp;
-			<?php echo textOnNull($data2['title'],"Unavailable");?>
-		</li>
-	</a>
+	<li style="cursor:pointer" onclick="loadSection('Service_Desk_Ticket', '<?php echo $data2['ID']; ?>');" class="secbtn">
+		<i title="<?php echo $data2['title']; ?>" style="color:#fff" class="fas fa-ticket-alt"></i>&nbsp;&nbsp;&nbsp;
+		<?php echo textOnNull($data2['title'],"Unavailable");?>
+	</li>
 <?php } 
  if($count2==0){ ?>
 	<li>No recent tickets</li> 

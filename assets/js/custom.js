@@ -222,11 +222,11 @@ function serverStatus(action){
     function(data, status){
         toastr.options.progressBar = true;
         if(action=="stop"){
-            toastr.error('The request to stop the server has been sent.');
+            type2="error";
+        }else{
+            type2="warning";
         }
-        if(action=="restart"){
-            toastr.warning('The request to restart the server has been sent.');
-        }
+        toastr[type2]('The request to ' + action + ' the server has been sent.');
     });
 }
 
@@ -238,6 +238,38 @@ function updateAgent(ID2){
     function(data, status){
         toastr.options.progressBar = true;
         toastr.info('The update request has been sent. Please allow up to 5 minutes for the update to complete.');
+    });
+}
+
+function updateCompanyAgent(ID2){ 
+    $.post("index.php", {
+       type: "CompanyUpdateAll",
+       ID: ID2
+    },
+    function(data, status){
+        toastr.options.progressBar = true;
+        toastr.info('The update request has been sent to each agent. Please allow up to 15 minutes for the update to complete.');
+    });
+}
+
+function agentStatus(ID,action){ 
+    var type2;
+    var message;
+    $.post("index.php", {
+       type: "agentStatus",
+       ID: ID,
+       action: action
+    },
+    function(data, status){
+        if(action=="stop"){
+            type2="error";
+            message="";
+        }else{
+            type2="warning";
+            message="Please allow up to 5 minutes for the agent to come back online."
+        }
+        toastr.options.progressBar = true;
+        toastr[type2]('The ' + action + ' request has been sent. ' + message);
     });
 }
 

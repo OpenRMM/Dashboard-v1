@@ -53,7 +53,7 @@ if($cpuUsage==""){
 	$cpuUsage="100";
 }
 //log user activity
-$activity = "Technician Viewed Asset: ".textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
+$activity = "Asset ".textOnNull($json['general']['Response'][0]['csname'],"Unavailable")." Viewed";
 userActivity($activity,$_SESSION['userid']);		
 ?>
 <?php //print_r($json['Screenshot']); ?>
@@ -61,7 +61,7 @@ userActivity($activity,$_SESSION['userid']);
 	.dataTables_info {margin-top:40px; }
 </style>
 <div style="padding:20px;margin-bottom:-1px;" class="card col-md-12">
-	<h5 style="color:#0c5460">Overview of <?php echo textOnNull($json['general']['Response'][0]['csname'],"Unavailable"); ?>	
+	<h5 title="ID: <?php echo $computerID; ?>" style="color:#0c5460">Overview of <?php echo textOnNull($json['general']['Response'][0]['csname'],"Unavailable"); ?>	
 		<center style="display:inline;margin-left:50px;">
 			<?php $alertCount = count($json['Alerts']);?>
 			<?php if($alertCount > 0){?>
@@ -91,7 +91,7 @@ userActivity($activity,$_SESSION['userid']);
 		</div>
 		<br>
 		<p>	
-			<span style="font-size:12px;color:#333"> Last Updated: <?php echo ago($lastPing);?></span>
+			<span style="font-size:12px;color:#333"> Last Updated: <?php echo ago($json['general_lastUpdate']);?></span>
 		</p>
 	</h5>
 </div>
@@ -141,7 +141,7 @@ if($online=="0"){ ?>
 </style>
 <div class="row py-2">
 	<?php if($size=="3"){ ?>
-	<div style="z-index:9;overflow:hidden;" class="col-md-3 py-1 marginTop">
+	<div data-toggle="modal" data-target="#screenshotModal" style="z-index:9;overflow:hidden;" class="col-md-3 py-1 marginTop">
         <div style="padding:0px;cursor:zoom-in;overflow:hidden;" class=" zoom2 card shadow-md">
             <img class="zoom" style="background-position: 50% 50%; background-size: 100vw" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot']); ?>"/>              
         </div>
@@ -190,7 +190,7 @@ if($online=="0"){ ?>
 </div>
 <div <?php if($size=="3"){ echo 'style="margin-top:-10%"'; } ?> class="row">
 	<div class="col-xs-6 col-sm-6 col-md-3 col-lg-4" style="padding:5px;">
-		<div class="panel panel-default">
+		<div class="panel panel-default" style="z-index:999">
 			<div class="panel-heading">
 				<h5  style="padding:7px" class="panel-title">
 					Asset Overview
@@ -351,14 +351,12 @@ if($online=="0"){ ?>
 					<?php $loc = $json['general']['Response'][0]['ExternalIP']["loc"]; ?>
 					<div style="width: 100%">
 						<iframe width="100%" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=<?php echo $loc; ?>&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
-							
 						</iframe>
 					</div>
 				</div>
 		  </div>
 		</div>
 	</div>
-
 	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -383,6 +381,7 @@ if($online=="0"){ ?>
 							usort($Logs, function($a, $b) {
 								return $a['Name'] <=> $b['Name'];
 							});
+							$count=0;
 							foreach($Logs as $key=>$log){
 								if (strpos($log['Type'], 'Warn') !== false) {
 									$logColor="background:#fff3cd;color:#856404";
@@ -408,13 +407,18 @@ if($online=="0"){ ?>
 								else {
 									$message= $log['Message'];
 								}
-							
+								$count++;
 						?>	
 							<tr style="<?php echo $logColor; ?>">
 								<td width="5%" ><?php echo $log['Title']; ?></td>
 								<td title="<?php echo $log['Message']." @ ".$time; ?>" ><?php echo $message; ?></td>
 							</tr>	
-							<?php } ?>				
+							<?php }
+							 if($count== 0){ ?>
+								<tr>
+									<td colspan=2><center><h6>No error logs.</h6></center></td>
+								</tr>
+							<?php }?>				
 						</tbody>
 					</table>
 				</div>
@@ -425,7 +429,7 @@ if($online=="0"){ ?>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h5 style="padding:7px" class="panel-title">
-					Speedtest
+					Okla Speedtest
 				</h5>
 			</div>
 			<div class="panel-body" style="overflow:hidden;background:#1D1D35;height:285px;">
@@ -491,7 +495,14 @@ if($online=="0"){ ?>
 	</div>
   </div>
 </div>
-
+<!--------------- View screenshot ------------->
+<div id="screenshotModal" class="modal fade" role="dialog">
+	<div data-dismiss="modal" style="cursor:zoom-out"class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<img style="height:500px;width:auto" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot']); ?>"/> 
+		</div>
+	</div>
+</div>
 <script>
 	function sendMessage(){  
 		var alertType = $("input[name='alertType']:checked").val();

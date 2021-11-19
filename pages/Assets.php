@@ -142,7 +142,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 										</div>
 									</td>
 									<td>
-										<button onclick="loadSection('Edit_Asset', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
+										<button onclick="loadSection('Asset_Edit', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
 											<i class="fas fa-pencil-alt"></i>
 										</button>
 										<button title="View Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('Asset_General', '<?php echo $result['ID']; ?>');" class="form-inline btn btn-warning btn-sm">
@@ -268,7 +268,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 						<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 						<?php } ?>
 					</div>
-					<button data-toggle="modal" data-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
+					<button data-toggle="modal" data-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" title="Create New Note" class="btn btn-sm">Create New Note</button>
 				</div>	
 			</div>
 		</div>

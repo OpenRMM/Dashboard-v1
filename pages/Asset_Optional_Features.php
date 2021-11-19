@@ -87,7 +87,7 @@ $online = $results['online'];
 		<?php }
 				if($count == 0){ ?>
 				<tr>
-					<td colspan=5><center><h5>No Optional Features Found.</h5></center></td>
+					<td colspan=5><center><h6>No optional features found.</h6></center></td>
 				</tr>
 		<?php }?>
 		</tbody>

@@ -59,9 +59,10 @@
 		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 
-		
-		  <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/trumbowyg.min.js"></script>
-		  <link href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/ui/trumbowyg.min.css" rel="stylesheet">
+		  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+			
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/trumbowyg.min.js"></script>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/ui/trumbowyg.min.css" rel="stylesheet">
 		<link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 		
 		<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
@@ -143,7 +144,7 @@
           					<div class="dropdown-menu">
 								<ul style="font-size:12px"  class="list-group">
 									<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
-										<li style="cursor:pointer" onclick="loadSection('NewTicket');" class="list-group-item secbtn">Create New Ticket</li>
+										<li style="cursor:pointer" onclick="loadSection('Service_Desk_New_Ticket');" class="list-group-item secbtn">Create New Ticket</li>
 									<?php } 
 									if($_SESSION['accountType']=="Admin"){ ?>
 										<li style="cursor:pointer" data-toggle="modal" data-target="#companyModal" class="list-group-item secbtn">Add New <?php echo $msp; ?></li>
@@ -277,6 +278,13 @@
 						<div class="recents" id="recents" style="margin-top:20px;"></div>							
 						<div style="height:500px">&nbsp;</div>		
 					</ul>
+					<div style="padding:5px;color:#696969;bottom:0" class="footer-copyright text-center">
+						<center>
+							© <?php echo date('Y');?> Copyright
+							<a style="color:#696969;" target="_blank" href="https://github.com/OpenRMM"> OpenRMM</a><br>
+							<a style="font-size:12px;cursor:pointer;color:#696969" onclick="loadSection('Versions');"><u>Agent Downloads</u></a>
+						</center>
+					</div>
 				</nav>
 			<?php } ?>
 			<!-- Page Content -->
@@ -324,6 +332,8 @@
 	<script src="assets/js/extra.js" ></script>
 	<script src="assets/js/toastr.js"></script>
 	<script src="assets/js/custom.js"></script>
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
 	<script>
 		var computerID = atob(getCookie("ID"));
 		var currentSection = atob(getCookie("section"));
@@ -361,13 +371,10 @@
 				$(".sidebarComputerName").text("");
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>We are getting the latest information for this asset</h5><br><h6>Instead of waiting, would you like to display the outdated assset data?</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460' type='submit'>View Older Asset Information <i class='fas fa-arrow-right'></i></button></form> <center></div></div>");
 			}else{
-			
-				//$(".sidebarComputerName").text("<?php echo $_SESSION['ComputerHostname']; ?>");
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
 			}
 		
 			$("html, body").animate({ scrollTop: 0 }, "slow"); 
-			//$(".loadSection").load("includes/loader.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other));
 			$.ajax({
 				url: "includes/loader.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other),
 				timeout: 60000,
@@ -382,7 +389,7 @@
 			var item = '#secbtn'+section;
 			$(item).addClass('secActive');	
 		}
-		if(section == "Service_Desk_New_Ticket" || section == "Service_Desk_Ticket" || section == "Service_Desk_Home" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "Technicains" || section == "Customers" || section == "Versions" || section == "Init"){
+		if(section == "Service_Desk_New_Ticket" || section == "Service_Desk_Ticket" || section == "Service_Desk_Home" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "Technicians" || section == "Customers" || section == "Versions" || section == "Init"){
 			$('#sectionList').slideUp(400);
 			$('#navConfig').collapse('show');
 		}else if($('#sectionList').css("display")=="none"){

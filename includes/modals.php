@@ -173,6 +173,7 @@
 					</div>
 				</div>
 			</div>
+		
 			<!---------- Company Modal ------------>
 			<div id="companyModal" class="modal fade" role="dialog">
 				<div class="modal-dialog modal-lg">

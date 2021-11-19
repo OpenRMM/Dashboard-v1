@@ -18,10 +18,10 @@ $json = getComputerData($computer['ID'], $getWMI);
 //print_r(getComputerData($computer['ID'], array("*")));
 if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['server_status']==""){
 	$serverStatus="Offline";
-	$serverStatus_color="danger";
+	$serverStatus_color="background:#f8d7da;color:#721c24";
 }else{
 	$serverStatus="Online";
-	$serverStatus_color="success";
+	$serverStatus_color="background:#d4edda;color:#155724";
 } 
 
 ?>	
@@ -134,7 +134,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 				<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 				<?php } ?>
 			</div>
-			<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" data-toggle="modal" data-target="#noteModal" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
+			<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" data-toggle="modal" data-target="#noteModal" title="Create New Note" class="btn btn-sm">Create New Note</button>
 		</div>
 	</div>			
 	<?php 	
@@ -172,7 +172,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 			<div class="row" style="heighst:200px">
 				<div class="col-md-4 py-1">
 					<div class="card" style="backgrsound:#35384e">
-						<div style="cursor:pointer;" onclick="loadSection('AllUsers');" class="card-body">
+						<div style="cursor:pointer;" onclick="loadSection('Technicians');" class="card-body">
 							<canvas data-centerval="" id="chDonut2"></canvas>
 							<h6 style="text-align:center">Users</h6>
 						</div>
@@ -180,7 +180,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 				</div>
 				<div class="col-md-4 py-1">
 					<div class="card" style="bacskground:#35384e">
-						<div style="cursor:pointer;" onclick="loadSection('AllCompanies');" class="card-body">
+						<div style="cursor:pointer;" onclick="loadSection('Customers');" class="card-body">
 							<canvas data-centerval="" id="chDonut1"></canvas>
 							<h6 style="text-align:center"><?php echo $msp."s"; ?></h6>
 						</div>
@@ -211,11 +211,14 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 				</div>
 				<div class="tab-content" style="padding-top:10px;overflow:hidden" >
 					<div id="Summary" class="tab-pane fade-in active">
-						<h5 style="margin-left:15px;display:inline;">Server Information Summary
-							<h6 style="display:inline;margin-left:25px;margin-top:3px;position:absolute">
-								<span style="color:#000" class="badge badge-<?php echo $serverStatus_color; ?>"><?php echo $serverStatus; ?></span>
+						<h5 style="margin-left:15px;display:inline;">Server Summary
+							<h6 style="display:inline;margin-left:25px;margin-top:0px;position:absolute;font-size:16px">
+								<span style="<?php echo $serverStatus_color; ?>" class="badge"><?php echo $serverStatus; ?></span>
+								<?php if($serverupdate){ ?>
+								<span style="color:#856404;background:#fff3cd;cursor:pointer" class="badge "><i class="fas fa-upload"></i>&nbsp; Update to v.2.0.3</span>
+								<?php } ?>
 							</h6>
-							<?php if($_SESSION['accountType']=="Admin"){ ?>
+							<?php if($_SESSION['accountType']=="Admin" and $serverStatus=="Online"){ ?>
 									<button onclick="serverStatus('stop');" title="Stop Server" style="float:right;margin-top:-10px" class="btn btn-sm btn-danger"><i class="fas fa-power-off"></i></button>
 									<button onclick="serverStatus('restart');" title="Restart Server" style="float:right;margin-right:10px;margin-top:-10px" class="btn btn-sm btn-warning"><i class="fas fa-redo"></i></button>
 							<?php } ?>
@@ -231,35 +234,35 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 									</div>
 									<div class="panel-body" style="height:285px;">	
 										<div class="roaw">
-										<ul class="list-group" style="margin-left:10px">
-											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.Name');" id="processor_LoadPercentage" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Processor: </b><?php echo textOnNull(str_replace(" 0 ", " ",str_replace("CPU", "",str_replace("(R)","",str_replace("(TM)","",$json['processor']['Response'][0]['Name'])))), "N/A");?></li>
-											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Caption');" id="general_Caption" class="list-group-item secbtn olderdata" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['general']['Response'][0]['Caption']), "N/A");?></li>
-											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.SystemType');" id="general_SystemType" class="list-group-item secbtn olderdata" style="padding:6px"><b>Architecture: </b><?php echo textOnNull(str_replace("PC", "",$json['general']['Response'][0]['SystemType']), "N/A");?></li>
-											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','bios','0.Version');" id="bios_Version" class="list-group-item secbtn olderdata" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['bios']['Response'][0]['Version'], "N/A");?></li>
-											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','ExternalIP.ip');" id="general_ip" class="list-group-item secbtn olderdata" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
-											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.');" id="general_PrimaryLocalIP" class="list-group-item secbtn olderdata" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
-											<?php 
-											if((int)$json['battery']['Response'][0]['BatteryStatus']>0){ ?>
-											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','battery','0.BatteryStatus');" id="battery_BatteryStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Battery Status: </b><?php 								
-												$statusArray = [
-												"1" => ["Text" => "Discharging", "Color" => "red"],
-												"2" => ["Text" => "Unknown", "Color" => "red"],
-												"3" => ["Text" => "Fully Charged", "Color" => "green"],
-												"4" => ["Text" => "Low", "Color" => "red"],
-												"5" => ["Text" => "Critical", "Color" => "red"],
-												"6" => ["Text" => "Charging", "Color" => "green"],
-												"7" => ["Text" => "Charging And High", "Color" => "green"],
-												"8" => ["Text" => "Charging And Low", "Color" => "green"],
-												"9" => ["Text" => "Charging And Critical", "Color" => "yellow"],
-												"10" =>["Text" => "Undefined", "Color" => "red"],
-												"11" =>["Text" => "Partially Charged", "Color"=>"yellow"]];
-												$statusInt = $json['battery']['Response'][0]['BatteryStatus'];						
-											?>
-											<?php echo textOnNull($json['battery']['Response'][0]['EstimatedChargeRemaining'], "Unknown");?>%
-											(<span style="color:<?php echo $statusArray[$statusInt]['Color']; ?>"><?php echo $statusArray[$statusInt]['Text']; ?></span>)	
-											</li>
-											<?php } ?>
-										</ul>
+											<ul class="list-group" style="margin-left:10px">
+												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.Name');" id="processor_LoadPercentage" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Processor: </b><?php echo textOnNull(str_replace(" 0 ", " ",str_replace("CPU", "",str_replace("(R)","",str_replace("(TM)","",$json['processor']['Response'][0]['Name'])))), "N/A");?></li>
+												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Caption');" id="general_Caption" class="list-group-item secbtn olderdata" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['general']['Response'][0]['Caption']), "N/A");?></li>
+												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.SystemType');" id="general_SystemType" class="list-group-item secbtn olderdata" style="padding:6px"><b>Architecture: </b><?php echo textOnNull(str_replace("PC", "",$json['general']['Response'][0]['SystemType']), "N/A");?></li>
+												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','bios','0.Version');" id="bios_Version" class="list-group-item secbtn olderdata" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['bios']['Response'][0]['Version'], "N/A");?></li>
+												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','ExternalIP.ip');" id="general_ip" class="list-group-item secbtn olderdata" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
+												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.');" id="general_PrimaryLocalIP" class="list-group-item secbtn olderdata" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
+												<?php 
+												if((int)$json['battery']['Response'][0]['BatteryStatus']>0){ ?>
+												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','battery','0.BatteryStatus');" id="battery_BatteryStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Battery Status: </b><?php 								
+													$statusArray = [
+													"1" => ["Text" => "Discharging", "Color" => "red"],
+													"2" => ["Text" => "Unknown", "Color" => "red"],
+													"3" => ["Text" => "Fully Charged", "Color" => "green"],
+													"4" => ["Text" => "Low", "Color" => "red"],
+													"5" => ["Text" => "Critical", "Color" => "red"],
+													"6" => ["Text" => "Charging", "Color" => "green"],
+													"7" => ["Text" => "Charging And High", "Color" => "green"],
+													"8" => ["Text" => "Charging And Low", "Color" => "green"],
+													"9" => ["Text" => "Charging And Critical", "Color" => "yellow"],
+													"10" =>["Text" => "Undefined", "Color" => "red"],
+													"11" =>["Text" => "Partially Charged", "Color"=>"yellow"]];
+													$statusInt = $json['battery']['Response'][0]['BatteryStatus'];						
+												?>
+												<?php echo textOnNull($json['battery']['Response'][0]['EstimatedChargeRemaining'], "Unknown");?>%
+												(<span style="color:<?php echo $statusArray[$statusInt]['Color']; ?>"><?php echo $statusArray[$statusInt]['Text']; ?></span>)	
+												</li>
+												<?php } ?>
+											</ul>
 										</div>
 									</div>
 								</div>
@@ -267,9 +270,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-6" style="padding:3px;">
 								<div class="panel panel-default">
 									<div class="panel-heading">
-										<h5 style="padding:7px" class="panel-title">
-											
-										</h5>
+										<h5 style="padding:7px" class="panel-title"></h5>
 									</div>
 									<div class="panel-body" style="height:285px;">
 										<div class="rsow">
@@ -283,15 +284,12 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 											<?php if(count($json['firewall']) > 0) {
 
 												$public = $json['firewall']['Response'][0]['publicProfile'];
-												//if($public=="OFF"){ $public="Disabled"; }else{ $public="Enabled"; }
 												$color1 = (($public == "Enabled") ? "text-success" : "text-danger");
 
 												$private = $json['firewall']['Response'][0]['privateProfile'];
-												//if($private=="OFF"){ $private="Disabled"; }else{ $private="Enabled"; }
 												$color2 = (($private == "Enabled") ? "text-success" : "text-danger");
 
 												$domain = $json['firewall']['Response'][0]['domainProfile'];
-												//if($domain=="OFF"){ $domain="Disabled"; }else{ $domain="Enabled"; }
 												$color3 = (($domain == "Enabled") ? "text-success" : "text-danger");
 											?>
 												<li id="Firewall" class="list-group-item olderdata" style="z-index:2;padding:6px;width:100%"><b>Firewall Status: </b><br>
@@ -327,27 +325,67 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 									</div>
 								</div>
 							</div>
-							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-12" style="padding:3px;">
+							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-6" style="padding:3px;">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h5 style="padding:7px" class="panel-title">
+											Recent Activity Feeds
+										</h5>
+									</div>
+									<div class="panel-body" style="hesight:285px;">
+										<div class="rosw">
+											<table id="dataTable2" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
+												<thead>
+													<tr>
+														<th scope="col">Event</th>			  
+													</tr>
+												</thead>
+												<tbody>			
+												<?php
+													//Fetch Results
+													$count=0;
+													$query = "SELECT * FROM user_activity WHERE active='1' ORDER BY ID DESC";
+													$results = mysqli_query($db, $query);
+													$userCount = mysqli_num_rows($results);
+													while($activity = mysqli_fetch_assoc($results)){
+														$count++;
+																			
+													?>
+														<tr>
+															<td><?php echo crypto('decrypt',$activity['activity'],$activity['hex']); ?> (<?php echo ago(date("m/d/y\ h:i",$activity['date'])); ?>)</td>				
+														</tr>
+														<?php }
+														if($count==0){?>
+															<tr>
+																<td colspan=4><center><h6>No activity found.</h6></center></td>
+															</tr>
+													<?php } ?>				
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-6 col-sm-6 col-md-4 col-lg-6" style="padding:3px;">
 								<div class="panel panel-default">
 									<div class="panel-heading">
 										<h5 style="padding:7px" class="panel-title">
 											Server Error Log
 										</h5>
 									</div>
-									<div class="panel-body" style="height:285px;">
+									<div class="panel-body" style="hesight:285px;">
 										<div class="rosw">
-											<table id="dataTable" style="width:125%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
+											<table id="dataTable2" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
 												<thead>
-													<tr style="border-bottom:2px solid #d3d3d3;">
-														<th scope="col">Details</th>
-														<th scope="col">Time</th>
+													<tr>
+														<th scope="col">Event</th>
+														<th scope="col">Date</th>			  
 													</tr>
 												</thead>
 												<tbody>			
 													<tr>
-														<td colspan=2><center><h6>No Logs Found</h6></center></td>
-														<td>&nbsp;</td>
-													</tr>					
+														<td colspan=4><center><h6>No activity found.</h6></center></td>
+													</tr>		
 												</tbody>
 											</table>
 										</div>
@@ -451,6 +489,12 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 	$(document).ready(function() {
 		$('#dataTable').dataTable( {
 			"paging": false,
+			"order": [],
+			colReorder: true
+		} );
+
+		$('#dataTable2').dataTable( {
+			"paging": true,
 			"order": [],
 			colReorder: true
 		} );

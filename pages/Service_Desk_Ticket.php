@@ -41,7 +41,7 @@ $name2 =  ucwords(crypto('decrypt',$user3['nicename'],$user3['hex']));
 
 
 //log user activity
-$activity = "Technician Viewed Ticket: TKT".$ticket['ID'];
+$activity = "Ticket TKT".$ticket['ID']." Viewed";
 userActivity($activity,$_SESSION['userid'])
 ?>
 <style>

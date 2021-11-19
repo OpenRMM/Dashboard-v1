@@ -85,7 +85,7 @@ $error = $json['products_error'];
 			<?php }
 				if($count == 0){ ?>
 					<tr>
-						<td colspan=6><center><h5>No Programs found.</h5></center></td>
+						<td colspan=6><center><h6>No programs found.</h6></center></td>
 					</tr>
 			<?php }?>
 	   </tbody>

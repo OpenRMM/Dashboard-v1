@@ -54,19 +54,19 @@ $error = $json["event_log_".$getEvent."_error"];
 					<ul class="nav nsv-tabs">
 						<?php if($getEvent=="application"){ $style="background:#333;color:#fff;"; }else{ $style="background:#f3f3f3;color:#333;"; } ?>
 						<li style="<?php echo $style; ?>padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
-							<a onclick="loadSection('EventLogs', '<?php echo $computerID; ?>','latest','application');" href="javascript:void(0)" <?php if($getEvent=="application"){ echo 'class="text-white"'; } ?> data-toggle="tab">Application Logs</a>
+							<a onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','application');" href="javascript:void(0)" <?php if($getEvent=="application"){ echo 'class="text-white"'; } ?> data-toggle="tab">Application Logs</a>
 						</li>
 						<?php if($getEvent=="security"){ $style="background:#333;color:#fff;"; }else{ $style="background:#f3f3f3;color:#333;"; } ?>
 						<li style="<?php echo $style; ?>padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
-							<a onclick="loadSection('EventLogs', '<?php echo $computerID; ?>','latest','security');" href="javascript:void(0)" <?php if($getEvent=="security"){ echo 'class="text-white"'; } ?> data-toggle="tab">Security Logs</a>
+							<a onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','security');" href="javascript:void(0)" <?php if($getEvent=="security"){ echo 'class="text-white"'; } ?> data-toggle="tab">Security Logs</a>
 						</li>
 						<?php if($getEvent=="system"){ $style="background:#333;color:#fff;"; }else{ $style="background:#f3f3f3;color:#333;"; } ?>
 						<li style="<?php echo $style; ?>padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
-							<a onclick="loadSection('EventLogs', '<?php echo $computerID; ?>','latest','system');" href="javascript:void(0)" <?php if($getEvent=="system"){ echo 'class="text-white"'; } ?> data-toggle="tab">System Logs</a>
+							<a onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','system');" href="javascript:void(0)" <?php if($getEvent=="system"){ echo 'class="text-white"'; } ?> data-toggle="tab">System Logs</a>
 						</li>
 						<?php if($getEvent=="setup"){ $style="background:#333;color:#fff;"; }else{ $style="background:#f3f3f3;color:#333;"; } ?>
 						<li style="<?php echo $style; ?>padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
-							<a onclick="loadSection('EventLogs', '<?php echo $computerID; ?>','latest','setup');" href="javascript:void(0)" <?php if($getEvent=="setup"){ echo 'class="text-white"'; } ?> data-toggle="tab">Setup Logs</a>
+							<a onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','setup');" href="javascript:void(0)" <?php if($getEvent=="setup"){ echo 'class="text-white"'; } ?> data-toggle="tab">Setup Logs</a>
 						</li>
 					</ul>
 				</form>

@@ -3,8 +3,8 @@ $computerID = $_GET['ID'];
 $query = "SELECT * FROM users";
 $results = mysqli_num_rows(mysqli_query($db, $query));
 
-$get = clean(base64_decode($_GET['other']));
-
+$gets = clean(base64_decode($_GET['other']));
+$get = explode("|", $gets);
 if($_SESSION['accountType']!="Admin"){
     $get="profile";
     /*
@@ -50,7 +50,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
         </small>
 	</p>
 	<hr />
-    <form method="POST">
+ 
 	<div class="row">
         <?php $host = explode(":",$siteSettings['MySQL']['host']); ?>
 		<div class="col-sm-4 mx-auto">	
@@ -141,10 +141,11 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
 </div>
 <?php } ?>
 <?php if(!$show){ ?>
-<div style="width:100%;padding:15px;">
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="padding-left:20px;">
-            <div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+<form method="POST">
+    <div style="width:100%;padding:15px;">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="padding-left:20px;">
+                <div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
                     <div style="height:45px" class="panel-heading">
                         <h6 class="panel-title">
                             OpenRMM Configuration 
@@ -152,85 +153,232 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                     </div>
                     <ul class="list-group">
                     <?php if($_SESSION['accountType']=="Admin"){ ?>
-                        <li onclick="loadSection('Init','','','general');" style="cursor:pointer;<?php if($get=="general" or $get==""){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+                        <li onclick="loadSection('Init','','','general');" style="cursor:pointer;<?php if($get[0]=="general" or $get[0]==""){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
                             General Settings
                         </li>
+                        <li onclick="loadSection('Init','','','agent');" style="cursor:pointer;<?php if($get[0]=="agent"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+                            Default Agent Configuration
+                        </li>
                     <?php } ?>
-                        <li onclick="loadSection('Init','','','profile');" style="cursor:pointer;<?php if($get=="profile"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+                        <li onclick="loadSection('Init','','','profile');" style="cursor:pointer;<?php if($get[0]=="profile"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
                             User Settings
                         </li>					
                     </ul>
                 </div>	
-            </div>
-            
-            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-left:20px;">
-                <div class="card user-card2" style="min-height:200px;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
-                    <div class="card-body">
-                         <?php if($get=="general" or $get==""){  ?>
-                            <h5>General Settings</h5>
-                        <?php }else{ ?>
-                            <h5>User Settings</h5>
-                        <?php } ?>
+                <?php if($get[0]=="agent"){ ?>
+                <div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+                    <div style="height:auto" class="panel-heading">
+                        <h5 style="font-size:14px;" class="panel-title">
+                            Default configurations per <?php echo strtolower($msp); ?> 
                         <hr>
-                        <?php if($get=="profile"){  ?>
-                            <form method="POST">
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">       
-                                    <center><h6>No Settings Yet</h6></center>
-                                    </div>
-                                </div>
-                                <button type="submit" style="float:right;margin-top:300px" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> &nbsp;Save Changes</button>  
-                            </form> 
-                        <?php } ?>
-                        <?php if($get=="general" or $get=="" and $_SESSION['accountType']=="Admin"){  ?>
-                            <form method="POST">
-                                <input type="hidden" name="type" value="initGeneral">
-                                <div class="row">       
-                                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                                        <div style="display:inline" class="form-group">
-                                            <label for="email">Are you an MSP? <span style="color:red">*</span></label>
-                                            <?php
-                                            if($siteSettings['theme']['MSP']=="true"){ 
-                                                $msp = "Yes"; 
-                                            }else{
-                                                $msp="No";
-                                            }   
-                                            ?>
-                                            <select required type="text"  name="msp" class="form-control" id="pwd">
-                                                <option><?php echo $msp; ?></option>
-                                                <option value="true">Yes</option>
-                                                <option value="false">No</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                                        <div style="display:inline" class="form-group">
-                                            <label for="pwd">Service Desk <span style="color:red">*</span></label>
-                                            <select required type="text"  name="serviceDesk" class="form-control" id="pwd">
-                                                <option value="<?php echo $siteSettings['Service_Desk']; ?>"><?php echo $siteSettings['Service_Desk']; ?></option>
-                                                <option value="Enabled">Enabled</option>
-                                                <option value="Disabled">Disabled</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                               
-                                <button type="submit" style="float:right;margin-top:20px" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> &nbsp;Save Changes</button>  
-                            </form> 
-                        <?php } ?>
-                     </div>
+                            <p style="padding:3px;font-size:13px"> 
+                                Select a <?php echo strtolower($msp); ?> to edit its default agent configuration. 
+                                <span style="color:red">
+                                    Changes here will not affect existing assets.
+                                </span>
+                            </p>
+                        </h5>
+                    </div>
+                    <ul class="list-group">
+                        <li onclick="loadSection('Init','','','agent|');" style="cursor:pointer;<?php if($get[1]==""){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+                            Base Defaults
+                        </li>
+                        <?php
+                            $query = "SELECT ID, name,hex FROM companies WHERE active='1' ORDER BY ID ASC";
+                            $results = mysqli_query($db, $query);
+                            while($result = mysqli_fetch_assoc($results)){ 
+                                if($result['ID']==$company['ID']){continue;}		
+                        ?>
+                            <li onclick="loadSection('Init','','','agent|<?php echo $result['ID']; ?>');" style="cursor:pointer;<?php if($get[1]==$result['ID']){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+                                <?php echo crypto('decrypt',$result['name'],$result['hex']);?>
+                            </li>
+                        <?php }?>			
+                    </ul>
                 </div>
+                <?php } ?>
             </div>
-        </div>
+                
+                    
+        
+                <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-left:20px;">
+                
+                    <div class="card user-card2" style="min-heighst:200px;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+                        <div class="card-body">
+                            <?php if($get[0]=="general" or $get[0]==""){  ?>
+                                <h5>General Settings</h5>
+                            <?php }elseif($get[0]=="agent"){ ?>
+                                <h5>Default Agent Configuration 
+                                <?php if($get[1]!=""){
+                                    $query = "SELECT ID,name,hex FROM companies WHERE ID='".$get[1]."' LIMIT 1";
+                                    $data = mysqli_fetch_assoc(mysqli_query($db, $query));
+                                    echo " | ".crypto('decrypt',$data['name'],$data['hex']);
+                                }?>
+                                </h5>
+                            <?php }else{ ?>                    
+                                <h5>User Settings</h5>
+                            <?php } ?>
+                            </div>
+                        </div>
+                            <?php if($get[0]=="profile"){  ?>
+                            
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <div class="card table-card" style="margin-top:0px;padding:20px"> 
+                                                <div style="margin-left:50px;margin-top:0px" class="row ">							
+                                                    <div style="padding:20px;border-radius:6px" class=" col-sm-12">     
+                                                        <center><h6>No Settings Yet</h6></center>
+                                                     </div>
+                                                 </div>
+                                             </div> 
+                                        </div>
+                                    </div>
+                            <?php } ?>
+                           
+                            <?php if($get[0]=="agent"){  
+                                   $count=0;
+                                   if($get[1]!=""){
+                                       $query = "SELECT ID, default_agent_settings FROM companies WHERE ID='".$get[1]."' LIMIT 1";
+                                   }else{
+                                       $query = "SELECT ID, default_agent_settings FROM general WHERE ID='1' LIMIT 1";
+                                   }
+                                   $results2 = mysqli_query($db, $query);
+                                   $data = mysqli_fetch_assoc($results2);
+
+                                   $agent_settings = json_decode($data['default_agent_settings'],true);    
+                            ?>
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> 
+                                        <div class="card table-card" style="margin-top:0px;padding:10px">  
+                                            <div style="margin-top:-40px" class="card-header"><br>
+                                                <h5>Update Settings</h5>
+                                                <p></p>
+                                                <hr>
+                                            </div>
+                                            <div style="margin-left:50px;margin-top:-40px" class="row ">							
+                                                <div style="padding:20px;border-radius:6px" class=" col-sm-12">
+                                                    <div class="row">
+                                                        <div class="col-sm-2">
+                                                            <?php 
+                                                            if($agent_settings["Updates"]['auto_update']=="1"){
+                                                                $auto = "checked";
+                                                            }else{
+                                                                $auto="";
+                                                            }
+                                                            ?>
+                                                            <label>Automatic Updates</label>
+                                                            <center>
+                                                                <div style="margin-top:10px;" class="custom-control custom-switch">
+                                                                    <input <?php echo $auto; ?> type="checkbox" class="custom-control-input" name="defaultAutoUpdate" value="1" id="customSwitches">
+                                                                    <label class="custom-control-label" for="customSwitches"></label>
+                                                                </div>
+                                                            </center>
+                                                        </div>
+                                                        <div class=" col-sm-5">
+                                                            <label class="form-label" for="customRange2">Update URL</label>
+                                                            <input placeholder="https://" name="defaultUpdateURL" class="form-control" type="url" value="<?php echo $agent_settings["Updates"]['update_url']; ?>">
+                                                        </div>
+                                                        <div class=" col-sm-5">
+                                                            <label class="form-label" for="customRange2">Update Check Interval</label>
+                                                            <div style="margin-top:10px;" class="range">
+                                                                <input style="width:200px" class="range-slider__range" type="range" name="defaultUpdateInterval" value="<?php echo (int)$agent_settings["Updates"]['check_interval']; ?>" min="0" max="1000">
+                                                                <span style="background:#6c757d;color:#fff;width:120px" class="range-slider__value">0</span>
+                                                            </div>
+                                                        </div>									
+                                                    </div>
+                                                </div>	
+                                            </div>	
+                                        </div>
+                                    </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <div class="card table-card" style="margin-top:0px;padding:20px"> 
+                                                <div style="margin-top:-40px" class="card-header"><br>
+                                                    <h5>Update Intervals</h5>
+                                                    <p>How often would you like the agent to send data?</p>
+                                                    <hr>
+                                                </div>      
+                                                <input type="hidden" name="type" value="defaultAgentConfig"/>
+                                                <input type="hidden" name="ID" value="<?php echo $get[1]; ?>"/>
+                                                <div style="padding:40px;padding-top:0px" class="row">
+                                                    <?php
+                                                 
+                                                    //print_r($agent_settings);exit;
+                                                    foreach ($agent_settings['Interval'] as $setting => $val) {
+                                                        $setting_new = str_replace("_"," ", $setting);
+                                                        $count++;	
+                                                    ?>
+                                                        <div class=" col-sm-4">
+                                                            <label class="form-label" for="customRange2"><?php echo ucwords($setting_new); ?></label>
+                                                            <div class="range">
+                                                                <input class="range-slider__range" type="range" name="agent_<?php echo $setting; ?>" value="<?php echo $val; ?>" min="0" max="360">
+                                                                <span style="background:#6c757d;color:#fff" class="range-slider__value">0</span>
+                                                            </div>
+                                                        </div>
+                                                    <?php } 
+                                                    if($count==0){
+                                                    ?>
+                                                        <div class="col-sm-12" style="margin-top:10px">
+                                                            <center>
+                                                                <h6>An error has occurred while trying to load the settings for the selected <?php echo strtolower($msp); ?>.</h6>
+                                                            </center>
+                                                        </div>
+                                                    <?php }	?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+                            <?php } ?>
+                            <?php if($get[0]=="general" or $get[0]=="" and $_SESSION['accountType']=="Admin"){  ?>
+                                <div class="card table-card" style="margin-top:0px;padding:20px"> 
+                                     
+                                    <input type="hidden" name="type" value="initGeneral">
+                                    <div class="row">       
+                                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                            <div style="display:inline" class="form-group">
+                                                <label for="email">Are you an MSP? <span style="color:red">*</span></label>
+                                                <?php
+                                                if($siteSettings['theme']['MSP']=="true"){ 
+                                                    $msp = "Yes"; 
+                                                }else{
+                                                    $msp="No";
+                                                }   
+                                                ?>
+                                                <select required type="text"  name="msp" class="form-control" id="pwd">
+                                                    <option><?php echo $msp; ?></option>
+                                                    <option value="true">Yes</option>
+                                                    <option value="false">No</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                            <div style="display:inline" class="form-group">
+                                                <label for="pwd">Service Desk <span style="color:red">*</span></label>
+                                                <select required type="text"  name="serviceDesk" class="form-control" id="pwd">
+                                                    <option value="<?php echo $siteSettings['Service_Desk']; ?>"><?php echo $siteSettings['Service_Desk']; ?></option>
+                                                    <option value="Enabled">Enabled</option>
+                                                    <option value="Disabled">Disabled</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php } ?>                      
+                        </div>
+                    </div>
+                </div>
+                <div style="bottom:0;position:fixed;float:right;width:100%;background:#fff;border-top:1px solid #d3d3d3d3;padding:10px;margin-left:-15px;z-index:1;overflow:hidden">
+                    <center>
+                        <button onclick="loadSection('Dashboard');" style="width:100px" class="btn btn-light btn-sm">Cancel</button>
+                        <button type="submit" style="width:120px" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> &nbsp;Save Changes</button>
+                    </center>
+                </div>          
+            </div>
+        </div>   
     </div>
-</div>
+</form>
 <?php } ?>
-<footer style="z-index:999;padding:5px;height:30px;position: fixed;left: 0;bottom: 0;width: 100%;color:#fff;text-align: center;background:<?php echo $siteSettings['theme']['Color 1'];?>" class="page-footer font-small black">
-    <div class="footer-copyright text-center ">© <?php echo date('Y');?> Copyright
-        <a style="color:#fff" href="https://github.com/OpenRMM"> OpenRMM</a>
-    </div>
-</footer>
+
 <?php if($results==0){ ?> 
     <div id="pageAlert" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">
@@ -279,4 +427,29 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
             $('#initButton').html('Show more &nbsp;<i class="fas fa-chevron-down"></i>');
         }; 
     }
+</script>
+<script>
+    var rangeSlider = function(){
+    var slider = $('.range'),
+        range = $('.range-slider__range'),
+        value = $('.range-slider__value');
+    slider.each(function(){
+        value.each(function(){
+        var value = $(this).prev().attr('value');		
+        if(this.value==0){
+            $(this).html("Disabled");
+        }else{
+            $(this).html(value+" minutes");
+        }
+        });
+        range.on('input', function(){
+            if(this.value==0){
+                $(this).next(value).html("Disabled");
+            }else{
+                $(this).next(value).html(this.value+" minutes");
+            }
+        });
+    });
+};
+rangeSlider();
 </script>

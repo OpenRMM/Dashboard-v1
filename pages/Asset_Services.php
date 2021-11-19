@@ -85,7 +85,7 @@ $error = $json['services_error'];
 			if($count == 0){ ?>
 				<tr>
 					<td colspan=5>
-						<center><h5>No Services Found.</h5></center>
+						<center><h6>No services found.</h6></center>
 					</td>
 				</tr>
 		<?php }?>

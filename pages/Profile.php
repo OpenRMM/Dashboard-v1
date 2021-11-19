@@ -16,8 +16,7 @@ if($_SESSION['accountType']=="Standard" & $userID!=$_SESSION['userid']){
 	userActivity($activity,$_SESSION['userid']);
 	exit("<center><br><br><h4>Sorry, You Do Not Have Permission To Access This Page!</h4><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' class='btn btn-warning btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");	
 }
-$userActivity2 = explode("|",crypto('decrypt',$user['user_activity'],$user['hex']));
-$userActivity = array_reverse($userActivity2,true);
+
 if($userID!=$_SESSION['userid']){
 	$activity="Technician Viewed The Profile Of ".ucwords(crypto('decrypt',$user['nicename'],$user['hex']))."'";
 	userActivity($activity, $_SESSION['userid']);
@@ -30,28 +29,28 @@ if($userID!=$_SESSION['userid']){
 		</button>
 	</h5>
 </div>
-<div id="printTable"style="padding:15px" >
+<div>
 	<section id="content">
-		<div style="margin-top:-20px;background:#343a40;padding:20px;color:#fff;border-radius:6px;margin-bottom:30px" class="page-heading">
+		<div style="margin-top:-20px;background:#343a40;padding:10px;color:#fff;border-radius:6px;margin-bottom:30px" class="">
 			<div class="media clearfix">
 				<div class="media-left pr30">
 					<?php
 						list($first, $last) = explode(' ', ucwords(crypto('decrypt',$user['nicename'],$user['hex'])), 2);
 						$name = strtoupper("$first[0]{$last[0]}"); 
 					?>
-					<div style="margin-top:20px;font-size:36px;margin-right:10px;float:left;display:inline;background:<?php echo $user['user_color']; ?>;color:#fff;padding:5px;border-radius:100px;text-align:center;width:100px;height:100px;padding-top:24px">
+					<div style="margin-top:0px;font-size:36px;margin-right:10px;float:left;display:inline;background:<?php echo $user['user_color']; ?>;color:#fff;padding:5px;border-radius:100px;text-align:center;width:100px;height:100px;padding-top:24px">
 						<?php echo $name; ?>
 					</div>
 				</div>                      
-				<div style="margin-top:20px" class="media-body va-m">
+				<div style="margin-top:0px" class="media-body va-m">
 					<h4 style="color:#fff" class="media-heading"><?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex'])); ?> 
 					<?php if($_SESSION['accountType']=="Admin"){ ?>
 						<span style="float:right;font-size:12px">User ID: <?php echo $user['ID']; ?></span>
 					<?php } ?>
 					<span style="font-size:14px" ><small>Last Seen: <?php if($user['last_login']==""){ echo "never"; }else{ echo ago(date('m/d/Y H:i:s',$user['last_login'])); } ?></small></span>
 					</h4>
-					<p style="color:#dedede">View All Assets Added By This User. You Can Also Access Contact Information And Recent Activity. </p>
-					<hr>
+					<p style="color:#dedede"> </p>
+					
 					<?php if($_SESSION['accountType']=="Admin"){  ?>
 						<?php if($user['active']=="1"){ ?>
 							
@@ -103,19 +102,23 @@ if($userID!=$_SESSION['userid']){
 										</tr>
 									</thead>
 									<tbody id="activity">			
-											<?php 
-											$count=0;
-											foreach($userActivity as $key=>$item) {
-												$count++;
-												$part = explode("@",$item);
-											?>
+									<?php
+										//Fetch Results
+										$count=0;
+										$query = "SELECT * FROM user_activity WHERE user_id='".$userID."' and active='1' ORDER BY ID DESC";
+										$results = mysqli_query($db, $query);
+										$userCount = mysqli_num_rows($results);
+										while($activity = mysqli_fetch_assoc($results)){
+											$count++;
+																
+										?>
 											<tr>
 												<td><?php echo $count; ?></td>
-												<td><?php echo $part[0]; ?></td>
-												<td><?php echo gmdate("m/d/y\ h:i",$part[1]); ?></td>					
+												<td><?php echo crypto('decrypt',$activity['activity'],$activity['hex']); ?></td>
+												<td><?php echo gmdate("m/d/y\ h:i",$activity['date']); ?></td>					
 											</tr>
 											<?php }
-											if($count==0){ echo "<td>No Recent Activity</td>"; } 
+											if($count==0){ echo "<td>No recent activity.</td>"; } 
 											?>				
 									</tbody>
 								</table>
@@ -181,7 +184,7 @@ if($userID!=$_SESSION['userid']){
 					<?php } ?>
 				</div>
 				<?php if($userID==$_SESSION['userid']){ ?>
-				<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" data-toggle="modal" data-target="#noteModal"  title="Create New Note" class="btn btn-block p-t-15 p-b-15">Create New Note</button>
+				<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" data-toggle="modal" data-target="#noteModal"  title="Create New Note" class="btn btn-sm">Create New Note</button>
 				<?php } ?>
 			</div>
 			<?php } ?>

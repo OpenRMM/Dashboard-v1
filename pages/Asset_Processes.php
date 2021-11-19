@@ -80,7 +80,7 @@ $error = $json['processes_error'];
 		<?php }
 			if($count == 0){ ?>
 				<tr>
-					<td colspan=4><center><h5>No Processes Found.</h5></center></td>
+					<td colspan=4><center><h6>No processes found.</h6></center></td>
 				</tr>
 		<?php }?>
 		</tbody>

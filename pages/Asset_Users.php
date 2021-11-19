@@ -93,9 +93,11 @@ $online = $results['online'];
 					</tr>			
 				<?php }
 					if(count($users) == 0){ ?>
+					<tr>
 						<td colspan=8>
 							<center><h6>No users found.</h6></center>
-					</td>
+						</td>
+					</tr>
 				<?php }?>
 				</tbody>
 			</table>

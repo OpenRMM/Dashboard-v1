@@ -420,26 +420,26 @@
 	//log user activity	
 	function userActivity($activity2,$IDuser){
 		global $db, $siteSettings, $userActivityLimit;	
+		$salt=getSalt(40);
 		$query = "SELECT * FROM users WHERE ID='".$IDuser."' LIMIT 1";
 		$users = mysqli_query($db, $query);
 		$user = mysqli_fetch_assoc($users);
-		$activity=clean($activity2);
-		if(crypto('decrypt',$user['user_activity'],$user['hex'])==""){
-			$active = $activity."@".time();
+		if (strpos(clean($activity2), 'Admin') !== false) {
+			$type=" for ";
 		}else{
-			$activeFix = clean(explode("|",crypto('decrypt',$user['user_activity'],$user['hex'])));
-			$fix = end($activeFix);
-			$activeFix2 = explode("@",$fix);
-			if($activeFix2[0]==clean($activity)){
-				$active= crypto('decrypt',$user['user_activity'],$user['hex']);				
-			}else{
-				$activeFix = explode("|",crypto('decrypt',$user['user_activity'],$user['hex'])."|".$activity."@".time());
-				$active = implode("|",array_slice($activeFix,0,$userActivityLimit));
-			}
+			$type=" by ";
 		}
-		$active = crypto('encrypt',$active,$user['hex']);
-		$query = "UPDATE users SET user_activity='".$active."' WHERE ID=".$IDuser.";";
-		$results = mysqli_query($db, $query);	
+		$activity=clean($activity2).$type.ucwords(crypto('decrypt',$user['nicename'],$user['hex']));
+
+		$query = "SELECT * FROM user_activity WHERE user_id='".$user['ID']."' ORDER BY ID DESC LIMIT 1";
+		$count =  mysqli_fetch_assoc(mysqli_query($db, $query));
+		if(crypto('decrypt',$count['activity'],$count['hex'])!=$activity){
+			$active = crypto('encrypt',$activity,$salt);
+
+			$query = "INSERT INTO user_activity (user_id, activity,date,hex) VALUES ('".$user['ID']."','".$active."', '".time()."','".$salt."')";
+			$results = mysqli_query($db, $query);
+		}
+
 	}
 	if($_SESSION['userid']!=""){
 		function computerEncrypt(array $data): string

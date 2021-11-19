@@ -321,9 +321,9 @@ $online = $results['online'];
 					<tr>
 					<th scope="row"><?php echo $key;?></th>
 					<td><?php echo $device['Caption'];?></td>
-					<td><?php echo $device['Manufacturer'];?></td>
-					<td><?php echo $device['Description'];?></td>
-					<td><?php echo $device['PNPClass'];?></td>
+					<td><?php echo textOnNull($device['Manufacturer'],"Unknown");?></td>
+					<td><?php echo textOnNull($device['Description'],"Unknown");?></td>
+					<td><?php echo textOnNull($device['PNPClass'],"Unknown");?></td>
 					</tr>
 					<?php }
 					if($key == 0){ ?>

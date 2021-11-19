@@ -27,7 +27,7 @@ $online = $data['online'];
 <div class="card">
 	<div class="row" style="padding:15px;">
 		<div class="col-md-10">
-			<h5 style="color:#0c5460">Editing Asset: <span style="color:#333"><?php echo $hostname; ?></span>
+			<h5 title="ID: <?php echo $computerID; ?>" style="color:#0c5460">Editing Asset: <span style="color:#333"><?php echo $hostname; ?></span>
 				<br>
 				<p>
 					Here You Can Add Information About The Asset, Client And The <?php echo $msp; ?> It's Assigned To

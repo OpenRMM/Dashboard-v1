@@ -75,7 +75,7 @@ $error = $json['printers_error'];
 		<?php }
 			if(count($printers) == 0){ ?>
 				<tr>
-					<td colspan=4><center><h5>No Printers found.</h5></center></td>
+					<td colspan=4><center><h6>No printers found.</h6></center></td>
 				</tr>
 		<?php }?>
 	   </tbody>
