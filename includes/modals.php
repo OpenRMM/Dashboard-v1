@@ -386,20 +386,31 @@
 						</div>
 						<form enctype="multipart/form-data" method="POST">
 							<div class="modal-body">
-							<p>This Will Create A Downloadable .Zip File. It Will Also Rewrite The Existing Update Directory.</p>
+								<p>This Will Create A Downloadable .Zip File. It Will Also Rewrite The Existing Update Directory.</p>
 								<div class="input-group">
-								<div class="input-group-prepend">
-									<span class="input-group-text" id="inputGroupFileAddon01">Agent Version</span>
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroupFileAddon01">Agent Version *</span>
+									</div>
+									<input style="padding:20px" type="text" name="agentVersion" required minlength=3 class="form-control" placeholder="ex. 1.0.0.4" value="<?php echo $siteSettings['general']['agent_latest_version']; ?>"/>&nbsp;
 								</div>
-								<input style="padding:20px" type="text" name="agentVersion" required minlength=7 class="form-control" placeholder="ex. 1.0.0.4" value="<?php echo $siteSettings['general']['agent_latest_version']; ?>"/>&nbsp;
-								<div class="input-group-prepend">
-									<span class="input-group-text" id="inputGroupFileAddon01">Upload .exe</span>
+								<hr><br>
+								<h6>Would you like to upload a file or update via URL?</h6><br>
+								<div class="input-group">
+									<div style="height:42px" class="input-group-prepend">
+										<span class="input-group-text" id="inputGroupFileAddon01">Update URL</span>
+									</div>
+									<input style="padding:20px" type="url" name="updateURL"  minlength=6 class="form-control" placeholder="https://" value="<?php echo json_decode($siteSettings['general']['default_agent_settings'],true)['Updates']['update_url']; ?>"/>&nbsp;
 								</div>
-								<div class="custom-file" >
-									<input required="" type="hidden" value="true" name="agentFile">
-									<input  required="" accept=".exe" type="file" name="agentUpload" class="custom-file-input" id="agentUpload"/>
-									<label style="padding:10px;padding-bottom:30px" class="custom-file-label" for="agentUpload">Choose file</label>
-								</div>
+								<hr><h6>OR</h6><hr>
+								<div class="input-group">
+									<div style="height:42px" class="input-group-prepend">
+										<span class="input-group-text" id="inputGroupFileAddon01">Upload .exe</span>
+									</div>
+									<div class="custom-file" >
+										<input required="" type="hidden" value="true" name="agentFile">
+										<input  accept=".py" type="file" name="agentUpload" class="custom-file-input" id="agentUpload"/>
+										<label style="padding:10px;padding-bottom:30px" class="custom-file-label" for="agentUpload">Choose file</label>
+									</div>
 								</div>
 							</div>
 							<div class="modal-footer">

@@ -398,7 +398,12 @@
 			$active = (int)$_POST['companyactive'];
 			$query = "UPDATE companies SET active='".$active."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
-			$activity = "Company: ".$ID." Deleted";
+			if($active=="1"){
+				$action=' enabled';
+			}else{
+				$action=' disabled';
+			}
+			$activity = "Company: ".$ID.$action;
 			userActivity($activity,$_SESSION['userid']);
 			header("location: /");
 		}
@@ -408,7 +413,12 @@
 			$active = (int)$_POST['useractive'];
 			$query = "UPDATE users SET active='".$active."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
-			$activity = "Technician: ".$ID." Deleted";
+			if($active=="1"){
+				$action=' enabled';
+			}else{
+				$action=' disabled';
+			}
+			$activity = "Technician: ".$ID.$action;
 			userActivity($activity,$_SESSION['userid']);			
 			header("location: /");
 		}
@@ -420,6 +430,8 @@
 			userActivity($activity,$_SESSION['userid']);
 			$query = "UPDATE commands SET status='Deleted' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
+			$activity = "Command ".$ID." Deleted";
+			userActivity($activity,$_SESSION['userid']);
 			header("location: /");
 		}
 		//Create Note
@@ -485,6 +497,8 @@
 			$ID = (int)$_POST['ID'];
 			$action = clean($_POST['action']);
 			MQTTpublish($ID."/Commands/act_".$action."_agent",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),false);
+			$activity = "Agent ".$ID." ".$action."ed";
+			userActivity($activity,$_SESSION['userid']);
 			header("location: /");
 		}
 
@@ -513,6 +527,8 @@
 			$settings .= '}';
 			MQTTpublish($ID."/Commands/set_agent_settings",$settings,getSalt(20),false);
 			sleep(2);
+			$activity = "Agent configuration updated";
+			userActivity($activity,$_SESSION['userid']);
 			header("location: /");
 		}
 
@@ -546,7 +562,8 @@
 				$query = "UPDATE companies SET default_agent_settings='".$settings."' WHERE ID='".$ID."';";
 			}
 			$results = mysqli_query($db, $query);
-
+			$activity = $msp." ".$ID." agent configuration updated";
+			userActivity($activity,$_SESSION['userid']);
 			header("location: /");
 		}
 
@@ -554,14 +571,18 @@
 		if($_POST['type'] == "CompanyUpdateAll"){
 			$ID = (int)$_POST['ID'];
 			$query = "SELECT ID, online FROM computers WHERE company_id='".$ID."' AND active='1'";
-			$results = mysqli_query($db, $query);
-			$getWMI = array("agent_settings","agent");
-			while($computer = mysqli_fetch_assoc($results)){			
+			$results = mysqli_query($db, $query);			
+			while($computer = mysqli_fetch_assoc($results)){
+				$getWMI = array("agent_settings","agent");			
 				$json = getComputerData($computer['ID'], $getWMI);
-			//	if(preg_replace('/\D/', '',$json['agent']['Response'][0]['Version'])!=preg_replace('/\D/', '', $siteSettings['general']['agent_latest_version'])){
+				$old = preg_replace('/\D/', '', $json['agent']['Response'][0]['Version']);
+				$new = preg_replace('/\D/', '', $siteSettings['general']['agent_latest_version']);
+				if($old != $new){
 					$message='{"userID":'.$_SESSION['userid'].'}';
 					MQTTpublish($computer['ID']."/Commands/act_update_agent",$message,getSalt(20),false);
-				//}
+					$activity = "All ".strtolower($msp)." ".$ID." agents updated";
+					userActivity($activity,$_SESSION['userid']);
+				}
 			}
 			header("location: /");
 		}
@@ -597,20 +618,12 @@
 			userActivity($activity,$_SESSION['userid']);
 			header("location: /");
 		}
-		//Get Site Settings
-		if($_POST['type'] == "getSiteSettings"){
-			exit(file_get_contents("includes/config.php"));
-		}
-		if($_POST['type'] == "saveSiteSettings"){
-			$settings = "<?php \$siteSettingsJson = '".$siteSettingsJson."';";
-			$configFile = "includes/config.php";
-			file_put_contents($configFile, $settings);
-			exit();
-		}
 		if($_POST['type'] == "updateAgent"){
 			$ID = (int)$_POST['ID'];
 			$message='{"userID":'.$_SESSION['userid'].'}';
 			MQTTpublish($ID."/Commands/act_update_agent",$message,getSalt(20),false);
+			$activity = "Agent ".$ID." updated";
+			userActivity($activity,$_SESSION['userid']);
 		}
 		//login
 		if(isset($_POST['loginusername'], $_POST['password'])){
@@ -655,19 +668,29 @@
 				userActivity($activity,$_SESSION['userid']);	
 			}
 			$company = $_POST['companyAgent'];
-			$uploaddir = 'includes/agentFiles/bin/';
+			$updateURL = clean($_POST['updateURL']);
+			
+			$uploaddir = 'includes/agentFiles/Source/';
 			$uploaddir2 = 'includes/update/Open_RMM.exe';
 			$uploadfile = $uploaddir.$_FILES['agentUpload']['name'];
-			$uploadfile2 = "includes/agentFiles/bin/Open_RMM.exe";
+			$uploadfile2 = "includes/agentFiles/Source/Open_RMM.exe";
+			if($updateURL!=""){
+				$url = json_decode($siteSettings['general']['default_agent_settings'],true)['Updates']['update_url'];
+				$py = file_get_contents($url);
+				$myfile = fopen($uploaddir."OpenRMM.py", "w") or die("Unable to open file!");
+				fwrite($myfile, $py);
+				fclose($myfile);
+			}
 			if($company==""){
 				move_uploaded_file($_FILES['agentUpload']['tmp_name'], $uploadfile);
 				copy($uploadfile2, $uploaddir2);
 			}
 			ini_set('max_execution_time', 600);
 			ini_set('memory_limit','1024M');
-			$myfile = fopen("includes/agentFiles/company.txt", "w") or die("Unable to open file!");
-			fwrite($myfile, $company);
-			echo $rootPath = realpath('includes/agentFiles/');
+			$myfile = fopen("includes/agentFiles/OpenRMM.json", "w") or die("Unable to open file!");
+			$data = '{"MQTT": {"Server": "'.$siteSettings['MQTT']['host'].'", "Username": "'.$siteSettings['MQTT']['username'].'", "Password": "'.$siteSettings['MQTT']['password'].'", "Port": '.$siteSettings['MQTT']['port'].'}}'; 
+			fwrite($myfile, $data);
+			$rootPath = realpath('includes/agentFiles/');
 			$zip = new ZipArchive();
 			$zip->open('Open_RMM('.$agentVersion.').zip', ZipArchive::CREATE | ZipArchive::OVERWRITE );
 			$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath), RecursiveIteratorIterator::LEAVES_ONLY);
@@ -688,7 +711,11 @@
 				$results = mysqli_query($db, $query);
 				$activity = "Agent File Uploaded";
 				userActivity($activity,$_SESSION['userid']);
-				echo '<script>window.onload = function() { pageAlert("File Upload", "File Uploaded Successfully","Success"); };</script>';
+				if($uploadfile==""){
+					echo '<script>window.onload = function() { pageAlert("File Upload", "File Uploaded Successfully","Success"); };</script>';
+				}else{
+					echo '<script>window.onload = function() { pageAlert("File Upload", "Agent Version Updated Successfully","Success"); };</script>';
+				}
 			}else{
 				$activity = $msp." ".$company." Agent Files Configured";
 				userActivity($activity,$_SESSION['userid']);

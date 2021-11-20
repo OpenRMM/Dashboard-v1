@@ -1,1 +1,3 @@
 includes/config.php
+includes/agentFiles/OpenRMM.json
+*.zip

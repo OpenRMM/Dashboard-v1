@@ -1,5 +1,5 @@
 <?php	
-	$activity = "Technician Logged Out";
+	$activity = "Logged Out";
 	userActivity($activity,$_SESSION['userid']);	
 	$_SESSION['userid']="";
 	$_SESSION['AccountType']="";

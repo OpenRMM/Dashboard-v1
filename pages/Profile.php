@@ -18,7 +18,7 @@ if($_SESSION['accountType']=="Standard" & $userID!=$_SESSION['userid']){
 }
 
 if($userID!=$_SESSION['userid']){
-	$activity="Technician Viewed The Profile Of ".ucwords(crypto('decrypt',$user['nicename'],$user['hex']))."'";
+	$activity="The profile of ".ucwords(crypto('decrypt',$user['nicename'],$user['hex']))." was viewed";
 	userActivity($activity, $_SESSION['userid']);
 }
 ?>
@@ -42,7 +42,7 @@ if($userID!=$_SESSION['userid']){
 						<?php echo $name; ?>
 					</div>
 				</div>                      
-				<div style="margin-top:0px" class="media-body va-m">
+				<div style="margin-top:10px" class="media-body va-m">
 					<h4 style="color:#fff" class="media-heading"><?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex'])); ?> 
 					<?php if($_SESSION['accountType']=="Admin"){ ?>
 						<span style="float:right;font-size:12px">User ID: <?php echo $user['ID']; ?></span>
@@ -109,13 +109,12 @@ if($userID!=$_SESSION['userid']){
 										$results = mysqli_query($db, $query);
 										$userCount = mysqli_num_rows($results);
 										while($activity = mysqli_fetch_assoc($results)){
-											$count++;
-																
+											$count++;																
 										?>
 											<tr>
 												<td><?php echo $count; ?></td>
 												<td><?php echo crypto('decrypt',$activity['activity'],$activity['hex']); ?></td>
-												<td><?php echo gmdate("m/d/y\ h:i",$activity['date']); ?></td>					
+												<td><?php echo date("m/d/y\ h:i",$activity['date']); ?></td>					
 											</tr>
 											<?php }
 											if($count==0){ echo "<td>No recent activity.</td>"; } 

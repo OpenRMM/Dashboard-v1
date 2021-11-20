@@ -1,6 +1,8 @@
 <?php
 $computerID = (int)base64_decode($_GET['ID']);
 checkAccess($_SESSION['page']);
+
+
 ?>
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 	<h5 style="color:#0c5460">Downloads
@@ -60,9 +62,9 @@ checkAccess($_SESSION['page']);
 							<?php echo $entry; ?>
 							<?php echo (strpos($entry, $siteSettings['general']['agent_latest_version'])!==false ? " <b>- Latest</b>" : "");?>
 						</td>
-						<td><?php echo gmdate("m/d/Y", filemtime("../downloads/".$entry)); ?></td>
+						<td><?php echo date("m/d/Y", filemtime("../downloads/".$entry)); ?></td>
 						<td>
-							<a class="btn btn-sm" <?php if($user==false){ echo 'style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;color:#fff;background:'.$siteSettings['theme']['Color 4'].'"'; }else echo '"'; ?> href="../../download//?file=<?php echo urlencode($entry); ?>">
+							<a class="btn btn-sm btn-primary" <?php if($user==false){ echo 'style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;"'; }else echo '"'; ?> href="../../?file=<?php echo urlencode($entry); ?>">
 								<?php if($user==false){ echo "<i class='fas fa-download'>&nbsp;</i>"; }else{ echo "Download"; } ?>
 							</a>
 							<?php if($user==false) { ?>
@@ -79,7 +81,7 @@ checkAccess($_SESSION['page']);
 				}
 				if($key == 0){ ?>
 					<tr>
-						<td colspan=4><center><h6>No Files Found</h6></center></td>
+						<td colspan=4><center><h6>No files found.</h6></center></td>
 					</tr>
 				<?php }?>
 			</tbody>
@@ -94,7 +96,8 @@ checkAccess($_SESSION['page']);
 <script>
 	$(document).ready(function() {
 		$('#dataTable').dataTable( {
-			colReorder: true
+			colReorder: true,
+			"order": [0,'desc'],
 		} );
 	});
 </script>
