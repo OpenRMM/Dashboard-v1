@@ -46,7 +46,7 @@ $error = $json['services_error'];
 }
 ?>
 <div style="overflow-x:auto;padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;">
-	<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
+	<table id="<?php echo $_SESSION['userid']; ?>Services" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 	  <thead>
 		<tr style="border-bottom:2px solid #d3d3d3;">
 		  <th scope="col">#</th>
@@ -102,8 +102,9 @@ $error = $json['services_error'];
 </script>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').dataTable( {
-			colReorder: true
+		$('#<?php echo $_SESSION['userid']; ?>Services').dataTable( {
+			colReorder: true,
+			stateSave: true
 		} );
 	});
 </script>

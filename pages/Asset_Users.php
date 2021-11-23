@@ -46,7 +46,7 @@ $online = $results['online'];
 	<div class="row" style="padding:15px;">	
 		<div class="col-md-12" style="overflow-x:auto;">
 	
-			<table id="dataTable" style="line-height:10px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
+			<table id="<?php echo $_SESSION['userid']; ?>Users" style="line-height:10px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 				<thead>
 					<tr style="border-bottom:2px solid #d3d3d3;">
 						<th>Name</th>
@@ -106,8 +106,9 @@ $online = $results['online'];
 </div>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').dataTable( {
-			colReorder: true
+		$('#<?php echo $_SESSION['userid']; ?>Users').dataTable( {
+			colReorder: true,
+			stateSave: true
 		} );
 	});
 </script>

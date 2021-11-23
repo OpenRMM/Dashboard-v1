@@ -98,6 +98,7 @@ checkAccess($_SESSION['page']);
 		$('#dataTable').dataTable( {
 			colReorder: true,
 			"order": [0,'desc'],
+			stateSave: true
 		} );
 	});
 </script>

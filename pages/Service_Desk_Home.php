@@ -120,7 +120,7 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 				</div>
 				<br>
 				<div style="overflow-x:auto">
-				   <table id="dataTable" style="line-height:20px;font-size:12px;margin-top:8px;font-family:Arial;width:100%" class="table table-hover table-striped table-borderless">				
+				   <table id="<?php echo $_SESSION['userid']; ?>Tickets" style="line-height:20px;font-size:12px;margin-top:8px;font-family:Arial;width:100%" class="table table-hover table-striped table-borderless">				
 							<thead>
 								<tr style="border-bottom:2px solid #d3d3d3;">
 									<th >
@@ -290,10 +290,11 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 
 <!---------------------------------End MODALS------------------------------------->
 <script>
-$('#dataTable').DataTable( {
+$('#<?php echo $_SESSION['userid']; ?>Tickets').DataTable( {
 	"lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
 	colReorder: true,
 	dom: 'Bfrtip',
+	stateSave: true,
 	buttons: ['pageLength',
 				{
 					extend: 'colvis',

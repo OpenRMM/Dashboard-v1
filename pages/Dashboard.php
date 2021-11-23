@@ -332,9 +332,9 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 											Recent Activity Feeds
 										</h5>
 									</div>
-									<div class="panel-body" style="hesight:285px;">
+									<div class="panel-body" style="hesight:285px;overflow:auto">
 										<div class="rosw">
-											<table id="dataTable2" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
+											<table id="<?php echo $_SESSION['userid']; ?>Activity_Logs" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
 												<thead>
 													<tr>
 														<th scope="col">Event</th>			  
@@ -375,7 +375,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 									</div>
 									<div class="panel-body" style="hesight:285px;">
 										<div class="rosw">
-											<table id="dataTable2" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
+											<table id="<?php echo $_SESSION['userid']; ?>Error_Log" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
 												<thead>
 													<tr>
 														<th scope="col">Event</th>
@@ -487,18 +487,23 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 </div>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').dataTable( {
+		$('#<?php echo $_SESSION['userid']; ?>Error_Log').dataTable( {
 			"paging": false,
 			"order": [],
-			colReorder: true
-		} );
-
-		$('#dataTable2').dataTable( {
-			"paging": true,
-			"order": [],
+			stateSave: true,
 			colReorder: true
 		} );
 	});
+	$('#<?php echo $_SESSION['userid']; ?>Activity_Logs').dataTable( {
+		"paging": true,
+		"order": [],
+		stateSave: true,
+		colReorder: true,
+		"language": {
+			"info": ""
+		}
+	} );
+	
 </script>
 <script>
 	var data = {

@@ -203,6 +203,12 @@
 										<label for="editUserModal_type">Phone (ex. 1234567890)</label>
 										<input placeholder="Phone" pattern="[0-9]{10}" type="tel" name="phone" class="form-control" id="editCompanyModal_phone"/>
 									</div>
+									<?php if($msp=="Customer"){ ?>
+										<div class="col-md-4 form-group">
+											<label for="editUserModal_type">Owner</label>
+											<input placeholder="Owner"  type="text" name="owner" class="form-control" id="editCompanyModal_owner"/>
+										</div>
+									<?php } ?>
 									<div class="col-md-6 form-group">
 										<label for="editUserModal_type">Email</label>
 										<input placeholder="Email" type="email" name="email" class="form-control" id="editCompanyModal_email"/>

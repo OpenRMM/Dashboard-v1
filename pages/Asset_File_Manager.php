@@ -78,7 +78,7 @@ $online = $results['online'];
 					<?php if($getFolder!=""){ ?>
 						<a href="javascript:void(0)" onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $back2;?>');" style="text-align:left" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i>&nbsp; Go back</a><br>
 					<?php } ?>
-					<table id="dataTable" style="line-height:20px;overflow:auto;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">				
+					<table id="<?php echo $_SESSION['userid']; ?>File_Manager" style="line-height:20px;overflow:auto;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">				
 						<thead>
 							<tr style="border-bottom:2px solid #d3d3d3;">			  
 								<th scope="col">Type</th>
@@ -294,10 +294,11 @@ $online = $results['online'];
     $(".sidebarComputerName").text("<?php echo strtoupper($_SESSION['ComputerHostname']);?>");
 </script>
 <script>	
-	$('#dataTable').DataTable( {
+	$('#<?php echo $_SESSION['userid']; ?>File_Manager').DataTable( {
 		"lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
 		colReorder: true,
-		fixedHeader: true
+		fixedHeader: true,
+		stateSave: true
 	});
 </script>
 <script>

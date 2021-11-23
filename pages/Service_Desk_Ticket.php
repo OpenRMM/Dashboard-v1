@@ -153,7 +153,7 @@ userActivity($activity,$_SESSION['userid'])
 				<div class="card table-card" id="printTable" style="z-index:1;marsgin-top:-20px;padding:30px;border-radius:6px;"> 
 					<h4 style="display:inline"><?php echo $ticket['title']; ?>
 						<div styles="float:right;display:inline" class="dropdown">
-							<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Ticket');" class="btn btn-sm" style="float:right;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
+							<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Service_Desk_Ticket');" class="btn btn-sm" style="float:right;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 								<i class="fas fa-sync"></i>
 							</a>
 							<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right;margin-right:5px" data-toggle="dropdown">

@@ -21,7 +21,7 @@ $online = $results['online'];
 		</h5>
 		<hr>
 		<button data-toggle="modal" data-target="#editAlert" onclick="$('#alertCompany').hide();$('#alertID').val('<?php echo $computerID; ?>');" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</button><hr>
-		<table class="table table-hover table-borderless" id="datatable">
+		<table class="table table-hover table-borderless" id="<?php echo $_SESSION['userid']; ?>Alerts">
 			<tr>
 				<th>Name</th>
 				<th >Alert Details</th>

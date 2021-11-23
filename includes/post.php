@@ -364,25 +364,25 @@
 				$salt = getSalt(40);
 				$name2 = clean($_POST['name']);
 				$name = crypto('encrypt', $name2, $salt);
+				$owner = crypto('encrypt', clean($_POST['owner']), $salt);
 				$phone = clean($_POST['phone']);
 				$phone = crypto('encrypt', $phone, $salt);
 				$address = clean($_POST['address']);
 				$address = crypto('encrypt', $address, $salt);
 				$comments = clean($_POST['comments']);
 				$comments = crypto('encrypt', $comments, $salt);
-				$email = str_replace("'", "", $_POST['email']);
-				$email = crypto('encrypt', $email, $salt);
+				$email = crypto('encrypt', clean($_POST['email']), $salt);
 				$query = "SELECT ID, default_agent_settings FROM general WHERE ID='1'";
 				$results = mysqli_query($db, $query);
 				$computer = mysqli_fetch_assoc($results);
 				$settings=$computer['default_agent_settings'];
 				if($ID == 0){
-					$query = "INSERT INTO companies (default_agent_settings,hex,name, phone, address, comments, email)
-							  VALUES ('".$settings."','".$salt."','".$name."', '".$phone."', '".$address."', '".$comments."', '".$email."')";
+					$query = "INSERT INTO companies (owner,default_agent_settings,hex,name, phone, address, comments, email)
+							  VALUES ('".$owner."','".$settings."','".$salt."','".$name."', '".$phone."', '".$address."', '".$comments."', '".$email."')";
 					$activity = "Company: ".$name." Added";
 					userActivity($activity,$_SESSION['userid']);
 				}else{
-					$query = "UPDATE companies SET hex='".$salt."',name='".$name."', phone='".$phone."', address='".$address."', email='".$email."', comments='".$comments."'
+					$query = "UPDATE companies SET owner='".$owner."',hex='".$salt."',name='".$name."', phone='".$phone."', address='".$address."', email='".$email."', comments='".$comments."'
 							  WHERE ID='".$ID."' LIMIT 1";
 					$activity = "Company: ".$name2." Edited";
 					userActivity($activity,$_SESSION['userid']);
@@ -488,7 +488,7 @@
 
 		//Get speedtest
 		if($_POST['type'] == "refreshSpeedtest"){
-			$ID = (int)$_POST['CompanyID'];
+			$ID = (int)$_POST['computer_id'];
 			MQTTpublish($ID."/Commands/get_okla_speedtest",'{"userID":'.$_SESSION['userid'].'}',getSalt(20),false);
 			header("location: /");
 		}
@@ -505,6 +505,14 @@
 		//Save agent config
 		if($_POST['type'] == "agentConfig"){
 			$ID = (int)$_POST['ID'];
+			
+			$attribute = clean($_POST['attribute']);
+			$attributes = $attribute."_raw";
+			$json = getComputerData($ID, array("$attribute"));
+			$_SESSION['raw_data_value_raw']=$json[$attributes];
+			$_SESSION['raw_data_value']=$json[$attribute];
+			$_SESSION['raw_data_title']=$attribute;
+
 
 			$autoUpdates = (int)$_POST['autoUpdate'];
 			$updateURL = clean($_POST['updateURL']);
@@ -529,6 +537,10 @@
 			sleep(2);
 			$activity = "Agent configuration updated";
 			userActivity($activity,$_SESSION['userid']);
+
+		
+
+
 			header("location: /");
 		}
 

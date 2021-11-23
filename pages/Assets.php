@@ -39,7 +39,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 				</div>
 				<br>
 				<div style="overflow-x:auto">
-				   <table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;width:100%" class="table table-hover  table-borderless">				
+				   <table id="<?php echo $_SESSION['userid']; ?>Assets" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;width:100%" class="table table-hover  table-borderless">				
 							<thead>
 								<tr style="border-bottom:2px solid #d3d3d3;">
 									<th >
@@ -278,10 +278,11 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 
 <!---------------------------------End MODALS------------------------------------->
 <script>
-$('#dataTable').DataTable( {
+$('#<?php echo $_SESSION['userid']; ?>Assets').DataTable( {
 	"lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
 	colReorder: true,
 	dom: 'Bfrtip',
+	stateSave: true,
 	columnDefs: [
         {
             "targets": [1,6,7,8],

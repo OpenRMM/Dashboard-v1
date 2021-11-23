@@ -170,10 +170,12 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
             include("../pages/".$_SESSION['page'].".php");  
             $_SESSION['count']=0;
         ?>
+        <?php if($_SESSION['raw_data_title']==""){ ?>
             <script> 
                 $("html, body").animate({ scrollTop: 0 }, "slow"); 
             </script> 
         <?php
+        }
     }else{     
             if($_SESSION['count']>15){  //use 15 or 2 for testing
             ?>
@@ -223,3 +225,8 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
 $("#ticketCount").text("<?php echo $ticketCount; ?>"); 
 $("#assetCount").text("<?php echo $assetCount; ?>");
 </script>
+<?php 
+$_SESSION['raw_data_title']=""; 
+$_SESSION['raw_data_value']="";
+$_SESSION['raw_data_value_raw']="";
+?>

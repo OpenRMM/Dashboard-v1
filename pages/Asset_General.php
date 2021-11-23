@@ -6,11 +6,11 @@ $query = "SELECT online, ID, company_id, name, phone, email,hex, computer_type F
 $results = mysqli_query($db, $query);
 $result = mysqli_fetch_assoc($results);
 
-$query = "SELECT name, phone, email,address,comments,date_added,hex FROM companies WHERE ID='".$result['company_id']."' LIMIT 1";
+$query = "SELECT name, phone, email,address,comments,date_added,hex,owner FROM companies WHERE ID='".$result['company_id']."' LIMIT 1";
 $companies = mysqli_query($db, $query);
 $company = mysqli_fetch_assoc($companies);
 
-$getWMI = array("general","screenshot","logical_disk","bios","processor","agent","battery","windows_activation","agent_log","firewall");
+$getWMI = array("general","screenshot","logical_disk","bios","processor","agent","battery","windows_activation","agent_log","firewall","okla_speedtest");
 $json = getComputerData($computerID, $getWMI);
 //print_r($json['agent_log']);
 $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
@@ -47,7 +47,6 @@ if($average2==0){
 }
 //echo $json['general']['Response'][0]['Totalphysicalmemory']."....".$free2."....".$used2."....".$average2;
 
-
 $cpuUsage= $json['processor']['Response'][0]['LoadPercentage'];
 if($cpuUsage==""){
 	$cpuUsage="100";
@@ -56,7 +55,6 @@ if($cpuUsage==""){
 $activity = "Asset ".textOnNull($json['general']['Response'][0]['csname'],"Unavailable")." Viewed";
 userActivity($activity,$_SESSION['userid']);		
 ?>
-<?php //print_r($json['Screenshot']); ?>
 <style>
 	.dataTables_info {margin-top:40px; }
 </style>
@@ -139,11 +137,11 @@ if($online=="0"){ ?>
 		//z-index:999909; 	
 	//}
 </style>
-<div class="row py-2">
+<div class="row py-2" style="">
 	<?php if($size=="3"){ ?>
 	<div data-toggle="modal" data-target="#screenshotModal" style="z-index:9;overflow:hidden;" class="col-md-3 py-1 marginTop">
         <div style="padding:0px;cursor:zoom-in;overflow:hidden;" class=" zoom2 card shadow-md">
-            <img class="zoom" style="background-position: 50% 50%; background-size: 100vw" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot']); ?>"/>              
+            <img class="zoom" style="background-position: 50% 50%; background-size: 100vw;" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot']); ?>"/>              
         </div>
 		
     </div>
@@ -366,7 +364,7 @@ if($online=="0"){ ?>
 			</div>
 			<div class="panel-body" style="height:285px;overflow:hidden">
 				<div class="rows">
-					<table id="dataTable" style="width:125%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
+					<table id="<?php echo $_SESSION['userid']; ?>General" style="width:125%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
 						<thead>
 							<tr style="border-bottom:2px solid #d3d3d3;">
 							<th style="width:20px;">Title</th>
@@ -432,19 +430,19 @@ if($online=="0"){ ?>
 					Okla Speedtest
 				</h5>
 			</div>
-			<div class="panel-body" style="overflow:hidden;background:#1D1D35;height:285px;">
+			<div class="panel-body" style="overflow:hidden;background:#32344a;height:285px;">
 				<div class="rsow">
-					<a target="_blank" href="<?php echo str_replace(".png","",$json['okla_speedtest']['Response']['share']); ?>">
+					<a target="_blank" href="<?php echo str_replace(".png","",$json['okla_speedtest']['Response'][0]['result']['url']); ?>">
 						<form style="" method="post" action="/">
-						<?php if($json['okla_speedtest']['Response']['share']!=""){ ?>
-							<center><img width="80%" style="margin-top:-10px" height="80%" src="<?php echo $json['okla_speedtest']['Response']['share']; ?>"/></center>
-						<?php }else{ ?>
-							<center><h6 style='text-align:center;width:100%;bottom:0;padding:30px;color:#fff'>Refresh the results to get the latest Internet Speedtest from this asset.</h6></center><br><br>
-						<?php } ?>
+							<?php if($json['okla_speedtest']['Response'][0]['result']['url']!=""){ ?>
+								<center><img width="80%" style="margin-top:0px" height="80%" src="<?php echo $json['okla_speedtest']['Response'][0]['result']['url']; ?>.png"/></center>
+							<?php }else{ ?>
+								<center><h6 style='text-align:center;width:100%;bottom:0;padding:30px;color:#fff'>Refresh the results to get the latest Internet Speedtest from this asset.</h6></center><br><br>
+							<?php } ?>
 							<input type="hidden" value="refreshSpeedtest" name="type">
-							<input type="hidden" value="<?php echo $computerID; ?>" name="company_id">
+							<input type="hidden" value="<?php echo $computerID; ?>" name="computer_id">
 							<center>
-								<button class="btn btn-md btn-secondary" style="width:100%;bottom:0" type="submit">Refresh Results</button>
+								<button class="btn btn-md btn-secondary" style="left:0;width:100%;bottom:0;position:absolute" type="submit">Refresh Results</button>
 							</center>
 						</form>
 					</a>
@@ -462,6 +460,12 @@ if($online=="0"){ ?>
 	  </div>
 	  <div class="modal-body">
 		<ul class="list-group">
+			<?php if($msp=="Customer"){ ?>
+				<li class="list-group-item">
+					<b>Owner:</b>
+					<?php echo textOnNull(phone(crypto('decrypt',$company['owner'],$company['hex'])), "No ".$msp." Owner"); ?>
+				</li>
+			<?php } ?>
 			<li class="list-group-item">
 				<b>Phone:</b>
 				<?php echo textOnNull(phone(crypto('decrypt',$company['phone'],$company['hex'])), "No ".$msp." Phone"); ?>
@@ -617,7 +621,7 @@ if($online=="0"){ ?>
 </script>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').DataTable( {
+		$('#<?php echo $_SESSION['userid']; ?>General').DataTable( {
 			"lengthMenu": [[5], [5]],
 			colReorder: true,
 			"searching": false,

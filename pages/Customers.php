@@ -2,7 +2,7 @@
 $computerID = (int)base64_decode($_GET['ID']);
 checkAccess($_SESSION['page']);
 
-$query = "SELECT hex,ID,name,phone,email,address,comments,active FROM companies where ID<>'1' ORDER BY active,name ASC";
+$query = "SELECT hex,ID,name,phone,email,address,comments,active,owner FROM companies where ID<>'1' ORDER BY active,name ASC";
 $results = mysqli_query($db, $query);
 $companyCount = mysqli_num_rows($results);
 ?>
@@ -34,7 +34,7 @@ $companyCount = mysqli_num_rows($results);
 		</div>
 	</div>
 	<div style="padding:10px;overflow-x:auto">
-		<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">
+		<table id="<?php echo $_SESSION['userid']; ?>Customers" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">
 			<thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">
 					<th scope="col">ID</th>
@@ -117,7 +117,7 @@ $companyCount = mysqli_num_rows($results);
 										<i class="fas fa-trash"></i>				
 									</button>
 								<?php }?>								
-								<a href="javascript:void(0)" data-toggle="modal" data-target="#companyModal" onclick="editCompany('<?php echo $company['ID'];?>','<?php echo crypto('decrypt',$company['name'],$company['hex']);?>','<?php echo crypto('decrypt',$company['address'],$company['hex']);?>','<?php echo (crypto('decrypt',$company['phone'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['email'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['comments'],$company['hex']));?>')" title="Edit <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
+								<a href="javascript:void(0)" data-toggle="modal" data-target="#companyModal" onclick="editCompany('<?php echo $company['ID'];?>','<?php echo crypto('decrypt',$company['name'],$company['hex']);?>','<?php echo crypto('decrypt',$company['address'],$company['hex']);?>','<?php echo (crypto('decrypt',$company['phone'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['email'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['comments'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['owner'],$company['hex']));?>')" title="Edit <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
 									<i class="fas fa-pencil-alt"></i>
 								</a>
 							</form>
@@ -141,13 +141,14 @@ $companyCount = mysqli_num_rows($results);
 </div>
 <script>
 	//Edit Company
-	function editCompany(ID, name, address, phone, email, comments){
+	function editCompany(ID, name, address, phone, email, comments, owner){
 		$("#editCompanyModal_ID").val(ID);
 		$("#editCompanyModal_name").val(name);
 		$("#editCompanyModal_address").val(address);
 		$("#editCompanyModal_phone").val(phone);
 		$("#editCompanyModal_email").val(email);
 		$("#editCompanyModal_comments").val(comments);
+		$("#editCompanyModal_owner").val(owner);
 	}
 	function searchItem(text, page="Dashboard", ID=0, filters="", limit=25){
 		$(".loadSection").html("<center><h3 style='margin-top:40px;'><i class='fas fa-spinner fa-spin'></i> Loading "+text+"</h3></center>");
@@ -156,8 +157,9 @@ $companyCount = mysqli_num_rows($results);
 </script>
 	<script>
     $(document).ready(function() {
-		$('#dataTable').dataTable( {
-			colReorder: true
+		$('#<?php echo $_SESSION['userid']; ?>Customers').dataTable( {
+			colReorder: true,
+			stateSave: true
 		} );
     });
 </script>

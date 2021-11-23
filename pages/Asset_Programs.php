@@ -2,15 +2,17 @@
 $computerID = (int)base64_decode($_GET['ID']);
 checkAccess($_SESSION['page'],$computerID);
 
-$json = getComputerData($computerID, array("products"));
+$json = getComputerData($computerID, array("products","startup"));
 
 $query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 
 $programs = $json['products']['Response'];
+$startup = $json['startup']['Response'];
 $error = $json['products_error'];
 ?>
+
 <div style="padding:20px;margin-bottom:-1px;" class="card">
 	<div class="row" style="padding:15px;">
 		<div class="col-md-10">
@@ -47,7 +49,7 @@ $error = $json['products_error'];
 }
 ?>
 <div style="overflow-x:auto;padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;">
-	<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">	
+	<table id="<?php echo $_SESSION['userid']; ?>Programs" style="line-height:20px;overflow:hisdden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">	
 	  <thead>
 		<tr style="border-bottom:2px solid #d3d3d3;">
 		  <th scope="col">#</th>
@@ -90,19 +92,67 @@ $error = $json['products_error'];
 			<?php }?>
 	   </tbody>
 	</table>
+</div><br><br>
+<div style="padding:20px;margin-bottom:-1px;" class="card">
+	<div class="row" style="padding:15px;">
+		<div class="col-md-10">
+			<h5 style="color:#0c5460">
+				Startup Programs (<?php echo count($startup);?>)
+			</h5>
+			<span style="font-size:12px;color:#666;">
+				Last Update: <?php echo ago($json['startup_lastUpdate']);?>
+			</span>
+		</div>
+		<div style="text-align:right;" class="col-md-2">
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','Startup','null');">
+				<i class="fas fa-scroll"></i>
+			</button>
+		</div>
+	</div>
+</div>
+<div style="overflow-x:auto;padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;">
+	<table id="<?php echo $_SESSION['userid']; ?>Startup" style="line-height:20px;overflow:auto;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">	
+	  <thead>
+		<tr style="border-bottom:2px solid #d3d3d3;">
+		  <th scope="col">#</th>
+		  <th scope="col">Name</th>
+		  <th scope="col">Location</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		<?php
+			$count = 0;
+			$program="";
+			foreach($startup as $key=>$program){
+				//ignore empty name
+				if(trim($program['Caption']) == ""){
+					continue;
+				}
+				$count++;
+		?>
+			<tr>
+			  <th scope="row"><?php echo $count;?></th>
+			  <td><?php echo $program['Caption'];?></td>
+			  <td><?php echo textOnNull($program['Location'],"Unknown");?></td>
+			</tr>
+			<?php }
+				if($count == 0){ ?>
+					<tr>
+						<td colspan=6><center><h6>No startup programs found.</h6></center></td>
+					</tr>
+			<?php }?>
+	   </tbody>
+	</table>
 </div>
 <script>
-	$('#searchInputPrograms').keypress(function(event){
-		var keycode = (event.keyCode ? event.keyCode : event.which);
-		if(keycode == '13'){
-			search($('#searchInputPrograms').val(),'Programs','<?php echo $computerID; ?>');
-		}
-	});
-</script>
-<script>
 	$(document).ready(function() {
-		$('#dataTable').dataTable( {
-			colReorder: true
+		$('#<?php echo $_SESSION['userid']; ?>Programs').dataTable( {
+			colReorder: true,
+			stateSave: true
+		} );
+		$('#<?php echo $_SESSION['userid']; ?>Startup').dataTable( {
+			colReorder: true,
+			stateSave: true
 		} );
 	});
 </script>

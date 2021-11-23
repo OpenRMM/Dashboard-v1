@@ -72,7 +72,7 @@ $error = $json["event_log_".$getEvent."_error"];
 				</form>
 			</div>
 			<div class="tab-contsent p3s0" style="padding:0px;margin-top:5px;overflow:auto">
-				<table id="dataTable" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
+				<table id="<?php echo $_SESSION['userid']; ?>Event_logs" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
 					<thead>
 						<tr style="border-bottom:2px solid #d3d3d3;">
 							<th scope="col">Source</th>
@@ -136,10 +136,11 @@ $error = $json["event_log_".$getEvent."_error"];
 </div>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').DataTable( {
+		$('#<?php echo $_SESSION['userid']; ?>Event_logs').DataTable( {
 			//"lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
 			"paging": false,
 			"order": [],
+			stateSave: true,
 			colReorder: true
 		} );
 	} );

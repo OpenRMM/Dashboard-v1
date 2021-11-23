@@ -52,7 +52,7 @@ while($result = mysqli_fetch_assoc($results)){
                 <td><?php echo textOnNull($result['computer_data_key'],"null"); ?></td>
         <?php } ?>
         <td>
-            <?php print_r($old) ?> &nbsp;<i title="Old Value -> New Value" class="fas fa-arrow-right"></i> &nbsp;<?php print_r($new) ?>     
+            <?php print_r($old); ?> &nbsp;<i title="Old Value -> New Value" class="fas fa-arrow-right"></i> &nbsp;<?php print_r($new); ?>     
         </td>
         <td>
             <span ><?php echo $icon; ?></span>
@@ -66,7 +66,7 @@ while($result = mysqli_fetch_assoc($results)){
     <tr>
         <td colspan=3>    
             <center>
-                <h6>No Older Data To Display</h6>
+                <h6>No older data to display.</h6>
             </center>   
         </td>
     </tr> 

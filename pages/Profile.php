@@ -93,7 +93,7 @@ if($userID!=$_SESSION['userid']){
 					<div class="tab-content p30"  style="border-radius:6px;margin-top:10px;">
 						<div id="tab1" class="tab-pane active">
 							<div style="padding:0px;">
-								<table id="dataTable" style="width:100%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover  table-borderless">
+								<table id="<?php echo $_SESSION['userid']; ?>Profile" style="width:100%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover  table-borderless">
 									<thead>
 										<tr style="border-bottom:2px solid #d3d3d3;">
 										<th scope="col">#</th>
@@ -193,11 +193,12 @@ if($userID!=$_SESSION['userid']){
 </div>
 <script>
 $(document).ready(function() {
-	var table = $('#dataTable').DataTable();
-	table
-	.order( [ 0, 'asc' ] )
-	.draw();		
-});
+		$('#<?php echo $_SESSION['userid']; ?>Profile').dataTable( {
+			colReorder: true,
+			stateSave: true,
+			order: [0, 'asc']
+		} );
+    });
 </script>
 <script>
 //Edit User
