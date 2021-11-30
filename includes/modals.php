@@ -315,74 +315,25 @@
 				</div>
 			</div>
 
-			<?php if($siteSettings['general']['asset_history']=="1"){ ?>
-			<!------------- Historical ------------------->
-			<div id="historicalData_modal" class="modal fade" role="dialog">
-				<div class="modal-dialog">
+			<!-------------asset messages ------------------->
+			<div id="asset_message_modal" class="modal fade" role="dialog">
+				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">
-								Historical Data
-							</h5>
-						</div>
-						<div class="modal-body">
-							<div id="historicalData" style="overflow:auto;max-height:400px;"></div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
+						<div class="row clearfix">
+							<div  class="col-lg-12">
+								<div id="chatDiv" class="card chat-app">
+									<center>
+										<h3 style='margin-top:40px;'>
+											<div class='spinner-grow text-muted'></div>
+											<div class='spinner-grow' style='color:#0c5460'></div>
+										</h3>
+									</center>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<!------------- Historical Date Selection  ------------------->
-			<div id="historicalDateSelection_modal" class="modal fade" role="dialog">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">
-								View Historical Data
-							</h5>
-						</div>
-						<div class="modal-body" style="overflow:auto;max-height:400px;">
-							<table class="table table-striped">
-								<tr>
-									<td>Latest</td>
-									<td>
-										<form method="post">
-											<input type="hidden" value="latest" name="historyDate">
-											<button type="submit" class="btn btn-sm btn-secondary" >
-												Select
-											</button>
-										</form>
-									</td>
-								</tr>
-								<?php
-									$showLast = $siteSettings['Max_History_Days']; //Show last 31 days
-									$count = 1;
-									while($count <= $showLast){ $count++;
-									$niceDate = date("l, F jS", strtotime("-".$count." day"));
-									$formatedDate = date("n/j/Y", strtotime("-".$count." day"));
-									$formatedDate2 = date("Y-m-d", strtotime("-".$count." day"));
-								?>
-								<tr>
-									<td><?php echo $niceDate; ?></td>
-									<td>
-										<form method="post">
-											<input type="hidden" value="<?php echo $formatedDate2; ?>" name="historyDate"> 
-											<button style="background:#0c5460;color:#d1ecf1" type="submit" class="btn btn-sm">Select</button>
-										</form>
-										</td>
-								</tr>
-								<?php }?>
-							</table>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-sm btn-secondary"  data-dismiss="modal">Close</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<?php } ?>
 			<!------------- Upload .exe File ------------------->
 			<div id="agentUpload" class="modal fade" role="dialog">
 				<div class="modal-dialog modal-lg">
@@ -612,7 +563,7 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title">One-way Message to Agent: <?php echo $_SESSION['ComputerHostname']; ?></h5>
+							<h5 class="modal-title">One-way message to asset: <?php echo $_SESSION['ComputerHostname']; ?></h5>
 						</div>
 						<form method="post" action="/">
 							<div class="modal-body">
@@ -623,21 +574,31 @@
 									<input type="text" placeholder="What should the title be?" id="#inputTitle" class="form-control" name="alertTitle"/>
 								</div>
 								<div class="form-group">
-									<textarea id="inputMessage" placeholder="What is your message?" name="alertMessage" class="form-control"></textarea>
+									<label>Message</label>
+									<textarea id="inputMessage" style="max-height:300px" placeholder="What is your message?" name="alertMessage" class="form-control"></textarea>
 								</div>
+								<label>Alert Type</label>
 								<center>
-									<label class="radio-inline">
-										<input type="radio" id="#inputType1" class="form-control" name="alertType" value="alert" checked>Alert
-									</label>
-									<label class="radio-inline">
-										<input type="radio" id="#inputType2" class="form-control" name="alertType" value="confirm" >Confirm
-									</label>
-									<label class="radio-inline">
-										<input type="radio" id="#inputType3" class="form-control" name="alertType" value="password" >Password
-									</label>
-									<label class="radio-inline">
-										<input type="radio" id="#inputType4" class="form-control" name="alertType" value="prompt" >Prompt
-									</label>
+									<div class="form-check form-check-inline">
+										<label class="radio-inline">
+											<input type="radio" id="#inputType1" class="form-check-input" name="alertType" value="alert" checked />Alert
+										</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<label class="radio-inline">
+											<input type="radio" id="#inputType2" class="form-check-input" name="alertType" value="confirm" />Confirm
+										</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<label class="radio-inline">
+											<input type="radio" id="#inputType3" class="form-check-input" name="alertType" value="password" />Password
+										</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<label class="radio-inline">
+											<input type="radio" id="#inputType4" class="form-check-input" name="alertType" value="prompt" />Prompt
+										</label>
+									</div>
 								<center>
 							</div>
 							<div class="modal-footer">

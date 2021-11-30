@@ -252,6 +252,25 @@ function updateCompanyAgent(ID2){
     });
 }
 
+
+function sendChat(){ 
+    var ID2 = $("#asset_message_id").val();
+    var message2 = $("#asset_message").val();
+    var user_id2 = $("#user_id").val();
+    if(ID2!='0' && message2!=''){
+        $.post("index.php", {
+        type: "asset_message",
+        ID: ID2,
+        user_id: user_id2,
+        message: message2
+        },
+        function(data, status){
+            $(".chatList").append(' <li title="Reload chat to see more info" class="clearfix"><div style="text-align:center;min-width:100px;font-size:14px;padding:5px" class="message other-message float-right bg-primary text-white">'+message2+'</div></li>');
+            $("#asset_message").val('');
+        });
+    }
+}
+
 function agentStatus(ID,action){ 
     var type2;
     var message;

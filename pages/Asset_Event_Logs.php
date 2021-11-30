@@ -17,8 +17,8 @@ $online = $results['online'];
 $events = $json["event_log_".$getEvent]['Response'];
 $error = $json["event_log_".$getEvent."_error"];
 ?>
-<div class="row" >
-	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+<div class="row" style="position:relative">
+	<div class="col-md-12" >
 		<div class="card" style="padding:20px;margin-bottom:-1px">
 			<h5 style="color:0c5460">Event Logs<br>
 				<span style="color:#000;font-size:12px">Last Update: <?php echo ago($json['event_log_'.$getEvent.'_lastUpdate']);?></span>
@@ -46,9 +46,9 @@ $error = $json["event_log_".$getEvent."_error"];
 	echo"<br>";
 }
 ?>
-<div class="row" >
+<div class="row" style="overflow:auto">
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-		<div class="card" style="padding:20px" >
+		<div class="card" style="padding:20px;overflow:auto" >
 			<div class="tab-block">
 				<form style="margin-bottom:-10px" method="POST" action="/" style="display:inline">
 					<ul class="nav nsv-tabs">
@@ -112,8 +112,8 @@ $error = $json["event_log_".$getEvent."_error"];
 							<td scope="row"><?php echo $event['Source'];?></td>
 							<td style="color:#333" title="<?php echo $message; ?>">
 								<?php 
-									if (strlen($message) >= 150) {
-										echo substr($message, 0, 150). " ... " . substr($message, -5);
+									if (strlen($message) >= 100) {
+										echo substr($message, 0, 100). " ... " . substr($message, -5);
 									}else {
 										echo $message;
 									}

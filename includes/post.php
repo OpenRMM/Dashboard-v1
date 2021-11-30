@@ -154,7 +154,7 @@
 			header("location: /");
 		}
 		//ticket message
-		if(isset($_POST['messageType'])){
+		if(isset($_POST['message'])){
 			$ID = (int)$_POST['ID'];
 			$message = clean($_POST['message']);
 			$type = clean($_POST['messageType']);
@@ -166,6 +166,36 @@
 			userActivity($activity,$_SESSION['userid']);		
 			header("location: /");				
 		}
+
+		//asset_message
+		if($_POST['type']=="asset_message"){
+			$ID = (int)$_POST['ID'];
+			
+				$user = (int)$_POST['user_id'];
+				$message = clean($_POST['message']);
+				$query = "INSERT INTO asset_messages (computer_id, userid, message)
+				VALUES ('".$ID."','".$user."','".$message."')";
+				$results = mysqli_query($db, $query);
+			//	echo mysqli_error($db); exit;
+			if($ID!=0){
+				$activity = "Message Sent On Asset: ".$ID;
+				userActivity($activity,$_SESSION['userid']);
+			}		
+			header("location: /");				
+		}
+
+		//asset_message
+		if($_POST['type']=="asset_viewed"){
+			$ID = (int)$_POST['ID'];
+			if($ID!=0){
+				$query = "UPDATE asset_messages SET chat_viewed='1' WHERE computer_id='".$ID."';";
+				$results = mysqli_query($db, $query);
+				$activity = "Messages for asset ".$ID." marked as read";
+				userActivity($activity,$_SESSION['userid']);
+			}		
+			header("location: /");				
+		}
+
 		//Add Computers To Company
 		if($_POST['type'] == "CompanyComputers"){
 			$computers = ($_POST['computers']);

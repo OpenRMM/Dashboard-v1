@@ -13,13 +13,13 @@ $error = $json['network_adapters_error'];
 ?>
 <div style="padding:20px;margin-bottom:-1px;" class="card">
 	<div class="row" style="padding:15px;">
-		<h5 style="color:#0c5460" class="col-md-10">
+		<h5 style="color:#0c5460" class="col-md-9">
 			Network Adapters (<?php echo count($adapters);?>)<br/>
 			<span style="font-size:12px;color:#666;">
 				Last Update: <?php echo ago($json['network_adapters_lastUpdate']);?>
 			</span>
 		</h5>	
-		<div style="text-align:right" class="col-md-2">
+		<div style="text-align:right" class="col-md-3">
 			<div class="btn-group">
 				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Asset_Network');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
 				<button style="background:#0c5460;color:#d1ecf1" type="button" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -28,9 +28,13 @@ if($_SESSION['userid']!=""){
         $checkrows=mysqli_num_rows($results);
         if($checkrows>0){
             $query = "UPDATE commands SET status='Notified' WHERE user_id='".$_SESSION['userid']."' and computer_id='".$_SESSION['computerID']."';";
-            $results = mysqli_query($db, $query);
-            echo "<script>toastr.success('Command Was Received.'); </script>";
+            $results = mysqli_query($db, $query);  
+            echo "<script>toastr.success('Command Was Received.'); </script>";          
         }
+
+     
+        
+					
 
         //get alert response
         $alertResponse = $json['alert'];
@@ -57,8 +61,33 @@ if($_SESSION['userid']!=""){
         $_SESSION['notifReset2']="1";
     }
 }
+if($_SESSION['page']!="Asset_Chat"){
+    $query = "SELECT * FROM asset_messages where userid='0' and chat_started='0' ORDER BY ID ASC Limit 1";
+    $results = mysqli_query($db, $query);
+    $checkrows = mysqli_num_rows($results);
+    $existing = mysqli_fetch_assoc($results);
+        
+    if($checkrows>0){
+        $json = getComputerData($existing['computer_id'], array("general"));
+        $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
+        
+    ?>
+    <script>toastr.info('Asset: <?php echo $hostname; ?> Sent you a message<br><br><center><button onclick=\'loadChat(\"<?php echo $existing['computer_id']; ?>\");\' data-toggle=\'modal\' data-target=\'#asset_message_modal\' class=\'btn btn-sm btn-secondary\'>View Chat</button></center>','',{timeOut:0,extendedTimeOut: 0}); </script>
+    <?php
+        sleep(6);
+        $query = "UPDATE asset_messages SET chat_started='1' WHERE ID='".$existing['ID']."' and chat_started='0';";
+        $results = mysqli_query($db, $query);
+    }
+}
 ?>
 <script>
     toastr.options = {'preventDuplicates': true ,'closeButton': true }
 </script>
 <?php $_SESSION['excludedPages'] = explode(",",$excludedPages); ?>
+<?php
+    $query = "SELECT  * FROM asset_messages WHERE chat_viewed='0' and userid='0'";
+    $message_count = mysqli_num_rows(mysqli_query($db, $query)); 
+?>
+<script>
+$("#messageCount").text("<?php echo (int)$message_count; ?>");
+</script>

@@ -6,7 +6,7 @@ if(!isset($_SESSION['userid'])){
 	http_response_code(404);
 	die();
 }
-$expire_after = 30;
+$expire_after = 30; //seconds
 $exists = 0;
 
 $query = "SELECT ID FROM computers WHERE ID='".$ID."'";
@@ -35,7 +35,7 @@ if($exists == 0){
 	//echo mysqli_error($db);exit;
 	MQTTpublish($ID."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"commandID": "'.$insertID.'","data":"'.$commands.'"}',$ID,false);
 
-	$activity="Technician Sent ".$commands." Command To: ".$computer['hostname'];
+	$activity=$commands." command was sent to: ".$computer['ID'];
 	userActivity($activity,$_SESSION['userid']);
 	
 	//Get Response
@@ -55,11 +55,11 @@ if($exists == 0){
 		if($count >= 10){
 			$response = "Response timed out";
 		}else{
-			$response = "No Response";
+			$response = "No response";
 		}
 	}
 ?>
 	<pre style="color:#fff;"><?php echo $response;?></pre>
 <?php }else{?>
-	A command has already been sent and the asset has not proccessed your request. Please wait 30 seconds before retrying a command.
+	A command has already been sent and the asset has not proccessed your request. Please wait <?php echo (int)$expire_after; ?> seconds before retrying a command.
 <?php }?>

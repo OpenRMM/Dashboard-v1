@@ -15,7 +15,7 @@ $error = $json['products_error'];
 
 <div style="padding:20px;margin-bottom:-1px;" class="card">
 	<div class="row" style="padding:15px;">
-		<div class="col-md-10">
+		<div class="col-md-9">
 			<h5 style="color:#0c5460">
 				Installed Programs (<?php echo count($programs);?>)
 			</h5>
@@ -23,7 +23,7 @@ $error = $json['products_error'];
 				Last Update: <?php echo ago($json['products_lastUpdate']);?>
 			</span>
 		</div>
-		<div style="text-align:right;" class="col-md-2">
+		<div style="text-align:right;" class="col-md-3">
 			<div class="btn-group">
 				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Asset_Programs');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
 				<button style="background:#0c5460;color:#d1ecf1" type="button" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -55,7 +55,6 @@ $error = $json['products_error'];
 		  <th scope="col">#</th>
 		  <th scope="col">Name</th>
 		  <th scope="col">Vendor</th>
-		  <th scope="col">Location</th>
 		  <th scope="col">Installed</th>
 		</tr>
 	  </thead>
@@ -81,7 +80,6 @@ $error = $json['products_error'];
 			  <th scope="row"><?php echo $count;?></th>
 			  <td><?php echo $program['Caption'];?></td>
 			  <td><?php echo $program['Vendor'];?></td>
-			  <td><?php echo textOnNull($program['InstallLocation'],"Unknown");?></td>
 			  <td><?php echo date("m/d/Y", strtotime($program['InstallDate']));?></td>
 			</tr>
 			<?php }

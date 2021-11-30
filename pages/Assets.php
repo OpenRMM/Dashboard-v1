@@ -279,6 +279,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 <!---------------------------------End MODALS------------------------------------->
 <script>
 $('#<?php echo $_SESSION['userid']; ?>Assets').DataTable( {
+	responsive: true,
 	"lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
 	colReorder: true,
 	dom: 'Bfrtip',
@@ -289,29 +290,29 @@ $('#<?php echo $_SESSION['userid']; ?>Assets').DataTable( {
             "visible": false
         }],
 	buttons: ['pageLength',
-				{
-					extend: 'colvis',
-					title: 'Column Visibility',
-					text:'Column Visibility',
-					//Columns to export
-					columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  
-				},{
-					extend: 'excelHtml5',
-					title: 'OpenRMM Asset List',
-					text:'Export to excel',
-					//Columns to export
-					exportOptions: {
-						columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-					}
-				},{
-					extend: 'pdfHtml5',
-					title: 'OpenRMM Asset List',
-					text: 'Export to PDF',
-					//Columns to export
-					exportOptions: {
-						columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-					}
-				}
+		{
+			extend: 'colvis',
+			title: 'Column Visibility',
+			text:'Column Visibility',
+			//Columns to export
+			columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  
+		},{
+			extend: 'excelHtml5',
+			title: 'OpenRMM Asset List',
+			text:'Export to excel',
+			//Columns to export
+			exportOptions: {
+				columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+			}
+		},{
+			extend: 'pdfHtml5',
+			title: 'OpenRMM Asset List',
+			text: 'Export to PDF',
+			//Columns to export
+			exportOptions: {
+				columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+			}
+		}
 	]
 } );	
 </script>

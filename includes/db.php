@@ -4,8 +4,8 @@
 	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Init,Login,Logout,Asset_Alerts,Asset_Commands,Dashboard,Profile,Asset_Edit,Technicians,Customers,Assets,Versions"; 
-	$allPages = "Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Asset_Agent_Settings,Asset_File_Manager,Init,Asset_Alerts,Customers,Technicians,Assets,Asset_Attached_Devices,Asset_Commands,Dashboard,Asset_Disks,Asset_Edit,Asset_Event_Logs,Asset_General,Login,Logout,Asset_Memory,Asset_Network,Asset_Optional_Features,Asset_Printers,Asset_Processes,Profile,Asset_Programs,Asset_Services,Asset_Users,Versions";
+	$excludedPages = "Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Init,Login,Logout,Asset_Alerts,Asset_Commands,Dashboard,Profile,Asset_Edit,Technicians,Customers,Assets,Versions"; 
+	$allPages = "Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Asset_Agent_Settings,Asset_File_Manager,Init,Asset_Alerts,Customers,Technicians,Assets,Asset_Attached_Devices,Asset_Commands,Dashboard,Asset_Disks,Asset_Edit,Asset_Event_Logs,Asset_General,Login,Logout,Asset_Memory,Asset_Network,Asset_Optional_Features,Asset_Printers,Asset_Processes,Profile,Asset_Programs,Asset_Services,Asset_Users,Versions";
 	$adminPages = "Asset_Agent_Settings,Technicians,Customers";
 	$taskCondtion_max = 5;
 ###########################################################################################################################################
@@ -298,7 +298,7 @@
 		$remove = array("'");
 		$replaceWith = array("");
 		$string =  htmlspecialchars($string, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-		$string = strip_tags($string);
+		$string = stripslashes(htmlentities(strip_tags($string)));
 		//$string = filter_input($string, FILTER_SANITIZE_STRING);
 		return $string;
 	}
@@ -441,7 +441,7 @@
 		}
 
 	}
-	if($_SESSION['userid']!=""){
+
 		function computerEncrypt(array $data): string
 		{
 			GLOBAL $passphrase;
@@ -467,5 +467,5 @@
 			$decrypted_data = openssl_decrypt($encrypted_data, 'aes-256-gcm', $secret_key, OPENSSL_RAW_DATA, $iv, $tag);
 			return json_decode(base64_decode($decrypted_data),True);	
 		}
-	}
+	
 ?>

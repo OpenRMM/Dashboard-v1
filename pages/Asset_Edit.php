@@ -26,7 +26,7 @@ $online = $data['online'];
 <?php exit; }?>
 <div class="card">
 	<div class="row" style="padding:15px;">
-		<div class="col-md-10">
+		<div class="col-md-9">
 			<h5 title="ID: <?php echo $computerID; ?>" style="color:#0c5460">Editing Asset: <span style="color:#333"><?php echo $hostname; ?></span>
 				<br>
 				<p>
@@ -34,7 +34,7 @@ $online = $data['online'];
 				</p>
 			</h5>
 		</div>
-		<div class="col-md-2" style="text-align:right;">
+		<div class="col-md-3" style="text-align:right;">
 			<button title="Refresh" onclick="loadSection('Asset_Edit');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-sync"></i>
 			</button>
@@ -44,8 +44,8 @@ $online = $data['online'];
 		</div>
 	</div>
 </div>
-<div style="width:100%;backgrdound:#fff;padding:15px;">
-	<form method="POST" action="/">
+<form method="POST" action="/">
+	<div style="width:100%;backgrdound:#fff;padding:15px;">	
 		<div class="row">
 			<div style="padding:20px;border-radius:6px" class="card card-sm col-sm-8">
 				<input type="hidden" name="type" value="EditComputer"/>
@@ -95,19 +95,6 @@ $online = $data['online'];
 				</div>
 			</div>				
 			<div class="col-sm-4">
-				<div class="panel panel-default" style="height:auto;color:#fff;color#000;padding:20px;border-radius:6px;margin-bottom:20px;">
-					<center>
-						<button style="width:55%;margin-top:-3px;border:none;" type="submit" class="btn btn-success btn-sm">
-							<i class="fas fa-save"></i> &nbsp; Save Details
-						</button>
-						<?php if($_SESSION['accountType']=="Admin"){ ?>
-							<a style="width:35%;margin-top:-3px;border:none;" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal" href="javascript:void(0)">
-								<i class="fas fa-trash"></i> &nbsp; Delete Asset
-							</a>
-						<?php } ?>
-					</center>
-				</div>
-				<hr>
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<h4 class="panel-title">
@@ -191,11 +178,26 @@ $online = $data['online'];
 							<?php } ?>
 						</ul>
 					</div>
+				</div>
+				<div class="panel panel-default" style="height:auto;color:#fff;color#000;padding:20px;border-radius:6px;margin-bottom:20px;">
+					<center>
+						<?php if($_SESSION['accountType']=="Admin"){ ?>
+							<a style="width:75%;margin-top:-3px;border:none;" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal" href="javascript:void(0)">
+								<i class="fas fa-trash"></i> &nbsp; Delete Asset
+							</a>
+						<?php } ?>
+					</center>
 				</div>			
 			</div>
-		</div>
-	</form>
-</div>
+		</div>	
+	</div>
+	<div style="left:0;bottom:0;position:fixed;float:right;width:110%;background:#fff;border-top:1px solid #d3d3d3d3;padding:10px;margin-left:-15px;z-index:1;overflow:hidden">
+		<center>
+			<button onclick="loadSection('Asset_General');" style="width:100px" class="btn btn-light btn-sm">Cancel</button>
+			<button type="submit" style="width:120px" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> &nbsp;Save Changes</button>
+		</center>
+	</div> 
+</form>
 <!-----------------------------------------modal------------------------------->
 <div id="delModal" class="modal fade" role="dialog">
   <div class="modal-dialog">

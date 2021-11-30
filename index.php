@@ -35,7 +35,6 @@ if(isset($_GET['file'])){
 	$user = mysqli_fetch_assoc($results);
 	$username=$user['username'];
 
-	
 
 	if($nologin==false){
 		if($_SESSION['userid']=="" && !in_array(basename($_SERVER['SCRIPT_NAME']), $serverPages)){
@@ -134,6 +133,11 @@ if(isset($_GET['file'])){
 				</div>
 				<?php if($_SESSION['userid']!=""){ ?>
 					<div style="float:right;">
+				
+						<button type="button" onclick="loadChat('0');"data-toggle="modal" data-target="#asset_message_modal" style="border:none;box-shadow:none;margin-top:4px" class="btn-sm btn" title="Asset Chat">
+							<i style="font-size:16px" class="fas fa-comment-dots"></i>
+							<span style="font-size:10px" id="messageCount" class="text-white badge bg-c-pink">0</span>
+						</button>
 						<div class="btn-group">
 						
           					<a href="javascript:void(0)" style="border:none;box-shadow:none" class="dropsdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -158,7 +162,7 @@ if(isset($_GET['file'])){
 									<?php } 
 									if($_SESSION['accountType']=="Admin"){ ?>
 										<li style="cursor:pointer" data-toggle="modal" data-target="#companyModal" class="list-group-item secbtn">Add New <?php echo $msp; ?></li>
-										<li style="cursor:pointer" data-toggle="modal" data-target="#userModal" class="list-group-item secbtn">Add New Technician</li>
+										<li style="cursor:pointer"  data-toggle="modal" data-target="#userModal" class="list-group-item secbtn">Add New Technician</li>
 									<?php } ?>
 								</ul>
 							</div>
@@ -366,8 +370,10 @@ if(isset($_GET['file'])){
 		setCookie("section", btoa(section), 365);
 		$('.secbtn').removeClass('secActive');
 		setCookie("ID", btoa(ID), 365);
+	
 		computerID = ID;
 		currentSection = section;
+			
 		if(section=="Logout"){
 			toastr.options.progressBar = true;
 			toastr.warning('Securely Logging You Out.');
@@ -399,7 +405,7 @@ if(isset($_GET['file'])){
 			var item = '#secbtn'+section;
 			$(item).addClass('secActive');	
 		}
-		if(section == "Service_Desk_New_Ticket" || section == "Service_Desk_Ticket" || section == "Service_Desk_Home" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "Technicians" || section == "Customers" || section == "Versions" || section == "Init"){
+		if(section == "Asset_Portal" || section == "Service_Desk_New_Ticket" || section == "Service_Desk_Ticket" || section == "Service_Desk_Home" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "Technicians" || section == "Customers" || section == "Versions" || section == "Init"){
 			$('#sectionList').slideUp(400);
 			$('#navConfig').collapse('show');
 		}else if($('#sectionList').css("display")=="none"){
@@ -450,5 +456,52 @@ if(isset($_GET['file'])){
 			$("#TextBoxDiv" + counter2).remove();
 		};
 	
+	</script>
+	<script>
+		function loadChat(ID) {
+		
+
+			$.ajax({
+				url: "includes/chat.php?ID="+btoa(ID),
+				timeout: 60000,
+				success: function(data) {
+					$("#chatDiv").html(data);
+					$("#asset_message_id").val(ID);
+					$(".sideDiv").removeClass("secActive");
+					$("#side"+ID).addClass("secActive");
+					$('#chatDiv2').scrollTop($('#chatDiv2')[0].scrollHeight);
+				}				
+			});
+			
+			$("#asset_message_id").val(ID);
+			$(".sideDiv").removeClass("secActive");
+			$("#side"+ID).addClass("secActive");
+			$('#chatDiv2').scrollTop($('#chatDiv2')[0].scrollHeight);
+
+			setInterval(function(){ 
+				$.ajax({
+					url: "includes/chat.php?ID="+btoa(ID),
+					timeout: 60000,
+					success: function(data) {
+						$("#chatDiv").html(data);
+						$("#asset_message_id").val(ID);
+						$(".sideDiv").removeClass("secActive");
+						$("#side"+ID).addClass("secActive");
+						$('#chatDiv2').scrollTop($('#chatDiv2')[0].scrollHeight);
+					}		
+				});
+			},10000);
+
+			$.post("index.php", {
+				type: "asset_viewed",
+				ID: ID
+			},
+			function(data, status){
+				$('#chatDiv2').scrollTop($('#chatDiv2')[0].scrollHeight);
+			});
+	
+}
+	
+
 	</script>
 </html>

@@ -145,7 +145,7 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 									if($get=="me"){$where=" and assignee='".$_SESSION['userid']."'";}
 									if($get=="closed"){$where=" and status='closed'";}
 									if($get=="noone"){$where=" and assignee='0'";}
-									$query = "SELECT * FROM tickets where active='1'".$where;
+									$query = "SELECT * FROM tickets where active='1'".$where." ORDER BY ID DESC";
 									$results = mysqli_query($db, $query);
 									$resultCount = mysqli_num_rows($results);							
 									

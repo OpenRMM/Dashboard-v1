@@ -10,7 +10,7 @@ $online = $results['online'];
 ?>
 <div style="padding:20px;margin-bottom:-1px;" class="card">
 	<div class="row" style="padding:15px;">
-		<div class="col-md-10">
+		<div class="col-md-9">
 			<h5 style="color:#0c5460">
 				Memory/Ram (<?php echo count($json['physical_memory']['Response']);?>)
 			</h5>
@@ -18,7 +18,7 @@ $online = $results['online'];
 				Last Update: <?php echo ago($json['physical_memory_lastUpdate']);?>
 			</span>
 		</div>
-		<div class="col-md-2" style="text-align:right;">
+		<div class="col-md-3" style="text-align:right;">
 			<div class="btn-group">
 				<button onclick="loadSection('Asset_Memory');" style="background:#0c5460;color:#d1ecf1" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
 				<button style="background:#0c5460;color:#d1ecf1" type="button" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

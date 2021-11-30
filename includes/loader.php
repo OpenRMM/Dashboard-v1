@@ -220,8 +220,12 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
     $ticketCount = mysqli_num_rows(mysqli_query($db, $query));
     $query = "SELECT ID FROM computers where active='1' and online='1'";
     $assetCount = mysqli_num_rows(mysqli_query($db, $query));
+
+    $query = "SELECT  * FROM asset_messages WHERE chat_viewed='0' and userid='0'";
+    $message_count = mysqli_num_rows(mysqli_query($db, $query)); 
 ?>
 <script>
+$("#messageCount").text("<?php echo (int)$message_count; ?>");
 $("#ticketCount").text("<?php echo $ticketCount; ?>"); 
 $("#assetCount").text("<?php echo $assetCount; ?>");
 </script>

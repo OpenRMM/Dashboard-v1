@@ -52,7 +52,7 @@ if($cpuUsage==""){
 	$cpuUsage="100";
 }
 //log user activity
-$activity = "Asset ".textOnNull($json['general']['Response'][0]['csname'],"Unavailable")." Viewed";
+$activity = "Asset ".textOnNull($json['general']['Response'][0]['csname'],"Unavailable")." viewed";
 userActivity($activity,$_SESSION['userid']);		
 ?>
 <style>
@@ -120,7 +120,7 @@ if($online=="0"){ ?>
 		<b><?php echo $alert; ?></b>
 	</div>
 <?php } 
-	if(base64_encode($json['screenshot'])!=""){
+	if(base64_encode($json['screenshot_1']['Response'][0])!=""){
 		$size="3";
 	}else{
 		$size="4";
@@ -141,7 +141,7 @@ if($online=="0"){ ?>
 	<?php if($size=="3"){ ?>
 	<div data-toggle="modal" data-target="#screenshotModal" style="z-index:9;overflow:hidden;" class="col-md-3 py-1 marginTop">
         <div style="padding:0px;cursor:zoom-in;overflow:hidden;" class=" zoom2 card shadow-md">
-            <img class="zoom" style="background-position: 50% 50%; background-size: 100vw;" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot']); ?>"/>              
+            <img class="zoom" style="background-position: 50% 50%; background-size: 100vw;" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot_1']['Response'][0]); ?>"/>              
         </div>
 		
     </div>
@@ -203,9 +203,9 @@ if($online=="0"){ ?>
 								<?php echo textOnNull((crypto('decrypt',$company['name'],$company['hex'])!="N/A" ? crypto('decrypt',$company['name'],$company['hex']) : ""), "No ".$msp." Name"); ?>
 							</h5>
 						</a>
-						<span style="color:#666;font-size:14px;"><?php echo textOnNull(phone(crypto('decrypt',$result['phone'],$result['hex'])), "No ".$msp." Phone"); ?> &bull;
+						<span style="color:#666;font-size:14px;"><?php echo textOnNull(phone(crypto('decrypt',$result['phone'],$result['hex'])), "No Phone"); ?> &bull;
 							<a href="mailto:<?php echo crypto('decrypt', $result['email'],$result['hex']); ?>">
-								<?php echo textOnNull(phone(crypto('decrypt',$result['email'],$result['hex'])), "No ".$msp." Email"); ?>
+								<?php echo textOnNull(phone(crypto('decrypt',$result['email'],$result['hex'])), "No Email"); ?>
 							</a>
 						</span>
 					</div>

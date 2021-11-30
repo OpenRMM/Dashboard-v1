@@ -18,12 +18,12 @@ $shared = $json['shared_drives']['Response'];
 ?>
 <div style="padding:20px;margin-bottom:-1px;" class="card">
 	<div class="row" style="padding:15px;">
-		<div class="col-md-10">
+		<div class="col-md-9">
 			<h4 style="color:#0c5460">
 				Disks
 			</h4>
 		</div>
-		<div class="col-md-2" style="text-align:right;">
+		<div class="col-md-3" style="text-align:right;">
 			<div class="btn-group">
 				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Asset_Disks');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
 				<button type="button" style="background:#0c5460;color:#d1ecf1" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

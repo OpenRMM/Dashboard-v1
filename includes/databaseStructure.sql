@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 17, 2021 at 10:07 AM
+-- Generation Time: Nov 30, 2021 at 10:34 AM
 -- Server version: 10.3.29-MariaDB
 -- PHP Version: 7.2.29
 
@@ -38,6 +38,23 @@ CREATE TABLE `alerts` (
   `active` int(1) NOT NULL DEFAULT 1,
   `date_added` timestamp NOT NULL DEFAULT current_timestamp(),
   `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `asset_messages`
+--
+
+CREATE TABLE `asset_messages` (
+  `ID` int(11) NOT NULL,
+  `computer_id` int(10) NOT NULL DEFAULT 0,
+  `userid` int(10) NOT NULL DEFAULT 0,
+  `message` varchar(9999) NOT NULL DEFAULT '',
+  `time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `hex` varchar(9999) NOT NULL DEFAULT '',
+  `chat_started` int(1) NOT NULL DEFAULT 0,
+  `chat_viewed` int(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -86,10 +103,12 @@ CREATE TABLE `commands` (
 CREATE TABLE `companies` (
   `ID` int(11) NOT NULL,
   `name` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
+  `owner` varchar(250) NOT NULL DEFAULT '',
   `phone` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
   `address` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
   `comments` longtext CHARACTER SET utf8mb4 NOT NULL,
   `email` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
+  `default_agent_settings` text NOT NULL DEFAULT '',
   `hex` varchar(100) NOT NULL DEFAULT '',
   `date_added` timestamp(6) NOT NULL DEFAULT current_timestamp(6),
   `active` int(2) NOT NULL DEFAULT 1
@@ -113,7 +132,6 @@ CREATE TABLE `computers` (
   `comment` varchar(500) NOT NULL DEFAULT '',
   `show_alerts` int(1) DEFAULT 1,
   `date_added` datetime(6) DEFAULT current_timestamp(6),
-  `last_update` timestamp(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6),
   `hex` varchar(100) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 
@@ -131,14 +149,6 @@ CREATE TABLE `computer_data` (
   `last_update` timestamp(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Triggers `computer_data`
---
-DELIMITER $$
-CREATE TRIGGER `Update computers last_update when new computer_data added` AFTER INSERT ON `computer_data` FOR EACH ROW UPDATE computers SET last_update=NOW() WHERE ID=NEW.computer_id
-$$
-DELIMITER ;
-
 -- --------------------------------------------------------
 
 --
@@ -148,6 +158,7 @@ DELIMITER ;
 CREATE TABLE `general` (
   `ID` int(11) NOT NULL,
   `agent_latest_version` varchar(10) NOT NULL,
+  `default_agent_settings` text NOT NULL DEFAULT '',
   `sitewide_alert` text NOT NULL,
   `asset_history` int(1) NOT NULL DEFAULT 0,
   `server_status` int(1) NOT NULL DEFAULT 0
@@ -233,10 +244,24 @@ CREATE TABLE `users` (
   `recentTickets` text NOT NULL DEFAULT '',
   `recent_edit` longtext NOT NULL DEFAULT '',
   `alert_settings` varchar(255) NOT NULL DEFAULT '''''',
-  `user_activity` text NOT NULL DEFAULT '\'\'',
   `hex` varchar(200) NOT NULL,
   `active` int(2) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_activity`
+--
+
+CREATE TABLE `user_activity` (
+  `ID` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `activity` varchar(400) NOT NULL DEFAULT '',
+  `date` int(15) NOT NULL DEFAULT current_timestamp(),
+  `active` int(1) NOT NULL DEFAULT 1,
+  `hex` varchar(200) NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Indexes for dumped tables
@@ -246,6 +271,14 @@ CREATE TABLE `users` (
 -- Indexes for table `alerts`
 --
 ALTER TABLE `alerts`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `computer_id` (`computer_id`),
+  ADD KEY `company_id` (`company_id`);
+
+--
+-- Indexes for table `asset_messages`
+--
+ALTER TABLE `asset_messages`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -332,6 +365,12 @@ ALTER TABLE `users`
   ADD KEY `active` (`active`);
 
 --
+-- Indexes for table `user_activity`
+--
+ALTER TABLE `user_activity`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -339,6 +378,12 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `alerts`
 --
 ALTER TABLE `alerts`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `asset_messages`
+--
+ALTER TABLE `asset_messages`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -393,6 +438,12 @@ ALTER TABLE `ticket_messages`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `user_activity`
+--
+ALTER TABLE `user_activity`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --

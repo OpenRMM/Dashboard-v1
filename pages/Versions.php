@@ -39,7 +39,7 @@ checkAccess($_SESSION['page']);
 		</div>
 	</div>
 	<div style="padding:10px;overflow-x:auto">
-		<table id="dataTable" style="line-height:10px;overflow:hidden;font-size:14px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">
+		<table id="<?php echo $_SESSION['userid']; ?>Downloads" style="line-height:10px;overflow:hidden;font-size:14px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">
 			<thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">
 				<th scope="col">#</th>
@@ -64,11 +64,11 @@ checkAccess($_SESSION['page']);
 						</td>
 						<td><?php echo date("m/d/Y", filemtime("../downloads/".$entry)); ?></td>
 						<td>
-							<a class="btn btn-sm btn-primary" <?php if($user==false){ echo 'style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;"'; }else echo '"'; ?> href="../../?file=<?php echo urlencode($entry); ?>">
+							<a class="btn btn-sm btn-primary" <?php if($user==false){ echo 'style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"'; }else echo '"'; ?> href="../../?file=<?php echo urlencode($entry); ?>">
 								<?php if($user==false){ echo "<i class='fas fa-download'>&nbsp;</i>"; }else{ echo "Download"; } ?>
 							</a>
 							<?php if($user==false) { ?>
-								<a style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm" href="javascript:void(0)" data-toggle="modal" data-target="#versionModal" onclick="delVersion('<?php echo $entry; ?>')">
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm" href="javascript:void(0)" data-toggle="modal" data-target="#versionModal" onclick="delVersion('<?php echo $entry; ?>')">
 									<i class="fas fa-trash">&nbsp;</i>
 								</a>
 							<?php } ?>
@@ -95,7 +95,7 @@ checkAccess($_SESSION['page']);
 </script>
 <script>
 	$(document).ready(function() {
-		$('#dataTable').dataTable( {
+		$('#<?php echo $_SESSION['userid']; ?>Downloads').dataTable( {
 			colReorder: true,
 			"order": [0,'desc'],
 			stateSave: true

@@ -30,7 +30,7 @@ $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 <?php } ?>
 <div class="card">
 	<div class="row" style="padding:15px;">
-		<div class="col-md-10">
+		<div class="col-md-9">
 			<h5 title="ID: <?php echo $computerID; ?>" style="color:#0c5460">Editing Agent: <span style="color:#333"><?php echo $hostname; ?></span>
 				<br>
 				<p>
@@ -38,7 +38,7 @@ $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 				</p>
 			</h5>
 		</div>
-		<div class="col-md-2" style="text-align:right;">
+		<div class="col-md-3" style="text-align:right;">
 			<button title="Refresh" onclick="loadSection('Asset_Agent_Settings');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-sync"></i>
 			</button>
@@ -181,10 +181,10 @@ $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 						</div>
 						<div  class="panel-body">
 							<div class="form-check" style="border-radius:6px;margin-bottom:10px;padding:10px;padding-left:50px;color:#333;">
-								<button type="button" style="width:35%;margin-top:-3px;border:none;background:#f8d7da;color:#721c24;" onclick="agentStatus('<?php echo $computerID; ?>','stop');" class="btn btn-sm">
+								<button type="button" style="width:40%;margin-top:-3px;border:none;background:#f8d7da;color:#721c24;" onclick="agentStatus('<?php echo $computerID; ?>','stop');" class="btn btn-sm">
 									<i class="fas fa-stop"></i> Stop Agent
 								</button>
-								<button type="button" style="width:55%;margin-top:-3px;border:none;background:#fff3cd;color:#856404;"  onclick="agentStatus('<?php echo $computerID; ?>','restart');" class="btn btn-sm">
+								<button type="button" style="width:50%;margin-top:-3px;border:none;background:#fff3cd;color:#856404;"  onclick="agentStatus('<?php echo $computerID; ?>','restart');" class="btn btn-sm">
 									<i class="fas fa-redo"></i> Restart Agent
 								</button>
 							</div>
