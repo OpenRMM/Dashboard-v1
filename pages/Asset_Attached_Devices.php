@@ -30,7 +30,7 @@ $online = $results['online'];
 </div>
 <?php if($online=="0"){ ?>
 	<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
-		&nbsp;&nbsp;&nbsp;This Agent is offline		
+		<i class="fas fa-ban"></i>&nbsp;&nbsp;&nbsp;This Agent is offline		
 	</div>
 <?php 
 }else{
@@ -48,7 +48,7 @@ $online = $results['online'];
 			</span>
 		</div>
 		<div class="col-md-2" style="text-align:right;">
-			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','desktop_monitor','null');">
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','desktop_monitor','null');">
 				<i class="fas fa-scroll"></i>
 			</button>
 		</div>
@@ -88,7 +88,7 @@ $online = $results['online'];
 				</span>
 			</div>
 			<div class="col-md-2" style="text-align:right;">
-				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','usbhub','null');">
+				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','usbhub','null');">
 					<i class="fas fa-scroll"></i>
 				</button>
 			</div>
@@ -127,7 +127,7 @@ $online = $results['online'];
 				</span>
 			</div>
 			<div class="col-md-2" style="text-align:right;">
-				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','keyboard','null');">
+				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','keyboard','null');">
 					<i class="fas fa-scroll"></i>
 				</button>
 			</div>
@@ -167,7 +167,7 @@ $online = $results['online'];
 				</span>
 			</div>
 			<div class="col-md-2" style="text-align:right;">
-				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','pointing_device','null');">
+				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','pointing_device','null');">
 					<i class="fas fa-scroll"></i>
 				</button>
 			</div>
@@ -207,7 +207,7 @@ $online = $results['online'];
 				</span>
 			</div>
 			<div class="col-md-2" style="text-align:right;">
-				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','sound_devices','null');">
+				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','sound_devices','null');">
 					<i class="fas fa-scroll"></i>
 				</button>
 			</div>
@@ -247,7 +247,7 @@ $online = $results['online'];
 				</span>
 			</div>
 			<div class="col-md-2" style="text-align:right;">
-				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','serial_port','null');">
+				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','serial_port','null');">
 					<i class="fas fa-scroll"></i>
 				</button>
 			</div>
@@ -288,7 +288,7 @@ $online = $results['online'];
 				</span>
 			</div>
 			<div class="col-md-2" style="text-align:right;">
-				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','pnp_entities','null');">
+				<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','pnp_entities','null');">
 					<i class="fas fa-scroll"></i>
 				</button>
 			</div>

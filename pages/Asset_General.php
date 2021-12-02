@@ -78,14 +78,16 @@ userActivity($activity,$_SESSION['userid']);
 					<a onclick="force='true'; loadSection('Asset_General','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 				</div>
 			</div>
-			<?php if($_SESSION['accountType']=="Admin"){  ?>
+			<?php if(in_array("Asset_Agent_Settings", $allowed_pages)){  ?>
 				<button title="Agent Configuration" onclick="loadSection('Asset_Agent_Settings');" class="btn btn-sm" style="margin:3px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-cogs"></i>
 				</button>
 			<?php } ?>
+			<?php if(in_array("Asset_Edit", $allowed_pages)){  ?>
 			<button title="Edit Asset Details" class="btn btn-sm" onclick="loadSection('Asset_Edit');" style="margin:3px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-pencil-alt"></i>
 			</button>
+			<?php } ?>
 		</div>
 		<br>
 		<p>	

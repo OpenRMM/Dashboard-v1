@@ -142,9 +142,11 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 										</div>
 									</td>
 									<td>
+										<?php if(in_array("Asset_Edit", $allowed_pages)){  ?>
 										<button onclick="loadSection('Asset_Edit', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
 											<i class="fas fa-pencil-alt"></i>
 										</button>
+										<?php } ?>
 										<button title="View Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('Asset_General', '<?php echo $result['ID']; ?>');" class="form-inline btn btn-warning btn-sm">
 											<i class="fas fa-eye"></i>
 										</button>

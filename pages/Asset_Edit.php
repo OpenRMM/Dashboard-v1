@@ -38,9 +38,11 @@ $online = $data['online'];
 			<button title="Refresh" onclick="loadSection('Asset_Edit');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-sync"></i>
 			</button>
+			<?php if(in_array("Asset_Agent_Settings", $allowed_pages)){  ?>
 			<button title="Agent Configuration" onclick="loadSection('Asset_Agent_Settings');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 				<i class="fas fa-cogs"></i>
 			</button>
+			<?php } ?>
 		</div>
 	</div>
 </div>

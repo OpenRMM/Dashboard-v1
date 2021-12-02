@@ -2,7 +2,7 @@
 $computerID = (int)base64_decode($_GET['ID']);
 checkAccess($_SESSION['page']);
 
-$query = "SELECT ID,username,last_login,active,email,nicename,hex,phone,account_type,user_color FROM users ORDER BY nicename ASC";
+$query = "SELECT ID,username,last_login,active,email,nicename,hex,phone,account_type,user_color,allowed_pages FROM users ORDER BY nicename ASC";
 $results = mysqli_query($db, $query);
 $userCount = mysqli_num_rows($results);
 ?>
@@ -11,7 +11,7 @@ $userCount = mysqli_num_rows($results);
 		<button href="javascript:void(0)" title="Refresh" onclick="loadSection('Technicians');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</button>
-		<button type="button" style="margin:5px;background:#0ac282;;float:right;color:#fff" data-toggle="modal" data-target="#userModal" class="btn-sm btn btn-light" title="Add User">
+		<button onclick="$('#userform').trigger('reset');$('.settingsCheckbox').prop('checked', true);$('#AssetAgentSettings').prop('checked', false);$('#AssetEdit').prop('checked', false);" type="button" style="margin:5px;background:#0ac282;;float:right;color:#fff" data-toggle="modal" data-target="#userModal" class="btn-sm btn btn-light" title="Add User">
 			 <i class="fas fa-plus"></i> Add Technician
 		</button>
 	</h5>	
@@ -57,7 +57,10 @@ $userCount = mysqli_num_rows($results);
 						$status="Active";
 					}else{
 						$status="Inactive";
-					}						
+					}		
+					
+					$settings1 =  explode(",",crypto("decrypt",$user['allowed_pages'],$user['hex'])); 
+					$settings = "\'".implode("\', \'",$settings1)."\'";					
 				?>
 				<tr>
 					<td><?php echo $user['ID'];?></td>
@@ -96,20 +99,29 @@ $userCount = mysqli_num_rows($results);
 									<i class="fas fa-trash" ></i>				
 								</button>
 							<?php } ?>
-							<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>')" title="Edit User" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
+							<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>','<?php echo $settings; ?>')" title="Edit User" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
 								<i class="fas fa-pencil-alt"></i>
 							</a>
 						</form>
 					</td>
 				</tr>
+
 			<?php }?>
 		    </tbody>
 		</table>
 	</div>	
 </div>
+
 <script>
 	//Edit User
-	function editUser(ID, username, name, email, phone, type, color){
+	function editUser(ID, username, name, email, phone, type, color, allowed_pages){
+		$('select>option:eq(0)').prop('selected', true);
+		if(type=="Standard"){
+			$("#allowed_pages").slideDown();
+		}else{
+			$("#allowed_pages").slideUp();
+		}
+		$('.settingsCheckbox').prop('checked',false);
 		$("#editUserModal_ID").val(ID);
 		$("#editUserModal_username").val(username);
 		$("#editUserModal_name").val(name);
@@ -120,6 +132,12 @@ $userCount = mysqli_num_rows($results);
 		$("#editUserModal_type").text(type)
 		$("#editUserModal_password").prop('type', 'password').val("");
 		$("#editUserModal_password2").prop('type', 'password').val("");
+		var setting = allowed_pages.split(",");
+		function iterate(item) {
+			item = item.replace(/[^a-zA-Z0-9]/g,'')
+			$('#'+ item).prop('checked', true);
+		}
+		setting.forEach(iterate);		
 	}
 </script>
 <script>

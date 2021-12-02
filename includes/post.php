@@ -208,6 +208,7 @@
 			}
 			header("location: /");
 		}
+
 		//Delete Selected assets
 		if($_POST['type'] == "deleteAssets"){
 			$computers = ($_POST['computers']);
@@ -235,32 +236,40 @@
 		//Add Edit/User
 		if($_POST['type'] == "AddEditUser"){
 			if(isset($_POST['username'])){
-				
+				$accountType = ucwords(clean($_POST['accountType']));
 				
 				$user_ID = (int)$_POST['ID'];
 				if($user_ID == 0){
 					$salt = getSalt(40);
+					$settings = crypto('encrypt', implode(",",$_POST['settings']), $salt);
 				}else{
-					$query = "SELECT password, hex FROM users WHERE ID='".$user_ID."' LIMIT 1";
+					$query = "SELECT password, hex, account_type FROM users WHERE ID='".$user_ID."' LIMIT 1";
 					$results = mysqli_query($db, $query);
 					$result = mysqli_fetch_assoc($results);
 					$salt=$result['hex'];
+					if($accountType=="Admin"){
+						$settings =  crypto('encrypt', implode(",",$allPages).",AssetChat", $salt);
+					}else{
+						$settings = crypto('encrypt', implode(",",$_POST['settings']), $salt);
+					}
 				}
 				$username = clean($_POST['username']);
 				$name2 = clean($_POST['name']);
 				$color = clean($_POST['color']);
 				$name = crypto('encrypt', $name2, $salt);
 				$phone = clean($_POST['phone']);
-				$type = ucwords(clean($_POST['accountType']));
+				$accountType = ucwords(clean($_POST['accountType']));
 				$email = crypto('encrypt', $_POST['email'], $salt);
 				$password = clean($_POST['password']);
 				$password2 = clean($_POST['password2']);
+				
+				
 				$encryptedPhone = $encryptedPhone = crypto('encrypt', $phone, $salt);
 				$encryptedPassword = password_hash($password, PASSWORD_DEFAULT);
 				if($_SESSION['accountType']!="Admin"){  
 					//$type="Standard";
 				}
-				$type = crypto('encrypt', $type, $salt);
+				$type = crypto('encrypt', $accountType, $salt);
 				if($password == $password2){
 					if($user_ID == 0){
 						if($password==""){
@@ -268,18 +277,18 @@
 						}else{
 							$active="1";
 						}
-						$query = "INSERT INTO users (active,user_color,account_type, phone, username, password, hex, nicename , email)
-								  VALUES ('".$active."','".$color."','".$type."','".$encryptedPhone."','".$username."', '".$encryptedPassword."','".$salt."','".$name."','".$email."')";
+						
+						$query = "INSERT INTO users (allowed_pages,active,user_color,account_type, phone, username, password, hex, nicename , email)
+								  VALUES ('".$settings."','".$active."','".$color."','".$type."','".$encryptedPhone."','".$username."', '".$encryptedPassword."','".$salt."','".$name."','".$email."')";
                                  
-						$activity = "New Technician: ".ucwords($name)." Created";
+						$activity = "New technician: ".ucwords($name)." created";
 						userActivity($activity,$_SESSION['userid']);
 					}else{
 					
 						if($password==""){
 							$encryptedPassword = $result['password'];
-							//$encryptedPassword = crypto('encrypt', $encryptedPassword, $salt);
 						}
-						$query = "UPDATE users SET user_color='".$color."',account_type='".$type."',phone='".$encryptedPhone."',username='".$username."',nicename='".$name."', email='".$email."', password='".$encryptedPassword."', hex='".$salt."' WHERE ID='".$user_ID."'";
+						$query = "UPDATE users SET allowed_pages='".$settings."',user_color='".$color."',account_type='".$type."',phone='".$encryptedPhone."',username='".$username."',nicename='".$name."', email='".$email."', password='".$encryptedPassword."', hex='".$salt."' WHERE ID='".$user_ID."'";
 						$activity = "Technician ".ucwords($name2)." Edited";
 						userActivity($activity,$_SESSION['userid']);
 					}

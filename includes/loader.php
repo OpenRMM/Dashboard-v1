@@ -10,7 +10,9 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
    exit("<html><head><title>OpenRMM console</title></head><body style='background:#000'><div style='margin-top:20px;color:#fff;font-family: \"Lucida Console\", \"Courier New\", monospace;font-size:14px'><h3>OpenRMM console > An error has occurred</h3></div></body></html>");
 }
 ?>
-    <script>
+    <script>       
+        $("#refreshAlert").slideUp();
+        $("#alertDiv").css({"margin-top": "0px"});
         <?php if($_SESSION['userid']!=""){ ?>
             $(".recents").load("includes/recent.php?ID="+getCookie("ID"));
         <?php } ?>
@@ -90,6 +92,8 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                         $page="logical_disk";
                         $retain = false;
                         $message = '{"userID":'.$_SESSION['userid'].'}';
+                        MQTTpublish($_SESSION['computerID']."/Commands/get_mapped_logical_disk",$message,getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/get_shared_drives",$message,getSalt(20),$retain);
                     break;
                     case "attached_devices":
                         $page="pnp_entities";
@@ -234,3 +238,15 @@ $_SESSION['raw_data_title']="";
 $_SESSION['raw_data_value']="";
 $_SESSION['raw_data_value_raw']="";
 ?>
+<?php 
+if($_SESSION['userid']!=""){
+    require("modals.php"); 
+?>
+        <div id="notifications"> </div>
+        <script>
+        setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
+            $("#notifications").load("includes/notifications.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other));	
+        }, 5000);
+
+        </script>
+<?php } ?>

@@ -86,9 +86,19 @@
         }
     }
 
+	//Get user data
+	$query = "SELECT username,nicename,account_type,hex,user_color,allowed_pages,notifications FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+	$results = mysqli_query($db, $query);
+	$user = mysqli_fetch_assoc($results);
+	$pages = crypto("decrypt",$user['allowed_pages'],$user['hex']);
+	$allowed_pages = explode(",",$pages);
+	$username=$user['username'];
+	$_SESSION['notifications']= explode("||",$user['notifications']);
+
 	//redirect standard users
 	function checkAccess($page,$computerID="null"){
 		GLOBAL $allAdminPages,$siteSettings, $db;
+		$_SESSION['dbRows']=strtotime(date("Y-m-d H:i:s"));
 		if($_SESSION['userid']==""){ 
 			return exit("
 			<script>		
@@ -100,9 +110,16 @@
 			</script>
 			<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
 		}else{
+		
+			
 			if($_SESSION['accountType']=="Standard" or $_SESSION['accountType']==""){
+				if(!in_array($page, $allowed_pages) and $page != "Dashboard" and $page != "Init"){
+					$activity="Technician Attempted To Access: ".str_replace("_"," ",$page);
+					userActivity($activity,$_SESSION['userid']);
+					return exit("<center><br><br><h5>Sorry, you do not have permission to access this page!</h5><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' style='background:#0c5460;color:".$siteSettings['theme']['Color 2']."' class='btn btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");					
+				}
 				if(in_array($page, $allAdminPages)){
-					$activity="Technician Attempted Access To: ".$page;
+					$activity="Technician Attempted To Access: ".str_replace("_"," ",$page);
 					userActivity($activity,$_SESSION['userid']);
 					return exit("<center><br><br><h5>Sorry, you do not have permission to access this page!</h5><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' style='background:#0c5460;color:".$siteSettings['theme']['Color 2']."' class='btn btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");					
 				}
@@ -115,6 +132,7 @@
 					<br><center><h4>No Asset Selected</h4><p>To Select An Asset, Please Visit The <a class='text-dark' style='cursor:pointer' onclick='loadSection(\'Assets\');'><u>Assets page</u></a></p></center><hr>");
 				}
 			}
+			
 		}
 	}
 	if($siteSettings['theme']['MSP']=="true"){
@@ -415,6 +433,16 @@
 		}elseif(date("H") > 17){
 			return "Good Evening";
 		}
+	}
+	//save notifications
+	function saveNotification($notification){
+		GLOBAL $db;
+		$current = explode("||", $_SESSION['notifications']);
+		array_push($current,$notification);
+		$new = implode("||",$current);
+		$query = "UPDATE users SET notifications='".$new."' WHERE ID='".$_SESSION['userid']."';";
+		$results = mysqli_query($db, $query);		
+		$_SESSION['notifications']= explode("||", $new);
 	}
 
 	//log user activity	

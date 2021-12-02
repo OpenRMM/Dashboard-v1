@@ -1,23 +1,5 @@
 <?php if($_SESSION['userid']!=""){ ?>
 		<!-------------------------------MODALS------------------------------------>
-		<!--------------- Notification Modal ------------->
-			<div id="alertModal" class="modal fade" role="dialog">
-				<div class="modal-dialog modal-md">
-					<div class="modal-content" >
-						<div class="modal-header">
-							<h6 class="modal-title"><b>Notifications</b></h6>
-						</div>
-						<div class="modal-body">
-							<ul>					
-							<li>No New Notifications</li>
-							</ul>
-						</div>
-						<div class="modal-footer">
-							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-warning btn-sm" data-dismiss="modal">Close</button>
-						</div>
-					</div>
-				</div>
-			</div>
 			<!--------------- User Modal ------------->
 			<div id="userModal" class="modal fade" role="dialog">
 				<div class="modal-dialog modal-lg">
@@ -55,16 +37,7 @@
 										<label for="editUserModal_type">Technician Color</label>
 										<input placeholder="User Color" type="color" name="color" class="form-control" id="editUserModal_color"/>
 									</div>
-									<?php if($_SESSION['accountType']=="Admin"){  ?>
-										<div class="col-md-4 form-group">
-											<label for="editUserModal_type">Access Type</label>
-											<select required name="accountType" class="form-control">
-												<option id="editUserModal_type" value="">Select Option</option>
-												<option value="Standard">Standard</option>
-												<option value="Admin">Admin</option>
-											</select>
-										</div>
-									<?php } ?>
+								
 								</div>
 								<br><hr>
 								<div class="row">
@@ -76,17 +49,70 @@
 												<a style="border-radius:0px;padding:6px;pointer:cursor;color:#fff;" class="btn btn-md btn-success" onclick="generate();" >Generate</a>
 											</span>
 										</div>
-									</div>
-									
+									</div>									
 									<div class="col-md-6 form-group">
 										<label for="editUserModal_type">Confirm Password</label>
 										<input placeholder="Confirm Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" type="password" id="editUserModal_password2" name="password2" class="form-control"/>
 									</div>
 								</div>
+								<hr>
+								<div class="row">
+									<?php if($_SESSION['accountType']=="Admin"){  ?>
+									
+										<div class="col-md-4 form-group">
+											<label for="editUserModal_type">Access Level</label>
+											<select onChange="update()" required name="accountType" id="accessSelect" class="form-control">
+												<option  id="editUserModal_type" value="">Select Option</option>
+												<option value="Standard">Standard</option>
+												<option value="Admin">Admin</option>
+											</select>
+										</div>
+									<?php } ?>
+								<?php if($_SESSION['accountType']=="Admin"){ ?>
+								<div id="allowed_pages" class="col-md-12 m-auto form-group">
+									<hr>
+									<h6 style="color:#35384e">Allowed Pages</h6>
+										<div style="margin-top:20px;margin-left:10px" class="row">
+											<div class="col-md-3 form-group">
+												<label class="checkbox-inline">
+													<input id="AssetChat" type="checkbox" class="settingsCheckbox" name="settings[]" style="margin-right:5px;" value="AssetChat">Asset Chat
+												</label>
+											</div>
+											<?php 
+											foreach ($allPages as $value) { 
+												$value2 = trim(str_replace("_","",$value));
+												$value3 = $value;
+												$value = trim(str_replace("_"," ",$value));	
+												$value = str_replace("Asset","",$value);
+												$value = str_replace("Service Desk","",$value);
+												if($value=="s"){$value="Assets";}
+												$value = str_replace("Home","Service Desk",$value);
+												$value = str_replace("Edit","Edit Assets",$value);
+												$value = str_replace("Versions","Downloads",$value);
+
+												if(trim($value)=="Init"){continue;}
+												if(trim($value)=="Logout"){continue;}
+												if(trim($value)=="Portal"){continue;}
+												if(trim($value)=="Login"){continue;}
+												if(trim($value)=="Dashboard"){continue;}
+												if(trim($value)=="Customers"){continue;}
+												if(trim($value)=="Technicians"){continue;}
+												if(trim($value)=="Technicians"){continue;}
+											?>
+												<div class="col-md-3 form-group">
+													<label class="checkbox-inline">
+														<input id="<?php echo $value2; ?>" type="checkbox" class="settingsCheckbox" name="settings[]" style="margin-right:5px;" value="<?php echo $value3; ?>"><?php echo $value; ?>
+													</label>
+												</div>
+											<?php } ?>
+										</div>
+									</div>
+								<?php } ?>
+								</div>		
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning">
+								<button type="submit" class="btn btn-sm btn-primary">
 									<i class="fas fa-check"></i> Create
 								</button>
 							</div>
@@ -94,6 +120,18 @@
 					</div>
 				</div>
 			</div>
+			<script>
+				function update() {
+					var select = document.getElementById('accessSelect');
+					var option = select.options[select.selectedIndex];
+
+					if(option.text=="Standard"){
+						$("#allowed_pages").slideDown();
+					}else{
+						$("#allowed_pages").slideUp();
+					}
+				}
+			</script>
 			<!--------------- Version Modal ------------->
 			<div id="versionModal" class="modal fade" role="dialog">
 				<div class="modal-dialog">
@@ -145,7 +183,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
-								<button data-dismiss="modal" type="button" onclick="newNote()"  style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning">
+								<button data-dismiss="modal" type="button" onclick="newNote()" class="btn btn-sm btn-primary">
 									<i class="fas fa-save"></i> Save
 								</button>
 							</div>
@@ -221,7 +259,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning">
+								<button type="submit" class="btn btn-sm btn-primary">
 									<i class="fas fa-check"></i> Save
 								</button>
 							</div>
@@ -255,27 +293,6 @@
 					</div>
 				</div>
 			</div>
-				<!------------- Alerts (not sure if used)------------------->
-			<div id="confirm" class="modal fade" role="dialog">
-				<div class="modal-dialog modal-lg">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h6 id="computerAlertsHostname">
-								<b>
-									Confirm Action(is this used?)
-								</b>
-							</h6>
-						</div>
-						<div class="modal-body">
-							<p>Are You Sure You Would Like To Complete This Action>(is this used?)</p>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 4']; ?>;color:#fff;" data-dismiss="modal">Close</button>
-							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning"  data-dismiss="modal">Confirm</button>
-						</div>
-					</div>
-				</div>
-			</div>
 			<!------------- Alerts ------------------->
 			<div id="computerAlerts" class="modal fade" role="dialog">
 				<div class="modal-dialog modal-lg">
@@ -291,7 +308,7 @@
 							<div id="computerAlertsModalList"></div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning" data-dismiss="modal">Close</button>
+							<button type="button"  class="btn btn-sm btn-primary" data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
@@ -306,10 +323,17 @@
 							</h5>
 						</div>
 						<div class="modal-body">
-							<div id="olderData_content" style="overflow-x:hidden;overflow-y:auto;max-height:400px;"></div>
+							<div id="olderData_content" style="overflow-x:hidden;overflow-y:auto;max-height:400px;">
+							<center>
+								<h3 style='margin-top:40px;'>
+									<div class='spinner-grow text-muted'></div>
+									<div class='spinner-grow' style='color:#0c5460'></div>
+								</h3>
+							</center>
+							</div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning"  data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-sm btn-primary"  data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
@@ -372,7 +396,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-sm"  data-dismiss="modal">Close</button>
-								<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460" class="btn btn-sm btn-warning" >Upload</button>
+								<button type="submit" class="btn btn-sm btn-primary" >Upload</button>
 							</div>
 						</form>
 					</div>

@@ -55,25 +55,27 @@ foreach(array_reverse($recent) as $item) {
 <br>
 
 <?php if($siteSettings['Service_Desk']=="Enabled"){ 
-//show recents on sidebar
-$recent2 = array_slice($_SESSION['recentTickets'], -8, 8, true);
-echo "<h6>Recently Viewed Tickets</h6>";	
-$count2 = 0;
-foreach(array_reverse($recent2) as $item2) {
-	$query2 = "SELECT * FROM tickets where active='1' and ID='".$item2."'";
-	$results2 = mysqli_query($db, $query2);
-	$data2 = mysqli_fetch_assoc($results2);
-	if($data2['ID']==""){ continue; }
-	$count2++;
-?>
-	<li style="cursor:pointer" onclick="loadSection('Service_Desk_Ticket', '<?php echo $data2['ID']; ?>');" class="secbtn">
-		<i title="<?php echo $data2['title']; ?>" style="color:#fff" class="fas fa-ticket-alt"></i>&nbsp;&nbsp;&nbsp;
-		<?php echo textOnNull($data2['title'],"Unavailable");?>
-	</li>
-<?php } 
- if($count2==0){ ?>
-	<li>No recent tickets</li> 
-<?php 
-	} 
+	if(in_array("Service_Desk_Ticket", $allowed_pages)){ 
+		//show recents on sidebar
+		$recent2 = array_slice($_SESSION['recentTickets'], -8, 8, true);
+		echo "<h6>Recently Viewed Tickets</h6>";	
+		$count2 = 0;
+		foreach(array_reverse($recent2) as $item2) {
+			$query2 = "SELECT * FROM tickets where active='1' and ID='".$item2."'";
+			$results2 = mysqli_query($db, $query2);
+			$data2 = mysqli_fetch_assoc($results2);
+			if($data2['ID']==""){ continue; }
+			$count2++;
+		?>
+			<li style="cursor:pointer" onclick="loadSection('Service_Desk_Ticket', '<?php echo $data2['ID']; ?>');" class="secbtn">
+				<i title="<?php echo $data2['title']; ?>" style="color:#fff" class="fas fa-ticket-alt"></i>&nbsp;&nbsp;&nbsp;
+				<?php echo textOnNull($data2['title'],"Unavailable");?>
+			</li>
+		<?php } 
+		if($count2==0){ ?>
+			<li>No recent tickets</li> 
+		<?php 
+			} 
+	}
 }
 ?>

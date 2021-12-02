@@ -31,7 +31,7 @@ $error = $json['printers_error'];
 					<a onclick="force='true'; loadSection('Asset_Printers','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 				</div>
 			</div>
-			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','Printers','null');">
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','Printers','null');">
 				<i class="fas fa-scroll"></i>
 			</button>
 		</div>
@@ -39,7 +39,7 @@ $error = $json['printers_error'];
 </div>
 <?php if($online=="0"){ ?>
 	<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
-		&nbsp;&nbsp;&nbsp;This Agent is offline		
+		<i class="fas fa-ban"></i>&nbsp;&nbsp;&nbsp;This Agent is offline		
 	</div>
 <?php 
 }else{

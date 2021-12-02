@@ -1,8 +1,7 @@
 <?php 
-$computerID = (int)base64_decode($_GET['ID']);
+$userID = (int)base64_decode($_GET['ID']);
 checkAccess($_SESSION['page']);
 
-$userID = (int)base64_decode($_GET['ID']);
 if($userID==0 or $userID==""){
 		$userID=$_SESSION['userid'];
 }
@@ -21,6 +20,8 @@ if($userID!=$_SESSION['userid']){
 	$activity="The profile of ".ucwords(crypto('decrypt',$user['nicename'],$user['hex']))." was viewed";
 	userActivity($activity, $_SESSION['userid']);
 }
+$settings1 =  explode(",",crypto("decrypt",$user['allowed_pages'],$user['hex'])); 
+$settings = "\'".implode("\', \'",$settings1)."\'";	
 ?>
 <div style="margin-top:0px;padding:15px;margin-bottom:30px;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;border-radius:6px;" class="card card-sm">
 	<h5 style="color:#0c5460">Technician Profile
@@ -69,7 +70,7 @@ if($userID!=$_SESSION['userid']){
 							</button>
 						<?php } ?>
 					<?php } ?>
-					<button  data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
+					<button  data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>','<?php echo $settings; ?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
 						<i class="fas fa-pencil-alt"></i> Edit
 					</button>
 					
@@ -202,7 +203,14 @@ $(document).ready(function() {
 </script>
 <script>
 //Edit User
-function editUser(ID, username, name, email, phone, type,color){
+function editUser(ID, username, name, email, phone, type, color, allowed_pages){
+	$('select>option:eq(0)').prop('selected', true);
+	if(type=="Standard"){
+		$("#allowed_pages").slideDown();
+	}else{
+		$("#allowed_pages").slideUp();
+	}
+	$('.settingsCheckbox').prop('checked',false);
 	$("#editUserModal_ID").val(ID);
 	$("#editUserModal_username").val(username);
 	$("#editUserModal_name").val(name);
@@ -213,6 +221,13 @@ function editUser(ID, username, name, email, phone, type,color){
 	$("#editUserModal_type").text(type)
 	$("#editUserModal_password").prop('type', 'password').val("");
 	$("#editUserModal_password2").prop('type', 'password').val("");
+	var setting = allowed_pages.split(",");
+	function iterate(item) {
+		item = item.replace(/[^a-zA-Z0-9]/g,'')
+		$('#'+ item).prop('checked', true);
+	}
+	setting.forEach(iterate);
+	update();
 }
 </script>
 <?php 
