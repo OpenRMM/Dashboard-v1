@@ -127,7 +127,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                         <div style="margin-top:30px;">
                                 <input type="hidden" value="init" name="type">
                                 <?php if($results==0 and $db){ ?>  
-                                    <button type="button"  data-toggle="modal" data-target="#pageAlert" class="btn btn-secondary btn-sm">Create Admin User&nbsp;&nbsp;<i class="fas fa-plus"></i></button>
+                                    <button type="button"  data-bs-toggle="modal" data-bs-target="#pageAlert" class="btn btn-secondary btn-sm">Create Admin User&nbsp;&nbsp;<i class="fas fa-plus"></i></button>
                                 <?php } ?>
                                 <button type="submit"  class="btn btn-success btn-sm">Save Details&nbsp;&nbsp;<i class="fas fa-save"></i></button>
                         </div>
@@ -343,7 +343,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                                                     $msp="No";
                                                 }   
                                                 ?>
-                                                <select required type="text"  name="msp" class="form-control" id="pwd">
+                                                <select required type="text"  name="msp" class="form-select" id="pwd">
                                                     <option><?php echo $msp; ?></option>
                                                     <option value="true">Yes</option>
                                                     <option value="false">No</option>
@@ -354,7 +354,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                                         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                                             <div style="display:inline" class="form-group">
                                                 <label for="pwd">Service Desk <span style="color:red">*</span></label>
-                                                <select required type="text"  name="serviceDesk" class="form-control" id="pwd">
+                                                <select required type="text"  name="serviceDesk" class="form-select" id="pwd">
                                                     <option value="<?php echo $siteSettings['Service_Desk']; ?>"><?php echo $siteSettings['Service_Desk']; ?></option>
                                                     <option value="Enabled">Enabled</option>
                                                     <option value="Disabled">Disabled</option>

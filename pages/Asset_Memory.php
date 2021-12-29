@@ -12,7 +12,7 @@ $online = $results['online'];
 	<div class="row" style="padding:15px;">
 		<div class="col-md-9">
 			<h5 style="color:#0c5460">
-				Memory/Ram (<?php echo count($json['physical_memory']['Response']);?>)
+				Memory/RAM (<?php echo count($json['physical_memory']['Response']);?>)
 			</h5>
 			<span style="font-size:12px;color:#666;"> 
 				Last Update: <?php echo ago($json['physical_memory_lastUpdate']);?>
@@ -21,14 +21,14 @@ $online = $results['online'];
 		<div class="col-md-3" style="text-align:right;">
 			<div class="btn-group">
 				<button onclick="loadSection('Asset_Memory');" style="background:#0c5460;color:#d1ecf1" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
-				<button style="background:#0c5460;color:#d1ecf1" type="button" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<button style="background:#0c5460;color:#d1ecf1" type="button" class="btn dropdown-toggle-split btn-sm" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-sort-down"></i>
 				</button>
 				<div class="dropdown-menu">
 					<a onclick="force='true'; loadSection('Asset_Memory','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 				</div>
 			</div>
-			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','physical_memory','null');">
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','physical_memory','null');">
 				<i class="fas fa-scroll"></i>
 			</button>
 		</div>

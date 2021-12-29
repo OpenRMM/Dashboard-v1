@@ -26,7 +26,7 @@ $shared = $json['shared_drives']['Response'];
 		<div class="col-md-3" style="text-align:right;">
 			<div class="btn-group">
 				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Asset_Disks');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
-				<button type="button" style="background:#0c5460;color:#d1ecf1" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<button type="button" style="background:#0c5460;color:#d1ecf1" class="btn dropdown-toggle-split btn-sm" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-sort-down"></i>
 				</button>
 				<div class="dropdown-menu">
@@ -56,7 +56,7 @@ $shared = $json['shared_drives']['Response'];
 			</span>
 		</div>
 		<div class="col-md-2" style="text-align:right;">
-			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','logical_disk','null');">
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','logical_disk','null');">
 				<i class="fas fa-scroll"></i>
 			</button>
 		</div>
@@ -125,7 +125,7 @@ $shared = $json['shared_drives']['Response'];
 			</span>
 		</div>
 		<div class="col-md-2" style="text-align:right;">
-			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','mapped_logical_disk','null');">
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','mapped_logical_disk','null');">
 				<i class="fas fa-scroll"></i>
 			</button>
 		</div>
@@ -194,7 +194,7 @@ $shared = $json['shared_drives']['Response'];
 			</span>	
 			</div>
 		<div class="col-md-2" style="text-align:right;">
-			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','shared_drives','null');">
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','shared_drives','null');">
 				<i class="fas fa-scroll"></i>
 			</button>
 		</div>

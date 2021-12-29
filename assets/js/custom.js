@@ -36,9 +36,9 @@ function computerAlertsModal(title, delimited='none', showHostname = false){
             continue;
         }
         if(showHostname == true){
-            hostname = alertData[3];
+            hostname = alertData[3] + " - ";
         }
-        $("#computerAlertsModalList").html($("#computerAlertsModalList").html() + "<div class='calert alert alert-"+alertData[2]+"' role='alert'><b><i class='fas fa-exclamation-triangle text-"+alertData[2]+"'></i> "+ hostname + " " + alertData[0]+"</b> - " + alertData[1] + "</div>");
+        $("#computerAlertsModalList").html($("#computerAlertsModalList").html() + "<div class='calert alert alert-"+alertData[2]+"' role='alert'><b><i class='fas fa-exclamation-triangle text-"+alertData[2]+"'></i> "+ hostname + " " + alertData[0]+"</b> " + alertData[1] + "</div>");
     }
 }
 

@@ -26,14 +26,14 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 		<form method="post" action="/">
 			<div class="card table-card" id="printTable" style="marsgin-top:-20px;padding:10px;border-radius:6px;"> 
 				<div styles="float:right;" class="dropdown">
-					<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right" data-toggle="dropdown">
+					<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right" data-bs-toggle="dropdown">
 						Actions <i class="fas fa-sort-down"></i>
 					</button>
 					<div class="dropdown-menu">
-						<a class="dropdown-item" data-toggle="modal" href="javascript:void(0)" data-target="#companyComputersModal2" >Assign Selected To <?php echo $msp; ?></a>
+						<a class="dropdown-item" data-bs-toggle="modal" href="javascript:void(0)" data-bs-target="#companyComputersModal2" >Assign Selected To <?php echo $msp; ?></a>
 						<?php if($_SESSION['accountType']=="Admin"){ ?>
 							<hr>
-							<a class="dropdown-item bg-danger" data-toggle="modal" href="javascript:void(0)" data-target="#deleteAssets" >Delete Selected Assets</a>
+							<a class="dropdown-item bg-danger" data-bs-toggle="modal" href="javascript:void(0)" data-bs-target="#deleteAssets" >Delete Selected Assets</a>
 						<?php } ?>
 					</div>
 				</div>
@@ -44,7 +44,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 								<tr style="border-bottom:2px solid #d3d3d3;">
 									<th >
 										<div class="form-check">
-											<input class="form-check-input" type="checkbox" value="<?php echo $result['ID']; ?>" style="margin-top:-15px" name="computers[]" id="checkall">	
+											<input class="form-check-input" type="checkbox" value="<?php echo $result['ID']; ?>" style="margin-top:10px" name="computers[]" id="checkall">	
 										</div>
 									</th>
 									
@@ -195,8 +195,8 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 							</div>
 							<div class="modal-footer">
 								<input type="hidden" name="type" value="CompanyComputers">
-								<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>
-								<button type="button" data-dismiss="modal" onclick="assignAssets()" class="btn btn-sm btn-warning" style="color:#fff;">Add</button>
+								<button type="button" class="btn btn-sm" data-bs-dismiss="modal">Close</button>
+								<button type="button" data-bs-dismiss="modal" onclick="assignAssets()" class="btn btn-sm btn-warning" style="color:#fff;">Add</button>
 							</div>
 						</div>
 					</div>
@@ -211,8 +211,8 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 								<h6 id="pageAlert_title">Are you sure you would like to delete the selected assets?</h6><hr>		
 							</div>
 							<div class="modal-footer">								
-								<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>
-								<button type="button"  onclick="deleteAssets()" data-dismiss="modal" class="btn btn-sm btn-danger" style="color:#fff;">Delete</button>
+								<button type="button" class="btn btn-sm" data-bs-dismiss="modal">Close</button>
+								<button type="button"  onclick="deleteAssets()" data-bs-dismiss="modal" class="btn btn-sm btn-danger" style="color:#fff;">Delete</button>
 							</div>
 						</div>
 					</div>
@@ -257,7 +257,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 								$note = explode("^",$note);
 								$count++;
 						?>
-							<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+							<a style="text-decoration:none" title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-bs-toggle="modal" data-bs-target="#viewNoteModal">
 								<li style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
 									<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 									<?php echo ucwords($note[0]);?>
@@ -270,7 +270,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 						<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 						<?php } ?>
 					</div>
-					<button data-toggle="modal" data-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" title="Create New Note" class="btn btn-sm">Create New Note</button>
+					<button data-bs-toggle="modal" data-bs-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" title="Create New Note" class="btn btn-sm">Create New Note</button>
 				</div>	
 			</div>
 		</div>

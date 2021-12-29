@@ -21,14 +21,14 @@ $online = $results['online'];
 		<div class="col-md-3" style="text-align:right;">
 			<div class="btn-group">
 				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Asset_Optional_Features');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
-				<button style="background:#0c5460;color:#d1ecf1" type="button" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<button style="background:#0c5460;color:#d1ecf1" type="button" class="btn dropdown-toggle-split btn-sm" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-sort-down"></i>
 				</button>
 				<div class="dropdown-menu">
 					<a onclick="force='true'; loadSection('Asset_Optional_Features','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 				</div>
 			</div>
-			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-toggle="modal" data-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','optional_features','null');">
+			<button title="Change Log" class="btn btn-sm" style="margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;" data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="$('#olderData_content').html(older_data_modal);olderData('<?php echo $computerID; ?>','optional_features','null');">
 				<i class="fas fa-scroll"></i>
 			</button>
 		</div>
@@ -49,7 +49,6 @@ $online = $results['online'];
 		<tr style="border-bottom:2px solid #d3d3d3;">
 			<th scope="col">#</th>
 			<th scope="col">Name</th>
-			<th scope="col">Caption</th>
 			<th scope="col">Description</th>
 			<th scope="col">Install State</th>
 		</tr>
@@ -79,7 +78,6 @@ $online = $results['online'];
 				<th scope="row"><?php echo $count;?></th>
 				<td><?php echo textOnNull($feature['Name'],"N/A");?></td>
 				<td><?php echo textOnNull($feature['Caption'],"N/A");?></td>
-				<td><?php echo textOnNull($feature['Description'],"N/A");?></td>
 				<td style="color:<?php echo $state['color'];?>;">
 				<b><?php echo textOnNull($state['state'],"Unknown");?></b>
 				</td>

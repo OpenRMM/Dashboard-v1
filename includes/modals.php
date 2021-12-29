@@ -61,7 +61,7 @@
 									
 										<div class="col-md-4 form-group">
 											<label for="editUserModal_type">Access Level</label>
-											<select onChange="update()" required name="accountType" id="accessSelect" class="form-control">
+											<select onChange="update()" required name="accountType" id="accessSelect" class="form-select">
 												<option  id="editUserModal_type" value="">Select Option</option>
 												<option value="Standard">Standard</option>
 												<option value="Admin">Admin</option>
@@ -111,7 +111,7 @@
 								</div>		
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+								<button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal">Cancel</button>
 								<button type="submit" class="btn btn-sm btn-primary">
 									<i class="fas fa-check"></i> Create
 								</button>
@@ -149,7 +149,7 @@
 								<p>This will delete this agent version. Are you sure?</p>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
+								<button type="button" class="btn btn-sm btn-default" data-bs-dismiss="modal">Cancel</button>
 								<button type="submit" style="color:#fff" class="btn btn-sm btn-danger">
 									<i class="fas fa-trash"></i> Delete
 								</button>
@@ -182,8 +182,8 @@
 								</div>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
-								<button data-dismiss="modal" type="button" onclick="newNote()" class="btn btn-sm btn-primary">
+								<button type="button" class="btn btn-sm btn-default" data-bs-dismiss="modal">Cancel</button>
+								<button data-bs-dismiss="modal" type="button" onclick="newNote()" class="btn btn-sm btn-primary">
 									<i class="fas fa-save"></i> Save
 								</button>
 							</div>
@@ -206,7 +206,7 @@
 								<h6 style="margin-top:20px"><span id="notedesc"></span></h6>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-sm btn-default" data-bs-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
@@ -258,7 +258,7 @@
 								</div>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+								<button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal">Cancel</button>
 								<button type="submit" class="btn btn-sm btn-primary">
 									<i class="fas fa-check"></i> Save
 								</button>
@@ -308,7 +308,7 @@
 							<div id="computerAlertsModalList"></div>
 						</div>
 						<div class="modal-footer">
-							<button type="button"  class="btn btn-sm btn-primary" data-dismiss="modal">Close</button>
+							<button type="button"  class="btn btn-sm btn-primary" data-bs-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
@@ -333,7 +333,7 @@
 							</div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-sm btn-primary"  data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-sm btn-primary"  data-bs-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
@@ -345,13 +345,27 @@
 					<div class="modal-content">
 						<div class="row clearfix">
 							<div  class="col-lg-12">
-								<div id="chatDiv" class="card chat-app">
-									<center>
-										<h3 style='margin-top:40px;'>
-											<div class='spinner-grow text-muted'></div>
-											<div class='spinner-grow' style='color:#0c5460'></div>
-										</h3>
-									</center>
+								<div class="card chat-app">
+									<sdfsdfsd id="chatDiv" >
+										<center>
+											<h3 style='margin-top:40px;'>
+												<div class='spinner-grow text-muted'></div>
+												<div class='spinner-grow' style='color:#0c5460'></div>
+											</h3>
+										</center>
+									</sdfsdfsd>
+									<div  class="chat-message clearfix">
+										<div style="width:490px;float:right;margin-right:15px;margin-bottom:-20px" class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text"><i class="fas fa-paper-plane"></i></span>
+											</div>
+											<input type="hidden" name="ID" id="asset_message_id"  value="<?php echo $computerID; ?>"> 
+											<input type="hidden" name="user_id" id="user_id"  value="<?php echo $_SESSION['userid']; ?>"> 
+											<input type="text" oninput="updateLastTypedTime();" id="asset_message" required class="form-control" name="message" placeholder="Enter text here...">   
+											<button onclick="sendChat();" class="btn btn-sm btn-primary"><i class="fas fa-paper-plane"></i> &nbsp;Send</button>                      
+										</div>
+									</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -395,7 +409,7 @@
 								</div>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-sm"  data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-sm"  data-bs-dismiss="modal">Close</button>
 								<button type="submit" class="btn btn-sm btn-primary" >Upload</button>
 							</div>
 						</form>
@@ -408,7 +422,7 @@
 					<div class="modal-content">
 						<div class="modal-header">
 							<h5 class="modal-title" >Create New Task</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">×</span>
 							</button>
 						</div>
@@ -424,7 +438,7 @@
 											<th scope="row" style="vertical-align:middle;">IF</th>
 											<td>
 												<input type="hidden" value="newTask" name="type">                                               
-												<select required class="form-control" style="width:23%;display:inline-block;" name="taskCond1">
+												<select required class="form-select" style="width:23%;display:inline-block;" name="taskCond1">
 													<option value="Total Alert Count">Total Alert Count</option>
 													<option value="Total Ram/Memory">Total Ram/Memory</option>
 													<option value="Available Disk Space">Available Disk Space</option>
@@ -444,7 +458,7 @@
 
 												</select>
 
-												<select class="form-control" required style="width:20%;display:inline-block;" name="taskCond1Comparison">
+												<select class="form-select" required style="width:20%;display:inline-block;" name="taskCond1Comparison">
 													<option value="=">Equals</option>
 													<option value="!=">Not Equal</option>
 													<option value=">">Greater than</option>
@@ -476,7 +490,7 @@
 									<tbody>		
 										<tr>
 											<td>
-												<select required class="form-control" name="taskAct1">
+												<select required class="form-select" name="taskAct1">
 													<option value="Log">Add to Log</option>
 													<option value="Command">Send Command</option>
 													<option value="Send Notification">Send Notification</option>
@@ -496,7 +510,7 @@
 								<p><b>Note:</b> To add log items to the message use: [condition states] [date] [time] [username]</p>	
 							</div>
 							<div class="modal-footer">	
-								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal">Close</button>
 								<button type="submit" class="btn btn-warning btn-sm" >Create Task</button>
 							</div>
 						</form>
@@ -509,7 +523,7 @@
 					<div class="modal-content">
 						<div class="modal-header">
 							<h5 class="modal-title" >Create New Alert</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">×</span>
 							</button>
 						</div>
@@ -520,7 +534,7 @@
 								<br>
                                 <div id="alertCompany">
                                     <h6><?php echo $msp; ?></h6><hr>
-                                    <select  name="alertCompany" class="form-control">
+                                    <select  name="alertCompany" class="form-select">
                                         <option value="0">All <?php echo $msp."s"; ?></option>
                                         <?php
                                             $query = "SELECT ID, name,hex FROM companies WHERE active='1' ORDER BY ID ASC";
@@ -540,7 +554,7 @@
 											<td>
 												<input type="hidden" value="newAlert" name="type">
                                                 <input type="hidden" value="" id="alertID" name="ID">
-												<select required class="form-control" style="width:23%;display:inline-block;" name="alertCondition">
+												<select required class="form-select" style="width:23%;display:inline-block;" name="alertCondition">
 													<option value="Total Alert Count">Total Alert Count</option>
 													<option value="Total Ram/Memory">Total Ram/Memory</option>
 													<option value="Available Disk Space">Available Disk Space</option>
@@ -558,7 +572,7 @@
 													<option value="Local IP Address">Local IP Address</option>
 													<option value="Last Update">Last Update</option>
 												</select>
-												<select class="form-control" required style="width:20%;display:inline-block;" name="alertComparison">
+												<select class="form-select" required style="width:20%;display:inline-block;" name="alertComparison">
 													<option value="=">Equals</option>
 													<option value="!=">Not Equal</option>
 													<option value=">">Greater than</option>
@@ -575,7 +589,7 @@
 								</table>	
 							</div>
 							<div class="modal-footer">	
-								<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal">Close</button>
 								<button type="submit" class="btn btn-primary btn-sm" >Create Alert</button>
 							</div>
 						</form>
@@ -626,8 +640,8 @@
 								<center>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-sm btn-default"  data-dismiss="modal">Close</button>
-								<button type="button" onclick='sendMessage()' data-dismiss="modal" class="btn btn-primary btn-sm">
+								<button type="button" class="btn btn-sm btn-default"  data-bs-dismiss="modal">Close</button>
+								<button type="button" onclick='sendMessage()' data-bs-dismiss="modal" class="btn btn-primary btn-sm">
 									Send <i class="fas fa-paper-plane" ></i>
 								</button>
 							</div>

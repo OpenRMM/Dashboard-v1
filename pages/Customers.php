@@ -11,7 +11,7 @@ $companyCount = mysqli_num_rows($results);
 		<button title="Refresh" onclick="loadSection('Customers');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</button>
-		<button type="button" style="float:right;margin:5px;background:#0ac282;;color:#fff" data-toggle="modal" data-target="#companyModal" class="btn-sm btn btn-light" title="Add User" onclick="editCompany('','','','','','')">
+		<button type="button" style="float:right;margin:5px;background:#0ac282;;color:#fff" data-bs-toggle="modal" data-bs-target="#companyModal" class="btn-sm btn btn-light" title="Add User" onclick="editCompany('','','','','','')">
 			<i class="fas fa-plus"></i> Add  <?php echo $msp; ?> 
 		</button>	
 	</h5>
@@ -77,12 +77,12 @@ $companyCount = mysqli_num_rows($results);
 						</td>
 						<td>
 							<?php if($computersWithAlerts > 0){?>
-								<button style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#computerAlerts" onclick="computerAlertsModal('<?php echo $company['name'];?>','<?php echo $aggrigateAlerts;?>', true);">
+								<button style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#computerAlerts" onclick="computerAlertsModal('<?php echo crypto('decrypt', $company['name'], $company['hex']); ?>','<?php echo $aggrigateAlerts;?>', true);">
 									<i title="Priority" class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
 									<?php echo $computersWithAlerts;?>
 							</button>
 							<?php }else{?>
-								<button data-toggle="modal" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" data-target="#computerAlerts" class="btn btn-success btn-sm" onclick="computerAlertsModal('<?php echo strtoupper($company['name']);?>');">
+								<button data-bs-toggle="modal" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" data-bs-target="#computerAlerts" class="btn btn-success btn-sm" onclick="computerAlertsModal('<?php echo crypto('decrypt', $company['name'], $company['hex']); ?>');">
 									<i class="fas fa-thumbs-up"></i>
 							</button>
 							<?php }?>
@@ -117,7 +117,7 @@ $companyCount = mysqli_num_rows($results);
 										<i class="fas fa-trash"></i>				
 									</button>
 								<?php }?>								
-								<a href="javascript:void(0)" data-toggle="modal" data-target="#companyModal" onclick="editCompany('<?php echo $company['ID'];?>','<?php echo crypto('decrypt',$company['name'],$company['hex']);?>','<?php echo crypto('decrypt',$company['address'],$company['hex']);?>','<?php echo (crypto('decrypt',$company['phone'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['email'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['comments'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['owner'],$company['hex']));?>')" title="Edit <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
+								<a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#companyModal" onclick="editCompany('<?php echo $company['ID'];?>','<?php echo crypto('decrypt',$company['name'],$company['hex']);?>','<?php echo crypto('decrypt',$company['address'],$company['hex']);?>','<?php echo (crypto('decrypt',$company['phone'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['email'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['comments'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['owner'],$company['hex']));?>')" title="Edit <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
 									<i class="fas fa-pencil-alt"></i>
 								</a>
 							</form>

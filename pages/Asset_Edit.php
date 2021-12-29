@@ -119,12 +119,12 @@ $online = $data['online'];
 					<div class="panel-body">
 						<ul class="list-group">
 							<li class="list-group-item"><b>Name:</b>
-								<a href="javascript:void(0)" onclick="searchItem('<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']),"N/A"); ?>');" title="Search Company">
+								<a style="text-decoration:none" href="javascript:void(0)" onclick="searchItem('<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']),"N/A"); ?>');" title="Search Company">
 									<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']),"N/A"); ?>
 								</a>
 							</li>
 							<li class="list-group-item"><b>Email:</b>
-								<a href="mailto:<?php echo crypto('decrypt',$company['email'],$company['hex']); ?>">
+								<a style="text-decoration:none" href="mailto:<?php echo crypto('decrypt',$company['email'],$company['hex']); ?>">
 									<?php echo textOnNull(ucfirst(crypto('decrypt',$company['email'],$company['hex'])),"N/A"); ?>
 								</a>
 							</li>
@@ -164,7 +164,7 @@ $online = $data['online'];
 									$icon = "server";
 								}  
 							?> 
-							<a href="javascript:void(0)" class="text-dark" onclick="loadSection('Asset_Edit', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo strtoupper($hostname);?>');">
+							<a style="text-decoration:none" href="javascript:void(0)" class="text-dark" onclick="loadSection('Asset_Edit', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo strtoupper($hostname);?>');">
 								<li class="list-group-item secbtn">
 									<?php if($data['online']=="0") {?>
 										<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
@@ -184,7 +184,7 @@ $online = $data['online'];
 				<div class="panel panel-default" style="height:auto;color:#fff;color#000;padding:20px;border-radius:6px;margin-bottom:20px;">
 					<center>
 						<?php if($_SESSION['accountType']=="Admin"){ ?>
-							<a style="width:75%;margin-top:-3px;border:none;" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal" href="javascript:void(0)">
+							<a style="width:75%;margin-top:-3px;border:none;" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delModal" href="javascript:void(0)">
 								<i class="fas fa-trash"></i> &nbsp; Delete Asset
 							</a>
 						<?php } ?>
@@ -216,7 +216,7 @@ $online = $data['online'];
 			<input type="hidden" name="type" value="DeleteComputer"/>
 			<input type="hidden" name="ID" value="<?php echo $data['ID'];?>"/>
 			<input type="hidden" name="hostname" value="<?php echo $hostname;?>"/>
-			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			<button type="button" class="btn btn-default" data-bs-dismiss="modal">Cancel</button>
 			<button type="submit" class="btn btn-danger">Confirm</button>
 		  <form>
 	  </div>
@@ -225,7 +225,7 @@ $online = $data['online'];
 			<p>Sorry, You Do Not Have Permissions To Delete Assets</p>
 		</div>
 		<div class="modal-footer">
-			<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">Cancel</button>
+			<button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Cancel</button>
 		</div>
 	  <?php } ?>
 	</div>

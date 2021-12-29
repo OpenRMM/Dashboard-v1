@@ -82,7 +82,7 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 								$note = explode("^",$note);
 								$count++;
 						?>
-							<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+							<a style="text-decoration:none" title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-bs-toggle="modal" data-bs-target="#viewNoteModal">
 								<li style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
 									<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 									<?php echo ucwords($note[0]);?>
@@ -95,7 +95,7 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 						<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 						<?php } ?>
 					</div>
-					<button data-toggle="modal" data-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" title="Create New Note" class="btn btn-sm">Create New Note</button>
+					<button data-bs-toggle="modal" data-bs-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" title="Create New Note" class="btn btn-sm">Create New Note</button>
 				</div>	
 			</div>
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;">
@@ -103,15 +103,15 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 			<div class="card table-card" id="printTable" style="marsgin-top:-20px;padding:10px;border-radius:6px;"> 
 				<div styles="float:right;" class="dropdown">
 				
-					<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right;margin-left:5px" data-toggle="dropdown">
+					<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right;margin-left:5px" data-bs-toggle="dropdown">
 						Actions <i class="fas fa-sort-down"></i>
 					</button>
 					<div class="dropdown-menu">
-						<a class="dropdown-item" data-toggle="modal" href="javascript:void(0)" data-target="#companyComputersModal2" >Assign Selected To <?php echo $msp; ?></a>
+						<a class="dropdown-item" data-bs-toggle="modal" href="javascript:void(0)" data-bs-target="#companyComputersModal2" >Assign Selected To <?php echo $msp; ?></a>
 						
 						<?php if($_SESSION['accountType']=="Admin"){ ?>
 							<hr>
-							<a class="dropdown-item bg-danger" data-toggle="modal" href="javascript:void(0)" data-target="#deleteTickets" >Delete Selected Tickets</a>
+							<a class="dropdown-item bg-danger" data-bs-toggle="modal" href="javascript:void(0)" data-bs-target="#deleteTickets" >Delete Selected Tickets</a>
 						<?php } ?>
 					</div>
 					<button title="Create New Ticket" onclick="loadSection('Service_Desk_New_Ticket');" type="button" class="btn btn-sm" style="float:right;background:#0c5460;color:#d1ecf1">
@@ -125,7 +125,7 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 								<tr style="border-bottom:2px solid #d3d3d3;">
 									<th >
 										<div class="form-check">
-											<input class="form-check-input" type="checkbox" value="<?php echo $result['ID']; ?>" style="margin-top:-15px" name="computers[]" id="checkall">	
+											<input class="form-check-input" type="checkbox" value="<?php echo $result['ID']; ?>" style="margin-top:10px" name="computers[]" id="checkall">	
 										</div>
 									</th>
 									
@@ -173,7 +173,7 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 									<td style="min-width:80px">
 										<div  class="btn-group">
 											<button id="status<?php echo $result['ID']; ?>" style="padding:4px;font-size:12px;border-radius:10px 0px 0px 10px;background:#cce5ff" type="button" class="btn btn-sm"><?php echo $result['status']; ?></button>
-											<button style="padding:4px;font-size:12px;border-radius:0px 10px 10px 0px;background:#cce5ff" type="button" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											<button style="padding:4px;font-size:12px;border-radius:0px 10px 10px 0px;background:#cce5ff" type="button" class="btn dropdown-toggle-split btn-sm" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 												<i class="fas fa-sort-down"></i>
 											</button>
 											<div class="dropdown-menu">
@@ -259,8 +259,8 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 							</div>
 							<div class="modal-footer">
 								<input type="hidden" name="type" value="CompanyComputers">
-								<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>
-								<button type="button" data-dismiss="modal" onclick="assignAssets()" class="btn btn-sm btn-warning" style="color:#fff;">Add</button>
+								<button type="button" class="btn btn-sm" data-bs-dismiss="modal">Close</button>
+								<button type="button" data-bs-dismiss="modal" onclick="assignAssets()" class="btn btn-sm btn-warning" style="color:#fff;">Add</button>
 							</div>
 						</div>
 					</div>
@@ -275,8 +275,8 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 								<h6 id="pageAlert_title">Are you sure you would like to delete the selected assets?</h6><hr>		
 							</div>
 							<div class="modal-footer">								
-								<button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>
-								<button type="button"  onclick="deleteAssets()" data-dismiss="modal" class="btn btn-sm btn-danger" style="color:#fff;">Delete</button>
+								<button type="button" class="btn btn-sm" data-bs-dismiss="modal">Close</button>
+								<button type="button"  onclick="deleteAssets()" data-bs-dismiss="modal" class="btn btn-sm btn-danger" style="color:#fff;">Delete</button>
 							</div>
 						</div>
 					</div>

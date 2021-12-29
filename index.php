@@ -49,9 +49,9 @@ if(isset($_GET['file'])){
   		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"/>
 		<link rel="stylesheet" href="assets/css/tagsinput.css"/>
-		<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
-		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-  		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+		<link rel="stylesheet" href="assets/css/sbootstrap.min.css"/>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  	
 
 		<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 			
@@ -61,7 +61,7 @@ if(isset($_GET['file'])){
 		
 		<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
 		<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
-		<script src="assets/js/bootstrap.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="assets/css/toastr.css"/>
 		<link rel="stylesheet" href="assets/css/custom.css"/>
 		<link rel="stylesheet" href="assets/css/style.css"/>
@@ -82,6 +82,7 @@ if(isset($_GET['file'])){
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 		<script src="assets/js/tagsinput.js"></script>
+
 	</head>
 	<script>
 		var force="";
@@ -120,14 +121,14 @@ if(isset($_GET['file'])){
 				<?php if($_SESSION['userid']!=""){ ?>
 					<div style="float:right;">
 					<?php if(in_array("AssetChat", $allowed_pages)){  ?>
-						<button type="button" onclick="loadChat('0');"data-toggle="modal" data-target="#asset_message_modal" style="border:none;box-shadow:none;margin-top:4px" class="btn-sm btn" title="Asset Chat">
+						<button type="button" onclick="loadChat('0');"data-bs-toggle="modal" data-bs-target="#asset_message_modal" style="border:none;box-shadow:none;margin-top:4px" class="btn-sm btn" title="Asset Chat">
 							<i style="font-size:16px" class="fas fa-comment-dots"></i>
 							<span style="font-size:10px" id="messageCount" class="text-white badge bg-c-pink">0</span>
 						</button>
 						<?php } ?>
 						<div class="btn-group">
 						
-          					<a href="javascript:void(0)" style="border:none;box-shadow:none" class="dropsdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          					<a href="javascript:void(0)" style="border:none;box-shadow:none;text-decoration:none" class="dropsdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 								<i style="font-size:16px;color:#000" class="fas fa-bell"></i>
 								<span style="margin-top" id="notificationCount" class="text-white badge bg-c-pink"><?php if($messageText==""){ echo "0"; }else{ echo "1"; } ?></span>
 							</a>
@@ -139,7 +140,7 @@ if(isset($_GET['file'])){
 						</div>
 						<div class="btn-group">
 							&nbsp;
-							<a href="javascript:void(0)" class="dropsdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							<a href="javascript:void(0)" class="dropsdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 								<i style="font-size:16px;color:#000" class="fas fa-plus"></i>
 							</a>
           					<div class="dropdown-menu">
@@ -150,8 +151,8 @@ if(isset($_GET['file'])){
 										<?php } ?>
 									<?php } 
 									if($_SESSION['accountType']=="Admin"){ ?>
-										<li style="cursor:pointer" data-toggle="modal" data-target="#companyModal" class="list-group-item secbtn">Add New <?php echo $msp; ?></li>
-										<li style="cursor:pointer"  data-toggle="modal" data-target="#userModal" class="list-group-item secbtn">Add New Technician</li>
+										<li style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#companyModal" class="list-group-item secbtn">Add New <?php echo $msp; ?></li>
+										<li style="cursor:pointer"  data-bs-toggle="modal" data-bs-target="#userModal" class="list-group-item secbtn">Add New Technician</li>
 									<?php } ?>
 								</ul>
 							</div>
@@ -189,16 +190,16 @@ if(isset($_GET['file'])){
 							<i class="fas fa-home"></i>&nbsp;&nbsp;&nbsp; Dashboard
 						</li>
 						<li onclick="loadSection('Assets');" id="secbtnAssets" class="secbtn">
-							<i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Assets <span id="assetCount" style="float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$assetCount; ?></span>
+							<i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Assets <span id="assetCount" title="Assets Online" style="float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$assetCount; ?></span>
 						</li>
 						<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
 						<?php if(in_array("Service_Desk_Home", $allowed_pages)){  ?>
 						<li id="secbtnService_Desk_Home" onclick="loadSection('Service_Desk_Home');" class="secbtn">
-							<i class="fa fa-ticket-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Service Desk <span id="ticketCount" style="float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$ticketCountAll; ?></span>
+							<i class="fa fa-ticket-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Service Desk <span id="ticketCount" title="Active Tickets" style="float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$ticketCountAll; ?></span>
 						</li>
 						<?php } } ?>
 						<li class="secbtn">
-							<h6 style="color:#d3d3d3" data-toggle="collapse" data-target="#navConfig"><i class="fa fa-cog" aria-hidden="true"></i>&nbsp;&nbsp;Configuration <i class="fa fa-angle-down" aria-hidden="true"></i></h6>
+							<h6 style="color:#d3d3d3" data-bs-toggle="collapse" data-bs-target="#navConfig"><i class="fa fa-cog" aria-hidden="true"></i>&nbsp;&nbsp;Configuration <i class="fa fa-angle-down" aria-hidden="true"></i></h6>
 						</li>
 						<ul style="margin-left:20px" class="nav nav-list collapse" id="navConfig">
 							<?php if($_SESSION['accountType']=="Admin"){ ?>
@@ -214,11 +215,6 @@ if(isset($_GET['file'])){
 									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Downloads
 								</li>
 							<?php } ?>
-							<?php if($_SESSION['accountType']=="Admin"){ ?>
-								<!--li onclick="loadSection('SiteSettings');" id="secbtnSiteSettings" style="width:100%" class="secbtn">
-									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Settings
-								</li-->
-							<?php } ?>
 						</ul>
 						<hr style="background:#dedede" >
 						<div id="sectionList" style="display:none;">
@@ -231,59 +227,33 @@ if(isset($_GET['file'])){
 							<?php } ?>
 							<hr>
 							<h6 class="">Tools</h6>
-							<?php if(in_array("Asset_Commands", $allowed_pages)){  ?>
-							<li onclick="loadSection('Asset_Commands');" id="secbtnAsset_Commands" class="secbtn">
-								<i class="fas fa-terminal"></i>&nbsp;&nbsp;&nbsp; Commands
-							</li>
-							<?php } ?>
 							<?php if(in_array("Asset_Alerts", $allowed_pages)){  ?>
 							<li onclick="loadSection('Asset_Alerts');" id="secbtnAsset_Alerts" class="secbtn">
 								<i class="fas fa-bell"></i>&nbsp;&nbsp;&nbsp; Alerts
+							</li>
+							<?php } ?>
+							<?php if(in_array("Asset_Commands", $allowed_pages)){  ?>
+							<li onclick="loadSection('Asset_Commands');" id="secbtnAsset_Commands" class="secbtn">
+								<i class="fas fa-terminal"></i>&nbsp;&nbsp;&nbsp; Commands
 							</li>
 							<?php } ?>
 							<?php if(in_array("Asset_Event_logs", $allowed_pages)){  ?>
 							<li onclick="loadSection('Asset_Event_Logs');" id="secbtnAsset_Event_Logs" class="secbtn">
 								<i class="fas fa-file-code"></i>&nbsp;&nbsp;&nbsp; Event Logs
 							</li>
-							<?php } ?>
-							<!-- li onclick="loadSection('Registry');" id="secbtnRegistry" class="secbtn">
-								<i class="fas fa-cubes"></i>&nbsp;&nbsp;&nbsp; Registry
-							</li -->						
+							<?php } ?>						
 							<?php if(in_array("Asset_File_Manager", $allowed_pages)){  ?>
 							<li onclick="loadSection('Asset_File_Manager');" id="secbtnAsset_File_Manager" class="secbtn">
 								<i class="fas fa-folder"></i>&nbsp;&nbsp;&nbsp; File Manager
 							</li>	
 							<?php } ?>
 							<hr>
-							<h6 class="">Asset Details</h6>						
-							<?php if(in_array("Asset_Network", $allowed_pages)){  ?>
-							<li onclick="loadSection('Asset_Network');" id="secbtnAsset_Network" class="secbtn">
-								<i class="fas fa-network-wired"></i>&nbsp;&nbsp;&nbsp; Network
+							<h6 class="">Asset Details</h6>	
+							<?php if(in_array("Asset_Attached_Devices", $allowed_pages)){  ?>
+							<li onclick="loadSection('Asset_Attached_Devices');" id="secbtnAsset_Attached_Devices" class="secbtn">
+								<i class="fab fa-usb"></i>&nbsp;&nbsp;&nbsp; Attached Devices
 							</li>
-							<?php } ?>
-							<?php if(in_array("Asset_Programs", $allowed_pages)){  ?>
-							<li onclick="loadSection('Asset_Programs');" id="secbtnAsset_Programs" class="secbtn">
-								<i class="fab fa-app-store-ios"></i>&nbsp;&nbsp;&nbsp; Programs
-							</li>
-							<?php } ?>
-							<!--li onclick="loadSection('DefaultPrograms');" id="secbtnDefaultPrograms" class="secbtn">
-								<i class="fab fa-app-store-ios"></i>&nbsp;&nbsp;&nbsp; Default Programs
-							</li-->							
-							<?php if(in_array("Asset_Services", $allowed_pages)){  ?>
-							<li onclick="loadSection('Asset_Services');" id="secbtnAsset_Services" class="secbtn">
-								<i class="fas fa-cogs"></i>&nbsp;&nbsp;&nbsp; Services
-							</li>
-							<?php } ?>
-							<?php if(in_array("Asset_Processes", $allowed_pages)){  ?>
-							<li onclick="loadSection('Asset_Processes');" id="secbtnAsset_Processes" class="secbtn">
-								<i class="fas fa-microchip"></i>&nbsp;&nbsp;&nbsp; Processes
-							</li>
-							<?php } ?>
-							<?php if(in_array("Asset_Printers", $allowed_pages)){  ?>
-							<li onclick="loadSection('Asset_Printers');" id="secbtnAsset_Printers" class="secbtn">
-								<i class="fas fa-edit"></i>&nbsp;&nbsp;&nbsp; Printers
-							</li>
-							<?php } ?>
+							<?php } ?>	
 							<?php if(in_array("Asset_Disks", $allowed_pages)){  ?>
 							<li onclick="loadSection('Asset_Disks');" id="secbtnAsset_Disks" class="secbtn">
 								<i class="fas fa-hdd"></i>&nbsp;&nbsp;&nbsp; Disks
@@ -293,10 +263,10 @@ if(isset($_GET['file'])){
 							<li onclick="loadSection('Asset_Memory');" id="secbtnAsset_Memory" class="secbtn">
 								<i class="fas fa-memory"></i>&nbsp;&nbsp;&nbsp; Memory
 							</li>
-							<?php } ?>
-							<?php if(in_array("Asset_Attached_Devices", $allowed_pages)){  ?>
-							<li onclick="loadSection('Asset_Attached_Devices');" id="secbtnAsset_Attached_Devices" class="secbtn">
-								<i class="fab fa-usb"></i>&nbsp;&nbsp;&nbsp; Attached Devices
+							<?php } ?>				
+							<?php if(in_array("Asset_Network", $allowed_pages)){  ?>
+							<li onclick="loadSection('Asset_Network');" id="secbtnAsset_Network" class="secbtn">
+								<i class="fas fa-network-wired"></i>&nbsp;&nbsp;&nbsp; Network
 							</li>
 							<?php } ?>
 							<?php if(in_array("Asset_Optional_Features", $allowed_pages)){  ?>
@@ -304,13 +274,33 @@ if(isset($_GET['file'])){
 								<i class="fas fa-list"></i>&nbsp;&nbsp;&nbsp; Optional Features
 							</li>
 							<?php } ?>
+							<?php if(in_array("Asset_Printers", $allowed_pages)){  ?>
+							<li onclick="loadSection('Asset_Printers');" id="secbtnAsset_Printers" class="secbtn">
+								<i class="fas fa-edit"></i>&nbsp;&nbsp;&nbsp; Printers
+							</li>
+							<?php } ?>
+							<?php if(in_array("Asset_Processes", $allowed_pages)){  ?>
+							<li onclick="loadSection('Asset_Processes');" id="secbtnAsset_Processes" class="secbtn">
+								<i class="fas fa-microchip"></i>&nbsp;&nbsp;&nbsp; Processes
+							</li>
+							<?php } ?>
+							<?php if(in_array("Asset_Programs", $allowed_pages)){  ?>
+							<li onclick="loadSection('Asset_Programs');" id="secbtnAsset_Programs" class="secbtn">
+								<i class="fab fa-app-store-ios"></i>&nbsp;&nbsp;&nbsp; Programs
+							</li>
+							<?php } ?>						
+							<?php if(in_array("Asset_Services", $allowed_pages)){  ?>
+							<li onclick="loadSection('Asset_Services');" id="secbtnAsset_Services" class="secbtn">
+								<i class="fas fa-cogs"></i>&nbsp;&nbsp;&nbsp; Services
+							</li>
+							<?php } ?>
 							<?php if(in_array("Asset_Users", $allowed_pages)){  ?>
 							<li onclick="loadSection('Asset_Users');" id="secbtnAsset_Users" class="secbtn">
 								<i class="fas fa-users"></i>&nbsp;&nbsp;&nbsp; User Accounts
 							</li>
-							<?php } ?>
-							<li></li>
-						</div>				
+							<?php } ?>							
+							<hr style="background:#dedede" >
+						</div>			
 						<div class="recents" id="recents" style="margin-top:20px;"></div>							
 						<div style="height:500px">&nbsp;</div>		
 					</ul>
@@ -325,7 +315,7 @@ if(isset($_GET['file'])){
 			<?php } ?>
 			
 			<!-- Page Content -->
-			<div id="content" class="containerLeft" style="margin-left:0;margin-top:15px;width:100%;">
+			<div id="content" class="containerLeft" style="margin-left:1;margin-top:15px;width:100%;">
 				<div id="refreshAlert" style="display:none;text-align:center" class="alert alert-warning">
 					
 				</div>	
@@ -415,7 +405,7 @@ if(isset($_GET['file'])){
 				url: "includes/loader.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other),
 				timeout: 60000,
 				success: function(data) {
-					$(".loadSection").hide().html(data).fadeIn("fast");
+					$(".loadSection").html(data);
 				},
 				error: function (error) {
 					$(".loadSection").hide().html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>Uh oh! There seems to be a problem on our end.</h5><br><h6>Reason: " + error.status + " " + error.statusText +"</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460' onclick='location.reload();'>Retry &nbsp;<i class='fas fa-sync'></i></button></form> <center></div></div>").fadeIn("fast");				
@@ -474,54 +464,73 @@ if(isset($_GET['file'])){
 			counter--;
 			$("#addButton" ).show();
 			$("#TextBoxDiv" + counter2).remove();
-		};
-	
+		};	
 	</script>
 	<script>
-		function loadChat(ID) {
+		var timer;
 		
 
-			$.ajax({
-				url: "includes/chat.php?ID="+btoa(ID),
-				timeout: 60000,
-				success: function(data) {
-					$("#chatDiv").html(data);
-					$("#asset_message_id").val(ID);
-					$(".sideDiv").removeClass("secActive");
-					$("#side"+ID).addClass("secActive");
-					$('#chatDiv2').scrollTop($('#chatDiv2')[0].scrollHeight);
-				}				
-			});
+		
 			
-			$("#asset_message_id").val(ID);
-			$(".sideDiv").removeClass("secActive");
-			$("#side"+ID).addClass("secActive");
-			$('#chatDiv2').scrollTop($('#chatDiv2')[0].scrollHeight);
-
-			setInterval(function(){ 
+		function loadChat(ID) {
+			callPage();
+			
+			clearInterval(timer);
+			timer = setInterval(callPage,2000);
+			function callPage(ID2=ID){
 				$.ajax({
-					url: "includes/chat.php?ID="+btoa(ID),
+					url: "includes/chat.php?ID="+btoa(ID2),
 					timeout: 60000,
 					success: function(data) {
 						$("#chatDiv").html(data);
-						$("#asset_message_id").val(ID);
+						$("#asset_message_id").val(ID2);
 						$(".sideDiv").removeClass("secActive");
-						$("#side"+ID).addClass("secActive");
+						$("#side"+ID2).addClass("secActive");
 						$('#chatDiv2').scrollTop($('#chatDiv2')[0].scrollHeight);
-					}		
+					}				
 				});
-			},10000);
-
+			}
 			$.post("index.php", {
 				type: "asset_viewed",
 				ID: ID
 			},
 			function(data, status){
 				$('#chatDiv2').scrollTop($('#chatDiv2')[0].scrollHeight);
-			});
-	
-}
+			});	
+			//refreshTypingStatus();	
+		
+		}
 
+		var textarea = $('#asset_message');
+		var lastTypedTime = new Date(0); // it's 01/01/1970
+		var typingDelayMillis = 5000;
+
+		function refreshTypingStatus() {
+  			 if (textarea.val() == '' || new Date().getTime() - lastTypedTime.getTime() > typingDelayMillis) {
+				$.post("index.php", {
+					type: "assetChat_typing",
+					ID: $("#asset_message_id").val(),
+					is_typing: "0",
+					userid: "<?php echo (int)$_SESSION['userid']; ?>"					
+				});
+			} else {
+				$.post("index.php", {
+					type: "assetChat_typing",
+					ID: $("#asset_message_id").val(),
+					is_typing:"1",
+					userid: "<?php echo (int)$_SESSION['userid']; ?>"
+					
+				});
+			}
+		}
+
+		function updateLastTypedTime() {
+			lastTypedTime = new Date();
+		}
+
+		setInterval(refreshTypingStatus, 500);
+		textarea.keypress(updateLastTypedTime);
+		textarea.blur(refreshTypingStatus);
 
 	</script>
 </html>

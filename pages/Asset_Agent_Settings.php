@@ -68,9 +68,9 @@ $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 										?>
 										<label>Automatic Updates</label>
 										<center>
-											<div style="margin-top:10px;" class="custom-control custom-switch">
-												<input <?php echo $auto; ?> type="checkbox" class="custom-control-input" name="autoUpdate" value="1" id="customSwitches">
-												<label class="custom-control-label" for="customSwitches"></label>
+											<div style="margin-top:10px;" class="form-check form-switch">
+												<input <?php echo $auto; ?> type="checkbox" class="form-check-input" name="autoUpdate" value="1" id="customSwitches">
+												<label class="form-check-label" for="customSwitches"></label>
 											</div>
 										</center>
 									</div>
@@ -136,7 +136,7 @@ $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 							<div style="padding:20px;border-radius:6px" class=" col-sm-12">
 									<div class="form-group">
 										<label for="sel1">Select Attribute:</label>
-										<select class="form-control" name="attribute" id="sel1">
+										<select class="form-select" name="attribute" id="sel1">
 											<option value="<?php echo strtolower(str_replace("","_",$_SESSION['raw_data_title'])); ?>"><?php echo ucwords(str_replace("_"," ",$_SESSION['raw_data_title'])); ?></option>
 											<?php
 												$count2=0;

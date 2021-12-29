@@ -212,14 +212,6 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
              }
         } 
     }
-?>
-<script>
-	<?php if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['server_status']==""){ ?>
-		toastr.remove()
-		toastr.error('The Asset Sever is offline. Assets will not be able to send or recieve new data.');
-	<?php } ?>
-</script>
-<?php
     $query = "SELECT ID FROM tickets where active='1' and status<>'Closed'";
     $ticketCount = mysqli_num_rows(mysqli_query($db, $query));
     $query = "SELECT ID FROM computers where active='1' and online='1'";
@@ -244,9 +236,12 @@ if($_SESSION['userid']!=""){
 ?>
         <div id="notifications"> </div>
         <script>
-        setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
-            $("#notifications").load("includes/notifications.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other));	
-        }, 5000);
-
+            setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
+                $("#notifications").load("includes/notifications.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other));	
+            }, 5000);
+            <?php if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['server_status']==""){ ?>
+                toastr.remove()
+                toastr.error('The Asset Sever is offline. Assets will not be able to send or recieve new data.');
+            <?php } ?>
         </script>
 <?php } ?>

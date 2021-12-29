@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 30, 2021 at 10:34 AM
+-- Generation Time: Dec 02, 2021 at 04:05 PM
 -- Server version: 10.3.29-MariaDB
 -- PHP Version: 7.2.29
 
@@ -240,7 +240,9 @@ CREATE TABLE `users` (
   `phone` varchar(400) NOT NULL DEFAULT '',
   `notes` varchar(400) NOT NULL DEFAULT '',
   `last_login` varchar(15) NOT NULL DEFAULT '',
+  `allowed_pages` text NOT NULL DEFAULT '',
   `recents` longtext NOT NULL DEFAULT '',
+  `notifications` text NOT NULL DEFAULT '',
   `recentTickets` text NOT NULL DEFAULT '',
   `recent_edit` longtext NOT NULL DEFAULT '',
   `alert_settings` varchar(255) NOT NULL DEFAULT '''''',

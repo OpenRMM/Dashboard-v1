@@ -100,17 +100,21 @@
 		GLOBAL $allAdminPages,$siteSettings, $db;
 		$_SESSION['dbRows']=strtotime(date("Y-m-d H:i:s"));
 		if($_SESSION['userid']==""){ 
-			return exit("
-			<script>		
-				toastr.error('Session timed out.');
-				setTimeout(function(){
-					setCookie('section', btoa('Login'), 365);	
-					window.location.replace('..//');
-				}, 3000);		
-			</script>
-			<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
+			if($page!="Asset_Portal"){
+				return exit("
+				<script>		
+					toastr.error('Session timed out.');
+					setTimeout(function(){
+						setCookie('section', btoa('Login'), 365);	
+						window.location.replace('..//');
+					}, 3000);		
+				</script>
+				<center><h5>Session timed out. You will be redirected to the login page in just a moment.</h5><br><h6>Redirecting</h6></center>");
+			}
 		}else{
-		
+			if($page=="Asset_Portal" and $_SESSION['userid']!=""){
+				return exit("<center><br><br><h5>Sorry, you do not have permission to access this page!</h5><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' style='background:#0c5460;color:".$siteSettings['theme']['Color 2']."' class='btn btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");					
+			}
 			
 			if($_SESSION['accountType']=="Standard" or $_SESSION['accountType']==""){
 				if(!in_array($page, $allowed_pages) and $page != "Dashboard" and $page != "Init"){
@@ -165,8 +169,8 @@
 			if(!in_array($row['name'], $fields)){
 				continue;
 			}
-			if($row['name']=="screenshot"){
-				$decoded = $row['data'];
+			if($row['name']=="screenshot_1" or $row['name']=="screenshot_2" or $row['name']=="screenshot_3"){
+				$decoded =($row['data']);
 				$retResult[$row['name']] = $decoded;
 			}else{
 				$decoded = jsonDecode(computerDecrypt($row['data']), true);
@@ -189,60 +193,160 @@
 		$query = "SELECT * FROM computers WHERE ID='".$ID."'";
         $result = mysqli_query($db, $query);
         $computer = mysqli_fetch_assoc($result);
-        $hostname = $computer['ID'].": ";
 
 		$alertArray = array();
 		$alertDelimited = "";
-		//Memory
-		//Total
-		/*$totalMemory = round((int)$json['WMI_ComputerSystem'][0]['TotalPhysicalMemory'] /1024 /1024 /1024,1); //GB
-		if($totalMemory < $siteSettings['Alert Settings']['Memory']['Total']['Danger']){
-			$alertName = "memory_total_danger";
-			$newAlert = array(
-				"subject"=>"Memory",
-				"message"=>"Total memory is real low (Current: ".$totalMemory." GB)",
-				"type"=>"danger",
-				"hostname"=>$hostname,
-				"alertName"=>$alertName
-			);
-			$alertArray[] = $newAlert;
-			$alertDelimited .= implode("|", $newAlert).",";
-		}elseif($totalMemory < $siteSettings['Alert Settings']['Memory']['Total']['Warning']){
-			$alertName = "memory_total_warning";
-			$newAlert = array("subject"=>"Memory",
-				"message"=>"Total memory is getting low (Current: ".$totalMemory." GB)",
-				"type"=>"warning",
-				"hostname"=>$hostname,
-				"alertName"=>$alertName
-			);
-			$alertArray[] = $newAlert;
-			$alertDelimited .= implode("|", $newAlert).",";
+
+		$getWMI = array("general","screenshot_1","screenshot_2","screenshot_3","logical_disk","bios","processor","agent","battery","windows_activation","agent_log","firewall","okla_speedtest");
+		$getWMI2 = implode("','",$getWMI);
+		$query2 = "SELECT name, data, last_update FROM computer_data WHERE computer_id='".$ID."' AND name IN('".$getWMI2."') ORDER BY ID DESC";
+		$results2 = mysqli_query($db, $query2);
+		while($row2 = mysqli_fetch_assoc($results2)){
+			if(isset($retResult[$row2['name']])){continue;}
+			if(!in_array($row2['name'], $getWMI)){
+				continue;
+			}		
+			$decoded = jsonDecode(computerDecrypt($row2['data']), true);
+			$retResult[$row2['name']] = $decoded['json'];
+			$retResult[$row2['name']."_raw"] = computerDecrypt($row2['data']);
+			$retResult[$row2['name']."_error"] = $decoded['error'];
+			$retResult[$row2['name']."_lastUpdate"] = $row2['last_update'];				
 		}
-		//Free
-	$freeMemory = round($json['WMI_OS'][0]['FreePhysicalMemory'] / 1024,1); //MB
-		if($freeMemory < $siteSettings['Alert Settings']['Memory']['Free']['Danger']){
-			$alertName = "memory_free_danger";
-			$newAlert = array(
-				"subject"=>"Memory",
-				"message"=>"Free memory is real low (Current: ".$freeMemory." MB)",
-				"type"=>"danger",
-				"hostname"=>$hostname,
-				"alertName"=>$alertName
-			);
-			$alertArray[] = $newAlert;
-			$alertDelimited .= implode("|", $newAlert).",";
-		}elseif($freeMemory < $siteSettings['Alert Settings']['Memory']['Free']['Warning']){
-			$alertName = "memory_free_warning";
-			$newAlert = array(
-				"subject"=>"Memory",
-				"message"=>"Free memory is getting low (Current: ".$freeMemory." MB)",
-				"type"=>"warning",
-				"hostname"=>$hostname,
-				"alertName"=>$alertName
-			);
-			$alertArray[] = $newAlert;
-			$alertDelimited .= implode("|", $newAlert).",";
-		}*/
+		$hostname = textOnNull($retResult['general']['Response'][0]['csname'],"Unavailable");
+
+		if($computer['show_alerts']=="1"){ 
+			$query = "SELECT * FROM alerts WHERE active='1' ORDER BY ID ASC";
+			$results = mysqli_query($db, $query);
+			$resultCount = mysqli_num_rows($results);	
+			while($result = mysqli_fetch_assoc($results)){
+				if($result['computer_id']==$computer['ID'] or $result['company_id']==$computer['company_id']){
+				
+				}else{
+					if($result['computer_id']!="0" and $result['company_id']!="0"){
+						continue;
+					}
+				}
+				
+				$details=jsonDecode($result['details'],true)['json'];
+				$show="false";
+				switch ($details['Details']['Condition']) {
+					case "Total Alert Count":
+					$currentValue="0";
+					break;
+					case "Total Ram/Memory":
+					$currentValue=formatBytes($retResult['general']['Response'][0]['Totalphysicalmemory'],0);
+					break;
+					case "Available Disk Space":
+						$currentValue=formatBytes($retResult['logical_disk']['Response']['C:']['FreeSpace']);
+					break;
+					case "Total Disk Space":
+						$currentValue=formatBytes($retResult['logical_disk']['Response']['C:']['Size']);
+					break;
+					case "Domain":
+						$currentValue=$retResult['general']['Response'][0]['Domain'];
+					break;
+					case "Public IP Address":
+						$currentValue=$retResult['general']['Response'][0]['ExternalIP']["ip"];
+					break;
+					case "Antivirus":
+						$currentValue=$retResult['general']['Response'][0]['Antivirus'];
+					break;
+					case "Agent Version":
+						$currentValue=$retResult['agent']['Response'][0]['Version'];
+					break;
+					case "Total User Accounts":
+						$currentValue="0";
+					break;
+					case "Command Received":
+						$currentValue="0";
+					break;
+					case "Agent Comes Online":
+						if($computer['online']=="0")$status="Offline";
+						if($computer['online']=="1")$status="Online";
+						$currentValue=$status;
+					break;
+					case "Agent Goes Offline":
+						if($computer['online']=="0")$status="Offline";
+						if($computer['online']=="1")$status="Online";
+						$currentValue=$status;
+					break;
+					case "Windows Activation":
+						$status = $retResult['windows_activation']['Response'][0]['LicenseStatus'];
+						if($status!="Licensed")$status="Not activated";
+						$currentValue=$status;
+					break;
+					case "Local IP Address":
+						$currentValue=$retResult['general']['Response'][0]['PrimaryLocalIP'];
+					break;
+					case "Last Update":
+						$currentValue=$retResult['Ping'];
+					break;
+
+					default:
+					$currentValue="unknown";
+				}
+				switch ($details['Details']['Comparison']) {
+					case "=":
+						if($currentValue == $details['Details']['Value']){
+							$show='true';	
+						}
+					break;
+					case "!=":
+						if($currentValue != $details['Details']['Value']){
+							$show='true';	
+						}
+					break;
+					case ">":
+						if($currentValue > $details['Details']['Value']){
+							$show='true';	
+						}
+					break;
+					case "<":
+						if($currentValue < $details['Details']['Value']){
+							$show='true';	
+						}
+					break;
+					case ">=":
+						if($currentValue >= $details['Details']['Value']){
+							$show='true';	
+						}
+					break;
+					case "<=":
+						if($currentValue <= $details['Details']['Value']){
+							$show='true';	
+						}
+					break;
+					case "contain":
+						if (strpos($details['Details']['Value'], $currentValue) !== false) {
+							$show='true';	
+						}
+					break;
+					case "notcontain":
+						if (strpos($details['Details']['Value'], $currentValue) !== false) { }else{
+							$show='true';	
+						} 
+					break;
+
+				}
+				if($show=="true"){
+				
+					$alertName = $details['Name'];
+					$newAlert = array(
+						"subject"=> $details['Name']."<br>",
+						"message"=>"If ".$details['Details']['Condition']." ".$details['Details']['Comparison']." ".$details['Details']['Value']."<br>Current Value: ".$currentValue,
+						"type"=>"danger",
+						"hostname"=>$hostname,
+						"alertName"=>$alertName
+					);
+					
+					array_push($alertArray,$newAlert);
+					$alertDelimited .= implode("|", $newAlert).",";
+					
+				}
+				
+			}
+		}
+	
 		//Disk Space
 		$disks = $json['logical_disk'];
 		foreach($disks as $disk){
@@ -275,34 +379,9 @@
 			}
 		}
 		
-		//Check agent version
-		if(preg_replace('/\D/', '', $siteSettings['general']['agent_latest_version']) != preg_replace('/\D/', '', $json['agent']['Response'][0]['Version'])){
-			$alertName = "agent_version";
-			$newAlert = array(
-				"subject"=>"Agent Version",
-				"message"=>"Agent is out of date. Currently installed: ".textOnNull($json['agent']['Response'][0]['Version'], "Unknown"),
-				"type"=>"warning",
-				"hostname"=>$hostname,
-				"alertName"=>$alertName
-			);
-			$alertArray[] = $newAlert;
-			$alertDelimited .= implode("|", $newAlert).",";
-		}
+
 		
-		//Windows Activation
-		/*if($json['WindowsActivation']['Value'] != "Activated"){
-			$alertName = "windows_activation";
-			$newAlert = array(
-				"subject"=>"Windows Activation",
-				"message"=>"Not Activated",
-				"type"=>"warning",
-				"hostname"=>$hostname,
-				"alertName"=>$alertName
-			);
-			$alertArray[] = $newAlert;
-			$alertDelimited .= implode("|", $newAlert).",";
-		}
-		*/
+
 		return array($alertArray, trim($alertDelimited, ","));
 	}
 	

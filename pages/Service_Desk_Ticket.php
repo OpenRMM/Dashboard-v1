@@ -61,7 +61,7 @@ userActivity($activity,$_SESSION['userid'])
 		</div>
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
 			<div class="card secbtn">
-				<div data-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Status</b><br>
+				<div data-bs-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Status</b><br>
 					<span id="status" style="margin-left:10px"><?php echo $ticket['status']; ?></span>
 					<div class="dropdown-menu">
 						<ul style="font-size:12px;"  class="list-group">
@@ -78,7 +78,7 @@ userActivity($activity,$_SESSION['userid'])
 		</div>
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
 			<div style="height:82px" class="card secbtn">
-				<div data-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Assignee</b><br>
+				<div data-bs-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Assignee</b><br>
 				<span id="assignee" style="margin-left:10px">	
 				<?php
 					list($first, $last) = explode(' ', $name2, 2);
@@ -108,7 +108,7 @@ userActivity($activity,$_SESSION['userid'])
 		</div>
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
 			<div class="card secbtn">
-			<div data-toggle="dropdown" role="button" style="cursor:pointer" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Priority</b><br><span id="priority" style="margin-left:10px"><?php echo $ticket['priority']; ?></span>
+			<div data-bs-toggle="dropdown" role="button" style="cursor:pointer" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Priority</b><br><span id="priority" style="margin-left:10px"><?php echo $ticket['priority']; ?></span>
 					<div class="dropdown-menu">
 						<ul style="font-size:12px;"  class="list-group">
 							<li onclick="updateTicket('priority','None','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">None</li>
@@ -123,7 +123,7 @@ userActivity($activity,$_SESSION['userid'])
 		</div>
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
 			<div class="card secbtn">
-				<div data-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Category</b><br><span id="category" style="margin-left:10px"><?php echo $ticket['category']; ?></span>
+				<div data-bs-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Category</b><br><span id="category" style="margin-left:10px"><?php echo $ticket['category']; ?></span>
 					<div class="dropdown-menu">
 							<ul style="font-size:12px;"  class="list-group">
 								<li onclick="updateTicket('category','Account Management','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Account Management</li>
@@ -156,15 +156,15 @@ userActivity($activity,$_SESSION['userid'])
 							<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Service_Desk_Ticket');" class="btn btn-sm" style="float:right;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 								<i class="fas fa-sync"></i>
 							</a>
-							<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right;margin-right:5px" data-toggle="dropdown">
+							<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right;margin-right:5px" data-bs-toggle="dropdown">
 								Actions <i class="fas fa-sort-down"></i>
 							</button>
 							<div class="dropdown-menu">
-								<a class="dropdown-item" data-toggle="modal" href="javascript:void(0)" data-target="#companyComputersModal2" >Clone</a>
-								<a class="dropdown-item" data-toggle="modal" href="javascript:void(0)" data-target="#companyComputersModal2" >Edit</a>
-								<a class="dropdown-item" data-toggle="modal" href="javascript:void(0)" data-target="#companyComputersModal2" >Merge</a>
+								<a class="dropdown-item" data-bs-toggle="modal" href="javascript:void(0)" data-bs-target="#companyComputersModal2" >Clone</a>
+								<a class="dropdown-item" data-bs-toggle="modal" href="javascript:void(0)" data-bs-target="#companyComputersModal2" >Edit</a>
+								<a class="dropdown-item" data-bs-toggle="modal" href="javascript:void(0)" data-bs-target="#companyComputersModal2" >Merge</a>
 								<hr>
-								<a class="dropdown-item bg-danger" data-toggle="modal" href="javascript:void(0)" data-target="#deleteAssets" >Delete</a>
+								<a class="dropdown-item bg-danger" data-bs-toggle="modal" href="javascript:void(0)" data-bs-target="#deleteAssets" >Delete</a>
 							</div>	
 						</div>	
 						<span style="color:#707070;font-size:12px">Created: <?php echo date("m/d/Y h:i A", strtotime($ticket['time'])); ?> by <?php echo $name5; ?></span><br><br>
@@ -188,13 +188,13 @@ userActivity($activity,$_SESSION['userid'])
 			<div class="tab-block">
 					<ul class="nav nav-pills">
 						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center;" class="nav-item">
-							<a data-toggle="pill" class="nav-link active" data-toggle="tab" href="#home">Comments</a>
+							<a data-bs-toggle="pill" class="nav-link active" data-bs-toggle="tab" href="#home">Comments</a>
 						</li>
 						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
-							<a data-toggle="pill" class="nav-link"  data-toggle="tab" href="#menu1">Details</a>
+							<a data-bs-toggle="pill" class="nav-link"  data-bs-toggle="tab" href="#menu1">Details</a>
 						</li>
 						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
-							<a data-toggle="pill" class="nav-link"  data-toggle="tab" href="#menu2">Tasks</a>
+							<a data-bs-toggle="pill" class="nav-link"  data-bs-toggle="tab" href="#menu2">Tasks</a>
 						</li>
 					</ul>
 				</div>
@@ -286,7 +286,7 @@ userActivity($activity,$_SESSION['userid'])
 						</ul>
 					</div>
 					<div id="menu2" class="tab-pane fade-in">
-						<button data-toggle="modal" data-target="#editTrigger" type="button" class="btn btn-sm btn-warning"><i class="fas fa-plus"></i> &nbsp;Add Task</button><hr>
+						<button data-bs-toggle="modal" data-bs-target="#editTrigger" type="button" class="btn btn-sm btn-warning"><i class="fas fa-plus"></i> &nbsp;Add Task</button><hr>
 						<table class="table table-hover table-borderless" id="datatable">
 							<tr>
 								<th>Task Name</th>
@@ -366,12 +366,12 @@ userActivity($activity,$_SESSION['userid'])
 					<div class="panel-body">
 						<ul class="list-group">
 							<li class="list-group-item"><b>Name:</b>
-								<a href="javascript:void(0)" onclick="searchItem('<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']),"N/A"); ?>');" title="Search Company">
+								<a style="text-decoration:none" href="javascript:void(0)" onclick="searchItem('<?php echo textOnNull(crypto('decrypt',$company['name'],$company['hex']),"N/A"); ?>');" title="Search Company">
 									<?php echo textOnNull(ucwords($ticket['requester']),"N/A"); ?>
 								</a>
 							</li>
 							<li class="list-group-item"><b>Email:</b>
-								<a href="mailto:<?php echo crypto('decrypt',$company['email'],$company['hex']); ?>">
+								<a style="text-decoration:none" href="mailto:<?php echo crypto('decrypt',$company['email'],$company['hex']); ?>">
 									<?php echo textOnNull(ucfirst(crypto('decrypt',$company['email'],$company['hex'])),"N/A"); ?>
 								</a>
 							</li>
@@ -401,7 +401,7 @@ userActivity($activity,$_SESSION['userid'])
 								$note = explode("^",$note);
 								$count++;
 						?>
-							<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+							<a style="text-decoration:none" title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-bs-toggle="modal" data-bs-target="#viewNoteModal">
 								<li style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
 									<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 									<?php echo ucwords($note[0]);?>
@@ -414,7 +414,7 @@ userActivity($activity,$_SESSION['userid'])
 						<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 						<?php } ?>
 					</div>
-					<button data-toggle="modal" data-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
+					<button data-bs-toggle="modal" data-bs-target="#noteModal" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" title="Create New Note" class="btn btn-warning btn-block p-t-15 p-b-15">Create New Note</button>
 				</div>	
 			</div>
 		</div>

@@ -44,7 +44,7 @@ $online = $results['online'];
 		<div style="float:right;">
 			<div class="btn-group">
 				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $current; ?>');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
-				<button type="button" style="background:#0c5460;color:#d1ecf1" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<button type="button" style="background:#0c5460;color:#d1ecf1" class="btn dropdown-toggle-split btn-sm" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-sort-down"></i>
 				</button>
 				<div class="dropdown-menu">
@@ -151,11 +151,11 @@ $online = $results['online'];
 								<?php echo $info; ?>	
 							</td>
 							<td style="float:right">
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" title="Rename" class="btn btn-sm btn-success" onclick="fileActionsModal('rename','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-pen"></i></a>
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Move" class="btn btn-sm btn-secondary" onclick="fileActionsModal('move','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-arrows-alt"></i></a>
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Copy" class="btn btn-sm btn-primary" onclick="fileActionsModal('copy','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-copy"></i></a>
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Download" class="btn btn-sm btn-warning" onclick="fileActionsModal('download','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-download"></i></a>
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Delete" class="btn btn-sm btn-danger" onclick="fileActionsModal('delete','<?php echo $info; ?>');" data-toggle="modal" data-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-trash"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" title="Rename" class="btn btn-sm btn-success" onclick="fileActionsModal('rename','<?php echo $info; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-pen"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Move" class="btn btn-sm btn-secondary" onclick="fileActionsModal('move','<?php echo $info; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-arrows-alt"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Copy" class="btn btn-sm btn-primary" onclick="fileActionsModal('copy','<?php echo $info; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-copy"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Download" class="btn btn-sm btn-warning" onclick="fileActionsModal('download','<?php echo $info; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-download"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Delete" class="btn btn-sm btn-danger" onclick="fileActionsModal('delete','<?php echo $info; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-trash"></i></a>
 							</td>
 						</tr>
 					<?php } ?>
@@ -282,7 +282,7 @@ $online = $results['online'];
 						<input type="text" placeholder="ex. C:/Demos/test" value="<?php echo $getFolder; ?>" class="form-control" name="filePath">
 					</div>
 					<div class="modal-footer">
-						<button type="button"  class="btn btn-sm btn-default"  data-dismiss="modal">Close</button>
+						<button type="button"  class="btn btn-sm btn-default"  data-bs-dismiss="modal">Close</button>
 						<input type="submit" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460;" id="actions_btnText" value="Save" class="btn btn-primary btn-sm">
 					</div>			
 				</div>

@@ -9,7 +9,7 @@ checkAccess($_SESSION['page']);
 		<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Versions');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</a>
-		<a href="javascript:void(0)"  data-toggle="modal" data-target="#agentUpload" style="margin:5px;float:right;background:#0c5460;color:#d1ecf1;" class="btn btn-sm">
+		<a href="javascript:void(0)"  data-bs-toggle="modal" data-bs-target="#agentUpload" style="margin:5px;float:right;background:#0c5460;color:#d1ecf1;" class="btn btn-sm">
 			<i class="fas fa-upload"></i> Upload Agent
 		</a>		
 	</h5>
@@ -68,7 +68,7 @@ checkAccess($_SESSION['page']);
 								<?php if($user==false){ echo "<i class='fas fa-download'>&nbsp;</i>"; }else{ echo "Download"; } ?>
 							</a>
 							<?php if($user==false) { ?>
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm" href="javascript:void(0)" data-toggle="modal" data-target="#versionModal" onclick="delVersion('<?php echo $entry; ?>')">
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#versionModal" onclick="delVersion('<?php echo $entry; ?>')">
 									<i class="fas fa-trash">&nbsp;</i>
 								</a>
 							<?php } ?>

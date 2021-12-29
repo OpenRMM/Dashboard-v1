@@ -10,7 +10,7 @@ $query = "SELECT name, phone, email,address,comments,date_added,hex,owner FROM c
 $companies = mysqli_query($db, $query);
 $company = mysqli_fetch_assoc($companies);
 
-$getWMI = array("general","screenshot","logical_disk","bios","processor","agent","battery","windows_activation","agent_log","firewall","okla_speedtest");
+$getWMI = array("general","screenshot_1","screenshot_2","screenshot_3","logical_disk","bios","processor","agent","battery","windows_activation","agent_log","firewall","okla_speedtest");
 $json = getComputerData($computerID, $getWMI);
 //print_r($json['agent_log']);
 $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
@@ -53,7 +53,8 @@ if($cpuUsage==""){
 }
 //log user activity
 $activity = "Asset ".textOnNull($json['general']['Response'][0]['csname'],"Unavailable")." viewed";
-userActivity($activity,$_SESSION['userid']);		
+userActivity($activity,$_SESSION['userid']);
+//print_r(base64_encode($json['screenshot_1']));
 ?>
 <style>
 	.dataTables_info {margin-top:40px; }
@@ -63,7 +64,7 @@ userActivity($activity,$_SESSION['userid']);
 		<center style="display:inline;margin-left:50px;">
 			<?php $alertCount = count($json['Alerts']);?>
 			<?php if($alertCount > 0){?>
-				<button onclick="computerAlertsModal('This PC','<?php echo $json['Alerts_raw'];?>');" data-toggle="modal" data-target="#computerAlerts"  class="btn btn-sm btn-danger">	
+				<button onclick="computerAlertsModal('This PC','<?php echo $json['Alerts_raw'];?>');" data-bs-toggle="modal" data-bs-target="#computerAlerts"  class="btn btn-sm btn-danger">	
 					<i title="<?php echo $alertCount;?> Issues" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
 				</button>
 			<?php } ?>
@@ -71,7 +72,7 @@ userActivity($activity,$_SESSION['userid']);
 		<div style="float:right;display:inline">
 			<div class="btn-group">
 				<button onclick="loadSection('Asset_General');" style="background:#0c5460;color:#fff" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
-				<button type="button" style="background:#0c5460;color:#fff" class="btn dropdown-toggle-split btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<button type="button" style="background:#0c5460;color:#fff" class="btn dropdown-toggle-split btn-sm" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-sort-down"></i>
 				</button>
 				<div class="dropdown-menu">
@@ -122,73 +123,64 @@ if($online=="0"){ ?>
 		<b><?php echo $alert; ?></b>
 	</div>
 <?php } 
-	if(base64_encode($json['screenshot_1']['Response'][0])!=""){
+	if(base64_encode($json['screenshot_1'])!=""){
 		$size="3";
+		$height= "220px";
 	}else{
 		$size="4";
+		$height= "250px";
 	}
-	?>
+	//print_r($json['screenshot_1']);
+?>
 <style>
-	//.zoom:hover {
-	//	overflow:visible;
-	//	z-index:999099; 
-		//background-size: cover;		
-//	}
-	//.zoom2:hover {
-	//	transform: scale(2.5);
-		//z-index:999909; 	
-	//}
+
 </style>
-<div class="row py-2" style="">
+<div  class="row" >
 	<?php if($size=="3"){ ?>
-	<div data-toggle="modal" data-target="#screenshotModal" style="z-index:9;overflow:hidden;" class="col-md-3 py-1 marginTop">
-        <div style="padding:0px;cursor:zoom-in;overflow:hidden;" class=" zoom2 card shadow-md">
-            <img class="zoom" style="background-position: 50% 50%; background-size: 100vw;" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot_1']['Response'][0]); ?>"/>              
-        </div>
+	<div data-bs-toggle="modal" data-bs-target="#screenshotModal" class="col-md-3 py-2">
+        <div style="height:<?php echo $height; ?>;cursor:zoom-in;" class="h-80 card-body card">
+			
+          	<img class="img-fluid" style="" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot_1']); ?>"/>              
+			<h6></h6>
+		</div>
 		
     </div>
 	<?php } ?>
-    <div style="z-index:1" class=" col-md-<?php echo $size; ?> py-1">
-        <div data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.LoadPercentage');" id="processor_LoadPercentage" class="card">
-            <div class="card-body">
-                <canvas data-centerval="<?php echo $cpuUsage; ?>%" id="chDonut2"></canvas>
-                <h6 style="text-align:center">CPU Usage</h6>
-            </div>
+    <div style="z-index:1" class=" col-md-<?php echo $size; ?> py-2">
+        <div style="height:<?php echo $height; ?>;" data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.LoadPercentage');" id="processor_LoadPercentage" class="h-80 card-body card">
+			<canvas data-centerval="<?php echo $cpuUsage; ?>%" id="chDonut2"></canvas>
+			<h6 style="text-align:center">CPU Usage</h6>
         </div>
     </div>
-    <div class="col-md-<?php echo $size; ?> py-1">
-        <div data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.FreePhysicalMemory');" id="general_FreePhysicalMemory" class="card">
-            <div class="card-body">
-                <canvas data-centerval="<?php echo (int)$average2; ?>%" id="chDonut1"></canvas>
-                <h6 style="text-align:center">RAM Usage</h6>
-            </div>
+    <div class="col-md-<?php echo $size; ?> py-2">
+        <div style="height:<?php echo $height; ?>;" data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.FreePhysicalMemory');" id="general_FreePhysicalMemory" class="h-80 card-body card">
+			<canvas data-centerval="<?php echo (int)$average2; ?>%" id="chDonut1"></canvas>
+			<h6 style="text-align:center">RAM Usage</h6>
         </div>
     </div>
-    <div class="col-md-<?php echo $size; ?> py-1">
-        <div data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','logical_disk','0.FreeSpace');" id="logical_disk_FreeSpace" class="card">
-            <div class="card-body">
-				<?php
-				//Determine Warning Level
-					$freeSpace = $json['logical_disk']['Response']['C:']['FreeSpace'];
-					$size2 = $json['logical_disk']['Response']['C:']['Size'];
-					$used = $size2 - $freeSpace;
-					$usedPct = round(($used/$size2) * 100);
-					if($usedPct > $siteSettings['Alert Settings']['Disk']['Danger'] ){
-						$pbColor = "red";
-					}elseif($usedPct > $siteSettings['Alert Settings']['Disk']['Warning']){
-						$pbColor = "#ffa500";
-					}else{ $pbColor = "#03925e"; }
-					$left = 100 - $usedPct;
-					if((int)$usedPct=="0"){$usedPct=100;}
-					
-				?>
-                <canvas data-centerval="<?php echo (int)$usedPct;?>%" id="chDonut3"></canvas>
-                <h6 style="text-align:center">Disk Usage</h6>
-            </div>
+    <div class="col-md-<?php echo $size; ?> py-2">
+        <div data-bs-toggle="modal" style="height:<?php echo $height; ?>;" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','logical_disk','0.FreeSpace');" id="logical_disk_FreeSpace" class="h-80 card-body card">
+			<?php
+			//Determine Warning Level
+				$freeSpace = $json['logical_disk']['Response']['C:']['FreeSpace'];
+				$size2 = $json['logical_disk']['Response']['C:']['Size'];
+				$used = $size2 - $freeSpace;
+				$usedPct = round(($used/$size2) * 100);
+				if($usedPct > $siteSettings['Alert Settings']['Disk']['Danger'] ){
+					$pbColor = "red";
+				}elseif($usedPct > $siteSettings['Alert Settings']['Disk']['Warning']){
+					$pbColor = "#ffa500";
+				}else{ $pbColor = "#03925e"; }
+				$left = 100 - $usedPct;
+				if((int)$usedPct=="0"){$usedPct=100;}
+				
+			?>
+			<canvas data-centerval="<?php echo (int)$usedPct;?>%" id="chDonut3"></canvas>
+			<h6 style="text-align:center">Disk Usage</h6>
         </div>
     </div>
 </div>
-<div <?php if($size=="3"){ echo 'style="margin-top:-10%"'; } ?> class="row">
+<div <?php if($sizse=="3"){ echo 'style="margin-top:-10%"'; } ?> class="row">
 	<div class="col-xs-6 col-sm-6 col-md-3 col-lg-4" style="padding:5px;">
 		<div class="panel panel-default" style="z-index:999">
 			<div class="panel-heading">
@@ -199,14 +191,14 @@ if($online=="0"){ ?>
 			<div class="panel-body" style="height:285px;">
 				<div class="rsow">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-						<a href="javascript:void(0)" style="color:<?php echo $siteSettings['theme']['Color 5']; ?>" data-toggle="modal" data-target="#companyMoreInfo">
+						<a href="javascript:void(0)" style="color:<?php echo $siteSettings['theme']['Color 5']; ?>" data-bs-toggle="modal" data-bs-target="#companyMoreInfo">
 							<h5>
 								<?php echo crypto('decrypt',$result['name'],$result['hex'])!="" ? ucwords(crypto('decrypt',$result['name'],$result['hex']))." at" : ""; ?>
 								<?php echo textOnNull((crypto('decrypt',$company['name'],$company['hex'])!="N/A" ? crypto('decrypt',$company['name'],$company['hex']) : ""), "No ".$msp." Name"); ?>
 							</h5>
 						</a>
 						<span style="color:#666;font-size:14px;"><?php echo textOnNull(phone(crypto('decrypt',$result['phone'],$result['hex'])), "No Phone"); ?> &bull;
-							<a href="mailto:<?php echo crypto('decrypt', $result['email'],$result['hex']); ?>">
+							<a style="text-decoration:none" href="mailto:<?php echo crypto('decrypt', $result['email'],$result['hex']); ?>">
 								<?php echo textOnNull(phone(crypto('decrypt',$result['email'],$result['hex'])), "No Email"); ?>
 							</a>
 						</span>
@@ -220,10 +212,10 @@ if($online=="0"){ ?>
 							</button><br>
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;">
-						<button class="btn btn-sm btn-warning" data-dismiss="modal" type="button" style="background:#0ac282;border:#0ac282;margin:3px;width:50%;" data-toggle="modal" data-target="#agentMessageModal">
+						<button class="btn btn-sm btn-warning" data-bs-dismiss="modal" type="button" style="background:#0ac282;border:#0ac282;margin:3px;width:50%;" data-bs-toggle="modal" data-bs-target="#agentMessageModal">
 							<i class="fas fa-comment" style=""></i> One-way Message
 						</button>
-						<button class="btn btn-sm" onclick='$("#terminaltxt").delay(3000).focus();' type="button" style="width:30%;margin:3px;color:#fff;background:#333;" data-dismiss="modal" data-toggle="modal" data-target="#terminalModal">
+						<button class="btn btn-sm" onclick='$("#terminaltxt").delay(3000).focus();' type="button" style="width:30%;margin:3px;color:#fff;background:#333;" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#terminalModal">
 							<i class="fas fa-terminal"></i> Terminal
 						</button>
 					</div>
@@ -241,21 +233,21 @@ if($online=="0"){ ?>
 			<div class="panel-body" style="height:285px;">	
 				<div class="roaw">
 					<ul class="list-group" style="margin-left:10px">
-						<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.Name');" id="processor_0Name" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Processor: </b><?php echo textOnNull(str_replace(" 0 ", " ",str_replace("CPU", "",str_replace("(R)","",str_replace("(TM)","",$json['processor']['Response'][0]['Name'])))), "N/A");?></li>
-						<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Caption');" id="general_0Caption" class="list-group-item secbtn olderdata" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['general']['Response'][0]['Caption']), "N/A");?></li>
-						<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.SystemType');" id="general_0SystemType" class="list-group-item secbtn olderdata" style="padding:6px"><b>Architecture: </b><?php echo textOnNull(str_replace("PC", "",$json['general']['Response'][0]['SystemType']), "N/A");?></li>
-						<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','bios','0.Version');" id="bios_0Version" class="list-group-item secbtn olderdata" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['bios']['Response'][0]['Version'], "N/A");?></li>
-						<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','ExternalIP.ip');" id="general_ExternalIPip" class="list-group-item secbtn olderdata" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
-						<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.PrimaryLocalIP');" id="general_0PrimaryLocalIP" class="list-group-item secbtn olderdata" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.Name');" id="processor_0Name" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Processor: </b><?php echo textOnNull(str_replace(" 0 ", " ",str_replace("CPU", "",str_replace("(R)","",str_replace("(TM)","",$json['processor']['Response'][0]['Name'])))), "N/A");?></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Caption');" id="general_0Caption" class="list-group-item secbtn olderdata" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['general']['Response'][0]['Caption']), "N/A");?></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.SystemType');" id="general_0SystemType" class="list-group-item secbtn olderdata" style="padding:6px"><b>Architecture: </b><?php echo textOnNull(str_replace("PC", "",$json['general']['Response'][0]['SystemType']), "N/A");?></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','bios','0.Version');" id="bios_0Version" class="list-group-item secbtn olderdata" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['bios']['Response'][0]['Version'], "N/A");?></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','ExternalIP.ip');" id="general_ExternalIPip" class="list-group-item secbtn olderdata" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.PrimaryLocalIP');" id="general_0PrimaryLocalIP" class="list-group-item secbtn olderdata" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
 						<?php if(count($json['windows_activation']['Response']) > 0) {
 							$status = $json['windows_activation']['Response'][0]['LicenseStatus'];
 							if($status!="Licensed")$status="Not activated";
 							$color = ($status == "Licensed" ? "text-success" : "text-danger");
 						?>
-							<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','windows_activation','0.LicenseStatus');" id="windows_activation_0LicenseStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
+							<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','windows_activation','0.LicenseStatus');" id="windows_activation_0LicenseStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
 						<?php } 
 						 if((int)$json['battery']['Response'][0]['BatteryStatus']>0){ ?>
-						<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','battery','0.BatteryStatus');" id="battery_0BatteryStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Battery Status: </b><?php 								
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','battery','0.BatteryStatus');" id="battery_0BatteryStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Battery Status: </b><?php 								
 							$statusArray = [
 							"1" => ["Text" => "Discharging", "Color" => "red"],
 							"2" => ["Text" => "Unknown", "Color" => "red"],
@@ -289,13 +281,13 @@ if($online=="0"){ ?>
 			<div class="panel-body" style="height:285px;">
 				<div class="">
 					<ul class="list-group" style="margin-left:20px">
-						<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.UserName');" id="general_0UserName" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Current User: </b><?php echo textOnNull(basename($json['general']['Response'][0]['UserName']), "Unknown");?></li>
-						<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Domain');" id="general_0Domain" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Domain: </b><?php echo textOnNull($json['general']['Response'][0]['Domain'], "N/A");?></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.UserName');" id="general_0UserName" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Current User: </b><?php echo textOnNull(basename($json['general']['Response'][0]['UserName']), "Unknown");?></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Domain');" id="general_0Domain" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Domain: </b><?php echo textOnNull($json['general']['Response'][0]['Domain'], "N/A");?></li>
 						<?php
 							$lastBoot = explode(".", $json['general']['Response'][0]['LastBootUpTime'])[0];
 							$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
 						?>
-						<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.LastBootUpTime');" id="general_0LastBootUpTime" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Uptime: </b><?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.LastBootUpTime');" id="general_0LastBootUpTime" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Uptime: </b><?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
 						<?php if(count($json['firewall']) > 0) {
 
 							$public = $json['firewall']['Response'][0]['publicProfile'];
@@ -312,13 +304,13 @@ if($online=="0"){ ?>
 						?>
 							<li id="Firewall" class="list-group-item olderdata" style="z-index:2;padding:6px;width:100%"><b>Firewall Status: </b><br>
 								<center>
-									<span data-toggle="modal" data-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.publicProfile');"  style="margin-left:20px">
+									<span data-bs-toggle="modal" data-bs-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.publicProfile');"  style="margin-left:20px">
 										Public: <span style="padding-right:20px" class="<?php echo $color1; ?>"><?php echo $public; ?></span>
 									</span>
-									<span data-toggle="modal" data-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.privateProfile');">
+									<span data-bs-toggle="modal" data-bs-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.privateProfile');">
 										Private: <span style="padding-right:20px" class="<?php echo $color2; ?>"><?php echo $private; ?></span>
 									</span>
-									<span data-toggle="modal" data-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.domainProfile');">
+									<span data-bs-toggle="modal" data-bs-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.domainProfile');">
 										Domain: <span class="<?php echo $color3; ?>"><?php echo $domain; ?></span>
 								</span>
 								</center>
@@ -330,9 +322,9 @@ if($online=="0"){ ?>
 							$status = $json['general']['Response'][0]['Antivirus'];
 							$color = ($status == "No Antivirus" ? "text-danger" : "text-success");
 						?>
-							<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Antivirus');" id="general_0Antivirus" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
+							<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Antivirus');" id="general_0Antivirus" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
 						<?php } ?>
-						<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','agent','0.Version');" id="agent_0Version" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%" title="Path: <?php echo $json['agent']['Response'][0]['Path']; ?>"><b>Agent Version: </b><?php echo textOnNull($json['agent']['Response'][0]['Version'],"N/A"); ?></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','agent','0.Version');" id="agent_0Version" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%" title="Path: <?php echo $json['agent']['Response'][0]['Path']; ?>"><b>Agent Version: </b><?php echo textOnNull($json['agent']['Response'][0]['Version'],"N/A"); ?></li>
 					</ul>
 				</div>
 		  </div>
@@ -496,16 +488,29 @@ if($online=="0"){ ?>
 		</span>
 	  </div>
 	  <div class="modal-footer">
-		<button type="button" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#0c5460;" data-dismiss="modal">Close</button>
+		<button type="button" class="btn btn-sm" style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#0c5460;" data-bs-dismiss="modal">Close</button>
 	  </div>
 	</div>
   </div>
 </div>
 <!--------------- View screenshot ------------->
 <div id="screenshotModal" class="modal fade" role="dialog">
-	<div data-dismiss="modal" style="cursor:zoom-out"class="modal-dialog modal-lg">
+	<div style="cursor:zoom-out"class="modal-dialog modal-lg">
 		<div class="modal-content">
-			<img style="height:500px;width:auto" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot']); ?>"/> 
+			<?php 
+				$query3 = "SELECT * FROM computer_data WHERE computer_id='".$computerID."' and name LIKE 'screenshot_%' ORDER BY ID DESC";
+				$results3 = mysqli_query($db, $query3);
+				$count3=0;
+				while($data3 = mysqli_fetch_assoc($results3)){ 
+					$count3++;	
+					if($count3>1){ $style= "display:none;"; $class=""; }else{$class="secActive disabled";}
+					$buttons .= "<button id='screenshotbtn".$count3."' type='button' onclick=\"$('.btn-sm').removeClass('secActive disabled');$('#screenshotbtn".$count3."').addClass('secActive disabled');$('.screenshots').slideUp('fast');$('#screenshot".$count3."').slideDown('fast');\" style='margin-right:5px;' class='btn btn-sm btn-primary ".$class."'>Display #".$count3."</button>"; 
+			?>
+						<img  data-bs-dismiss="modal" class="screenshots" id="screenshot<?php echo $count3;  ?>" style="height:500px;width:auto;<?php echo $style; ?>" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot_'.$count3]); ?>"/> 
+			<?php } ?>
+			<div class="modal-footer">
+				<?php echo $buttons; ?>
+			</div>
 		</div>
 	</div>
 </div>

@@ -369,7 +369,7 @@
 		if($_POST['type'] == "newAlert"){
 			$name=clean($_POST['name']);
 			$id=clean((int)$_POST['ID']);
-			$alertComparison=clean($_POST['alertComparison']);
+			$alertComparison=($_POST['alertComparison']);
 			$alertCondition=clean($_POST['alertCondition']);
 			$alertValue=clean($_POST['alertValue']);
 			$alertCompany=clean((int)$_POST['alertCompany']);
@@ -582,7 +582,15 @@
 
 			header("location: /");
 		}
-
+		
+		if($_POST['type'] == "assetChat_typing"){
+			$ID = (int)$_POST['ID'];
+			$user = (int)$_POST['userid'];
+			$typing =  (int)$_POST['is_typing'];
+			$query = "UPDATE asset_messages SET is_typing='".$typing."' WHERE computer_id='".$ID."' and userid='".$user."';";
+			$results = mysqli_query($db, $query);
+			header("location: /");
+		}
 		//Save company config
 		if($_POST['type'] == "defaultAgentConfig"){
 			$ID = (int)$_POST['ID'];

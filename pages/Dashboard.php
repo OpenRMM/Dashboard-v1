@@ -120,7 +120,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 						$note = explode("^",$note);
 						$count++;
 				?>
-					<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+					<a style="text-decoration:none" title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-bs-toggle="modal" data-bs-target="#viewNoteModal">
 						<li  style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
 							<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 							<?php echo ucwords($note[0]);?>
@@ -133,7 +133,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 				<li class="no_noteList list-group-item" style="display:none" >No Notes</li>
 				<?php } ?>
 			</div>
-			<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" data-toggle="modal" data-target="#noteModal" title="Create New Note" class="btn btn-sm">Create New Note</button>
+			<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" data-bs-toggle="modal" data-bs-target="#noteModal" title="Create New Note" class="btn btn-sm">Create New Note</button>
 		</div>
 	</div>			
 	<?php 	
@@ -198,13 +198,13 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 				<div class="tab-block">
 					<ul class="nav nav-pills">
 						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center;" class="nav-item">
-							<a data-toggle="pill" class="nav-link active" data-toggle="tab" href="#Summary">Summary</a>
+							<a data-bs-toggle="pill" class="nav-link active" data-bs-toggle="tab" href="#Summary">Summary</a>
 						</li>
 						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
-							<a data-toggle="pill" class="nav-link"  data-toggle="tab" href="#Alerts">Alerts</a>
+							<a data-bs-toggle="pill" class="nav-link"  data-bs-toggle="tab" href="#Alerts">Alerts</a>
 						</li>
 						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
-							<a data-toggle="pill" class="nav-link"  data-toggle="tab" href="#Tasks">Tasks</a>
+							<a data-bs-toggle="pill" class="nav-link"  data-bs-toggle="tab" href="#Tasks">Tasks</a>
 						</li>
 					</ul>
 				</div>
@@ -234,15 +234,15 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 									<div class="panel-body" style="height:285px;">	
 										<div class="roaw">
 											<ul class="list-group" style="margin-left:10px">
-												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.Name');" id="processor_LoadPercentage" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Processor: </b><?php echo textOnNull(str_replace(" 0 ", " ",str_replace("CPU", "",str_replace("(R)","",str_replace("(TM)","",$json['processor']['Response'][0]['Name'])))), "N/A");?></li>
-												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Caption');" id="general_Caption" class="list-group-item secbtn olderdata" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['general']['Response'][0]['Caption']), "N/A");?></li>
-												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.SystemType');" id="general_SystemType" class="list-group-item secbtn olderdata" style="padding:6px"><b>Architecture: </b><?php echo textOnNull(str_replace("PC", "",$json['general']['Response'][0]['SystemType']), "N/A");?></li>
-												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','bios','0.Version');" id="bios_Version" class="list-group-item secbtn olderdata" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['bios']['Response'][0]['Version'], "N/A");?></li>
-												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','ExternalIP.ip');" id="general_ip" class="list-group-item secbtn olderdata" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
-												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.');" id="general_PrimaryLocalIP" class="list-group-item secbtn olderdata" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
+												<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.Name');" id="processor_LoadPercentage" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Processor: </b><?php echo textOnNull(str_replace(" 0 ", " ",str_replace("CPU", "",str_replace("(R)","",str_replace("(TM)","",$json['processor']['Response'][0]['Name'])))), "N/A");?></li>
+												<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Caption');" id="general_Caption" class="list-group-item secbtn olderdata" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['general']['Response'][0]['Caption']), "N/A");?></li>
+												<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.SystemType');" id="general_SystemType" class="list-group-item secbtn olderdata" style="padding:6px"><b>Architecture: </b><?php echo textOnNull(str_replace("PC", "",$json['general']['Response'][0]['SystemType']), "N/A");?></li>
+												<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','bios','0.Version');" id="bios_Version" class="list-group-item secbtn olderdata" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['bios']['Response'][0]['Version'], "N/A");?></li>
+												<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','ExternalIP.ip');" id="general_ip" class="list-group-item secbtn olderdata" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
+												<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.');" id="general_PrimaryLocalIP" class="list-group-item secbtn olderdata" style="padding:6px"><span style="margin-left:0px"><b>Local IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['PrimaryLocalIP'], "N/A");?></span></li>
 												<?php 
 												if((int)$json['battery']['Response'][0]['BatteryStatus']>0){ ?>
-												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','battery','0.BatteryStatus');" id="battery_BatteryStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Battery Status: </b><?php 								
+												<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','battery','0.BatteryStatus');" id="battery_BatteryStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Battery Status: </b><?php 								
 													$statusArray = [
 													"1" => ["Text" => "Discharging", "Color" => "red"],
 													"2" => ["Text" => "Unknown", "Color" => "red"],
@@ -274,12 +274,12 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 									<div class="panel-body" style="height:285px;">
 										<div class="rsow">
 										<ul class="list-group" style="margin-left:20px">
-											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.csname');" id="general_0csname" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Hostname: </b><?php echo textOnNull($json['general']['Response'][0]['csname'], "Unavailable");?></li>
+											<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.csname');" id="general_0csname" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Hostname: </b><?php echo textOnNull($json['general']['Response'][0]['csname'], "Unavailable");?></li>
 											<?php
 												$lastBoot = explode(".", $json['general']['Response'][0]['LastBootUpTime'])[0];
 												$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
 											?>
-											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.LastBootUpTime');" id="general_0LastBootUpTime" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Uptime: </b><?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
+											<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.LastBootUpTime');" id="general_0LastBootUpTime" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Uptime: </b><?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></li>
 											<?php if(count($json['firewall']) > 0) {
 
 												$public = $json['firewall']['Response'][0]['publicProfile'];
@@ -293,13 +293,13 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 											?>
 												<li id="Firewall" class="list-group-item olderdata" style="z-index:2;padding:6px;width:100%"><b>Firewall Status: </b><br>
 													<center>
-														<span data-toggle="modal" data-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.publicProfile');"  style="margin-left:20px">
+														<span data-bs-toggle="modal" data-bs-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.publicProfile');"  style="margin-left:20px">
 															Public: <span style="padding-right:20px" class="<?php echo $color1; ?>"><?php echo $public; ?></span>
 														</span>
-														<span data-toggle="modal" data-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.privateProfile');">
+														<span data-bs-toggle="modal" data-bs-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.privateProfile');">
 															Private: <span style="padding-right:20px" class="<?php echo $color2; ?>"><?php echo $private; ?></span>
 														</span>
-														<span data-toggle="modal" data-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.domainProfile');">
+														<span data-bs-toggle="modal" data-bs-target="#olderDataModal"  onclick="olderData('<?php echo $computerID; ?>','firewall','0.domainProfile');">
 															Domain: <span class="<?php echo $color3; ?>"><?php echo $domain; ?></span>
 													</span>
 													</center>
@@ -309,16 +309,16 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 												$status = $json['general']['Response'][0]['Antivirus'];
 												$color = ($status == "No Antivirus" ? "text-danger" : "text-success");
 											?>
-												<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Antivirus');" id="general_0Antivirus" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
+												<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Antivirus');" id="general_0Antivirus" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
 											<?php } ?>
 											<?php if(count($json['windows_activation']['Response']) > 0) {
 												$status = $json['windows_activation']['Response'][0]['LicenseStatus'];
 												if($status!="Licensed")$status="Not activated";
 												$color = ($status == "Licensed" ? "text-success" : "text-danger");
 											?>
-											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','windows_activation','0.LicenseStatus');" id="WindowsActivation_0LicenseStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
+											<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','windows_activation','0.LicenseStatus');" id="WindowsActivation_0LicenseStatus" class="list-group-item secbtn olderdata" style="padding:6px"><b>Windows Activation: </b><span class="<?php echo $color; ?>"><?php echo textOnNull($status, "N/A");?></span></li>
 											<?php } ?>
-											<li data-toggle="modal" data-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','agent','0.Version');" id="agent_0Version" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%" title="Path: <?php echo $json['agent']['Response'][0]['Path']; ?>"><b>Server Version: </b><?php echo textOnNull($json['agent']['Response'][0]['Version'],"N/A"); ?></li>
+											<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','agent','0.Version');" id="agent_0Version" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%" title="Path: <?php echo $json['agent']['Response'][0]['Path']; ?>"><b>Server Version: </b><?php echo textOnNull($json['agent']['Response'][0]['Version'],"N/A"); ?></li>
 										</ul>
 										</div>
 									</div>
@@ -394,7 +394,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 						</div>
 					</div>
 					<div id="Alerts" class="tab-pane fade">
-						<button data-toggle="modal" data-target="#editAlert" onclick="$('#alertCompany').show();$('#alertID').val('');" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</button><hr>
+						<button data-bs-toggle="modal" data-bs-target="#editAlert" onclick="$('#alertCompany').show();$('#alertID').val('');" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</button><hr>
 						<table class="table table-hover table-borderless" id="datatable">
 							<tr>
 								
@@ -440,7 +440,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 						</table>
 					</div>
 					<div id="Tasks" class="tab-pane fade">
-						<button data-toggle="modal" data-target="#editTrigger" class="btn btn-sm btn-warning"><i class="fas fa-plus"></i> &nbsp;Add Task</button><hr>
+						<button data-bs-toggle="modal" data-bs-target="#editTrigger" class="btn btn-sm btn-warning"><i class="fas fa-plus"></i> &nbsp;Add Task</button><hr>
 						<table class="table table-hover table-borderless" id="datatable">
 							<tr>
 								<th>Task Name</th>

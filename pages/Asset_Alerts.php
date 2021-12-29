@@ -4,7 +4,7 @@ checkAccess($_SESSION['page'],"null");
 
 
 $json = getComputerData($computerID, array("general"));
-$query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT  online, ID,show_alerts FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
 ?>
@@ -20,7 +20,12 @@ $online = $results['online'];
 			<p>Configure Notifications For This Asset.</p>
 		</h5>
 		<hr>
-		<button data-toggle="modal" data-target="#editAlert" onclick="$('#alertCompany').hide();$('#alertID').val('<?php echo $computerID; ?>');" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</button><hr>
+		<button data-bs-toggle="modal" data-bs-target="#editAlert" onclick="$('#alertCompany').hide();$('#alertID').val('<?php echo $computerID; ?>');" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</button><hr>
+		<?php if($results['show_alerts']=="0"){ ?>
+			<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
+				<i class="fas fa-bell-slash"></i>&nbsp;&nbsp;&nbsp;Alerts have been turned off for this asset		
+			</div>
+		<?php } ?>
 		<table class="table table-hover table-borderless" id="<?php echo $_SESSION['userid']; ?>Alerts">
 			<tr>
 				<th>Name</th>
@@ -45,10 +50,10 @@ $online = $results['online'];
 					$currentValue=formatBytes($json['general']['Response'][0]['Totalphysicalmemory'],0);
 					break;
 					case "Available Disk Space":
-						$currentValue=formatBytes($json['logical_disk']['Response'][0]['FreeSpace']);
+						$currentValue=formatBytes($json['logical_disk']['Response']['C:']['FreeSpace']);
 					break;
 					case "Total Disk Space":
-						$currentValue=formatBytes($json['logical_disk']['Response'][0]['Size']);
+						$currentValue=formatBytes($json['logical_disk']['Response']['C:']['Size']);
 					break;
 					case "Domain":
 						$currentValue=$json['general']['Response'][0]['Domain'];

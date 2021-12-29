@@ -41,39 +41,39 @@ $hostname = $json['general']['Response'][0]['csname'];
 			<div class="card-body">
 					<div class="row" style="margin-top:10px;margin-left:30px;padding-bottom:10px">		
 						
-						<div class="col-md-5 secbtn bg-dark" onclick='$("#terminaltxt").focus();' data-dismiss="modal" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" data-toggle="modal" data-target="#terminalModal">	
+						<div class="col-md-5 secbtn bg-dark" onclick='$("#terminaltxt").focus();' data-bs-dismiss="modal" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" data-bs-toggle="modal" data-bs-target="#terminalModal">	
 							<center>
 								<i class="fas fa-terminal" style="margin-top:15px;"></i>
 								<br>Terminal
 							</center>
 						</div>
-						<div data-toggle="modal" data-target="#agentMessageModal" class="col-md-5 bg-success text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;">
+						<div data-bs-toggle="modal" data-bs-target="#agentMessageModal" class="col-md-5 bg-success text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;">
 							<center>
 								<i class="fas fa-comment" style="margin-top:10px;"></i>
 								<br>One-way <br>Message	
 							</center>
 						</div>
-						<div  data-dismiss="modal" class="bg-primary col-md-5 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
+						<div  data-bs-dismiss="modal" class="bg-primary col-md-5 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f", "Enable Remote Desktop");'>
 							<center>
 								<i class="fas fa-desktop" style="margin-top:15px"></i><br> Enable RDP
 							<center>
 						</div>
-						<div  data-dismiss="modal" class="bg-warning col-md-5 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
+						<div  data-bs-dismiss="modal" class="bg-warning col-md-5 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick='sendCommand("reg add \"HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 1 /f", "Disable Remote Desktop");'>
 							<center>
 							<i class="fas fa-desktop" style="margin-top:15px"></i><br> Disable RDP
 							<center>
 						</div>
-						<div  data-dismiss="modal" class="bg-primary col-md-5 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick="sendCommand('Netsh Advfirewall set allprofiles state on', 'Enable Firewall');">
+						<div  data-bs-dismiss="modal" class="bg-primary col-md-5 text-white secbtn" style="margin-top:10px;cursor:pointer;display:inline;width:45%;border:none;border-radius:5px;margin-right:10px;height:80px;" onclick="sendCommand('Netsh Advfirewall set allprofiles state on', 'Enable Firewall');">
 							<center>
 							<i class="fas fa-fire-alt" style="margin-top:15px"></i><br> Enable Firewall
 							<center>
 						</div>
-						<div  data-dismiss="modal" class="bg-warning col-md-5 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('Netsh Advfirewall set allprofiles state off', 'Disable Firewall');">
+						<div  data-bs-dismiss="modal" class="bg-warning col-md-5 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('Netsh Advfirewall set allprofiles state off', 'Disable Firewall');">
 							<center>	
 							<i class="fas fa-fire-alt" style="margin-top:15px"></i><br> Disable Firewall
 							<center>
 						</div>
-						<div  data-dismiss="modal" class="bg-secondary col-md-5 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('ipconfig /flushdns', 'Clear DNS Cache');">
+						<div  data-bs-dismiss="modal" class="bg-secondary col-md-5 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('ipconfig /flushdns', 'Clear DNS Cache');">
 							<center>	
 								<i class="fas fa-network-wired" style="margin-top:15px"></i><br> Flush DNS
 							<center>

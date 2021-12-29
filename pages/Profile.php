@@ -32,7 +32,7 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 </div>
 <div>
 	<section id="content">
-		<div style="margin-top:-20px;background:#343a40;padding:10px;color:#fff;border-radius:6px;margin-bottom:30px" class="">
+		<div style="margin-top:-20px;background:#343a40;padding:10px;color:#fff;border-radius:6px;margin-bottom:30px;width:100%" class="">
 			<div class="media clearfix">
 				<div class="media-left pr30">
 					<?php
@@ -43,12 +43,13 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 						<?php echo $name; ?>
 					</div>
 				</div>                      
-				<div style="margin-top:10px" class="media-body va-m">
+				<div style="margin-top:10px;;width:100%" class="media-body va-m">
 					<h4 style="color:#fff" class="media-heading"><?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex'])); ?> 
+					
+					<span style="font-size:14px" ><small>Last Seen: <?php if($user['last_login']==""){ echo "never"; }else{ echo ago(date('m/d/Y H:i:s',$user['last_login'])); } ?></small></span>
 					<?php if($_SESSION['accountType']=="Admin"){ ?>
 						<span style="float:right;font-size:12px">User ID: <?php echo $user['ID']; ?></span>
 					<?php } ?>
-					<span style="font-size:14px" ><small>Last Seen: <?php if($user['last_login']==""){ echo "never"; }else{ echo ago(date('m/d/Y H:i:s',$user['last_login'])); } ?></small></span>
 					</h4>
 					<p style="color:#dedede"> </p>
 					
@@ -70,7 +71,7 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 							</button>
 						<?php } ?>
 					<?php } ?>
-					<button  data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>','<?php echo $settings; ?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
+					<button  data-bs-toggle="modal" data-bs-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>','<?php echo $settings; ?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
 						<i class="fas fa-pencil-alt"></i> Edit
 					</button>
 					
@@ -82,12 +83,12 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 				<div class="tab-block">
 						<ul class="nav nav-tabs">
 							<li class="active">
-								<a href="#tab1" data-toggle="tab">Activity</a>
+								<a style="text-decoration:none" href="#tab1" data-bs-toggle="tab">Activity</a>
 							</li>
 							<?php if($_SESSION['accountType']=="Admin"){  ?>
 								<li onclick="deleteActivity()" class="active bg-danger text-white" style="cursor:pointer" >    
 									<input type="hidden" id="delActivity" name="delActivity" value="<?php echo $userID; ?>">        
-									<a href="javascript:void(0)" style="background:#0c5460;color:#d1ecf1;cursor:pointer" data-toggle="tab">Clear Activity</a>
+									<a style="text-decoration:none" href="javascript:void(0)" style="background:#0c5460;color:#d1ecf1;cursor:pointer" data-bs-toggle="tab">Clear Activity</a>
 								</li>
 							<?php } ?>
 						</ul>
@@ -138,10 +139,10 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 					<div class="panel-body pb5">              
 					<ul class="list-group">
 						<li class="list-group-item">
-							<a href="mailto:<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>"><?php echo textOnNull(crypto('decrypt', $user['email'], $user['hex']),"No Phone Number"); ?></a>
+							<a style="text-decoration:none" href="mailto:<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>"><?php echo textOnNull(crypto('decrypt', $user['email'], $user['hex']),"No Phone Number"); ?></a>
 						</li>
 						<li class="list-group-item">
-							<a href="tel:<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>"><?php echo textOnNull(phone(crypto('decrypt', $user['phone'], $user['hex'])),"No Phone"); ?></a>
+							<a style="text-decoration:none" href="tel:<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>"><?php echo textOnNull(phone(crypto('decrypt', $user['phone'], $user['hex'])),"No Phone"); ?></a>
 						</li>
 					</ul>
 					</div>
@@ -170,7 +171,7 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 							$note = explode("^",$note);
 							$count++;
 					?>
-						<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+						<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-bs-toggle="modal" data-bs-target="#viewNoteModal" style="text-decoration:none">
 							<li style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
 								<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 								<?php echo ucwords($note[0]);?>
@@ -184,7 +185,7 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 					<?php } ?>
 				</div>
 				<?php if($userID==$_SESSION['userid']){ ?>
-				<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" data-toggle="modal" data-target="#noteModal"  title="Create New Note" class="btn btn-sm">Create New Note</button>
+				<button style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none;color:#fff" data-bs-toggle="modal" data-bs-target="#noteModal"  title="Create New Note" class="btn btn-sm">Create New Note</button>
 				<?php } ?>
 			</div>
 			<?php } ?>

@@ -11,7 +11,7 @@ $userCount = mysqli_num_rows($results);
 		<button href="javascript:void(0)" title="Refresh" onclick="loadSection('Technicians');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</button>
-		<button onclick="$('#userform').trigger('reset');$('.settingsCheckbox').prop('checked', true);$('#AssetAgentSettings').prop('checked', false);$('#AssetEdit').prop('checked', false);" type="button" style="margin:5px;background:#0ac282;;float:right;color:#fff" data-toggle="modal" data-target="#userModal" class="btn-sm btn btn-light" title="Add User">
+		<button onclick="$('#userform').trigger('reset');$('.settingsCheckbox').prop('checked', true);$('#AssetAgentSettings').prop('checked', false);$('#AssetEdit').prop('checked', false);" type="button" style="margin:5px;background:#0ac282;;float:right;color:#fff" data-bs-toggle="modal" data-bs-target="#userModal" class="btn-sm btn btn-light" title="Add User">
 			 <i class="fas fa-plus"></i> Add Technician
 		</button>
 	</h5>	
@@ -99,7 +99,7 @@ $userCount = mysqli_num_rows($results);
 									<i class="fas fa-trash" ></i>				
 								</button>
 							<?php } ?>
-							<a href="javascript:void(0)" data-toggle="modal" data-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>','<?php echo $settings; ?>')" title="Edit User" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
+							<a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>','<?php echo $settings; ?>')" title="Edit User" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">
 								<i class="fas fa-pencil-alt"></i>
 							</a>
 						</form>

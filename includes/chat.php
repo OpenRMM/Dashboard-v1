@@ -59,6 +59,13 @@ if($_SESSION['userid']!=""){
                 $results = mysqli_query($db, $query);
                 while($activity = mysqli_fetch_assoc($results)){
                     $count4++;
+                    if($activity['is_typing']=="0" and $activity['userid']=="0"){
+                        $_SESSION['typingmsg']="";
+                    }
+                    if($activity['is_typing']=="1" and $activity['userid']=="0"){
+                        $_SESSION['typingmsg']="<span class='text-right'>Guest is typing</span><br><div style='margin-top:-40px;height:5px;width:150px' class='spinner-grow text-muted'></div>";
+                    }
+                   
                     if($activity['userid']!="0"){
                         $class1=" text-left";
                         $query2 = "SELECT * FROM users WHERE ID='".$activity['userid']."' ORDER BY ID ASC";
@@ -78,34 +85,24 @@ if($_SESSION['userid']!=""){
                     </div>           
                 </li>
             <?php } ?>
+             <?php echo $_SESSION['typingmsg']; ?>
             </ul>
+           
             <?php  
             if($count4==0){ 
             ?>
                 <br>
                 <center>
                     <h6>
-                        Select an asset to view chat history
+                     Select an asset to view chat history
+                      
                     </h6>
                 </center>
                 <div style="height:200px"></div>
             <?php } ?>
         
     </div>
-    <div class="chat-message clearfix">
 
-        <div class="input-group mb-0">
-            <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-paper-plane"></i></span>
-            </div>
-            <input type="hidden" name="ID" id="asset_message_id"  value="<?php echo $computerID; ?>"> 
-            <input type="hidden" name="user_id" id="user_id"  value="<?php echo $_SESSION['userid']; ?>"> 
-            <input type="text" id="asset_message" required class="form-control" name="message" placeholder="Enter text here...">   
-            <button onclick="sendChat();" class="btn btn-sm btn-primary"><i class="fas fa-paper-plane"></i> &nbsp;Send</button>                      
-        </div>
-
-    </div>
-</div>
 
 <?php }else{ ?>
 
@@ -117,6 +114,14 @@ if($_SESSION['userid']!=""){
             $results = mysqli_query($db, $query);
             while($activity = mysqli_fetch_assoc($results)){
                 $count4++;
+                if($activity['is_typing']=="0" and $activity['userid']!="0"){
+                    $_SESSION['typingmsg']="";
+                }
+                if($activity['is_typing']=="1" and $activity['userid']!="0"){
+                    $_SESSION['typingmsg']="<span class='text-right'>Technician is typing</span><br><div style='margin-top:-40px;height:5px;width:150px' class='spinner-grow text-muted'></div>";
+                }
+              
+                
                 if($activity['userid']=="0"){
                     $class1=" text-left";  
                     $name="";             
@@ -137,6 +142,7 @@ if($_SESSION['userid']!=""){
                 </div>           
             </li>
         <?php } ?>
+        <?php echo $_SESSION['typingmsg']; ?>
     </ul>
 
 <?php } ?>
