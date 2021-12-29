@@ -227,7 +227,7 @@
 							<input type="hidden" name="type" value="AddEditCompany"/>
 							<input type="hidden" name="ID" value="" id="editCompanyModal_ID"/>
 							<div class="modal-body">
-								<p>This Will Add <?php echo $msp; ?> Information. To Better Assist And Organize Content.</p>
+								<p>Add <?php echo strtolower($msp); ?> information to organize content and create <?php echo strtolower($msp); ?> based events.</p>
 								<div class="row">
 									<div class="col-md-4 form-group">
 										<label for="editUserModal_type">Name</label>
@@ -382,30 +382,20 @@
 						<form enctype="multipart/form-data" method="POST">
 							<div class="modal-body">
 								<p>This Will Create A Downloadable .Zip File. It Will Also Rewrite The Existing Update Directory.</p>
-								<div class="input-group">
-									<div class="input-group-prepend">
-										<span class="input-group-text" id="inputGroupFileAddon01">Agent Version *</span>
-									</div>
-									<input style="padding:20px" type="text" name="agentVersion" required minlength=3 class="form-control" placeholder="ex. 1.0.0.4" value="<?php echo $siteSettings['general']['agent_latest_version']; ?>"/>&nbsp;
+								<div class="input-group">									
+									<span class="input-group-text" id="inputGroupFileAddon01">Agent Version *</span>
+									<input type="text" name="agentVersion" required minlength=3 class="form-control" placeholder="ex. 1.0.0.4" value="<?php echo $siteSettings['general']['agent_latest_version']; ?>"/>&nbsp;
 								</div>
 								<hr><br>
 								<h6>Would you like to upload a file or update via URL?</h6><br>
 								<div class="input-group">
-									<div style="height:42px" class="input-group-prepend">
-										<span class="input-group-text" id="inputGroupFileAddon01">Update URL</span>
-									</div>
-									<input style="padding:20px" type="url" name="updateURL"  minlength=6 class="form-control" placeholder="https://" value="<?php echo json_decode($siteSettings['general']['default_agent_settings'],true)['Updates']['update_url']; ?>"/>&nbsp;
+									<span class="input-group-text" id="inputGroupFileAddon01">Update URL</span>
+									<input  type="url" name="updateURL"  minlength=6 class="form-control" placeholder="https://" value="<?php echo json_decode($siteSettings['general']['default_agent_settings'],true)['Updates']['update_url']; ?>"/>&nbsp;
 								</div>
 								<hr><h6>OR</h6><hr>
-								<div class="input-group">
-									<div style="height:42px" class="input-group-prepend">
-										<span class="input-group-text" id="inputGroupFileAddon01">Upload .exe</span>
-									</div>
-									<div class="custom-file" >
-										<input required="" type="hidden" value="true" name="agentFile">
-										<input  accept=".py" type="file" name="agentUpload" class="custom-file-input" id="agentUpload"/>
-										<label style="padding:10px;padding-bottom:30px" class="custom-file-label" for="agentUpload">Choose file</label>
-									</div>
+								<div class="input-group">										
+									<input required="" type="hidden" value="true" name="agentFile">
+									<input  accept=".py" type="file" name="agentUpload" class="form-control" id="agentUpload"/>
 								</div>
 							</div>
 							<div class="modal-footer">

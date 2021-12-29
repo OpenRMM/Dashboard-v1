@@ -338,13 +338,13 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                                                 <label for="email">Are you an MSP? <span style="color:red">*</span></label>
                                                 <?php
                                                 if($siteSettings['theme']['MSP']=="true"){ 
-                                                    $msp = "Yes"; 
+                                                    $msp2 = "Yes"; 
                                                 }else{
-                                                    $msp="No";
+                                                    $msp2="No";
                                                 }   
                                                 ?>
                                                 <select required type="text"  name="msp" class="form-select" id="pwd">
-                                                    <option><?php echo $msp; ?></option>
+                                                    <option><?php echo $msp2; ?></option>
                                                     <option value="true">Yes</option>
                                                     <option value="false">No</option>
                                                 </select>

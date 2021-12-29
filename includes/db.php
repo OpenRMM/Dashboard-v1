@@ -159,6 +159,13 @@
 	function getComputerData($ID, $fields = array("*")){
 		global $db, $siteSettings;
 		$retResult = array();
+		
+
+		$query4 = "SELECT name, data, last_update FROM computer_data WHERE computer_id='".$ID."' AND name LIKE 'screenshot_%'";
+		$Counts = mysqli_num_rows(mysqli_query($db, $query4));
+		for ($x = 0; $x <= $Counts; $x++) {
+			array_push($fields,"screenshot_".$x);
+		}
 		$fields2 = implode("','",$fields);
 		$query = "SELECT name, data, last_update FROM computer_data WHERE computer_id='".$ID."' AND name IN('".$fields2."') ORDER BY ID DESC";
 		$results = mysqli_query($db, $query);
@@ -169,7 +176,7 @@
 			if(!in_array($row['name'], $fields)){
 				continue;
 			}
-			if($row['name']=="screenshot_1" or $row['name']=="screenshot_2" or $row['name']=="screenshot_3"){
+			if(strpos($row['name'], "screenshot_") !== false){
 				$decoded =($row['data']);
 				$retResult[$row['name']] = $decoded;
 			}else{
@@ -197,7 +204,12 @@
 		$alertArray = array();
 		$alertDelimited = "";
 
-		$getWMI = array("general","screenshot_1","screenshot_2","screenshot_3","logical_disk","bios","processor","agent","battery","windows_activation","agent_log","firewall","okla_speedtest");
+		$getWMI = array("general","logical_disk","bios","processor","agent","battery","windows_activation","agent_log","firewall","okla_speedtest");
+		$query4 = "SELECT name, data, last_update FROM computer_data WHERE computer_id='".$ID."' AND name LIKE 'screenshot_%'";
+		$Counts = mysqli_num_rows(mysqli_query($db, $query4));
+		for ($x = 0; $x <= $Counts; $x++) {
+			array_push($getWMI,"screenshot_".$x);
+		}
 		$getWMI2 = implode("','",$getWMI);
 		$query2 = "SELECT name, data, last_update FROM computer_data WHERE computer_id='".$ID."' AND name IN('".$getWMI2."') ORDER BY ID DESC";
 		$results2 = mysqli_query($db, $query2);
@@ -206,11 +218,16 @@
 			if(!in_array($row2['name'], $getWMI)){
 				continue;
 			}		
-			$decoded = jsonDecode(computerDecrypt($row2['data']), true);
-			$retResult[$row2['name']] = $decoded['json'];
-			$retResult[$row2['name']."_raw"] = computerDecrypt($row2['data']);
-			$retResult[$row2['name']."_error"] = $decoded['error'];
-			$retResult[$row2['name']."_lastUpdate"] = $row2['last_update'];				
+			if(strpos($row2['name'], "screenshot_") !== false){
+				$decoded =($row2['data']);
+				$retResult[$row2['name']] = $decoded;
+			}else{
+				$decoded = jsonDecode(computerDecrypt($row2['data']), true);
+				$retResult[$row2['name']] = $decoded['json'];
+				$retResult[$row2['name']."_raw"] = computerDecrypt($row2['data']);
+				$retResult[$row2['name']."_error"] = $decoded['error'];
+				$retResult[$row2['name']."_lastUpdate"] = $row2['last_update'];	
+			}			
 		}
 		$hostname = textOnNull($retResult['general']['Response'][0]['csname'],"Unavailable");
 

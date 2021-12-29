@@ -10,7 +10,7 @@ $query = "SELECT name, phone, email,address,comments,date_added,hex,owner FROM c
 $companies = mysqli_query($db, $query);
 $company = mysqli_fetch_assoc($companies);
 
-$getWMI = array("general","screenshot_1","screenshot_2","screenshot_3","logical_disk","bios","processor","agent","battery","windows_activation","agent_log","firewall","okla_speedtest");
+$getWMI = array("general","logical_disk","bios","processor","agent","battery","windows_activation","agent_log","firewall","okla_speedtest");
 $json = getComputerData($computerID, $getWMI);
 //print_r($json['agent_log']);
 $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");

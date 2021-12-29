@@ -60,93 +60,96 @@ userActivity($activity,$_SESSION['userid'])
 			</div>
 		</div>
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
-			<div class="card secbtn">
-				<div data-bs-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Status</b><br>
+			<div class="card secbtn dropdown">
+				<div data-bs-toggle="dropdown" style="cursor:pointer"  id="dropdownMenuButton1" aria-expanded="false" class="dropdown-toggle card-body"><b>Status</b><br>
 					<span id="status" style="margin-left:10px"><?php echo $ticket['status']; ?></span>
-					<div class="dropdown-menu">
-						<ul style="font-size:12px;"  class="list-group">
-							<li onclick="updateTicket('status','New','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">New</li>
-							<li onclick="updateTicket('status','Closed','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Closed</li>
-							<li onclick="updateTicket('status','In Progress','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">In Progress</li>
-							<li onclick="updateTicket('status','On Hold','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">On Hold</li>
-							<li onclick="updateTicket('status','Resolved','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Resolved</li>
-							<li onclick="updateTicket('status','Awaiting Input','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Awaiting Input</li>
-						</ul>
-					</div>
+				</div>
+					<ul style="font-size:12px;"   class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+						<li onclick="updateTicket('status','New','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">New</li>
+						<li onclick="updateTicket('status','Closed','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Closed</li>
+						<li onclick="updateTicket('status','In Progress','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">In Progress</li>
+						<li onclick="updateTicket('status','On Hold','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">On Hold</li>
+						<li onclick="updateTicket('status','Resolved','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Resolved</li>
+						<li onclick="updateTicket('status','Awaiting Input','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Awaiting Input</li>
+					</ul>
+					
 				</div>	
 			</div>
-		</div>
+		
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
-			<div style="height:82px" class="card secbtn">
-				<div data-bs-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Assignee</b><br>
+			<div style="height:75px" class="card secbtn">
+				<div data-bs-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle card-body"><b>Assignee</b><br>
 				<span id="assignee" style="margin-left:10px">	
 				<?php
 					list($first, $last) = explode(' ', $name2, 2);
 					$name = strtoupper("$first[0]{$last[0]}"); 
 				?>
 				<div style="font-size:9px;margin-left:10px;float:left;display:inline;background:<?php echo $user3['user_color']; ?>;color:#fff;padding:5px;border-radius:100px;text-align:center;width:25px;height:25px;padding-top:7px"><?php echo $name; ?></div>
-				<?php echo textOnNull($name2,"Unassigned"); ?></span>
-					<div class="dropdown-menu">
-						<ul style="font-size:12px;"  class="list-group">
-							<li onclick="updateTicket('assignee','Unassigned','<?php echo $ticketID; ?>','0');" style="cursor:pointer" class="list-group-item secbtn">Unassigned</li>
-							<?php
-								$query = "SELECT ID,hex,nicename,user_color FROM users WHERE active='1' ORDER BY ID ASC";
-								$results = mysqli_query($db, $query);
-								while($result = mysqli_fetch_assoc($results)){ 
-									$name2 = textOnNull(ucwords(crypto('decrypt',$result['nicename'],$result['hex'])),"Unavailable"); 
-									list($first, $last) = explode(' ', $name2, 2);
-									$name = strtoupper("$first[0]{$last[0]}"); 
-							?>
-								<li onclick="updateTicket('assignee','<?php echo $name2; ?>','<?php echo $ticketID; ?>','<?php echo $result['ID']; ?>');" style="cursor:pointer" class="list-group-item secbtn">
-								<div style="font-size:9px;margin-right:10px;float:left;display:inline;background:<?php echo $result['user_color']; ?>;color:#fff;padding:5px;border-radius:100px;text-align:center;width:25px;height:25px;padding-top:6px"><?php echo $name; ?></div>
-								<?php echo $name2; ?></li>
-							<?php $name=""; } ?>
-						</ul>
-					</div>
+					<?php echo textOnNull($name2,"Unassigned"); ?></span>
 				</div>
+				<div class="dropdown-menu">
+					<ul style="font-size:12px;"  class="list-group">
+						<li onclick="updateTicket('assignee','Unassigned','<?php echo $ticketID; ?>','0');" style="cursor:pointer" class="list-group-item secbtn">Unassigned</li>
+						<?php
+							$query = "SELECT ID,hex,nicename,user_color FROM users WHERE active='1' ORDER BY ID ASC";
+							$results = mysqli_query($db, $query);
+							while($result = mysqli_fetch_assoc($results)){ 
+								$name2 = textOnNull(ucwords(crypto('decrypt',$result['nicename'],$result['hex'])),"Unavailable"); 
+								list($first, $last) = explode(' ', $name2, 2);
+								$name = strtoupper("$first[0]{$last[0]}"); 
+						?>
+							<li onclick="updateTicket('assignee','<?php echo $name2; ?>','<?php echo $ticketID; ?>','<?php echo $result['ID']; ?>');" style="cursor:pointer" class="list-group-item secbtn">
+							<div style="font-size:9px;margin-right:10px;float:left;display:inline;background:<?php echo $result['user_color']; ?>;color:#fff;padding:5px;border-radius:100px;text-align:center;width:25px;height:25px;padding-top:6px"><?php echo $name; ?></div>
+							<?php echo $name2; ?></li>
+						<?php $name=""; } ?>
+					</ul>
+				</div>				
 			</div>
 		</div>
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
 			<div class="card secbtn">
-			<div data-bs-toggle="dropdown" role="button" style="cursor:pointer" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Priority</b><br><span id="priority" style="margin-left:10px"><?php echo $ticket['priority']; ?></span>
-					<div class="dropdown-menu">
-						<ul style="font-size:12px;"  class="list-group">
-							<li onclick="updateTicket('priority','None','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">None</li>
-							<li onclick="updateTicket('priority','Low','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Low</li>
-							<li onclick="updateTicket('priority','Medium','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Medium</li>
-							<li onclick="updateTicket('priority','High','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">High</li>
-							<li onclick="updateTicket('priority','Critical','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Critical</li>
-						</ul>
-					</div>
-				</div>
+			<div data-bs-toggle="dropdown" role="button" style="cursor:pointer" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle card-body">
+				<b>Priority</b><br><span id="priority" style="margin-left:10px"><?php echo $ticket['priority']; ?></span>
+			</div>
+				<div class="dropdown-menu">
+					<ul style="font-size:12px;"  class="list-group">
+						<li onclick="updateTicket('priority','None','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">None</li>
+						<li onclick="updateTicket('priority','Low','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Low</li>
+						<li onclick="updateTicket('priority','Medium','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Medium</li>
+						<li onclick="updateTicket('priority','High','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">High</li>
+						<li onclick="updateTicket('priority','Critical','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Critical</li>
+					</ul>
+				</div>		
 			</div>
 		</div>
 		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
 			<div class="card secbtn">
-				<div data-bs-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown card-body"><b>Category</b><br><span id="category" style="margin-left:10px"><?php echo $ticket['category']; ?></span>
-					<div class="dropdown-menu">
-							<ul style="font-size:12px;"  class="list-group">
-								<li onclick="updateTicket('category','Account Management','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Account Management</li>
-								<li onclick="updateTicket('category','Applications','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Applications</li>
-								<li onclick="updateTicket('category','Facilities','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Facilities</li>
-								<li onclick="updateTicket('category','Finance','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Finance</li>
-								<li onclick="updateTicket('category','General Inquiries','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">General Inquiries</li>
-								<li onclick="updateTicket('category','Hardware','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Hardware</li>
-								<li onclick="updateTicket('category','Human Resources','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Human Resources</li>
-								<li onclick="updateTicket('category','Networking','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Networking</li>
-								<li onclick="updateTicket('category','Other','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Other</li>
-							</ul>
-						</div>
-					</div>
+				<div data-bs-toggle="dropdown" style="cursor:pointer" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle card-body">
+					<b>Category</b><br><span id="category" style="margin-left:10px"><?php echo $ticket['category']; ?></span>
 				</div>
-			</div>
-			<div class="col-sm-12 col-md-6 col-lg-2 my-1">
-				<div class="card sewcbtn">
-					<div class="card-body"><b>Created</b><br><span style="margin-left:10px"><?php echo ago($ticket['time']); ?></span></div>
+				<div class="dropdown-menu">
+					<ul style="font-size:12px;"  class="list-group">
+						<li onclick="updateTicket('category','Account Management','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Account Management</li>
+						<li onclick="updateTicket('category','Applications','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Applications</li>
+						<li onclick="updateTicket('category','Facilities','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Facilities</li>
+						<li onclick="updateTicket('category','Finance','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Finance</li>
+						<li onclick="updateTicket('category','General Inquiries','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">General Inquiries</li>
+						<li onclick="updateTicket('category','Hardware','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Hardware</li>
+						<li onclick="updateTicket('category','Human Resources','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Human Resources</li>
+						<li onclick="updateTicket('category','Networking','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Networking</li>
+						<li onclick="updateTicket('category','Other','<?php echo $ticketID; ?>');" style="cursor:pointer" class="list-group-item secbtn">Other</li>
+					</ul>
 				</div>
+					
 			</div>
 		</div>
-	</div>	
+		<div class="col-sm-12 col-md-6 col-lg-2 my-1">
+			<div class="card sewcbtn">
+				<div class="card-body"><b>Created</b><br><span style="margin-left:10px"><?php echo ago($ticket['time']); ?></span></div>
+			</div>
+		</div>
+	</div>
+</div>	
 	<div class="row" style="z-index:1;margin-bottom:10px;margin-top:0px;border-radius:3px;ovesrflow:hidden;padding:0px">
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="z-index:1;padding-bottom:20px;padding-top:0px;">
 			<form method="post" action="/">
@@ -192,9 +195,6 @@ userActivity($activity,$_SESSION['userid'])
 						</li>
 						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
 							<a data-bs-toggle="pill" class="nav-link"  data-bs-toggle="tab" href="#menu1">Details</a>
-						</li>
-						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
-							<a data-bs-toggle="pill" class="nav-link"  data-bs-toggle="tab" href="#menu2">Tasks</a>
 						</li>
 					</ul>
 				</div>
@@ -284,46 +284,6 @@ userActivity($activity,$_SESSION['userid'])
 							<li class="list-group-item">Category: <?php echo $ticket['category']; ?></li>
 							<li class="list-group-item">Tags: <?php echo $ticket['tags']; ?></li>
 						</ul>
-					</div>
-					<div id="menu2" class="tab-pane fade-in">
-						<button data-bs-toggle="modal" data-bs-target="#editTrigger" type="button" class="btn btn-sm btn-warning"><i class="fas fa-plus"></i> &nbsp;Add Task</button><hr>
-						<table class="table table-hover table-borderless" id="datatable">
-							<tr>
-								<th>Task Name</th>
-								<th>Date Created</td>
-								<th style="float:right"></th>
-							</tr>
-							<?php
-							$count=0;
-							$query = "SELECT * FROM tasks WHERE active='1' ORDER BY ID ASC";
-							$results = mysqli_query($db, $query);
-							while($task = mysqli_fetch_assoc($results)){
-								$count++;
-								if($task['last_run']!=""){ $last_run=$task['last_run'];}else{ $last_run="Never";}
-							?>
-							<tr id="task<?php echo $task['ID']; ?>">
-								<td><?php echo $task['name']; ?></td>
-								<td><?php echo $last_run; ?></td>
-								<td style="float:right">
-									<form action="/" method="post" style="display:inline;">
-										<input type="hidden" value="<?php echo $task['ID'];?>" name="ID">
-										<input type="hidden" value="startTask" name="type">
-										<button type="submit" title="Run Task Now" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
-											<i class="fas fa-play"></i>
-										</button>
-									</form>
-									<button type="button" onclick="deleteTask('<?php echo $task['ID']; ?>')" title="Delete Task" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
-										<i class="fas fa-trash"></i>
-									</button>
-								</td>
-							</tr>
-							<?php } 
-							if($count == 0){ ?>
-								<tr>
-									<td colspan=4><center><h6>Once you create a Task, it will show up here.</h6></center></td>
-								</tr>
-						<?php }?>
-						</table>
 					</div>
 				</div>
 			</div>	

@@ -395,11 +395,12 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 					</div>
 					<div id="Alerts" class="tab-pane fade">
 						<button data-bs-toggle="modal" data-bs-target="#editAlert" onclick="$('#alertCompany').show();$('#alertID').val('');" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</button><hr>
+						<p>Configure alerts for all assets or assets within a certain <?php echo strtolower($msp); ?></p>
 						<table class="table table-hover table-borderless" id="datatable">
 							<tr>
 								
 								<th>Name</th>
-								<th >Alert Details</th>
+								<th >Details</th>
 								<th><?php echo $msp; ?></th>
 								<th style="float:right">Actions</th>
 							</tr>
@@ -443,7 +444,7 @@ if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['s
 						<button data-bs-toggle="modal" data-bs-target="#editTrigger" class="btn btn-sm btn-warning"><i class="fas fa-plus"></i> &nbsp;Add Task</button><hr>
 						<table class="table table-hover table-borderless" id="datatable">
 							<tr>
-								<th>Task Name</th>
+								<th>Name</th>
 								<th>Last run</td>
 								<th style="float:right"></th>
 							</tr>

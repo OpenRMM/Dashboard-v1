@@ -181,15 +181,15 @@ $online = $data['online'];
 						</ul>
 					</div>
 				</div>
-				<div class="panel panel-default" style="height:auto;color:#fff;color#000;padding:20px;border-radius:6px;margin-bottom:20px;">
-					<center>
-						<?php if($_SESSION['accountType']=="Admin"){ ?>
+				<?php if($_SESSION['accountType']=="Admin"){ ?>
+					<div class="panel panel-default" style="height:auto;color:#fff;color#000;padding:20px;border-radius:6px;margin-bottom:20px;">
+						<center>
 							<a style="width:75%;margin-top:-3px;border:none;" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delModal" href="javascript:void(0)">
 								<i class="fas fa-trash"></i> &nbsp; Delete Asset
 							</a>
-						<?php } ?>
-					</center>
-				</div>			
+						</center>
+					</div>	
+				<?php } ?>		
 			</div>
 		</div>	
 	</div>

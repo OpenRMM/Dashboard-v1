@@ -42,7 +42,6 @@ checkAccess($_SESSION['page']);
 		<table id="<?php echo $_SESSION['userid']; ?>Downloads" style="line-height:10px;overflow:hidden;font-size:14px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">
 			<thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">
-				<th scope="col">#</th>
 				<th scope="col">Filename</th>
 				<th scope="col">Date Published</th>
 				<th scope="col">Actions</th>
@@ -56,19 +55,18 @@ checkAccess($_SESSION['page']);
 						if ($entry != "." && $entry != "..") {
 						$key++;
 						?>
-						<tr <?php if($user==true){?> style="text-align:center;" <?php }?>>
-						<th scope="row"><?php echo $key;?></th>
+						<tr>
 						<td>
 							<?php echo $entry; ?>
 							<?php echo (strpos($entry, $siteSettings['general']['agent_latest_version'])!==false ? " <b>- Latest</b>" : "");?>
 						</td>
 						<td><?php echo date("m/d/Y", filemtime("../downloads/".$entry)); ?></td>
 						<td>
-							<a class="btn btn-sm btn-primary" <?php if($user==false){ echo 'style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"'; }else echo '"'; ?> href="../../?file=<?php echo urlencode($entry); ?>">
-								<?php if($user==false){ echo "<i class='fas fa-download'>&nbsp;</i>"; }else{ echo "Download"; } ?>
+							<a class="btn btn-sm btn-primary" title="Download" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" href="../../?file=<?php echo urlencode($entry); ?>">
+								<i class='fas fa-download'></i>
 							</a>
-							<?php if($user==false) { ?>
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#versionModal" onclick="delVersion('<?php echo $entry; ?>')">
+							<?php if($_SESSION['userid']!="") { ?>
+								<a title="Delete" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#versionModal" onclick="delVersion('<?php echo $entry; ?>')">
 									<i class="fas fa-trash">&nbsp;</i>
 								</a>
 							<?php } ?>
