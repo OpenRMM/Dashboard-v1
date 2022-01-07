@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 02, 2021 at 04:05 PM
+-- Generation Time: Jan 05, 2022 at 09:25 AM
 -- Server version: 10.3.29-MariaDB
 -- PHP Version: 7.2.29
 
@@ -54,7 +54,8 @@ CREATE TABLE `asset_messages` (
   `time` timestamp NOT NULL DEFAULT current_timestamp(),
   `hex` varchar(9999) NOT NULL DEFAULT '',
   `chat_started` int(1) NOT NULL DEFAULT 0,
-  `chat_viewed` int(1) NOT NULL DEFAULT 0
+  `chat_viewed` int(1) NOT NULL DEFAULT 0,
+  `is_typing` varchar(10) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -158,11 +159,22 @@ CREATE TABLE `computer_data` (
 CREATE TABLE `general` (
   `ID` int(11) NOT NULL,
   `agent_latest_version` varchar(10) NOT NULL,
-  `default_agent_settings` text NOT NULL DEFAULT '',
-  `sitewide_alert` text NOT NULL,
-  `asset_history` int(1) NOT NULL DEFAULT 0,
-  `server_status` int(1) NOT NULL DEFAULT 0
+  `default_agent_settings` text NOT NULL DEFAULT ''
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `servers`
+--
+
+CREATE TABLE `servers` (
+  `ID` int(11) NOT NULL,
+  `hostname` varchar(50) NOT NULL,
+  `statistics` text NOT NULL DEFAULT '{}',
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `active` int(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -321,6 +333,7 @@ ALTER TABLE `computers`
 --
 ALTER TABLE `computer_data`
   ADD PRIMARY KEY (`ID`),
+  ADD UNIQUE KEY `ID` (`ID`),
   ADD KEY `Hostname` (`computer_id`),
   ADD KEY `WMI_Name` (`name`);
 
@@ -329,6 +342,13 @@ ALTER TABLE `computer_data`
 --
 ALTER TABLE `general`
   ADD UNIQUE KEY `ID` (`ID`);
+
+--
+-- Indexes for table `servers`
+--
+ALTER TABLE `servers`
+  ADD PRIMARY KEY (`ID`),
+  ADD UNIQUE KEY `hostname` (`hostname`);
 
 --
 -- Indexes for table `tasks`
@@ -417,6 +437,12 @@ ALTER TABLE `computers`
 --
 ALTER TABLE `computer_data`
   MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `servers`
+--
+ALTER TABLE `servers`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tasks`

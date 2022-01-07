@@ -304,12 +304,21 @@ userActivity($activity,$_SESSION['userid'])
 								$results = mysqli_query($db, $query);
 								$result = mysqli_fetch_assoc($results);
 								if($result['ID']!=""){
+									$icons = array("desktop","server","laptop","tablet","allinone","other");
+									if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
+										$icon = strtolower(str_replace("-","",$result['computer_type']));
+										if($icon=="allinone")$icon="tv";
+										if($icon=="tablet")$icon="tablet-alt";
+										if($icon=="other")$icon="microchip";
+									}else{
+										$icon = "desktop";
+									} 
 							?>
 							<li onclick="loadSection('Asset_General', '<?php echo $result['ID']; ?>');$('.sidebarComputerName').text('<?php echo textOnNull(strtoupper($hostname),'Unavailable');?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
 								<?php if($result['online']=="0") {?>
 									<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
 								<?php }else{?>
-									<i class="fas fa-desktop" style="color:green;font-size:12px;" title="Online"></i>
+									<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
 								<?php }?>
 								&nbsp;&nbsp;<?php echo $hostname; ?>
 							</li>

@@ -94,9 +94,9 @@
 												if(trim($value)=="Logout"){continue;}
 												if(trim($value)=="Portal"){continue;}
 												if(trim($value)=="Login"){continue;}
+												if(trim($value)=="Servers"){continue;}
 												if(trim($value)=="Dashboard"){continue;}
 												if(trim($value)=="Customers"){continue;}
-												if(trim($value)=="Technicians"){continue;}
 												if(trim($value)=="Technicians"){continue;}
 											?>
 												<div class="col-md-3 form-group">
@@ -267,32 +267,7 @@
 					</div>
 				</div>
 			</div>
-			<!----------- Terminal ---------------->
-			<div id="terminalModal" class="modal fade" role="dialog">
-				<div class="modal-dialog modal-lg">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h6>
-								<b>
-									Terminal
-								</b>
-							</h6>
-						</div>
-						<div class="modal-body" style="background-color:#000;color:#fff;font-family: 'Courier New', Courier, monospace;padding:20px;">
-							<div style="max-height:400px;margin-bottom:10px;min-height:100px;overflow:auto;">
-								<div id="terminalResponse" style="color:#fff;font-family:font-family:monospace;">
-									Microsoft Windows [Version 10.0.<?php echo rand(100000,9999999);?>]<br/>
-									(c) <?php echo date("Y");?> Microsoft Corporation. All rights reserved.
-									<br/><br/>
-								</div>
-							</div>
-							<div style="min-height:50px;">
-								<?php echo strtoupper($hostname);?>> <input type="text" id="terminaltxt" style="outline: none;border:none;background:#000;width:300px;color:#fff;font-family:font-family:monospace;"/>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			
 			<!------------- Alerts ------------------->
 			<div id="computerAlerts" class="modal fade" role="dialog">
 				<div class="modal-dialog modal-lg">
@@ -324,12 +299,12 @@
 						</div>
 						<div class="modal-body">
 							<div id="olderData_content" style="overflow-x:hidden;overflow-y:auto;max-height:400px;">
-							<center>
-								<h3 style='margin-top:40px;'>
-									<div class='spinner-grow text-muted'></div>
-									<div class='spinner-grow' style='color:#0c5460'></div>
-								</h3>
-							</center>
+								<center>
+									<h3 style='margin-top:40px;'>
+										<div class='spinner-grow text-muted'></div>
+										<div class='spinner-grow' style='color:#0c5460'></div>
+									</h3>
+								</center>
 							</div>
 						</div>
 						<div class="modal-footer">
@@ -338,7 +313,6 @@
 					</div>
 				</div>
 			</div>
-
 			<!-------------asset messages ------------------->
 			<div id="asset_message_modal" class="modal fade" role="dialog">
 				<div class="modal-dialog modal-lg">
@@ -346,26 +320,23 @@
 						<div class="row clearfix">
 							<div  class="col-lg-12">
 								<div class="card chat-app">
-									<sdfsdfsd id="chatDiv" >
+									<div id="chatDiv" >
 										<center>
 											<h3 style='margin-top:40px;'>
 												<div class='spinner-grow text-muted'></div>
 												<div class='spinner-grow' style='color:#0c5460'></div>
 											</h3>
 										</center>
-									</sdfsdfsd>
-									<div  class="chat-message clearfix">
-										<div style="width:490px;float:right;margin-right:15px;margin-bottom:-20px" class="input-group">
-											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-paper-plane"></i></span>
-											</div>
+									</div>
+									<div class="chat-message clearfix">
+										<div style="width:490px;float:right;margin-right:15px;margin-bottom:-20px" class="input-group">									
+											<span class="input-group-text"><i class="fas fa-paper-plane"></i></span>
 											<input type="hidden" name="ID" id="asset_message_id"  value="<?php echo $computerID; ?>"> 
 											<input type="hidden" name="user_id" id="user_id"  value="<?php echo $_SESSION['userid']; ?>"> 
 											<input type="text" oninput="updateLastTypedTime();" id="asset_message" required class="form-control" name="message" placeholder="Enter text here...">   
 											<button onclick="sendChat();" class="btn btn-sm btn-primary"><i class="fas fa-paper-plane"></i> &nbsp;Send</button>                      
 										</div>
-									</div>
-									</div>
+									</div>									
 								</div>
 							</div>
 						</div>
@@ -412,9 +383,6 @@
 					<div class="modal-content">
 						<div class="modal-header">
 							<h5 class="modal-title" >Create New Task</h5>
-							<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">×</span>
-							</button>
 						</div>
 						<form method="post">
 							<div class="modal-body">
@@ -513,9 +481,6 @@
 					<div class="modal-content">
 						<div class="modal-header">
 							<h5 class="modal-title" >Create New Alert</h5>
-							<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">×</span>
-							</button>
 						</div>
 						<form method="post">
 							<div class="modal-body">
@@ -630,7 +595,7 @@
 								<center>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-sm btn-default"  data-bs-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-sm btn-default" data-bs-dismiss="modal">Close</button>
 								<button type="button" onclick='sendMessage()' data-bs-dismiss="modal" class="btn btn-primary btn-sm">
 									Send <i class="fas fa-paper-plane" ></i>
 								</button>

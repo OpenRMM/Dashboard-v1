@@ -88,7 +88,7 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 							<?php if($_SESSION['accountType']=="Admin"){  ?>
 								<li onclick="deleteActivity()" class="active bg-danger text-white" style="cursor:pointer" >    
 									<input type="hidden" id="delActivity" name="delActivity" value="<?php echo $userID; ?>">        
-									<a style="text-decoration:none" href="javascript:void(0)" style="background:#0c5460;color:#d1ecf1;cursor:pointer" data-bs-toggle="tab">Clear Activity</a>
+									<a href="javascript:void(0)" style="background:#dedede;color:#696969;cursor:pointer;text-decoration:none" data-bs-toggle="tab">Clear Activity</a>
 								</li>
 							<?php } ?>
 						</ul>

@@ -13,7 +13,7 @@ checkAccess($_SESSION['page']);
 			<i class="fas fa-upload"></i> Upload Agent
 		</a>		
 	</h5>
-	<p>Downloading Older Agent Versions May Expose The Client To Bugs Or Have Less Features Available. However, Older Versions May Help With Compatibility.
+	<p>Downloading older agent versions may expose the asset to bugs or have less features available. However, older versions may help with compatibility.
 		<br><br>
 		<span style="color:red">Note: This will download a generic agent. It will not be assigned to a <?php echo strtolower($msp); ?>.</span>
 	</p>

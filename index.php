@@ -28,7 +28,7 @@ if(isset($_GET['file'])){
 		}
 		include("includes/post.php");	
 	}
-
+	
 	
 ?>
 <!DOCTYPE html>
@@ -49,7 +49,6 @@ if(isset($_GET['file'])){
   		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"/>
 		<link rel="stylesheet" href="assets/css/tagsinput.css"/>
-		<link rel="stylesheet" href="assets/css/sbootstrap.min.css"/>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   	
 
@@ -61,7 +60,7 @@ if(isset($_GET['file'])){
 		
 		<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
 		<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 		<link rel="stylesheet" href="assets/css/toastr.css"/>
 		<link rel="stylesheet" href="assets/css/custom.css"/>
 		<link rel="stylesheet" href="assets/css/style.css"/>
@@ -82,7 +81,6 @@ if(isset($_GET['file'])){
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 		<script src="assets/js/tagsinput.js"></script>
-
 	</head>
 	<script>
 		var force="";
@@ -190,12 +188,12 @@ if(isset($_GET['file'])){
 							<i class="fas fa-home"></i>&nbsp;&nbsp;&nbsp; Dashboard
 						</li>
 						<li onclick="loadSection('Assets');" id="secbtnAssets" class="secbtn">
-							<i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Assets <span id="assetCount" title="Assets Online" style="float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$assetCount; ?></span>
+							<i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Assets <span id="assetCount" title="Assets Online" style="background:#696969;float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$assetCount; ?></span>
 						</li>
 						<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
 						<?php if(in_array("Service_Desk_Home", $allowed_pages)){  ?>
 						<li id="secbtnService_Desk_Home" onclick="loadSection('Service_Desk_Home');" class="secbtn">
-							<i class="fa fa-ticket-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Service Desk <span id="ticketCount" title="Active Tickets" style="float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$ticketCountAll; ?></span>
+							<i class="fa fa-ticket-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Service Desk <span id="ticketCount" title="Active Tickets" style="background:#696969;float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$ticketCountAll; ?></span>
 						</li>
 						<?php } } ?>
 						<li class="secbtn">
@@ -208,6 +206,9 @@ if(isset($_GET['file'])){
 								</li>
 								<li onclick="loadSection('Technicians');" id="secbtnTechnicians" style="width:100%" class="secbtn">
 									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Technicians
+								</li>
+								<li onclick="loadSection('Servers');" id="secbtnServers" style="width:100%" class="secbtn">
+									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Servers
 								</li>
 							<?php } ?>
 							<?php if(in_array("Versions", $allowed_pages)){  ?>
@@ -306,25 +307,50 @@ if(isset($_GET['file'])){
 					</ul>
 					<div style="padding:5px;color:#696969;bottom:0" class="footer-copyright text-center">
 						<center>
-							© <?php echo date('Y');?> Copyright
-							<a style="color:#696969;" target="_blank" href="https://github.com/OpenRMM"> OpenRMM</a><br>
+							© Copyright <?php echo date('Y');?>,
+							<a style="color:#696969;" target="_blank" href="https://github.com/OpenRMM"> OpenRMM</a><hr>
 							<a style="font-size:12px;cursor:pointer;color:#696969" onclick="loadSection('Versions');"><u>Agent Downloads</u></a>
 						</center>
 					</div>
 				</nav>
 			<?php } ?>
-			
+			<!----------- Terminal (jquery issue if not on main page)---------------->
+			<div id="terminalModal" class="modal fade" role="dialog">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h6>
+								<b>
+									Terminal
+								</b>
+							</h6>
+						</div>
+						<div class="modal-body" style="background-color:#000;color:#fff;font-family: 'Courier New', Courier, monospace;padding:20px;">
+							<div style="max-height:400px;margin-bottom:10px;min-height:100px;overflow:auto;">
+								<div id="terminalResponse" style="color:#fff;font-family:font-family:monospace;">
+									<?php echo textOnNull($json['general']['Response'][0]['BuildNumber'], "Microsoft Windows");?>
+									<br/>
+									(c) Microsoft Corporation. All rights reserved.
+									<br/><br/>
+								</div>
+							</div>
+							<div style="min-height:50px;">					
+								<?php echo strtoupper($hostname);?>> 
+								<input type="text" id="terminaltxt" style="outline:none;border:none;background:#000;width:300px;color:#fff;font-family:font-family:monospace;">				
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 			<!-- Page Content -->
 			<div id="content" class="containerLeft" style="margin-left:1;margin-top:15px;width:100%;">
-				<div id="refreshAlert" style="display:none;text-align:center" class="alert alert-warning">
-					
+				<div id="refreshAlert" style="display:none;text-align:center" class="alert alert-warning">					
 				</div>	
-				<div id="alertDiv" style="padding:10px" class="row">
-			
+				<div id="alertDiv" style="padding:10px" class="row">			
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top:20px;">
-					<script>
-						var older_data_modal = "<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div></h3></center>";
-					</script>
+						<script>
+							var older_data_modal = "<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div></h3></center>";
+						</script>
 						<div class="loadSection">
 							<!------ Loads main data from jquery ------>
 							<center>
@@ -337,9 +363,8 @@ if(isset($_GET['file'])){
 									<div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div>
 									<div class='spinner-grow text-light'></div>
 								</h3>
-							</center>
-							
-						</div>
+							</center>						
+						</div>					
 						<div style="height:50px;" class="clearfix">&nbsp;</div>						
 					</div>
 					<footer style="display:none;" class="page-footer font-small black">
@@ -350,8 +375,7 @@ if(isset($_GET['file'])){
 					</footer>
 				</div>
 			</div>
-		</div>
-	
+		</div>	
 	</body>
 	<script src="assets/js/extra.js" ></script>
 	<script src="assets/js/toastr.js"></script>
@@ -396,6 +420,7 @@ if(isset($_GET['file'])){
 			if(section=="Asset_File_Manager" || force=="true"){
 				$(".sidebarComputerName").text("");
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>We are getting the latest information for this asset</h5><br><h6>Instead of waiting, would you like to display the outdated assset data?</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460' type='submit'>View Older Asset Information <i class='fas fa-arrow-right'></i></button></form> <center></div></div>");
+				force="";
 			}else{
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
 			}
@@ -413,9 +438,10 @@ if(isset($_GET['file'])){
 				
 			});
 			var item = '#secbtn'+section;
-			$(item).addClass('secActive');	
+			$(item).addClass('secActive');
+
 		}
-		if(section == "Asset_Portal" || section == "Service_Desk_New_Ticket" || section == "Service_Desk_Ticket" || section == "Service_Desk_Home" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "Technicians" || section == "Customers" || section == "Versions" || section == "Init"){
+		if(section == "Servers" || section == "Asset_Portal" || section == "Service_Desk_New_Ticket" || section == "Service_Desk_Ticket" || section == "Service_Desk_Home" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "Technicians" || section == "Customers" || section == "Versions" || section == "Init"){
 			$('#sectionList').slideUp(400);
 			$('#navConfig').collapse('show');
 		}else if($('#sectionList').css("display")=="none"){
@@ -444,21 +470,20 @@ if(isset($_GET['file'])){
 	</script>
 	<script>
 		var counter = 2;
-		$("#addButton").click(function () {
-	 
-		var newTextBoxDiv = $(document.createElement('tr')).attr("id", 'TextBoxDiv' + counter);
-		newTextBoxDiv.after().html('<th scope="row" style="vertical-align:middle;">AND</th>' +
-			'<td>' +
-			'<select required class="form-control" style="width:23%;display:inline-block;" name="taskCond' + counter + '">'+
-			'<option value="Total Alert Count">Total Alert Count</option><option value="Total Ram/Memory">Total Ram/Memory</option><option value="Available Disk Space">Available Disk Space</option><option value="Total Disk Space">Total Disk Space</option><option value="Domain">Domain</option><option value="Public IP Address">Public IP Address</option><option value="Antivirus">Antivirus</option><option value="Agent Version">Agent Version</option><option value="Total User Accounts">Total User Accounts</option><option value="Command Received">Command Received</option><option value="Agent Comes Online">Agent Comes Online</option><option value="Agent Goes Offline">Agent Goes Offline</option><option value="Windows Activation">Windows Activation</option><option value="Local IP Address">Local IP Address</option><option value="Last Update">Last Update</option></select> <select class="form-control" required style="width:20%;display:inline-block;" name="taskCond' + counter + 'Comparison"><option value="=">Equals</option><option value="!=">Not Equal</option><option value=">">Greater than</option><option value="<">Less than</option><option value=">=">Greater than or equals</option><option value="<=">Less than equals</option><option value="contain">Contains</option><option value="notcontain">Does not Contain</option></select>' +
-			' <input style="width:47%;display:inline-block;" type="text" class="form-control" required  name="taskCond' + counter + 
-			'Value" id="textbox' + counter + '" value="" ><button onclick="hide('+ counter + ');" type="button" id="removeButton' + counter + '" style="margin-left:10px" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></td>');
-			newTextBoxDiv.appendTo("#TextBoxesGroup");
-		counter++;
-		if(counter><?php echo $taskCondtion_max; ?>){
+		$("#addButton").click(function () { 
+			var newTextBoxDiv = $(document.createElement('tr')).attr("id", 'TextBoxDiv' + counter);
+			newTextBoxDiv.after().html('<th scope="row" style="vertical-align:middle;">AND</th>' +
+				'<td>' +
+				'<select required class="form-control" style="width:23%;display:inline-block;" name="taskCond' + counter + '">'+
+				'<option value="Total Alert Count">Total Alert Count</option><option value="Total Ram/Memory">Total Ram/Memory</option><option value="Available Disk Space">Available Disk Space</option><option value="Total Disk Space">Total Disk Space</option><option value="Domain">Domain</option><option value="Public IP Address">Public IP Address</option><option value="Antivirus">Antivirus</option><option value="Agent Version">Agent Version</option><option value="Total User Accounts">Total User Accounts</option><option value="Command Received">Command Received</option><option value="Agent Comes Online">Agent Comes Online</option><option value="Agent Goes Offline">Agent Goes Offline</option><option value="Windows Activation">Windows Activation</option><option value="Local IP Address">Local IP Address</option><option value="Last Update">Last Update</option></select> <select class="form-control" required style="width:20%;display:inline-block;" name="taskCond' + counter + 'Comparison"><option value="=">Equals</option><option value="!=">Not Equal</option><option value=">">Greater than</option><option value="<">Less than</option><option value=">=">Greater than or equals</option><option value="<=">Less than equals</option><option value="contain">Contains</option><option value="notcontain">Does not Contain</option></select>' +
+				' <input style="width:47%;display:inline-block;" type="text" class="form-control" required  name="taskCond' + counter + 
+				'Value" id="textbox' + counter + '" value="" ><button onclick="hide('+ counter + ');" type="button" id="removeButton' + counter + '" style="margin-left:10px" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></td>');
+				newTextBoxDiv.appendTo("#TextBoxesGroup");
+			counter++;
+			if(counter><?php echo $taskCondtion_max; ?>){
 				$("#addButton" ).hide();
 				return false;
-		}  
+			}  
 		}); 
 		function hide(counter2) {
 			counter--;
@@ -468,10 +493,6 @@ if(isset($_GET['file'])){
 	</script>
 	<script>
 		var timer;
-		
-
-		
-			
 		function loadChat(ID) {
 			callPage();
 			
@@ -498,7 +519,6 @@ if(isset($_GET['file'])){
 				$('#chatDiv2').scrollTop($('#chatDiv2')[0].scrollHeight);
 			});	
 			//refreshTypingStatus();	
-		
 		}
 
 		var textarea = $('#asset_message');
@@ -531,6 +551,6 @@ if(isset($_GET['file'])){
 		setInterval(refreshTypingStatus, 500);
 		textarea.keypress(updateLastTypedTime);
 		textarea.blur(refreshTypingStatus);
+</script>
 
-	</script>
 </html>

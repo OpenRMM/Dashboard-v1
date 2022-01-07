@@ -4,9 +4,9 @@
 	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Init,Login,Logout,Asset_Alerts,Asset_Commands,Dashboard,Profile,Asset_Edit,Technicians,Customers,Assets,Versions"; 
-	$allPages = "Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Asset_Agent_Settings,Asset_File_Manager,Init,Asset_Alerts,Customers,Technicians,Assets,Asset_Attached_Devices,Asset_Commands,Dashboard,Asset_Disks,Asset_Edit,Asset_Event_Logs,Asset_General,Login,Logout,Asset_Memory,Asset_Network,Asset_Optional_Features,Asset_Printers,Asset_Processes,Profile,Asset_Programs,Asset_Services,Asset_Users,Versions";
-	$adminPages = "Asset_Agent_Settings,Technicians,Customers";
+	$excludedPages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Init,Login,Logout,Asset_Alerts,Asset_Commands,Dashboard,Profile,Asset_Edit,Technicians,Customers,Assets,Versions"; 
+	$allPages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Asset_Agent_Settings,Asset_File_Manager,Init,Asset_Alerts,Customers,Technicians,Assets,Asset_Attached_Devices,Asset_Commands,Dashboard,Asset_Disks,Asset_Edit,Asset_Event_Logs,Asset_General,Login,Logout,Asset_Memory,Asset_Network,Asset_Optional_Features,Asset_Printers,Asset_Processes,Profile,Asset_Programs,Asset_Services,Asset_Users,Versions";
+	$adminPages = "Servers,Asset_Agent_Settings,Technicians,Customers";
 	$taskCondtion_max = 5;
 ###########################################################################################################################################
 ######################################################## DEV ONLY DO NOT PASS #############################################################
@@ -236,10 +236,14 @@
 			$results = mysqli_query($db, $query);
 			$resultCount = mysqli_num_rows($results);	
 			while($result = mysqli_fetch_assoc($results)){
-				if($result['computer_id']==$computer['ID'] or $result['company_id']==$computer['company_id']){
-				
+				if($result['computer_id']!="0"){
+					if($result['computer_id']==$computer['ID']){					
+					}else{					
+						continue;
+					}
 				}else{
-					if($result['computer_id']!="0" and $result['company_id']!="0"){
+					if($result['company_id']==$computer['company_id'] or $result['company_id']=="0"){	
+					}else{
 						continue;
 					}
 				}
@@ -453,7 +457,7 @@
 			}
 		}
 		if (!$full) $string = array_slice($string, 0, 1);
-		return $string ? implode(', ', $string) . ' ago' : 'just now';
+		return $string ? implode(', ', $string) . ' ago' : 'just now';	
 	}
 	
 	//Encrypt And Decrypt With Salt

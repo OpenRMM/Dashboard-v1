@@ -138,7 +138,7 @@ if($online=="0"){ ?>
 <div  class="row" >
 	<?php if($size=="3"){ ?>
 	<div data-bs-toggle="modal" data-bs-target="#screenshotModal" class="col-md-3 py-2">
-        <div style="height:<?php echo $height; ?>;cursor:zoom-in;" class="h-80 card-body card">
+        <div style="height:<?php echo $height; ?>;cursor:zoom-in;overflow:hidden;padding:0" class="h-80 card-body card">
 			
           	<img class="img-fluid" style="" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot_1']); ?>"/>              
 			<h6></h6>
@@ -180,7 +180,7 @@ if($online=="0"){ ?>
         </div>
     </div>
 </div>
-<div <?php if($sizse=="3"){ echo 'style="margin-top:-10%"'; } ?> class="row">
+<div style="margin-top:-35px" class="row">
 	<div class="col-xs-6 col-sm-6 col-md-3 col-lg-4" style="padding:5px;">
 		<div class="panel panel-default" style="z-index:999">
 			<div class="panel-heading">
@@ -191,32 +191,42 @@ if($online=="0"){ ?>
 			<div class="panel-body" style="height:285px;">
 				<div class="rsow">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-						<a href="javascript:void(0)" style="color:<?php echo $siteSettings['theme']['Color 5']; ?>" data-bs-toggle="modal" data-bs-target="#companyMoreInfo">
-							<h5>
-								<?php echo crypto('decrypt',$result['name'],$result['hex'])!="" ? ucwords(crypto('decrypt',$result['name'],$result['hex']))." at" : ""; ?>
-								<?php echo textOnNull((crypto('decrypt',$company['name'],$company['hex'])!="N/A" ? crypto('decrypt',$company['name'],$company['hex']) : ""), "No ".$msp." Name"); ?>
-							</h5>
-						</a>
-						<span style="color:#666;font-size:14px;"><?php echo textOnNull(phone(crypto('decrypt',$result['phone'],$result['hex'])), "No Phone"); ?> &bull;
-							<a style="text-decoration:none" href="mailto:<?php echo crypto('decrypt', $result['email'],$result['hex']); ?>">
-								<?php echo textOnNull(phone(crypto('decrypt',$result['email'],$result['hex'])), "No Email"); ?>
+						<div style="margin-top:-10px">
+							<a href="javascript:void(0)" style="color:#696969;text-decoration:none;" data-bs-toggle="modal" data-bs-target="#companyMoreInfo">
+							<?php echo $msp; ?> Details:
+								<br>
+								<ul class="list-group" style="margin-left:20px">
+									<li class="list-group-item secbtn" style="padding:4px">	 
+										<b>Name:</b> <?php echo textOnNull((crypto('decrypt',$company['name'],$company['hex'])!="N/A" ? crypto('decrypt',$company['name'],$company['hex']) : ""), "No ".$msp." Name"); ?>
+										<i style="float:right;margin-right:10px;margin-top:4px" class="fas fa-ellipsis-h"></i>
+									</li>
+								</ul>
 							</a>
-						</span>
+						
+							
+							<div style="margin-top:5px">
+							
+								<span style="color:#696969">Client Details</span><br>
+								<ul class="list-group" style="margin-left:20px">
+									<li class="list-group-item" style="padding:4px"><b>Name:</b> <?php echo textOnNull(crypto('decrypt',$result['name'],$result['hex']),"not set"); ?></li>
+									<li class="list-group-item" style="padding:4px"><b>Email:</b> <a style="text-decoration:none" href="mailto:<?php echo crypto('decrypt',$result['email'],$result['hex']); ?>"><?php echo textOnNull(crypto('decrypt',$result['email'],$result['hex']),"not set"); ?></a></li>
+									<li class="list-group-item" style="padding:4px"><b>Phone:</b> <?php echo textOnNull(crypto('decrypt',$result['phone'],$result['hex']),"not set"); ?></li>
+								</ul>
+							</div>
+						</div>
 					</div>
-					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;"><hr>
-							<button class="btn btn-danger btn-sm" onclick='sendCommand("shutdown -s -t 0", "Shutdown Computer");' style="width:40%;margin:3px;">
-								<i class="fas fa-power-off"></i> Shutdown
-							</button>
-							<button class="btn btn-warning btn-sm" onclick='sendCommand("shutdown -r -t 0", "Reboot Computer");' style="width:40%;margin:3px;color:#000;background:#ffa500;border:#ffa500">
-								<i class="fas fa-redo"></i> Reboot
-							</button><br>
-					</div>
-					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;">
-						<button class="btn btn-sm btn-warning" data-bs-dismiss="modal" type="button" style="background:#0ac282;border:#0ac282;margin:3px;width:50%;" data-bs-toggle="modal" data-bs-target="#agentMessageModal">
-							<i class="fas fa-comment" style=""></i> One-way Message
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 mx-auto" style="text-align:center;bottom:0;position:absolute;left:0;padding-bottom:10px"><hr>
+						<button class="btn btn-danger btn-sm" onclick='sendCommand("shutdown -s -t 0", "Shutdown Computer");' style="width:22%;margsin:3px;height:60px;border-radius:5px">
+							<i class="fas fa-power-off"></i><br>Shutdown
 						</button>
-						<button class="btn btn-sm" onclick='$("#terminaltxt").delay(3000).focus();' type="button" style="width:30%;margin:3px;color:#fff;background:#333;" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#terminalModal">
-							<i class="fas fa-terminal"></i> Terminal
+						<button class="btn btn-warning btn-sm" onclick='sendCommand("shutdown -r -t 0", "Reboot Computer");' style="width:22%;masrgin:3px;color:#000;background:#ffa500;border:#ffa500;;height:60px;border-radius:5px">
+							<i class="fas fa-redo"></i><br>Reboot
+						</button>
+						<button class="btn btn-sm btn-warning" data-bs-dismiss="modal" type="button" style="background:#0ac282;border:#0ac282;msargin:3px;width:22%;;height:60px;border-radius:5px" data-bs-toggle="modal" data-bs-target="#agentMessageModal">
+							<i class="fas fa-comment"></i><br>Show Alert
+						</button>
+						<button class="btn btn-sm" onclick='$("#terminaltxt").delay(3000).focus();' type="button" style="width:22%;margsin:3px;color:#fff;background:#333;;height:60px;border-radius:5px" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#terminalModal">
+							<i class="fas fa-terminal"></i><br>Terminal
 						</button>
 					</div>
 				</div>
@@ -283,6 +293,7 @@ if($online=="0"){ ?>
 					<ul class="list-group" style="margin-left:20px">
 						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.UserName');" id="general_0UserName" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Current User: </b><?php echo textOnNull(basename($json['general']['Response'][0]['UserName']), "Unknown");?></li>
 						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Domain');" id="general_0Domain" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Domain: </b><?php echo textOnNull($json['general']['Response'][0]['Domain'], "N/A");?></li>
+						<!--<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.BuildNumber');" id="general_0BuildNumber" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Build: </b><?php echo textOnNull($json['general']['Response'][0]['Version'], "N/A");?></li>-->
 						<?php
 							$lastBoot = explode(".", $json['general']['Response'][0]['LastBootUpTime'])[0];
 							$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
@@ -331,7 +342,7 @@ if($online=="0"){ ?>
 		</div>
 	</div>
 
-	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
+	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4"style="margin-top:-30px;padding:3px;">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h5 style="padding:7px" class="panel-title">
@@ -349,7 +360,7 @@ if($online=="0"){ ?>
 		  </div>
 		</div>
 	</div>
-	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
+	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="margin-top:-30px;padding:3px;">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h5 style="padding:7px" class="panel-title">
@@ -417,7 +428,7 @@ if($online=="0"){ ?>
 		  	</div>
 		</div>
 	</div>
-	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
+	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="margin-top:-30px;padding:3px;">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h5 style="padding:7px" class="panel-title">

@@ -40,7 +40,7 @@ $online = $results['online'];
 		<span style="color:#000;font-size:12px">Last Update: <?php echo ago($json['filesystem_lastUpdate']);?></span>
 		<hr>
 		<span style="font-size:14px">Current Path:</span><br>
-		<a href="javascript:void(0)" onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $back2; ?>');" style="font-size:22px;margin-left:20px"><?php echo $drive.":".$shownFolder; ?></a>
+		<a href="javascript:void(0)" onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $back2; ?>');" style="font-size:16px;margin-left:20px"><?php echo $drive.":".$shownFolder; ?></a>
 		<div style="float:right;">
 			<div class="btn-group">
 				<button style="background:#0c5460;color:#d1ecf1" onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $current; ?>');" type="button" class="btn btn-sm"><i class="fas fa-sync"></i> &nbsp;Refresh</button>
@@ -64,7 +64,7 @@ $online = $results['online'];
 ?>
 <div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 	<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;border-radius:6px;">			 
-			<form method="post" action="/">
+			
 				<div class="card table-card" style="margin-top:-40px;padding:10px;overflow-x:auto">  
 					<div class="card-header">
 						<div class="card-header-right">
@@ -77,7 +77,7 @@ $online = $results['online'];
 					</div>
 					<?php if($getFolder!=""){ ?>
 						<a href="javascript:void(0)" onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo $back2;?>');" style="text-align:left" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i>&nbsp; Go back</a><br>
-					<?php } ?>
+					<hr><?php } ?>
 					<table id="<?php echo $_SESSION['userid']; ?>File_Manager" style="line-height:20px;overflow:auto;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">				
 						<thead>
 							<tr style="border-bottom:2px solid #d3d3d3;">			  
@@ -143,19 +143,19 @@ $online = $results['online'];
 								}	
 								$count++;	
 						?>		
-						<tr <?php if($icon=="folder"){ ?>style="cursor:pointer" onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo ($path);?>');"<?php } ?>>
-							<td>
+						<tr <?php if($icon=="folder"){ ?>style="cursor:pointer"<?php } ?>>
+							<td onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo ($path);?>');">
 								<i style="font-size:18px" class="fas fa-<?php echo $icon; ?> text-secondary"></i>
 							</td>
-							<td>       	
+							<td onclick="loadSection('Asset_File_Manager', '<?php echo $computerID; ?>','latest','<?php echo ($path);?>');">       	
 								<?php echo $info; ?>	
 							</td>
 							<td style="float:right">
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" title="Rename" class="btn btn-sm btn-success" onclick="fileActionsModal('rename','<?php echo $info; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-pen"></i></a>
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Move" class="btn btn-sm btn-secondary" onclick="fileActionsModal('move','<?php echo $info; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-arrows-alt"></i></a>
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Copy" class="btn btn-sm btn-primary" onclick="fileActionsModal('copy','<?php echo $info; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-copy"></i></a>
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Download" class="btn btn-sm btn-warning" onclick="fileActionsModal('download','<?php echo $info; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-download"></i></a>
-								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Delete" class="btn btn-sm btn-danger" onclick="fileActionsModal('delete','<?php echo $info; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-trash"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" title="Rename" class="btn btn-sm btn-success" onclick="fileActionsModal('rename','<?php echo $info; ?>','<?php echo $drive.":".$shownFolder; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-pen"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Move" class="btn btn-sm btn-secondary" onclick="fileActionsModal('move','<?php echo  $drive.":/".$info; ?>','<?php echo $drive.":".$shownFolder; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-arrows-alt"></i></a>
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Copy" class="btn btn-sm btn-primary" onclick="fileActionsModal('copy','<?php echo $drive.":/".$info; ?>','<?php echo $drive.":".$shownFolder; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-copy"></i></a>
+								<!--<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Download" class="btn btn-sm btn-warning" onclick="fileActionsModal('download','<?php echo $info; ?>','');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-download"></i></a>-->
+								<a style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;"title="Delete" class="btn btn-sm btn-danger" onclick="fileActionsModal('delete','<?php echo $info; ?>','<?php echo $drive.":".$shownFolder; ?>');" data-bs-toggle="modal" data-bs-target="#fileAction_modal" href="javascript:void(0)"><i class="fas fa-trash"></i></a>
 							</td>
 						</tr>
 					<?php } ?>
@@ -242,25 +242,23 @@ $online = $results['online'];
 					<?php } ?>
 				</div>
 			</div>
-			<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;margin-top:-35px">
+			<!--<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;margin-top:-35px">
 				<div style="height:45px" class="panel-heading">
 					<h5 class="panel-title">Upload File</h5>
 				</div>
 				<form method="post">
 					<div class="card-block texst-center">
-						<div class="custom-file" >
-							<input required="" type="hidden" value="true" name="agentFile">
-							<input  required="" accept=".exe" type="file" name="agentUpload" class="custom-file-input" id="agentUpload"/>
-							<label style="padding:10px;padding-bottom:30px" class="custom-file-label" for="agentUpload">Choose file</label>
-						</div>
+						<input required="" type="hidden" value="true" name="agentFile">
+						<input  required="" accept=".exe" type="file" name="agentUpload" class="form-control" id="agentUpload"/>
 					</div>
-					<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" title="Complete Upload" class="btn btn-warning btn-block p-t-15 p-b-15">Start Upload</button>
+					<button type="submit" style="background:<?php echo $siteSettings['theme']['Color 5']; ?>;border:none" title="Complete Upload" class="btn btn-warning btn-sm btn-block">Start Upload</button>
 				</form>
-			</div>	
+			</div>-->	
 		</div>
 		
 	</div>
 </div>
+				
 <!------------- file action modal ------------------->
 <div id="fileAction_modal" class="modal fade" role="dialog">
 	<div class="modal-dialog">
@@ -279,7 +277,10 @@ $online = $results['online'];
 					<div style="display:none" id="actions_input">
 						<br>
 						<label id="actions_inputLabel">File Path</label>
-						<input type="text" placeholder="ex. C:/Demos/test" value="<?php echo $getFolder; ?>" class="form-control" name="filePath">
+						<input type="text" id="file_path" placeholder="ex. C:/Demos/test" value="<?php echo $getFolder; ?>" class="form-control" name="filePath">
+						<input type="hidden" id="act_type" value="" name="fs_act_type">
+						<input type="hidden" id="act_name" value="" name="fileFolder">
+						<input type="hidden"  value="<?php echo $computerID; ?>" name="ID">
 					</div>
 					<div class="modal-footer">
 						<button type="button"  class="btn btn-sm btn-default"  data-bs-dismiss="modal">Close</button>
@@ -311,39 +312,53 @@ $online = $results['online'];
 $(document).ready(function(){
 	$('.fadein').fadeIn("slow");
 });
-function fileActionsModal(action, filename){
+function fileActionsModal(action, filename, path){
 	$("#filename").html("<b>File Actions for "+filename+"</b>");
 	if(action=="delete"){
 		$("#fileActionText").html("Are you sure you would like to delete this file from the selected asset?");
 		$("#actions_input").hide();
+		$("#file_path").val(filename);
 		$("#actions_btnText").val("Delete");
+		$("#act_type").val("delete");
+		$("#act_name").val(filename);
 		return; 
 	}
 	if(action=="rename"){
 		$("#fileActionText").html("What is the desired name for this file?");
 		$("#actions_inputLabel").text("File Name:");
 		$("#actions_input").show();
+		$("#file_path").val(filename);
 		$("#actions_btnText").val("Rename");
+		$("#act_type").val("rename");
+		$("#act_name").val(path + filename);
 		return;
 	}
 	if(action=="move"){
 		$("#fileActionText").html("Where would you like to move this file to?");
 		$("#actions_inputLabel").text("File Path:");
 		$("#actions_input").show();
+		$("#file_path").val(path);
 		$("#actions_btnText").val("Move");
+		$("#act_type").val("move");
+		$("#act_name").val(filename);
 		return;
 	}
 	if(action=="copy"){
 		$("#fileActionText").html("Where would you like to copy this file to?");
 		$("#actions_inputLabel").text("File Path:");
 		$("#actions_input").show();
+		$("#file_path").val(path);
 		$("#actions_btnText").val("Copy");
+		$("#act_type").val("copy");
+		$("#act_name").val(filename);
 		return;
 	}
 	if(action=="download"){
 		$("#fileActionText").html("Would you like to Download: " +filename+"?");
 		$("#actions_input").hide();
 		$("#actions_btnText").val("Download");
+		$("#act_type").val("download");
+		$("#act_name").val(filename);
 		return;
 	}
 }

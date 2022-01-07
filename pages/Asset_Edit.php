@@ -79,7 +79,7 @@ $online = $data['online'];
 					</select>
 				</div>
 				<hr>
-				<h4 class="page-header">Client Information</h4><br>
+				<h5 class="page-header">Client Information</h5><br>
 				<div class="form-group float-label-control">
 					<label>Client Name:</label>
 					<input type="text" name="name" value="<?php echo crypto('decrypt',$data['name'],$data['hex']); ?>" class="form-control" placeholder="What's Their Name?">
@@ -103,7 +103,7 @@ $online = $data['online'];
 							Asset Settings
 						</h4>
 					</div>
-					<div  class="panel-body">
+					<div class="panel-body">
 						<div class="form-check" style="border-radius:6px;margin-bottom:10px;padding:10px;padding-left:50px;color:#333;">
 							<input value="1" <?php if($data['show_alerts']=="1"){ echo "checked"; } ?>  name="show_alerts" type="checkbox" class="form-check-input" id="noalerts">
 							<label class="form-check-label" for="show_alerts">Show Alerts For This Asset</label>
@@ -161,7 +161,7 @@ $online = $data['online'];
 									if($icon=="tablet")$icon="tablet-alt";
 									if($icon=="other")$icon="microchip";
 								}else{
-									$icon = "server";
+									$icon = "desktop";
 								}  
 							?> 
 							<a style="text-decoration:none" href="javascript:void(0)" class="text-dark" onclick="loadSection('Asset_Edit', '<?php echo $data['ID']; ?>');$('.sidebarComputerName').text('<?php echo strtoupper($hostname);?>');">

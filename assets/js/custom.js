@@ -6,9 +6,10 @@ $(document).ready(function () {
 });
 
 //Terminal
-$('#terminaltxt').keypress(function(event){
-    var keycode = (event.keyCode ? event.keyCode : event.which);
+$('#terminaltxt').keypress(function(e){
+    var keycode = (e.keyCode ? e.keyCode : e.which);   	
     if(keycode == '13'){
+      
         $("#terminalResponse").html("Sending Command: "+$('#terminaltxt').val()+" <i class='fas fa-spinner fa-spin'></i>");
         $.post("includes/terminal.php", {
             id: computerID,
@@ -16,7 +17,7 @@ $('#terminaltxt').keypress(function(event){
         },
         function(data, status){
             $("#terminalResponse").html(data);
-        });
+        });     
     }
 });
 
@@ -214,21 +215,7 @@ function deleteActivity(){
     });
 }
 
-function serverStatus(action){ 
-    $.post("index.php", {
-        type: "serverStatus",
-        action: action
-    },
-    function(data, status){
-        toastr.options.progressBar = true;
-        if(action=="stop"){
-            type2="error";
-        }else{
-            type2="warning";
-        }
-        toastr[type2]('The request to ' + action + ' the server has been sent.');
-    });
-}
+
 
 function updateAgent(ID2){ 
     $.post("index.php", {
@@ -311,6 +298,42 @@ function deleteAssets(){
         toastr.error('The Selected Assets Have Been Deleted');
         
     });
+}
+function deleteServer(ID,action){   
+    $.post("index.php", {
+        ID: ID,
+        action: action,
+        type: "deleteServer"
+    },
+    function(data, status){            
+        toastr.options.progressBar = true;
+        if(action=="0"){
+            $("#delServer"+ID).hide();
+            $("#actServer"+ID).show();
+            toastr.error('The Selected Server Has Been Disabled');
+        }else{
+            $("#actServer"+ID).hide();
+            $("#delServer"+ID).show();
+            toastr.success('The Selected Server Has Been Enabled');
+        }       
+    });
+}
+function serverStatus(ID,action){  
+    if (confirm('Are you sure you want to ' + action +' this server?')) { 
+        $.post("index.php", {
+            ID: ID,
+            action: action,
+            type: "serverStatus"
+        },
+        function(data, status){            
+            toastr.options.progressBar = true;
+            if(action=="restart"){
+                toastr.warning('The Selected Server Has Been Restarted');
+            }else{
+                toastr.error('The Selected Server Has Been Shutdown');
+            }       
+        });
+    }
 }
 function assignAssets(){ 
     var array = []

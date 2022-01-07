@@ -41,17 +41,22 @@ if($_SESSION['userid']!=""){
     }
 
     //check if 2 servers
-    $query = "SELECT * FROM computers WHERE computer_type='OpenRMM Server' and online='1' and active='1' ORDER BY ID DESC";
+    $query = "SELECT * FROM servers WHERE active='1' ORDER BY ID ASC";
     $results = mysqli_query($db, $query);
-    $existing = mysqli_fetch_assoc($results);
-    $checkrows=mysqli_num_rows($results);
-    if($checkrows>1 and $_SESSION['notifReset2']==""){
-        echo "<script>toastr.error('Two OpenRMM Servers have been detected. We recommend using one server to avoid conflicts.','',{timeOut:0,extendedTimeOut: 0}); </script>";
-        $_SESSION['notifReset2']="1";
-        saveNotification("Two OpenRMM Servers have been detected. We recommend using one server to avoid conflicts.");
+    $count=0;
+    while($servers = mysqli_fetch_assoc($results)){	
+        if(strtotime($servers['last_update']) < strtotime('-2 minutes')) {
+            continue;
+        }else{
+            $count++;
+        }
+        if($count>1){
+            echo "<script>toastr.error('".$count." OpenRMM Servers have been detected. We recommend using one server to avoid conflicts.<br><br><button onclick=\'loadSection(\"Servers\");\' class=\'btn btn-sm btn-secondary\'>View Servers</button>','',{timeOut:0,extendedTimeOut: 0}); </script>";
+            $_SESSION['notifReset2']="1";
+            saveNotification($count." OpenRMM Servers have been detected. We recommend using one server to avoid conflicts.");
+        }
     }
 }
- 
 if($_SESSION['page']!="Asset_Chat"){
    // if(in_array("AssetChat", $allowed_pages)){
         $query = "SELECT * FROM asset_messages where userid='0' and chat_started='0' ORDER BY ID ASC Limit 1";
@@ -149,5 +154,8 @@ $("#messageCount").text("<?php echo (int)$message_count; ?>");
    $("#notificationList").html('<?php echo $data; ?>');  
    $("#notificationCount").html('<?php echo count($_SESSION['notifications'])-1; ?>');  
 </script>
+
+
+
 
 

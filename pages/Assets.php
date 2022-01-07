@@ -61,7 +61,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 									<th scope="col">Actions</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody >
 								<?php
 									//Get Total Count					
 									$query = "SELECT * FROM computers WHERE active='1' ORDER BY ID ASC";
@@ -87,7 +87,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 										$results2 = mysqli_query($db, $query2);
 										$company = mysqli_fetch_assoc($results2)
 								?>
-								<tr id="row<?php echo $result['ID']; ?>">
+								<tr id="row<?php echo $result['ID']; ?>" >
 									<td>
 										<div class="form-check">
 											<input class="form-check-input checkbox" type="checkbox" value="<?php echo $result['ID']; ?>" name="computers[]" id="flexCheckDefault">	
@@ -106,7 +106,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 												if($icon=="tablet")$icon="tablet-alt";
 												if($icon=="other")$icon="microchip";
 											}else{
-												$icon = "server";
+												$icon = "desktop";
 											}  
 										?>
 										<span style="color:#000;font-size:12px;cursor:pointer" >
@@ -143,13 +143,14 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 									</td>
 									<td>
 										<?php if(in_array("Asset_Edit", $allowed_pages)){  ?>
-										<button onclick="loadSection('Asset_Edit', '<?php echo $result['ID']; ?>');" title="Edit Client" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
+										<button onclick="loadSection('Asset_Edit', '<?php echo $result['ID']; ?>');" title="Edit Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
 											<i class="fas fa-pencil-alt"></i>
 										</button>
 										<?php } ?>
 										<button title="View Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('Asset_General', '<?php echo $result['ID']; ?>');" class="form-inline btn btn-warning btn-sm">
 											<i class="fas fa-eye"></i>
 										</button>
+
 									</td>
 								</tr>
 							<?php }?>
@@ -157,7 +158,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 								<tr>
 									<td colspan=9>
 										<center>
-											<h6>No Assets To Display</h6>
+											<h6>No assets to display.</h6>
 										</center>
 									</td>
 								</tr>
@@ -208,7 +209,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 								<h5 class="modal-title" id="pageAlert_title">Delete Assets</h5>
 							</div>
 							<div class="modal-body">
-								<h6 id="pageAlert_title">Are you sure you would like to delete the selected assets?</h6><hr>		
+								<h6 id="pageAlert_title">Are you sure you would like to delete the selected assets?</h6>		
 							</div>
 							<div class="modal-footer">								
 								<button type="button" class="btn btn-sm" data-bs-dismiss="modal">Close</button>
@@ -257,7 +258,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 								$note = explode("^",$note);
 								$count++;
 						?>
-							<a style="text-decoration:none" title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-bs-toggle="modal" data-bs-target="#viewNoteModal">
+							<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
 								<li style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
 									<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 									<?php echo ucwords($note[0]);?>

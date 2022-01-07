@@ -7,7 +7,7 @@ if(!isset($_SESSION['userid'])){
 	die();
 }
 //show recents on sidebar
-$recent = array_slice($_SESSION['recent'], -8, 8, true);
+$recent = array_slice($_SESSION['recent'], -5, 5, true);
 echo "<h6>Recently Viewed Assets</h6>";	
 $count = 0;
 foreach(array_reverse($recent) as $item) {
@@ -26,7 +26,7 @@ foreach(array_reverse($recent) as $item) {
 		if($icon=="tablet")$icon="tablet-alt";
 		if($icon=="other")$icon="microchip";
 	}else{
-		$icon = "server";
+		$icon = "desktop";
 	} 
 	if($data['online']=="1"){
 		$color="color:green";
@@ -57,7 +57,7 @@ foreach(array_reverse($recent) as $item) {
 <?php if($siteSettings['Service_Desk']=="Enabled"){ 
 	if(in_array("Service_Desk_Ticket", $allowed_pages)){ 
 		//show recents on sidebar
-		$recent2 = array_slice($_SESSION['recentTickets'], -8, 8, true);
+		$recent2 = array_slice($_SESSION['recentTickets'], -5, 5, true);
 		echo "<h6>Recently Viewed Tickets</h6>";	
 		$count2 = 0;
 		foreach(array_reverse($recent2) as $item2) {

@@ -461,6 +461,35 @@
 			userActivity($activity,$_SESSION['userid']);			
 			header("location: /");
 		}
+		//Delete Server
+		if($_POST['type'] == "deleteServer"){
+			$ID = (int)$_POST['ID'];
+			$active = (int)$_POST['action'];
+			$query = "UPDATE servers SET active='".$active."' WHERE ID='".$ID."';";
+			$results = mysqli_query($db, $query);
+			if($active=="1"){
+				$action=' enabled';
+			}else{
+				$action=' disabled';
+			}
+			$activity = "Server: ".$ID.$action;
+			userActivity($activity,$_SESSION['userid']);			
+			header("location: /");
+		}
+		//server status
+		if($_POST['type'] == "serverStatus"){
+			$ID = (int)$_POST['ID'];
+			$active = (int)$_POST['action'];
+			if($active=="restart"){
+				$action=' restarted';
+			}else{
+				$action=' shutdown';
+			}
+			MQTTpublish($ID."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"payload":"'.$commands.'"}',$ID,false);
+			$activity = "Server: ".$ID.$action;
+			userActivity($activity,$_SESSION['userid']);			
+			header("location: /");
+		}
 		//Delete Command
 		if($_POST['type'] == "DeleteCommand"){
 			$ID = $_POST['ID'];
@@ -781,4 +810,30 @@
 				echo '<script>window.onload = function() { pageAlert("File Upload", "Download Started For Customer Agent","Default"); };</script>';
 				header("location: ../../download//?company=".$company);
 			}
+		}
+
+		//needs tested, then combined
+		if($_POST['fs_act_type']=="rename"){
+			$path = $_POST['filepath'];
+			$filename = $_POST['fileFolder'];
+			$id = (int)$_POST['ID'];
+			$commands = "rename ".$filename." ".$path;
+			MQTTpublish($id."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"commandID": "'.$insertID.'","data":"'.$commands.'"}',$id,false);
+		}
+		if($_POST['fs_act_type']=="move"){ 
+			$path = $_POST['filepath'];
+			$filename = $_POST['fileFolder'];
+			$id = (int)$_POST['ID'];
+			$commands = "move ".$filename." ".$path;
+			MQTTpublish($id."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"commandID": "'.$insertID.'","data":"'.$commands.'"}',$id,false);
+		}
+		if($_POST['fs_act_type']=="copy"){
+			$path = $_POST['filepath'];
+			$filename = $_POST['fileFolder'];
+			$id = (int)$_POST['ID'];
+			$commands = "copy ".$filename." ".$path;
+			MQTTpublish($id."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"commandID": "'.$insertID.'","data":"'.$commands.'"}',$id,false);
+		}
+		if($_POST['fs_act_type']=="delete"){
+
 		}

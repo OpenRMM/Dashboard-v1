@@ -1,5 +1,28 @@
 <?php
-include("db.php");
+    include("db.php");
+?>
+<script>
+<?php 
+$query = "SELECT * FROM servers where active='1' ORDER BY ID ASC";
+$results = mysqli_query($db, $query);
+$resultCount = mysqli_num_rows($results);
+$count=0;
+while($computer = mysqli_fetch_assoc($results)){
+    if(strtotime($computer['last_update']) < strtotime('-2 minutes')) {
+        $count++;
+    }
+}
+if($resultCount==$count){
+ ?>
+     toastr.remove()
+     toastr.error('All OpenRMM Servers are offline. Assets will not be able to send or recieve new data.');
+ <?php
+     //set assets to offline
+     $query = "UPDATE computers SET online='0';";
+     $results = mysqli_query($db, $query);       
+ } ?>
+ </script>
+ <?php
 if($_SESSION['excludedPages']==""){
     $_SESSION['excludedPages'] = explode(",",$excludedPages); //use this to clear pages if an error occurs
 }
@@ -232,16 +255,13 @@ $_SESSION['raw_data_value_raw']="";
 ?>
 <?php 
 if($_SESSION['userid']!=""){
-    require("modals.php"); 
+    require("modals.php");  
 ?>
         <div id="notifications"> </div>
         <script>
             setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
                 $("#notifications").load("includes/notifications.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other));	
             }, 5000);
-            <?php if($siteSettings['general']['server_status']=="0" or $siteSettings['general']['server_status']==""){ ?>
-                toastr.remove()
-                toastr.error('The Asset Sever is offline. Assets will not be able to send or recieve new data.');
-            <?php } ?>
+           
         </script>
 <?php } ?>
