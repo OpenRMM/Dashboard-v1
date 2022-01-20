@@ -12,7 +12,7 @@ $siteSettingsJson = '
         "salt": "[salt]"
     },
     "agentEncryption": {
-        "secret": "[agentSecret]",
+        "secret": "[agentSecret]"
     },
     "MQTT": {
         "host": "[mqttHost]",
@@ -21,11 +21,11 @@ $siteSettingsJson = '
         "port": "[mqttPort]"
     },
     "theme": {
-        "Color 1": "[color1]",
-        "Color 2": "[color2]",
-        "Color 3": "[color3]",
-        "Color 4": "[color4]",
-        "Color 5": "[color5]",
+        "Color 1": "#f0f0f0",
+        "Color 2": "#d1ecf1",
+        "Color 3": "#0ac282",
+        "Color 4": "#eb3422",
+        "Color 5": "#01a9ac",
         "MSP": "false"
     },
     "Alert Settings": {
@@ -50,4 +50,3 @@ $siteSettingsJson = '
     },
     "Service_Desk": "Enabled"
 }';
- 

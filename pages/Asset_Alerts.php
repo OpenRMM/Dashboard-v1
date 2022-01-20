@@ -2,7 +2,6 @@
 $computerID = (int)base64_decode($_GET['ID']);
 checkAccess($_SESSION['page'],"null");
 
-
 $json = getComputerData($computerID, array("general"));
 $query = "SELECT  online, ID,show_alerts FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));

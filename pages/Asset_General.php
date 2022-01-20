@@ -6,7 +6,7 @@ $query = "SELECT online, ID, company_id, name, phone, email,hex, computer_type F
 $results = mysqli_query($db, $query);
 $result = mysqli_fetch_assoc($results);
 
-$query = "SELECT name, phone, email,address,comments,date_added,hex,owner FROM companies WHERE ID='".$result['company_id']."' LIMIT 1";
+$query = "SELECT name, phone, email,address,comments,date_added,hex,owner FROM companies WHERE ID='".$result['company_id']."' and active='1' LIMIT 1";
 $companies = mysqli_query($db, $query);
 $company = mysqli_fetch_assoc($companies);
 
@@ -78,7 +78,7 @@ userActivity($activity,$_SESSION['userid']);
 				<div class="dropdown-menu">
 					<a onclick="force='true'; loadSection('Asset_General','<?php echo $computerID; ?>','latest','force');" class="dropdown-item" href="javascript:void(0)">Force Refresh</a>
 				</div>
-			</div>
+			</div>&nbsp;
 			<?php if(in_array("Asset_Agent_Settings", $allowed_pages)){  ?>
 				<button title="Agent Configuration" onclick="loadSection('Asset_Agent_Settings');" class="btn btn-sm" style="margin:3px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 					<i class="fas fa-cogs"></i>
@@ -100,25 +100,24 @@ userActivity($activity,$_SESSION['userid']);
 $agentVersion = preg_replace('/\D/', '', $json['agent']['Response'][0]['Version']);
 if($agentVersion != preg_replace('/\D/', '', $siteSettings['general']['agent_latest_version']) and $online=="1"){ ?>
 	<?php if($agentVersion==""){?>
-		<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
+		<div  style="border-radius: 0px 0px 4px 4px;padding:8px" class="alert alert-danger" role="alert">
 			<div class="spinner-border spinner-border-sm" style="font-size:12px" role="status">
 				<span class="sr-only">Loading...</span>
 			</div>
 			&nbsp;&nbsp;&nbsp;The agent is trying to get initial data for this asset.		
 		</div>
 	<?php }else{ ?>
-		<div onclick="updateAgent('<?php echo $computerID; ?>')" style="border-radius: 0px 0px 4px 4px;cursor:pointer" class="alert alert-danger" role="alert">
+		<div onclick="updateAgent('<?php echo $computerID; ?>')" style="border-radius: 0px 0px 4px 4px;cursor:pointer;padding:8px" class="alert alert-danger" role="alert">
 			<i class="fas fa-cloud-upload-alt"></i>&nbsp;&nbsp;&nbsp;An update is available for this asset. <span style="color:#333;font-weigh:bold"><u>Update to v.<?php echo $siteSettings['general']['agent_latest_version']; ?></u></span>			
 		</div>
 	<?php } ?>
 <?php }
 if($online=="0"){ ?>
-	<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
+	<div  style="border-radius: 0px 0px 4px 4px;padding:8px" class="alert alert-danger" role="alert">
 		<i class="fas fa-ban"></i>&nbsp;&nbsp;&nbsp;This agent is offline.		
 	</div>
-<?php }?>
-
-<?php if($alert!=""){ ?>
+<?php }
+if($alert!=""){ ?>
 	<div class="row alert alert-<?php echo $alertType; ?>" role="alert">
 		<b><?php echo $alert; ?></b>
 	</div>
@@ -130,36 +129,30 @@ if($online=="0"){ ?>
 		$size="4";
 		$height= "250px";
 	}
-	//print_r($json['screenshot_1']);
 ?>
-<style>
-
-</style>
-<div  class="row" >
+<div style="margin-top:10px" id="sortableChart" class="row">
 	<?php if($size=="3"){ ?>
-	<div data-bs-toggle="modal" data-bs-target="#screenshotModal" class="col-md-3 py-2">
-        <div style="height:<?php echo $height; ?>;cursor:zoom-in;overflow:hidden;padding:0" class="h-80 card-body card">
-			
-          	<img class="img-fluid" style="" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot_1']); ?>"/>              
-			<h6></h6>
+		<div data-id="1" data-bs-toggle="modal" data-bs-target="#screenshotModal" style="overflow:hidden" id="chart-1" class="col-md-3">
+			<div style="height:<?php echo $height; ?>;cursor:zoom-in;overflow:hidden;padding:0" class="card-body card">			
+				<img class="img-fluid" style="height:<?php echo $height; ?>" src="data:image/jpeg;base64,<?php echo base64_encode($json['screenshot_1']); ?>"/>              
+				<h6></h6>
+			</div>		
 		</div>
-		
-    </div>
 	<?php } ?>
-    <div style="z-index:1" class=" col-md-<?php echo $size; ?> py-2">
-        <div style="height:<?php echo $height; ?>;" data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.LoadPercentage');" id="processor_LoadPercentage" class="h-80 card-body card">
-			<canvas data-centerval="<?php echo $cpuUsage; ?>%" id="chDonut2"></canvas>
+    <div data-id="2" style="z-index:1"  id="chart-2" class=" col-md-<?php echo $size; ?>">
+        <div style="height:<?php echo $height; ?>;" data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.LoadPercentage');" id="processor_LoadPercentage" class="card-body card">
+			<canvas style="height:<?php echo $height; ?>;" data-centerval="<?php echo $cpuUsage; ?>%" id="chDonut2"></canvas>
 			<h6 style="text-align:center">CPU Usage</h6>
         </div>
     </div>
-    <div class="col-md-<?php echo $size; ?> py-2">
-        <div style="height:<?php echo $height; ?>;" data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.FreePhysicalMemory');" id="general_FreePhysicalMemory" class="h-80 card-body card">
-			<canvas data-centerval="<?php echo (int)$average2; ?>%" id="chDonut1"></canvas>
+    <div data-id="3" id="chart-3" class="col-md-<?php echo $size; ?>">
+        <div style="height:<?php echo $height; ?>;" data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.FreePhysicalMemory');" id="general_FreePhysicalMemory" class="card-body card">
+			<canvas style="height:<?php echo $height; ?>;" data-centerval="<?php echo (int)$average2; ?>%" id="chDonut1"></canvas>
 			<h6 style="text-align:center">RAM Usage</h6>
         </div>
     </div>
-    <div class="col-md-<?php echo $size; ?> py-2">
-        <div data-bs-toggle="modal" style="height:<?php echo $height; ?>;" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','logical_disk','0.FreeSpace');" id="logical_disk_FreeSpace" class="h-80 card-body card">
+    <div data-id="4" id="chart-4" class="col-md-<?php echo $size; ?>">
+        <div data-bs-toggle="modal" style="height:<?php echo $height; ?>;" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','logical_disk','0.FreeSpace');" id="logical_disk_FreeSpace" class="card-body card">
 			<?php
 			//Determine Warning Level
 				$freeSpace = $json['logical_disk']['Response']['C:']['FreeSpace'];
@@ -175,21 +168,16 @@ if($online=="0"){ ?>
 				if((int)$usedPct=="0"){$usedPct=100;}
 				
 			?>
-			<canvas data-centerval="<?php echo (int)$usedPct;?>%" id="chDonut3"></canvas>
+			<canvas style="height:<?php echo $height; ?>;" data-centerval="<?php echo (int)$usedPct;?>%" id="chDonut3"></canvas>
 			<h6 style="text-align:center">Disk Usage</h6>
         </div>
     </div>
 </div>
-<div style="margin-top:-35px" class="row">
-	<div class="col-xs-6 col-sm-6 col-md-3 col-lg-4" style="padding:5px;">
-		<div class="panel panel-default" style="z-index:999">
-			<div class="panel-heading">
-				<h5  style="padding:7px" class="panel-title">
-					Asset Overview
-				</h5>
-			</div>
-			<div class="panel-body" style="height:285px;">
-				<div class="rsow">
+<div style="margin-top:-15px;background:#D3D3D3;padding:10px;border-radius:10px;margin:20px;margin-top:0px" id="sortableCard" class="row shadow p-3 mb-5 rounded">
+	<div id="card-1" class="col-xs-6 col-sm-6 col-md-3 col-lg-3" style="padding:5px;">
+		<div class="panel panel-default" style="z-index:999;border-radius:10px;">
+			<div class="panel-body" style="z-index:999;border-radius:10px;height:285px;">
+				<div style="margin-top:5px">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 						<div style="margin-top:-10px">
 							<a href="javascript:void(0)" style="color:#696969;text-decoration:none;" data-bs-toggle="modal" data-bs-target="#companyMoreInfo">
@@ -197,15 +185,12 @@ if($online=="0"){ ?>
 								<br>
 								<ul class="list-group" style="margin-left:20px">
 									<li class="list-group-item secbtn" style="padding:4px">	 
-										<b>Name:</b> <?php echo textOnNull((crypto('decrypt',$company['name'],$company['hex'])!="N/A" ? crypto('decrypt',$company['name'],$company['hex']) : ""), "No ".$msp." Name"); ?>
+										<b>Name:</b> <?php echo textOnNull((crypto('decrypt',$company['name'],$company['hex'])!="N/A" ? crypto('decrypt',$company['name'],$company['hex']) : ""), "not assigned"); ?>
 										<i style="float:right;margin-right:10px;margin-top:4px" class="fas fa-ellipsis-h"></i>
 									</li>
 								</ul>
 							</a>
-						
-							
 							<div style="margin-top:5px">
-							
 								<span style="color:#696969">Client Details</span><br>
 								<ul class="list-group" style="margin-left:20px">
 									<li class="list-group-item" style="padding:4px"><b>Name:</b> <?php echo textOnNull(crypto('decrypt',$result['name'],$result['hex']),"not set"); ?></li>
@@ -215,17 +200,17 @@ if($online=="0"){ ?>
 							</div>
 						</div>
 					</div>
-					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 mx-auto" style="text-align:center;bottom:0;position:absolute;left:0;padding-bottom:10px"><hr>
-						<button class="btn btn-danger btn-sm" onclick='sendCommand("shutdown -s -t 0", "Shutdown Computer");' style="width:22%;margsin:3px;height:60px;border-radius:5px">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 mx-auto" style="text-align:center;bottom:0;position:absolute;left:0;padding-bottom:10px">
+						<button class="btn btn-danger btn-sm" onclick='sendCommand("shutdown -s -t 0", "Shutdown Computer");' style="text-align:center;width:22%;height:60px;border-radius:5px">
 							<i class="fas fa-power-off"></i><br>Shutdown
-						</button>
-						<button class="btn btn-warning btn-sm" onclick='sendCommand("shutdown -r -t 0", "Reboot Computer");' style="width:22%;masrgin:3px;color:#000;background:#ffa500;border:#ffa500;;height:60px;border-radius:5px">
+						</button>&nbsp;
+						<button class="btn btn-warning btn-sm" onclick='sendCommand("shutdown -r -t 0", "Reboot Computer");' style="text-align:center;width:22%;border:#ffa500;;height:60px;border-radius:5px">
 							<i class="fas fa-redo"></i><br>Reboot
-						</button>
-						<button class="btn btn-sm btn-warning" data-bs-dismiss="modal" type="button" style="background:#0ac282;border:#0ac282;msargin:3px;width:22%;;height:60px;border-radius:5px" data-bs-toggle="modal" data-bs-target="#agentMessageModal">
+						</button>&nbsp;
+						<button class="btn btn-sm btn-warning" data-bs-dismiss="modal" type="button" style="text-align:center;background:#0ac282;border:#0ac282;width:22%;;height:60px;border-radius:5px" data-bs-toggle="modal" data-bs-target="#agentMessageModal">
 							<i class="fas fa-comment"></i><br>Show Alert
-						</button>
-						<button class="btn btn-sm" onclick='$("#terminaltxt").delay(3000).focus();' type="button" style="width:22%;margsin:3px;color:#fff;background:#333;;height:60px;border-radius:5px" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#terminalModal">
+						</button>&nbsp;
+						<button class="btn btn-sm" onclick='$("#terminaltxt").delay(3000).focus();' type="button" style="text-align:center;width:22%;color:#fff;background:#333;;height:60px;border-radius:5px" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#terminalModal">
 							<i class="fas fa-terminal"></i><br>Terminal
 						</button>
 					</div>
@@ -233,18 +218,13 @@ if($online=="0"){ ?>
 		  </div>
 		</div>
 	</div>
-	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h5  style="padding:7px" class="panel-title">
-					Asset Details
-				</h5>
-			</div>
-			<div class="panel-body" style="height:285px;">	
-				<div class="roaw">
-					<ul class="list-group" style="margin-left:10px">
+	<div id="card-2" class="col-xs-6 col-sm-6 col-md-4 col-lg-3" style="padding:3px;">
+		<div class="panel panel-default" style="z-index:999;border-radius:10px;">		
+			<div class="panel-body" style="z-index:999;border-radius:10px;height:285px;">	
+				<div style="margin-top:5px">
+					<ul class="list-group" style="margin-left:10px;font-size:12px">
 						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','processor','0.Name');" id="processor_0Name" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Processor: </b><?php echo textOnNull(str_replace(" 0 ", " ",str_replace("CPU", "",str_replace("(R)","",str_replace("(TM)","",$json['processor']['Response'][0]['Name'])))), "N/A");?></li>
-						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Caption');" id="general_0Caption" class="list-group-item secbtn olderdata" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['general']['Response'][0]['Caption']), "N/A");?></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Caption');" id="general_0Caption" class="list-group-item secbtn olderdata" style="padding:6px"><b>Operating System: </b><?php echo textOnNull(str_replace("Microsoft", "", $json['general']['Response'][0]['Caption']), "N/A")." ".$json['general']['Response'][0]['Version'];?></li>
 						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.SystemType');" id="general_0SystemType" class="list-group-item secbtn olderdata" style="padding:6px"><b>Architecture: </b><?php echo textOnNull(str_replace("PC", "",$json['general']['Response'][0]['SystemType']), "N/A");?></li>
 						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','bios','0.Version');" id="bios_0Version" class="list-group-item secbtn olderdata" style="padding:6px"><b>BIOS Version: </b><?php echo textOnNull($json['bios']['Response'][0]['Version'], "N/A");?></li>
 						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','ExternalIP.ip');" id="general_ExternalIPip" class="list-group-item secbtn olderdata" style="padding:6px"><b>Public IP Address: </b><?php echo textOnNull($json['general']['Response'][0]['ExternalIP']["ip"], "N/A");?></li>
@@ -281,16 +261,11 @@ if($online=="0"){ ?>
 		  </div>
 		</div>
 	</div>
-	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="padding:3px;">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h5 style="padding:7px" class="panel-title">
-					
-				</h5>
-			</div>
-			<div class="panel-body" style="height:285px;">
-				<div class="">
-					<ul class="list-group" style="margin-left:20px">
+	<div id="card-3" class="col-xs-6 col-sm-6 col-md-4 col-lg-3" style="padding:3px;">
+		<div class="panel panel-default" style="z-index:999;border-radius:10px;">		
+			<div class="panel-body" style="z-index:999;border-radius:10px;height:285px;">				
+				<div style="margin-top:5px">
+					<ul class="list-group" style="margin-left:20px;font-size:12px">
 						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.UserName');" id="general_0UserName" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Current User: </b><?php echo textOnNull(basename($json['general']['Response'][0]['UserName']), "Unknown");?></li>
 						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Domain');" id="general_0Domain" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Domain: </b><?php echo textOnNull($json['general']['Response'][0]['Domain'], "N/A");?></li>
 						<!--<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.BuildNumber');" id="general_0BuildNumber" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Build: </b><?php echo textOnNull($json['general']['Response'][0]['Version'], "N/A");?></li>-->
@@ -336,38 +311,15 @@ if($online=="0"){ ?>
 							<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','general','0.Antivirus');" id="general_0Antivirus" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Antivirus: </b><span title="<?php echo textOnNull($status, "N/A"); ?>" class="<?php echo $color; ?>"><?php echo mb_strimwidth(textOnNull($status, "N/A"), 0, 30, "...");?></span></li>
 						<?php } ?>
 						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','agent','0.Version');" id="agent_0Version" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%" title="Path: <?php echo $json['agent']['Response'][0]['Path']; ?>"><b>Agent Version: </b><?php echo textOnNull($json['agent']['Response'][0]['Version'],"N/A"); ?></li>
+						<li data-bs-toggle="modal" data-bs-target="#olderDataModal" onclick="olderData('<?php echo $computerID; ?>','agent','0.Python_Version');" id="agent_0Python_Version" class="list-group-item secbtn olderdata" style="z-index:2;padding:6px;width:100%"><b>Python Version: </b><?php echo textOnNull($json['agent']['Response'][0]['Python_Version'],"N/A"); ?></li>
 					</ul>
 				</div>
 		  </div>
 		</div>
 	</div>
-
-	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4"style="margin-top:-30px;padding:3px;">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h5 style="padding:7px" class="panel-title">
-					Geolocation Details
-				</h5>
-			</div>
-			<div class="panel-body" style="height:285px;">
-				<div class="row">
-					<?php $loc = $json['general']['Response'][0]['ExternalIP']["loc"]; ?>
-					<div style="width: 100%">
-						<iframe width="100%" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=<?php echo $loc; ?>&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
-						</iframe>
-					</div>
-				</div>
-		  </div>
-		</div>
-	</div>
-	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="margin-top:-30px;padding:3px;">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h5 style="padding:7px" class="panel-title">
-					Agent Error Log
-				</h5>
-			</div>
-			<div class="panel-body" style="height:285px;overflow:hidden">
+	<div id="card-4" class="col-xs-6 col-sm-6 col-md-4 col-lg-3" style="padding:3px;">
+		<div class="panel panel-default" style="z-index:999;border-radius:10px;padding:5px">
+			<div class="panel-body" style="z-index:999;border-radius:10px;height:275px;overflow-x:auto;overflow-y:hidden">
 				<div class="rows">
 					<table id="<?php echo $_SESSION['userid']; ?>General" style="width:125%;line-height:10px;overflow:hidden;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
 						<thead>
@@ -428,19 +380,28 @@ if($online=="0"){ ?>
 		  	</div>
 		</div>
 	</div>
-	<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" style="margin-top:-30px;padding:3px;">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h5 style="padding:7px" class="panel-title">
-					Okla Speedtest
-				</h5>
-			</div>
-			<div class="panel-body" style="overflow:hidden;background:#32344a;height:285px;">
+	<div id="card-5" class="col-xs-6 col-sm-6 col-md-4 col-lg-3"style="padding:3px;">
+		<div class="panel panel-default" style="z-index:999;border-radius:10px;">			
+			<div class="panel-body" style="z-index:999;border-radius:10px;height:285px;padding:0px">
+				<div class="row">
+					<?php $loc = $json['general']['Response'][0]['ExternalIP']["loc"]; ?>
+					<div style="width: 100%">
+						<iframe style="border-radius:10px;" width="100%" height="285" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=<?php echo $loc; ?>&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
+						</iframe>
+					</div>
+				</div>
+		  	</div>
+		</div>
+	</div>
+	<div id="card-6" class="col-xs-6 col-sm-6 col-md-4 col-lg-3" style="padding:3px;">
+		<div class="panel panel-default" style="z-index:999;border-radius:10px;border:#343a40">
+
+			<div class="panel-body" style="z-index:999;border-radius:10px;overflow:hidden;background:#32344a;height:285px;border:#343a40">
 				<div class="rsow">
 					<a target="_blank" href="<?php echo str_replace(".png","",$json['okla_speedtest']['Response'][0]['result']['url']); ?>">
 						<form style="" method="post" action="/">
 							<?php if($json['okla_speedtest']['Response'][0]['result']['url']!=""){ ?>
-								<center><img width="80%" style="margin-top:0px" height="80%" src="<?php echo $json['okla_speedtest']['Response'][0]['result']['url']; ?>.png"/></center>
+								<center><img width="100%" style="margin-top:0px" height="80%" src="<?php echo $json['okla_speedtest']['Response'][0]['result']['url']; ?>.png"/></center>
 							<?php }else{ ?>
 								<center><h6 style='text-align:center;width:100%;bottom:0;padding:30px;color:#fff'>Refresh the results to get the latest Internet Speedtest from this asset.</h6></center><br><br>
 							<?php } ?>
@@ -513,7 +474,7 @@ if($online=="0"){ ?>
 				$results3 = mysqli_query($db, $query3);
 				$count3=0;
 				while($data3 = mysqli_fetch_assoc($results3)){ 
-					$count3++;	
+					$count3++;	if($count3>10){break;}
 					if($count3>1){ $style= "display:none;"; $class=""; }else{$class="secActive disabled";}
 					$buttons .= "<button id='screenshotbtn".$count3."' type='button' onclick=\"$('.btn-sm').removeClass('secActive disabled');$('#screenshotbtn".$count3."').addClass('secActive disabled');$('.screenshots').slideUp('fast');$('#screenshot".$count3."').slideDown('fast');\" style='margin-right:5px;' class='btn btn-sm btn-primary ".$class."'>Display #".$count3."</button>"; 
 			?>
@@ -640,16 +601,61 @@ if($online=="0"){ ?>
 <script>
 	$(document).ready(function() {
 		$('#<?php echo $_SESSION['userid']; ?>General').DataTable( {
-			"lengthMenu": [[5], [5]],
+			"lengthMenu": [[6], [6]],
 			colReorder: true,
 			"searching": false,
 			"lengthChange": false,
+			"pagingType": "simple",
 			"info": false,
 			"order": [],
 			colReorder: true
 		} );
 	} );
-	
+
+
+	var test = atob(getCookie("sortableChart<?php echo $_SESSION['userid']; ?>"));
+	if(test==""){
+		var custumOrder = ["chart-1", "chart-3", "chart-4", "chart-2"];
+	}else{
+		var custumOrder = test.split(",");
+	}
+	var ul = $("#sortableChart");
+	var items = $("#sortableChart div");
+	for (var item of custumOrder) {
+		ul.append($('#' + item + ''));
+	}
+	$("#sortableChart").disableSelection();
+	$('#sortableChart').sortable({
+		update: function (event, ui) {
+			var data2 = $(this).sortable('serialize');
+			data2 = data2.replaceAll("[]=", "-");
+			data2 = data2.replaceAll("&", ",");
+
+			setCookie("sortableChart<?php echo $_SESSION['userid']; ?>", btoa(data2), 365);
+		}
+	});
+
+	var test = atob(getCookie("sortableCard<?php echo $_SESSION['userid']; ?>"));
+	if(test==""){
+		var custumOrder = ["card-1", "card-2", "card-3", "card-4", "card-5", "card-6"];
+	}else{
+		var custumOrder = test.split(",");
+	}
+	var ul = $("#sortableCard");
+	var items = $("#sortableCard div");
+	for (var item of custumOrder) {
+		ul.append($('#' + item + ''));
+	}
+	$("#sortableCard").disableSelection();
+	$('#sortableCard').sortable({
+		update: function (event, ui) {
+			var data2 = $(this).sortable('serialize');
+			data2 = data2.replaceAll("[]=", "-");
+			data2 = data2.replaceAll("&", ",");
+
+			setCookie("sortableCard<?php echo $_SESSION['userid']; ?>", btoa(data2), 365);
+		}
+	});
 </script>
 <script>
 //$('#dataTable4').DataTable();

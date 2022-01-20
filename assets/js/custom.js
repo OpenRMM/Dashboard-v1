@@ -6,20 +6,41 @@ $(document).ready(function () {
 });
 
 //Terminal
-$('#terminaltxt').keypress(function(e){
+var old = "";
+var items2 = [];
+var n = 0;
+var i = 0;
+$('#terminaltxt').keydown(function(e){
+   
     var keycode = (e.keyCode ? e.keyCode : e.which);   	
     if(keycode == '13'){
-      
-        $("#terminalResponse").html("Sending Command: "+$('#terminaltxt').val()+" <i class='fas fa-spinner fa-spin'></i>");
+        var command = $('#terminaltxt').val();
+        $('#cmdtxt').hide();
+        
+        $("#terminalResponse").html(old + "C:\\Windows\\System32> Sending Command: "+$('#terminaltxt').val()+" <i class='fas fa-spinner fa-spin'></i>");
         $.post("includes/terminal.php", {
             id: computerID,
             command: $('#terminaltxt').val()
         },
         function(data, status){
-            $("#terminalResponse").html(data);
-        });     
+            old += "<br>C:\\Windows\\System32> " + command + "<br><br>" + data;
+            $("#terminalResponse").html(old);
+            $('#terminaltxt').val("");
+            $('#terminaltxt').focus(); 
+            n = items2.length + 1;  
+            items2.push(command);
+            //items2.reverse();
+            $(".modal-body").animate({ scrollTop: $(".modal-body")[0].scrollHeight}, 1000);
+        });   
+    }
+    if(e.keyCode==38||e.keyCode==40){
+        i = (e.keyCode==38? ++i : --i) <0? n-1 : i%n;
+        //if      (e.keyCode==38) items2.push(items2.shift());
+        //else if (e.keyCode==40) items2.unshift(items2.pop());
+        $('#terminaltxt').val(items2[i]);
     }
 });
+
 
 //Alerts Modal
 function computerAlertsModal(title, delimited='none', showHostname = false){
@@ -88,6 +109,20 @@ function sendCommand(command, prompt, expire_after=5){
         });
     }
 }
+//remove commands
+function removeCommand(ID,command){
+    if(confirm("Are you sure you would like to remove this command?")){
+        $.post("index.php", {
+        type: "removeCommand",
+        command: command
+        },
+        function(data, status){
+            toastr.options.progressBar = true;
+            $('#btn' + ID).hide();
+            toastr.info('Your Command Has Been Removed.');
+        });
+    }
+}
 function deleteNote(delNote){  
     $.post("index.php", {
     delNote: delNote
@@ -99,6 +134,23 @@ function deleteNote(delNote){
         $(".no_noteList").show();
     });
 }
+function resetAssetPassword(){ 
+    var ID = $("#AssetID").val();
+    var pass = $("#AssetPassword").val();
+    var user = $("#AssetUser").val();
+    var command = "net user " + user + " " + pass;
+    $.post("index.php", {
+    command: command,
+    ID: ID,
+    type: 'SendCommand',
+    expire_after: 5
+    },
+    function(data, status){
+        toastr.options.progressBar = true;
+        $("#AssetPassword").val("");
+        toastr.info('The asset password has been updated. Changes may take some time to reflect.');
+    });
+}
 function deleteCompany(ID,status2){  
     $.post("index.php", {
         ID: ID,
@@ -108,13 +160,13 @@ function deleteCompany(ID,status2){
     function(data, status){
         if(status2=="0"){
             toastr.options.progressBar = true;
-            toastr.info('The selected <?php echo $msp; ?> has been deactivated.');
+            toastr.info('The selected has been deactivated.');
             $("#actCompany" + ID).show();
             $("#delCompany" + ID).hide();
         }
         if(status2=="1"){
             toastr.options.progressBar = true;
-            toastr.info('The selected <?php echo $msp; ?> has been activated.');
+            toastr.info('The selected has been activated.');
             $("#actCompany" + ID).hide();
             $("#delCompany" + ID).show(); 
         }
@@ -328,10 +380,16 @@ function serverStatus(ID,action){
         function(data, status){            
             toastr.options.progressBar = true;
             if(action=="restart"){
-                toastr.warning('The Selected Server Has Been Restarted');
+                toastr.warning('The Selected Server Has Been Sent Restart Request');
+            }else if(action=="shutdown"){
+                toastr.error('The Selected Server Has Been Sent Shutdown Request');
+            }else if(action=="stop service"){
+                toastr.error('The Selected Server Service Has Been Sent Stop Request');
+            }else if(action=="restart service"){
+                toastr.warning('The Selected Server Service Has Been Sent Restart Request');
             }else{
-                toastr.error('The Selected Server Has Been Shutdown');
-            }       
+
+            }     
         });
     }
 }

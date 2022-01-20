@@ -676,3 +676,7 @@ body {
         overflow-x: auto
     }
 }
+.Asset_Agent-FormHead {
+    Width:100%;
+    padding:15px; 
+}

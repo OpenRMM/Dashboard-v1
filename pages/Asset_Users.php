@@ -86,7 +86,7 @@ $online = $results['online'];
 						<?php if($user['Disabled']=="True"){ ?>
 							<button onclick='sendCommand("net user <?php echo $user["Name"]; ?> /active:yes", "Enable The Account For <?php echo $user["Name"]; ?>");'style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;float:right" title="Enable User?" class="btn btn-sm btn-success"><i class="fas fa-toggle-on"></i></button>
 						<?php }else{ ?>
-							<button onclick='sendCommand("net user <?php echo $user["Name"]; ?> passsword123", "Reset Password For <?php echo $user["Name"]; ?> To: passsword123");' style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;float:right;margin-left:5px;" title="Resets Password To: passsword123" class="btn btn-sm btn-primary"><i class="fas fa-star-of-life"></i></button>&nbsp;
+							<button onclick='$("#AssetID").val("<?php echo $computerID; ?>");$("#AssetUser").val("<?php echo $user["Name"]; ?>");' data-bs-toggle="modal" data-bs-target="#Asset_Reset_Password_Modal" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;float:right;margin-left:5px;" title="Reset Password" class="btn btn-sm btn-primary"><i class="fas fa-star-of-life"></i></button>&nbsp;
 							<button onclick='sendCommand("net user <?php echo $user["Name"]; ?> /active:no", "Disable The Account For <?php echo $user["Name"]; ?>");' style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;float:right" title="Disable User?" class="btn btn-sm btn-danger"><i class="fas fa-toggle-off"></i></button>
 						<?php } ?>
 					  </td>	

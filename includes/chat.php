@@ -3,7 +3,7 @@ $ID = base64_decode($_GET['ID']);
 if($_SESSION['userid']!=""){
 ?>
 
-<div id="plist" style="background:#343a40;color:#fff;height:108%;overflow:hidden" class="people-list">
+<div id="plist" style="background:#343a40;color:#fff;height:120%;overflow:hidden" class="people-list">
 
     <ul class="list-unstyled chat-list mt-2 mb-0">
     <?php

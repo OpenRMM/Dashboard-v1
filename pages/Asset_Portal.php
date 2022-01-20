@@ -18,8 +18,7 @@ $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 $online = $result['online'];
 
 if($_SERVER['HTTP_X_FORWARDED_FOR'] != $json['general']['Response'][0]['ExternalIP']["ip"]){
-
-//	 exit("<center><br><br><h5>Sorry, you do not have permission to access this page!</h5><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' style='background:#0c5460;color:".$siteSettings['theme']['Color 2']."' class='btn btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");					
+	//	 exit("<center><br><br><h5>Sorry, you do not have permission to access this page!</h5><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' style='background:#0c5460;color:".$siteSettings['theme']['Color 2']."' class='btn btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");					
 }
 ?>
 <style>
@@ -30,18 +29,6 @@ if($_SERVER['HTTP_X_FORWARDED_FOR'] != $json['general']['Response'][0]['External
 	<h1 style="font-family: Arial, Helvetica, sans-serif;font-size:40px" >Welcome to our<br>Online Helpdesk</h1>
 	<p>View basic information about your computer. Find solutions to common problems, or get help from a support agent.</p>
   </div>
-
-
-<?php if($online=="0"){ ?>
-	<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
-		&nbsp;&nbsp;&nbsp;This Agent is offline		
-	</div>
-<?php 
-}else{
-	echo"<br>";
-}
-?>
-
 <div class="row justify-content-md-center" style="padding:35px;">
 <?php if($computerID!="0"){ ?>
 	<div class="col-md-2 bg-success secbtn btnActive" onclick="$('#asset').show();$('#chat').hide();$('#ticket').hide();$('.secbtn').removeClass('btnActive');$(this).addClass('btnActive');" style="cursor:pointer;padding:20px;padding-top:20px;padding-bottom:0px;border-radius:5px;height:200px;overflow-x:auto;margin-right:10px">

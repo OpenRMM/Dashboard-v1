@@ -113,7 +113,7 @@ $userCount = mysqli_num_rows($results);
 </div>
 
 <script>
-	//Edit User
+
 	function editUser(ID, username, name, email, phone, type, color, allowed_pages){
 		$('select>option:eq(0)').prop('selected', true);
 		if(type=="Standard"){

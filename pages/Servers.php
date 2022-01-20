@@ -99,7 +99,7 @@ $results2 = mysqli_query($db, $query2);
 								<i class="fas fa-server" style="color:#666;font-size:12px;" title="Offline"></i>
 							<?php }else{?>
 								<i class="fas fa-server" style="color:green;font-size:12px;" title="Online"></i>
-							<?php }?>
+							<?php }?>&nbsp;
 							<?php echo ucwords($server['hostname']);?>
 						</h6>
 					</td>
@@ -146,13 +146,27 @@ $results2 = mysqli_query($db, $query2);
 							<?php 
 								} 
 								if($status=="Online"){
-							?>						
-								<button onclick="serverStatus('<?php echo $server['ID']; ?>','restart')" type="button" title="Restart Server" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-warning btn-sm">
-									<i class="fas fa-redo" ></i>				
-								</button>
-								<button onclick="serverStatus('<?php echo $server['ID']; ?>','shutdown')" type="button" title="Power Off Server" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm">
-									<i class="fas fa-power-off" ></i>				
-								</button>
+							?>	
+								<div style="margin-top:-2px" class="btn-group">
+									<button style="padding:8px;padding-top:6px;padding-bottom:6px;border:none;" type="button" class=" btn-danger btn btn-sm"><i class="fas fa-power-off"></i></button>
+									<button type="button" style="padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn-danger btn dropdown-toggle-split btn-sm" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fas fa-sort-down"></i>
+									</button>
+									<div class="dropdown-menu">
+										<a onclick="serverStatus('<?php echo $server['ID']; ?>','restart');" title="Restart Server"class="dropdown-item" href="javascript:void(0)">Restart Server</a>
+										<a onclick="serverStatus('<?php echo $server['ID']; ?>','shutdown');" title="Shutdown Server" class="bg-danger text-white dropdown-item" href="javascript:void(0)">Shutdown Server</a>
+									</div>
+								</div>
+								<div style="margin-top:-2px;margin-right:5px;" class="btn-group">
+									<button style="padding:8px;padding-top:6px;padding-bottom:6px;border:none;" type="button" class="btn btn-sm btn-warning"><i class="fas fa-database"></i> </button>
+									<button style="padding:8px;padding-top:6px;padding-bottom:6px;border:none;" type="button" class="btn dropdown-toggle-split btn-sm btn-warning" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fas fa-sort-down"></i>
+									</button>
+									<div class="dropdown-menu">
+										<a onclick="serverStatus('<?php echo $server['ID']; ?>','restart service');" title="Restart Server Service"class="dropdown-item" href="javascript:void(0)">Restart Service</a>
+										<a onclick="serverStatus('<?php echo $server['ID']; ?>','stop service');" title="Stop Server Service" class="bg-warning text-white dropdown-item" href="javascript:void(0)">Stop Service</a>
+									</div>
+								</div>
 							<?php } ?>
 						</form>
 					</td>

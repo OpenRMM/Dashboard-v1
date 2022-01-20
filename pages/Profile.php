@@ -44,37 +44,33 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 					</div>
 				</div>                      
 				<div style="margin-top:10px;;width:100%" class="media-body va-m">
-					<h4 style="color:#fff" class="media-heading"><?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex'])); ?> 
-					
-					<span style="font-size:14px" ><small>Last Seen: <?php if($user['last_login']==""){ echo "never"; }else{ echo ago(date('m/d/Y H:i:s',$user['last_login'])); } ?></small></span>
-					<?php if($_SESSION['accountType']=="Admin"){ ?>
-						<span style="float:right;font-size:12px">User ID: <?php echo $user['ID']; ?></span>
-					<?php } ?>
+					<h4 title="User ID: <?php echo $user['ID']; ?>" style="color:#fff;cursor:default;" class="media-heading"><?php echo ucwords(crypto('decrypt',$user['nicename'],$user['hex'])); ?> 					
+						<span style="font-size:14px" ><small>Last Seen: <?php if($user['last_login']==""){ echo "never"; }else{ echo ago(date('m/d/Y H:i:s',$user['last_login'])); } ?></small></span>
+						<?php if($_SESSION['accountType']=="Admin"){ ?>
+							<span style="float:right;font-size:12px">User ID: <?php echo $user['ID']; ?></span>
+						<?php } ?>
 					</h4>
 					<p style="color:#dedede"> </p>
-					
 					<?php if($_SESSION['accountType']=="Admin"){  ?>
-						<?php if($user['active']=="1"){ ?>
-							
+						<?php if($user['active']=="1"){ ?>					
 							<button id="userDel<?php echo $user['ID']; ?>" onclick="deleteUserProfile('<?php echo $user['ID']; ?>','0')" <?php if($user['ID']=="1") echo "disabled"; ?> type="button" title="Deactivate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
 								<i class="fas fa-trash" ></i> Deactivate			
-							</button>
+							</button>&nbsp;
 							<button type="button" id="userAct<?php echo $user['ID']; ?>" onclick="deleteUserProfile('<?php echo $user['ID']; ?>','1')" title="Activate User" style="display:none;margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-success btn-sm">
 								<i class="fas fa-plus" ></i> Activate
-							</button>
+							</button>&nbsp;
 						<?php }else{ ?>
 							<button type="button" id="userAct<?php echo $user['ID']; ?>" onclick="deleteUserProfile('<?php echo $user['ID']; ?>','1')" title="Activate User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-success btn-sm">
 								<i class="fas fa-plus" ></i> Activate
-							</button>
+							</button>&nbsp;
 							<button id="userDel<?php echo $user['ID']; ?>" onclick="deleteUserProfile('<?php echo $user['ID']; ?>','0')" <?php if($user['ID']=="1") echo "disabled"; ?> type="button" title="Deactivate User" style="display:none;margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
 								<i class="fas fa-trash" ></i> Deactivate			
-							</button>
+							</button>&nbsp;
 						<?php } ?>
 					<?php } ?>
 					<button  data-bs-toggle="modal" data-bs-target="#userModal" onclick="editUser('<?php echo $user['ID'];?>','<?php echo $user['username'];?>','<?php echo crypto('decrypt',$user['nicename'],$user['hex']);?>','<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>','<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>','<?php echo crypto('decrypt',$user['account_type'],$user['hex']);?>','<?php echo $user['user_color']; ?>','<?php echo $settings; ?>')" title="Edit User" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-primary btn-sm">
 						<i class="fas fa-pencil-alt"></i> Edit
-					</button>
-					
+					</button>				
 				</div>
 			</div>
 		</div>
@@ -203,7 +199,7 @@ $(document).ready(function() {
     });
 </script>
 <script>
-//Edit User
+
 function editUser(ID, username, name, email, phone, type, color, allowed_pages){
 	$('select>option:eq(0)').prop('selected', true);
 	if(type=="Standard"){

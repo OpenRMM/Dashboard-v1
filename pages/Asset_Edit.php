@@ -4,11 +4,11 @@ checkAccess($_SESSION['page'],$computerID);
 
 $json = getComputerData($computerID, array("general"));
 $hostname =  textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
-$query = "SELECT ID, show_alerts, company_id, phone,hex, email, online, name, comment,computer_type FROM computers WHERE ID='".$computerID."' LIMIT 1";
+$query = "SELECT ID, show_alerts, company_id, phone,hex, email, online, name, comment,computer_type FROM computers WHERE ID='".$computerID."' and active='1' LIMIT 1";
 $results = mysqli_query($db, $query);
 $data = mysqli_fetch_assoc($results);
 
-$query = "SELECT ID, name, phone, address, email, comments,hex FROM companies WHERE ID='".$data['company_id']."' LIMIT 1";
+$query = "SELECT ID, name, phone, address, email, comments,hex FROM companies WHERE ID='".$data['company_id']."' and active='1' LIMIT 1";
 $companys = mysqli_query($db, $query);
 $company = mysqli_fetch_assoc($companys);
 
@@ -171,7 +171,7 @@ $online = $data['online'];
 									<?php }else{?>
 										<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
 									<?php }?>
-									&nbsp;&nbsp;<?php echo strtoupper($hostname);?>
+									&nbsp;&nbsp;<?php echo textOnNull(strtoupper($hostname),"Unavailable");?>
 								</li>
 							</a>
 							<?php } ?>

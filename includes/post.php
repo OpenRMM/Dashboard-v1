@@ -11,16 +11,30 @@
             // echo '<script>window.onload = function() { pageAlert("User Settings", "User settings changed successfully.","Success"); };</script>';
             header("location: /");
         }
-		//stop server
-		if($_POST['type'] == "serverStatus"){
-			if($_SESSION['accountType']=="Admin"){
-				$ID = (int)$_POST['ID'];
-				$action = clean($_POST['action']);
-				if($action=="stop"){
-					MQTTpublish("OpenRMMServer/Commands/State","stop",getSalt(20),false);
+		
+		//custom command
+		if(isset($_POST['customCommand'])){
+			if($cmdButtons==""){ $_SESSION['customCommands']=array(); }else{
+				//$_SESSION['customCommands']=$cmdButtons;
+			}
+			$title = clean($_POST['title']);
+			$color = clean($_POST['btnColor']);
+			$command = clean($_POST['customCommand']);
+			$data = $title."(||)".$color."(||)".$command;
+			if (in_array( $data, $_SESSION['customCommands'])){
+				if (($key = array_search($data, $_SESSION['customCommands'])) !== false) {
+					unset($_SESSION['customCommands'][$key]);
 				}
-				if($action=="restart"){
-					MQTTpublish("OpenRMMServer/Commands/State","restart",getSalt(20),false);
+				array_push($_SESSION['customCommands'], $data);
+				$query = "UPDATE users SET Command_Buttons='".implode("{|}", $_SESSION['customCommands'])."' WHERE ID=".$_SESSION['userid'].";";
+				$results = mysqli_query($db, $query);
+			}else{
+				if(end($_SESSION['customCommands']) != $data){
+				
+					array_push($_SESSION['customCommands'], $data);
+				
+					$query = "UPDATE users SET Command_Buttons='".implode("{|}", $_SESSION['customCommands'])."' WHERE ID=".$_SESSION['userid'].";";
+					$results = mysqli_query($db, $query);
 				}
 			}
 			header("location: /");
@@ -32,8 +46,8 @@
             $mysqlUsername = clean($_POST['mysqlUsername']);
             $mysqlPassword = clean($_POST['mysqlPassword']);
             $mysqlDatabase = clean($_POST['mysqlDatabase']);
-			$rand = random_bytes(32); // chiper = AES-256-CBC ? 32 : 16
-			$agentSecret='base64:'.base64_encode($rand);
+			$rand = random_bytes(64); // chiper = AES-256-CBC ? 32 : 16
+			$agentSecret=base64_encode($rand);
 			$mqttHost = clean($_POST['mqttHost']);
             $mqttPort = clean($_POST['mqttPort']);
             $mqttUsername = clean($_POST['mqttUsername']);
@@ -146,11 +160,9 @@
 		if($_POST['type']=="updateTicket"){
 			$ID = (int)$_POST['ID'];
 			$type = strtolower(clean($_POST['tkttype']));
-			$data = clean($_POST['tktdata']);
-		
+			$data = clean($_POST['tktdata']);		
 			$query = "UPDATE tickets SET ".$type."='".$data."' WHERE ID='".$ID."';";
 			$results = mysqli_query($db, $query);
-
 			header("location: /");
 		}
 		//ticket message
@@ -203,7 +215,7 @@
 			$companyID=(int)$_POST['companyID'];
 
 			foreach($computers as $computer) {
-				$query = "UPDATE computers SET company_id='".$companyID."' WHERE ID='".$computer."';";
+				$query = "UPDATE computers SET company_id='".$companyID."' WHERE ID='".(int)$computer."';";
 				$results = mysqli_query($db, $query);
 			}
 			header("location: /");
@@ -213,7 +225,7 @@
 		if($_POST['type'] == "deleteAssets"){
 			$computers = ($_POST['computers']);
 			foreach($computers as $computer) {
-				$query = "UPDATE computers SET active='0' WHERE ID='".$computer."';";
+				$query = "UPDATE computers SET active='0' WHERE ID='".(int)$computer."';";
 				$results = mysqli_query($db, $query);
 			}
 			header("location: /");
@@ -259,7 +271,7 @@
 				$name = crypto('encrypt', $name2, $salt);
 				$phone = clean($_POST['phone']);
 				$accountType = ucwords(clean($_POST['accountType']));
-				$email = crypto('encrypt', $_POST['email'], $salt);
+				$email = crypto('encrypt', strip_tags($_POST['email']), $salt);
 				$password = clean($_POST['password']);
 				$password2 = clean($_POST['password2']);
 				
@@ -479,20 +491,26 @@
 		//server status
 		if($_POST['type'] == "serverStatus"){
 			$ID = (int)$_POST['ID'];
-			$active = (int)$_POST['action'];
+			$active = clean($_POST['action']);
 			if($active=="restart"){
-				$action=' restarted';
+				$action=' restarted server';
+			}elseif($active=="shutdown"){
+				$action=' shutdown server';
+			}elseif($active=="restart service"){
+				$action=' restarted server service';
+			}elseif($active=="stop service"){
+				$action=' stopped server service';
 			}else{
-				$action=' shutdown';
+
 			}
-			MQTTpublish($ID."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"payload":"'.$commands.'"}',$ID,false);
+			MQTTpublish($ID."/Server/Command",'{"userID":'.$_SESSION['userid'].',"payload":"'.$active.'"}',$ID,false);
 			$activity = "Server: ".$ID.$action;
 			userActivity($activity,$_SESSION['userid']);			
 			header("location: /");
 		}
 		//Delete Command
 		if($_POST['type'] == "DeleteCommand"){
-			$ID = $_POST['ID'];
+			$ID = (int)$_POST['ID'];
 			$active = (int)$_POST['commandactive'];
 			$activity = "Command: ".$ID." Deleted";
 			userActivity($activity,$_SESSION['userid']);
@@ -504,7 +522,7 @@
 		}
 		//Create Note
 		if(isset($_POST['note'])){			
-			$ID=$_SESSION['userid'];
+			$ID=(int)$_SESSION['userid'];
 			$salt = getSalt(40);
 			$activity = "Note Created";
 			$newnote = clean($_POST['note']);
@@ -522,7 +540,7 @@
 		//Commands
 		if($_POST['type'] == "SendCommand"){
 			$ID = (int)$_POST['ID'];
-			$commands = $_POST['command'];
+			$commands = clean($_POST['command']);
 			$expire_after = (int)$_POST['expire_after'];
 			$exists = 0;
 			if(trim($commands)!=""){
@@ -605,10 +623,6 @@
 			sleep(2);
 			$activity = "Agent configuration updated";
 			userActivity($activity,$_SESSION['userid']);
-
-		
-
-
 			header("location: /");
 		}
 		
@@ -674,30 +688,6 @@
 			}
 			header("location: /");
 		}
-		//Alert Config Modal
-		if($_POST['type'] == "AlertSettings"){
-			$alert_settings = "";
-			$email = $_POST['alert_settings_email'];
-			foreach($siteSettings['Alert Settings'] as $type=>$alert){
-				foreach($alert as $option=>$options){
-					 if(count($options) > 1){ //Contains Sub Options
-						 foreach($options as $subOptionKey=>$subOptionValue){
-							$keyName = $type."_".$option."_".$subOptionKey;
-							$alert_settings .= $keyName.":".(int)$_POST['alert_settings_'.$keyName].",";
-						}
-					 }else{
-						$keyName = $type."_".$option;
-						$alert_settings .= $keyName.":".(int)$_POST['alert_settings_'.$keyName].",";
-					 }
-				}
-			}
-			$alert_settings = trim($alert_settings, ",");
-			$query = "UPDATE users SET alert_settings='".$alert_settings."' WHERE ID='".$_SESSION['userid']."';";
-			$results = mysqli_query($db, $query);
-			if($results){
-				echo '<script>window.onload = function() { pageAlert("Alert Settings", "Alert Settings Saved Successfully","Success"); };</script>';
-			}
-		}
 		//Delete Version
 		if(isset($_POST['version'])){
 			$version=clean($_POST['version']);
@@ -716,7 +706,7 @@
 		//login
 		if(isset($_POST['loginusername'], $_POST['password'])){
 			$username = clean($_POST['loginusername']);
-			$password = $_POST['password'];
+			$password = clean($_POST['password']);
 			$_SESSION['loginusername']="";
 			$query = "SELECT * FROM users where active='1' and username='".$username."'";
 			$results= mysqli_query($db, $query);
@@ -733,6 +723,8 @@
 					$_SESSION['showModal']="true";	
 					$_SESSION['recent']=explode(",",$data['recents']);
 					if($data['recents']==""){ $_SESSION['recent']=array(); }
+					$_SESSION['customCommands']=explode("{|}",$data['Command_Buttons']);
+					if($data['Command_Buttons']==""){ $_SESSION['customCommands']=array(); }
 					$_SESSION['recentTickets']=explode(",",$data['recentTickets']);
 					if($data['recentTickets']==""){ $_SESSION['recentTickets']=array(); }
 					$_SESSION['recentedit']=explode(",",$data['recent_edit']);
@@ -749,7 +741,7 @@
 		//Upload or download new agent file
 		if(isset($_POST['agentFile']) or isset($_POST['companyAgent'])){
 			$agentVersion = clean($_POST['agentVersion']);
-			if($_POST['agentVersion']==""){
+			if($agentVersion==""){
 				$agentVersion= $siteSettings['general']['agent_latest_version'];
 			}else{
 				$activity = "Latest Agent Version Number ".$agentVersion." Updated";
@@ -812,7 +804,7 @@
 			}
 		}
 
-		//needs tested, then combined
+		//needs tested, then combined and strings need cleaned
 		if($_POST['fs_act_type']=="rename"){
 			$path = $_POST['filepath'];
 			$filename = $_POST['fileFolder'];

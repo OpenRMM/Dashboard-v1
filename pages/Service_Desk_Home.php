@@ -36,25 +36,25 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 					</div>
 					<ul class="list-group">
 						<li onclick="loadSection('Service_Desk_Home','','','all');" style="cursor:pointer;<?php if($get=="all" or $get==""){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
-							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
+							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;min-width:20px;max-width:40px;height:20px;padding-top:1px">
 								<?php echo $ticketCountAll; ?>
 							</div>
 							All Tickets
 						</li>
 						<li onclick="loadSection('Service_Desk_Home','','','me');" style="cursor:pointer;<?php if($get=="me"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
-							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
+							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;min-width:20px;max-width:40px;height:20px;padding-top:1px">
 								<?php echo $ticketCount3; ?>
 							</div>
 							Assigned to me
 						</li>
 						<li onclick="loadSection('Service_Desk_Home','','','noone');" style="cursor:pointer;<?php if($get=="noone"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
-							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
+							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;min-width:20px;max-width:40px;height:20px;padding-top:1px">
 								<?php echo $ticketCount4; ?>
 							</div>
 							Unassigned
 						</li>
 						<li onclick="loadSection('Service_Desk_Home','','','closed');" style="cursor:pointer;<?php if($get=="closed"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
-							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;width:20px;height:20px;padding-top:1px">
+							<div class="bg-default" style="font-size:12px;margin-right:10px;float:left;display:inline;color:#000;padding:5px;border-radius:100px;text-align:center;min-width:20px;max-width:40px;height:20px;padding-top:1px">
 								<?php echo $ticketCount2; ?>
 							</div>
 							Closed
@@ -164,7 +164,7 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 								<tr>
 									<td>
 										<div class="form-check">
-											<input class="form-check-input checkbox" type="checkbox" value="<?php echo $result['ID']; ?>" name="computers[]" id="flexCheckDefault">	
+											<input class="form-check-input checkbox" type="checkbox" value="<?php echo $result['ID']; ?>" name="computers[]" id="flexCheckDefault<?php echo $count;?>">	
 										</div>
 									</td>
 									<td onclick="loadSection('Service_Desk_Ticket', '<?php echo $result['ID']; ?>');" id="row<?php echo $result['ID']; ?>">
@@ -183,7 +183,6 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 												<a onclick="updateTicket('status','On Hold','<?php echo $result['ID']; ?>');"class="dropdown-item" href="javascript:void(0)">On Hold</a>
 												<a onclick="updateTicket('status','Resolved','<?php echo $result['ID']; ?>');"class="dropdown-item" href="javascript:void(0)">Resolved</a>
 												<a onclick="updateTicket('status','Awaiting Input','<?php echo $result['ID']; ?>');"class="dropdown-item" href="javascript:void(0)">Awaiting Input</a>
-
 											</div>
 										</div>
 									</td>
@@ -210,8 +209,7 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 										<div title="<?php echo $name2; ?>" style="font-size:12px;margin-right:10px;float:left;display:inline;background:<?php echo $user3['user_color']; ?>;color:#fff;padding:5px;border-radius:100px;text-align:center;width:30px;height:30px;padding-top:5px;margin-top:-5px">
 											<?php echo $name; ?>
 										</div>
-										<?php } ?>
-								
+										<?php } ?>				
 									</td>
 									<td><?php echo ucwords($result['requester']); ?></td>
 									<td><?php echo ago($result['time']); ?></td>
@@ -221,7 +219,7 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 								<tr>
 									<td colspan=9>
 										<center>
-											<h6>No Tickets To Display</h6>
+											<h6>No tickets to display.</h6>
 										</center>
 									</td>
 								</tr>
@@ -231,14 +229,14 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 					</div>
 				</div>
 				<!------------- Add Company Computers ------------------->
-				<div id="companyComputersModal2" class="modal fade" role="dialog">
+				<div id="companyComputsersModal2" class="modal fade" role="dialog">
 					<div class="modal-dialog modal-md">
 						<div class="modal-content">
 							<div class="modal-header">
 								<h5 class="modal-title" id="pageAlert_title">Assign Assets</h5>
 							</div>
 							<div class="modal-body">
-								<h6 id="pageAlert_title">Select The <?php echo $msp; ?> You Would Like To Add These Assets To</h6><hr>
+								<h6 id="pageAlert_title">Select the <?php echo strtolower($msp); ?> you would like to add these assets to.</h6><hr>
 								<div class="list-group" style="padding-bottom:10%">
 								<?php							
 									$query = "SELECT ID, name,hex FROM companies ORDER BY ID DESC LIMIT 100";
@@ -269,10 +267,10 @@ $ticketCount4 = mysqli_num_rows(mysqli_query($db, $query));
 					<div class="modal-dialog modal-md">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h5 class="modal-title" id="pageAlert_title">Delete Assets</h5>
+								<h5 class="modal-title" id="pageAlert_title">Delete Tickets</h5>
 							</div>
 							<div class="modal-body">
-								<h6 id="pageAlert_title">Are you sure you would like to delete the selected assets?</h6><hr>		
+								<h6 id="pageAlert_title">Are you sure you would like to delete the selected tickets?</h6><hr>		
 							</div>
 							<div class="modal-footer">								
 								<button type="button" class="btn btn-sm" data-bs-dismiss="modal">Close</button>
@@ -300,13 +298,11 @@ $('#<?php echo $_SESSION['userid']; ?>Tickets').DataTable( {
 					extend: 'colvis',
 					title: 'Column Visibility',
 					text:'Column Visibility',
-					//Columns to export
 					columns: [1, 2, 3, 4, 5, 6, 7, 8]  
 				},{
 					extend: 'excelHtml5',
 					title: 'OpenRMM Asset List',
 					text:'Export to excel',
-					//Columns to export
 					exportOptions: {
 						columns: [1, 2, 3, 4, 5, 6, 7, 8]
 					}
@@ -314,7 +310,6 @@ $('#<?php echo $_SESSION['userid']; ?>Tickets').DataTable( {
 					extend: 'pdfHtml5',
 					title: 'OpenRMM Asset List',
 					text: 'Export to PDF',
-					//Columns to export
 					exportOptions: {
 						columns: [1, 2, 3, 4, 5, 6, 7, 8]
 					}
@@ -324,7 +319,6 @@ $('#<?php echo $_SESSION['userid']; ?>Tickets').DataTable( {
 </script>
 <script type='text/javascript'>
  $(document).ready(function(){
-   // Check or Uncheck All checkboxes
    $("#checkall").change(function(){
      var checked = $(this).is(':checked');
      if(checked){
@@ -338,7 +332,7 @@ $('#<?php echo $_SESSION['userid']; ?>Tickets').DataTable( {
      }
    });
  
-  // Changing state of CheckAll checkbox 
+ 
   $(".checkbox").click(function(){
  
     if($(".checkbox").length == $(".checkbox:checked").length) {

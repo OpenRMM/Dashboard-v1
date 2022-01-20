@@ -17,9 +17,12 @@ if($resultCount==$count){
      toastr.remove()
      toastr.error('All OpenRMM Servers are offline. Assets will not be able to send or recieve new data.');
  <?php
-     //set assets to offline
-     $query = "UPDATE computers SET online='0';";
-     $results = mysqli_query($db, $query);       
+    //set assets to offline
+    //$query = "UPDATE computers SET online='0';";
+    //  $results = mysqli_query($db, $query);  
+    $serverStatus="offline";     
+ }else{
+    $serverStatus="online";
  } ?>
  </script>
  <?php
@@ -214,7 +217,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                         <center>
                             <h5>Asset: <?php echo $_SESSION['ComputerHostname']; ?> is online but did not respond to a request for <?php echo str_replace("_"," ",str_replace("Asset_","",$_SESSION['page'])); ?>.</h5>
                             <br>
-                            <h6>Would you like to display the outdated assset data?</h6>
+                            <h6>Would you like to display the outdated asset data?</h6>
                             <br>
                             <form method="post">
                                 <input value="true" type="hidden" name="ignore">
@@ -259,7 +262,7 @@ if($_SESSION['userid']!=""){
 ?>
         <div id="notifications"> </div>
         <script>
-            setInterval(function(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry) {
+            setInterval(function(section=currentSection, ID=computerID, date='',other=otherEntry) {
                 $("#notifications").load("includes/notifications.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other));	
             }, 5000);
            

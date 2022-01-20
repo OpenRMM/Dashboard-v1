@@ -64,7 +64,7 @@ checkAccess($_SESSION['page']);
 						<td>
 							<a class="btn btn-sm btn-primary" title="Download" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" href="../../?file=<?php echo urlencode($entry); ?>">
 								<i class='fas fa-download'></i>
-							</a>
+							</a>&nbsp;
 							<?php if($_SESSION['userid']!="") { ?>
 								<a title="Delete" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#versionModal" onclick="delVersion('<?php echo $entry; ?>')">
 									<i class="fas fa-trash">&nbsp;</i>

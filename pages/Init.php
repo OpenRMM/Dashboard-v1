@@ -50,99 +50,119 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
         </small>
 	</p>
 	<hr />
- 
-	<div class="row">
-        <?php $host = explode(":",$siteSettings['MySQL']['host']); ?>
-		<div class="col-sm-4 mx-auto">	
-             <div class="panel panel-default">
-                <div class="panel-heading">
-					<h4 class="panel-title">
-                        MySQL Database
-					</h4>
-				</div>
-                <div class="panel-body">			
-                    <div class="form-group float-label-control">
-                        <label>Host:</label>
-                        <input required type="text" name="mysqlHost" value="<?php echo $host[0]; ?>" class="form-control" placeholder="">
+    <form method="post">
+        <div class="row">
+            <?php $host = explode(":",$siteSettings['MySQL']['host']); ?>    
+            <div class="col-sm-3 mx-auto">	
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            MySQL Database
+                        </h4>
                     </div>
-                    <div class="form-group float-label-control">
-                        <label>Port:</label>
-                        <input required type="text" name="mysqlPort" value="<?php echo $host[1]; ?>" class="form-control" placeholder="">
+                    <div class="panel-body">			
+                        <div class="form-group float-label-control">
+                            <label>Host:</label>
+                            <input required type="text" name="mysqlHost" value="<?php echo $host[0]; ?>" class="form-control" placeholder="">
+                        </div>
+                        <div class="form-group float-label-control">
+                            <label>Port:</label>
+                            <input required type="text" name="mysqlPort" value="<?php echo $host[1]; ?>" class="form-control" placeholder="">
+                        </div>
+                        <div class="form-group float-label-control">
+                            <label>Database Name:</label>
+                            <input required type="text" name="mysqlDatabase" value="<?php echo $siteSettings['MySQL']['database']; ?>" class="form-control" placeholder="">
+                        </div>
+                        <div class="form-group float-label-control">
+                            <label>Username:</label>
+                            <input required type="text" name="mysqlUsername" value="<?php echo $siteSettings['MySQL']['username']; ?>" class="form-control" placeholder="">
+                        </div>
+                        <div class="form-group float-label-control">
+                            <label>Password:</label>
+                                <input required type="password" name="mysqlPassword" value="" class="form-control" placeholder="">
+                        </div>                 
+                    </div>		
+                </div>
+            </div>       
+            <div class="col-sm-3 mx-auto">	
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        MQTT Broker
+                        </h4>
                     </div>
-                    <div class="form-group float-label-control">
-                        <label>Database Name:</label>
-                        <input required type="text" name="mysqlDatabase" value="<?php echo $siteSettings['MySQL']['database']; ?>" class="form-control" placeholder="">
-                    </div>
-                    <div class="form-group float-label-control">
-                        <label>Username:</label>
-                        <input required type="text" name="mysqlUsername" value="<?php echo $siteSettings['MySQL']['username']; ?>" class="form-control" placeholder="">
-                    </div>
-                    <div class="form-group float-label-control">
-                        <label>Password:</label>
-                            <input required type="password" name="mysqlPassword" value="" class="form-control" placeholder="">
-                    </div>                 
-                </div>		
-		    </div>
-        </div>       
-        <div class="col-sm-4 mx-auto">	
-             <div class="panel panel-default">
-                <div class="panel-heading">
-					<h4 class="panel-title">
-                     MQTT Broker
-					</h4>
-				</div>
-                <div class="panel-body">
-                    <div class="form-group float-label-control">
-                        <label>Host:</label>
-                        <input required type="text" name="mqttHost" value="<?php echo $siteSettings['MQTT']['host']; ?>" class="form-control" placeholder="">
-                    </div>
-                    <div class="form-group float-label-control">
-                        <label>Port:</label>
-                        <input required type="text" name="mqttPort" value="<?php echo $siteSettings['MQTT']['port']; ?>" class="form-control" placeholder="">
-                    </div>
-                    <div class="form-group float-label-control">
-                        <label>Username:</label>
-                        <input required type="text" name="mqttUsername" value="<?php echo $siteSettings['MQTT']['username']; ?>" class="form-control" placeholder="">
-                    </div>
-                    <div class="form-group float-label-control">
-                        <label>Password:</label>
+                    <div class="panel-body">
+                        <div class="form-group float-label-control">
+                            <label>Host:</label>
+                            <input required type="text" name="mqttHost" value="<?php echo $siteSettings['MQTT']['host']; ?>" class="form-control" placeholder="">
+                        </div>
+                        <div class="form-group float-label-control">
+                            <label>Port:</label>
+                            <input required type="text" name="mqttPort" value="<?php echo $siteSettings['MQTT']['port']; ?>" class="form-control" placeholder="">
+                        </div>
+                        <div class="form-group float-label-control">
+                            <label>Username:</label>
+                            <input required type="text" name="mqttUsername" value="<?php echo $siteSettings['MQTT']['username']; ?>" class="form-control" placeholder="">
+                        </div>
+                        <div class="form-group float-label-control">
+                            <label>Password:</label>
                             <input required type="password" name="mqttPassword" value="" class="form-control" placeholder="">
-                    </div>                 
-                </div>		
-		    </div>
-        </div>      
-        <div class="col-sm-4 mx-auto">
-			<div class="panel panel-default">
-			   <div class="panel-heading">
-					<h4 class="panel-title">
-						Setup Progress
-					</h4>
-				</div>
-				<div  class="panel-body">
-                    <div class="form-check" style="border-radius:6px;margin-bottom:10px;padding:10px;padding-left:50px;color:#333;">
-                        <b>Database: </b><?php if(!$db){ echo "<span style='color:red'>Cannot connect to database</span>"; }else{ echo "<span style='color:green'>Connected</span>"; } ?><br>
-                        <b>MQTT Broker: </b><?php if($mqttConnect=="timeout"){ echo "<span style='color:red'>Cannot connect to broker</span>"; }else{ echo "<span style='color:green'>Connected</span>"; } ?><br>
-                        <b>User Count: </b> <?php if($results==0){ echo "<span style='color:red'>0</span>"; }else{ echo "<span style='color:green'>1 or more</span>"; } ?>
+                        </div>                 
+                    </div>		
+                </div>
+            </div>  
+            <div class="col-sm-3 mx-auto">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            Encryption
+                        </h4>
+                    </div>
+                    <div  class="panel-body">
+                        <div class="form-check" style="border-radius:6px;margin-bottom:10px;padding:10px;padding-left:50px;color:#333;">
+                        <b>Agent Encryption</b><br><br>
+                        <div style="margin-left:5px" class="form-group float-label-control">                       
+                            <label>Secret Key:</label> <a id="showbtn" style="" href="#" onclick="$('#agentSecret').attr('type', 'text');$('#showbtn').hide();">Show</a>
+                            <input readonly required type="password" id="agentSecret"  value="<?php echo $siteSettings['agentEncryption']['secret']; ?>" class="form-control" placeholder="">
+                        </div> 
                         <hr>
-                        <div style="margin-top:30px;">
-                                <input type="hidden" value="init" name="type">
-                                <?php if($results==0 and $db){ ?>  
-                                    <button type="button"  data-bs-toggle="modal" data-bs-target="#pageAlert" class="btn btn-secondary btn-sm">Create Admin User&nbsp;&nbsp;<i class="fas fa-plus"></i></button>
-                                <?php } ?>
-                                <button type="submit"  class="btn btn-success btn-sm">Save Details&nbsp;&nbsp;<i class="fas fa-save"></i></button>
+                        <button type="button" style="margin-left:5px" class="btn btn-sm btn-danger" >Regenerate All Keys</button>                        
                         </div>
                     </div>
-				</div>
-			</div>
+                </div>
+            </div>		  
+            <div class="col-sm-3 mx-auto">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                            <h4 class="panel-title">
+                                Setup Progress
+                            </h4>
+                        </div>
+                        <div  class="panel-body">
+                            <div class="form-check" style="border-radius:6px;margin-bottom:10px;padding:10px;padding-left:50px;color:#333;">
+                                <b>Database: </b><?php if(!$db){ echo "<span style='color:red'>Cannot connect to database</span>"; }else{ echo "<span style='color:green'>Connected</span>"; } ?><br>
+                                <b>MQTT Broker: </b><?php if($mqttConnect=="timeout"){ echo "<span style='color:red'>Cannot connect to broker</span>"; }else{ echo "<span style='color:green'>Connected</span>"; } ?><br>
+                                <b>User Count: </b> <?php if($results==0){ echo "<span style='color:red'>0</span>"; }else{ echo "<span style='color:green'>1 or more</span>"; } ?>
+                                <hr>
+                                <div style="margin-top:30px;">
+                                        <input type="hidden" value="init" name="type">
+                                        <?php if($results==0 and $db){ ?>  
+                                            <button type="button"  data-bs-toggle="modal" data-bs-target="#pageAlert" class="btn btn-secondary btn-sm">Create Admin User&nbsp;&nbsp;<i class="fas fa-plus"></i></button>
+                                        <?php } ?>
+                                        <button type="submit"  class="btn btn-success btn-sm">Save Details&nbsp;&nbsp;<i class="fas fa-save"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>	
+		    </div>
         </div>
-	</form>	
-		</div>
-	</div>
+    </form>		
 </div>
 <?php } ?>
 <?php if(!$show){ ?>
 <form method="POST">
-    <div style="width:100%;padding:15px;">
+    <div id="initPage" style="width:100%;padding:15px;">
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="padding-left:20px;">
                 <div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
@@ -354,7 +374,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                                         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                                             <div style="display:inline" class="form-group">
                                                 <label for="pwd">Service Desk <span style="color:red">*</span></label>
-                                                <select required type="text"  name="serviceDesk" class="form-select" id="pwd">
+                                                <select required type="text"  name="serviceDesk" class="form-select" id="pwd2">
                                                     <option value="<?php echo $siteSettings['Service_Desk']; ?>"><?php echo $siteSettings['Service_Desk']; ?></option>
                                                     <option value="Enabled">Enabled</option>
                                                     <option value="Disabled">Disabled</option>
@@ -367,7 +387,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                         </div>
                     </div>
                 </div>
-                <div style="bottom:0;position:fixed;float:right;width:100%;background:#fff;border-top:1px solid #d3d3d3d3;padding:10px;margin-left:-15px;z-index:1;overflow:hidden">
+                <div id="saveBar" style="bottom:0;position:fixed;float:right;width:100%;background:#fff;border-top:1px solid #d3d3d3d3;padding:10px;margin-left:-15px;z-index:1;overflow:hidden">
                     <center>
                         <button onclick="loadSection('Dashboard');" style="width:100px" class="btn btn-light btn-sm">Cancel</button>
                         <button type="submit" style="width:120px" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> &nbsp;Save Changes</button>
@@ -423,8 +443,12 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
         $('#init').slideToggle();
         if ($('#initButton').html().includes('Show more')){ 
             $('#initButton').html('Show less &nbsp;<i class="fas fa-chevron-up"></i>');
+            $('#initPage').hide();
+            $('#saveBar').fadeOut();
         }else{                 
             $('#initButton').html('Show more &nbsp;<i class="fas fa-chevron-down"></i>');
+            $('#initPage').show();
+            $('#saveBar').fadeIn();
         }; 
     }
 </script>

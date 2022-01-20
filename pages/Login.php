@@ -55,7 +55,7 @@ if($_SESSION['userid']!=""){ ?>
 <footer style="z-index:999;padding:5px;height:30px;position: fixed;left: 0;bottom: 0;width: 100%;color:#0c5460;text-align: center;background:<?php echo $siteSettings['theme']['Color 2'];?>" class="page-footer font-small black">
 	<div class="footer-copyright text-center ">© Copyright <?php echo date('Y');?> 
 		<a style="color:#333" href="https://github.com/OpenRMM"> OpenRMM</a>
-		<a style="float:right;font-size:12px;cursor:pointer;color:#696969;padding-right:20px" onclick="loadSection('Versions');"><u>Agent Downloads</u></a>
+		<a style="float:right;font-size:12px;cursor:pointer;color:#696969;padding-right:20px" onclick="loadSection('Downloads');"><u>Agent Downloads</u></a>
 	</div>
 </footer>
 <?php 	

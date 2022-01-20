@@ -4,8 +4,8 @@
 	require('phpMQTT.php');
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Init,Login,Logout,Asset_Alerts,Asset_Commands,Dashboard,Profile,Asset_Edit,Technicians,Customers,Assets,Versions"; 
-	$allPages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Asset_Agent_Settings,Asset_File_Manager,Init,Asset_Alerts,Customers,Technicians,Assets,Asset_Attached_Devices,Asset_Commands,Dashboard,Asset_Disks,Asset_Edit,Asset_Event_Logs,Asset_General,Login,Logout,Asset_Memory,Asset_Network,Asset_Optional_Features,Asset_Printers,Asset_Processes,Profile,Asset_Programs,Asset_Services,Asset_Users,Versions";
+	$excludedPages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Init,Login,Logout,Asset_Alerts,Asset_Commands,Dashboard,Profile,Asset_Edit,Technicians,Customers,Assets,Downloads"; 
+	$allPages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Asset_Agent_Settings,Asset_File_Manager,Init,Asset_Alerts,Customers,Technicians,Assets,Asset_Attached_Devices,Asset_Commands,Dashboard,Asset_Disks,Asset_Edit,Asset_Event_Logs,Asset_General,Login,Logout,Asset_Memory,Asset_Network,Asset_Optional_Features,Asset_Printers,Asset_Processes,Profile,Asset_Programs,Asset_Services,Asset_Users,Downloads";
 	$adminPages = "Servers,Asset_Agent_Settings,Technicians,Customers";
 	$taskCondtion_max = 5;
 ###########################################################################################################################################
@@ -15,7 +15,7 @@
 	date_default_timezone_set("America/Chicago");
 	if($siteSettings==""){
 		session_write_close();
-		exit("There is a problem with you config.json file");
+		exit("There is a problem with your config.json file");
 	}
 	$serverPages = array("cron.php", "LoadHistorical.php");
 	if(!isset($_SESSION['excludedPages'])){
@@ -70,6 +70,7 @@
 	if(!$db and file_exists("config.php")){
 		//exit("<center><h3 style='color:maroon;'>An error has occured. Please try again in a few moments.</h3><a href='#' onclick='location.reload();'>Retry</a><hr></center>");
 	}
+	mysqli_set_charset($db, 'utf8mb4');
     if($createDatabase=="true"){
         $templine = '';
         $lines = file("databaseStructure.sql");
@@ -80,19 +81,20 @@
             $templine .= $line;
             if (substr(trim($line), -1, 1) == ';')
             {
-                mysql_query($db, $templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysql_error($db) . '<br /><br />');
+                mysqli_query($db, $templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysqli_error($db) . '<br /><br />');
                 $templine = '';
             }
         }
     }
 
 	//Get user data
-	$query = "SELECT username,nicename,account_type,hex,user_color,allowed_pages,notifications FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+	$query = "SELECT Command_Buttons,username,nicename,account_type,hex,user_color,allowed_pages,notifications FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	$pages = crypto("decrypt",$user['allowed_pages'],$user['hex']);
 	$allowed_pages = explode(",",$pages);
 	$username=$user['username'];
+	$cmdButtons = $user['Command_Buttons'];
 	$_SESSION['notifications']= explode("||",$user['notifications']);
 
 	//redirect standard users
@@ -416,7 +418,8 @@
 		$remove = array("'");
 		$replaceWith = array("");
 		$string =  htmlspecialchars($string, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-		$string = stripslashes(htmlentities(strip_tags($string)));
+		$string = sprintf(stripslashes(htmlentities(strip_tags($string))));
+		//$string = mysqli_real_escape_string($db,$string);
 		//$string = filter_input($string, FILTER_SANITIZE_STRING);
 		return $string;
 	}
@@ -595,5 +598,27 @@
 			$decrypted_data = openssl_decrypt($encrypted_data, 'aes-256-gcm', $secret_key, OPENSSL_RAW_DATA, $iv, $tag);
 			return json_decode(base64_decode($decrypted_data),True);	
 		}
-	
+		function sanitize_output($buffer) {
+
+			$search = array(
+				'/\>[^\S ]+/s',     // strip whitespaces after tags, except space
+				'/[^\S ]+\</s',     // strip whitespaces before tags, except space
+				'/(\s)+/s',         // shorten multiple whitespace sequences
+				'/<!--(.|\s)*?-->/', // Remove HTML comments
+				'/(?:(?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:(?<!\:|\\\|\')\/\/.*))/'
+			);
+		
+			$replace = array(
+				'>',
+				'<',
+				'\\1',
+				''
+			);
+		
+			$buffer = preg_replace($search, $replace, $buffer);
+		
+			return $buffer;
+		}
+		
+		
 ?>

@@ -102,7 +102,7 @@ if($hostname==""){
 						while($result = mysqli_fetch_assoc($results)){
 							$count++;	
 						?>
-					<li onclick="loadSection('Ticket', '<?php echo $result['ID']; ?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
+					<li onclick="loadSection('Service_Desk_Ticket', '<?php echo $result['ID']; ?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
 						<i class="fas fa-ticket-alt" style="color:#666;font-size:12px;" title="Ticket"></i>
 						&nbsp;&nbsp;<?php echo $result['title']; ?>
 					</li>
@@ -150,19 +150,37 @@ if($hostname==""){
 	</div>			
 	<?php 	
 	//Get stats
-		//companies
-		$query = "SELECT ID, name,hex FROM companies where active='1'";
 		$companyArray= "";
+		$query3 = "SELECT ID FROM computers where active='1' and company_id='0'";
+		$count3 = mysqli_num_rows(mysqli_query($db, $query3));
+		$colors = array("#dedede","#0c5460","#333");
+		if($count3 > 0){
+			$computerColors="'#dedede',";
+			$companyArray= "'Not Assigned',";
+			$companyTotal =$count3.",";
+		}
+
+		$query = "SELECT ID, name,hex FROM companies where active='1'";
+		$count2=0;
+		$count3=1;
 		$companys = mysqli_query($db, $query);
 		while($result = mysqli_fetch_assoc($companys)){
 			$companyArray.= "'".crypto('decrypt', $result['name'],$result['hex'])."',";
 			$query = "SELECT ID FROM computers where active='1' and company_id='".$result['ID']."'";
 			$count = mysqli_num_rows(mysqli_query($db, $query));
 			$companyTotal.=$count.",";
+			$computerColors .= "'".$colors[$count3]."',";
+			$count3++;
+			if($count3==3){
+				$count3=0;
+			}
+			$count2 = $count2 + $count;
+			$count=0;
 		}
+		
 		$companyArray= rtrim($companyArray,',');
 		$companyTotal=rtrim($companyTotal,',');
-		if($count==0){
+		if($count2==0){
 			$companyTotal="0,100";
 			$companyArray= "'Assigned','Not Assigned'";
 		}
@@ -184,7 +202,7 @@ if($hostname==""){
 					<div class="card" style="backgrsound:#35384e">
 						<div style="cursor:pointer;" onclick="loadSection('Technicians');" class="card-body">
 							<canvas data-centerval="" id="chDonut2"></canvas>
-							<h6 style="text-align:center">Users</h6>
+							<h6 style="text-align:center">Technicians</h6>
 						</div>
 					</div>
 				</div>
@@ -215,9 +233,27 @@ if($hostname==""){
 						<?php } ?>
 						
 					</h6>
-					<?php if($_SESSION['accountType']=="Admin" and $serverStatus=="Online"){ ?>
-							<button onclick="serverStatus('<?php echo $computerID; ?>','shutdown');" title="Stop Server" style="float:right;margin-top:-5px" class="btn btn-sm btn-danger"><i class="fas fa-power-off"></i></button>
-							<button onclick="serverStatus('<?php echo $computerID; ?>','restart');" title="Restart Server" style="float:right;margin-right:10px;margin-top:-5px" class="btn btn-sm btn-warning"><i class="fas fa-redo"></i></button>
+					<?php if($_SESSION['accountType']=="Admin" and $serverStatus=="Online"){ ?>	
+						<div style="float:right;margin-top:-5px" class="btn-group">
+							<button type="button" class=" btn-danger btn btn-sm"><i class="fas fa-power-off"></i></button>
+							<button type="button" class="btn-danger btn dropdown-toggle-split btn-sm" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="fas fa-sort-down"></i>
+							</button>
+							<div class="dropdown-menu">
+								<a onclick="serverStatus('<?php echo $computerID; ?>','restart');" title="Restart Server"class="dropdown-item" href="javascript:void(0)">Restart Server</a>
+								<a onclick="serverStatus('<?php echo $computerID; ?>','shutdown');" title="Shutdown Server" class="bg-danger text-white dropdown-item" href="javascript:void(0)">Shutdown Server</a>
+							</div>
+						</div>
+						<div style="float:right;margin-top:-5px;margin-right:5px;" class="btn-group">
+							<button type="button" class="btn btn-sm btn-warning"><i class="fas fa-database"></i> </button>
+							<button type="button" class="btn dropdown-toggle-split btn-sm btn-warning" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="fas fa-sort-down"></i>
+							</button>
+							<div class="dropdown-menu">
+								<a onclick="serverStatus('<?php echo $computerID; ?>','restart service');" title="Restart Server Service"class="dropdown-item" href="javascript:void(0)">Restart Service</a>
+								<a onclick="serverStatus('<?php echo $computerID; ?>','stop service');" title="Stop Server Service" class="bg-warning text-white dropdown-item" href="javascript:void(0)">Stop Service</a>
+							</div>
+						</div>					
 					<?php } ?>
 				</h6>		
 			</div>
@@ -399,7 +435,7 @@ if($hostname==""){
 	    {
 	      data: [<?php echo $companyTotal;  ?>],
 	      backgroundColor: [
-	        "#0c5460"
+	       <?php echo $computerColors; ?>
 	      ],
 	      hoverBackgroundColor: [
 	        "#696969"

@@ -46,8 +46,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 										<div class="form-check">
 											<input class="form-check-input" type="checkbox" value="<?php echo $result['ID']; ?>" style="margin-top:10px" name="computers[]" id="checkall">	
 										</div>
-									</th>
-									
+									</th>									
 									<th scope="col">ID</th>		  
 									<th scope="col">Hostname</th>
 									<th scope="col">Logged In</th>
@@ -90,7 +89,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 								<tr id="row<?php echo $result['ID']; ?>" >
 									<td>
 										<div class="form-check">
-											<input class="form-check-input checkbox" type="checkbox" value="<?php echo $result['ID']; ?>" name="computers[]" id="flexCheckDefault">	
+											<input class="form-check-input checkbox" type="checkbox" value="<?php echo $result['ID']; ?>" name="computers[]" id="flexCheckDefault<?php echo $count; ?>">	
 										</div>
 									</td>
 									<td>
@@ -145,12 +144,11 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 										<?php if(in_array("Asset_Edit", $allowed_pages)){  ?>
 										<button onclick="loadSection('Asset_Edit', '<?php echo $result['ID']; ?>');" title="Edit Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="form-inline btn btn-dark btn-sm">
 											<i class="fas fa-pencil-alt"></i>
-										</button>
+										</button>&nbsp;
 										<?php } ?>
 										<button title="View Asset" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;background:#0ac282;" onclick="loadSection('Asset_General', '<?php echo $result['ID']; ?>');" class="form-inline btn btn-warning btn-sm">
 											<i class="fas fa-eye"></i>
 										</button>
-
 									</td>
 								</tr>
 							<?php }?>
@@ -258,7 +256,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 								$note = explode("^",$note);
 								$count++;
 						?>
-							<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" data-target="#viewNoteModal">
+							<a title="View Note" class="noteList" onclick="$('#notetitle').text('<?php echo $note[0]; ?>');$('#notedesc').text('<?php echo $note[1]; ?>');" data-toggle="modal" style="text-decoration:none" data-target="#viewNoteModal">
 								<li style="font-size:14px;cursor:pointer;color:#333;background:#fff;" class="secbtn list-group-item">
 									<i style="float:left;font-size:26px;padding-right:7px;color:#999" class="far fa-sticky-note"></i>
 									<?php echo ucwords($note[0]);?>
@@ -277,9 +275,6 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 		</div>
 	</div>
 </div>
-<!--------------------------------------modals---------------------------------------------->
-
-<!---------------------------------End MODALS------------------------------------->
 <script>
 $('#<?php echo $_SESSION['userid']; ?>Assets').DataTable( {
 	responsive: true,
@@ -297,13 +292,11 @@ $('#<?php echo $_SESSION['userid']; ?>Assets').DataTable( {
 			extend: 'colvis',
 			title: 'Column Visibility',
 			text:'Column Visibility',
-			//Columns to export
 			columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  
 		},{
 			extend: 'excelHtml5',
 			title: 'OpenRMM Asset List',
 			text:'Export to excel',
-			//Columns to export
 			exportOptions: {
 				columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
 			}
@@ -311,7 +304,6 @@ $('#<?php echo $_SESSION['userid']; ?>Assets').DataTable( {
 			extend: 'pdfHtml5',
 			title: 'OpenRMM Asset List',
 			text: 'Export to PDF',
-			//Columns to export
 			exportOptions: {
 				columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
 			}
@@ -321,7 +313,6 @@ $('#<?php echo $_SESSION['userid']; ?>Assets').DataTable( {
 </script>
 <script type='text/javascript'>
  $(document).ready(function(){
-   // Check or Uncheck All checkboxes
    $("#checkall").change(function(){
      var checked = $(this).is(':checked');
      if(checked){
@@ -335,7 +326,6 @@ $('#<?php echo $_SESSION['userid']; ?>Assets').DataTable( {
      }
    });
  
-  // Changing state of CheckAll checkbox 
   $(".checkbox").click(function(){
  
     if($(".checkbox").length == $(".checkbox:checked").length) {

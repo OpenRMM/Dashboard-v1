@@ -31,6 +31,20 @@ if(isset($_GET['file'])){
 	
 	
 ?>
+<!--
+	
+ .d88888b.                             8888888b.  888b     d888 888b     d888 
+d88P" "Y88b                            888   Y88b 8888b   d8888 8888b   d8888 
+888     888                            888    888 88888b.d88888 88888b.d88888 
+888     888 88888b.   .d88b.  88888b.  888   d88P 888Y88888P888 888Y88888P888 
+888     888 888 "88b d8P  Y8b 888 "88b 8888888P"  888 Y888P 888 888 Y888P 888 
+888     888 888  888 88888888 888  888 888 T88b   888  Y8P  888 888  Y8P  888 
+Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888 
+ "Y88888P"  88888P"   "Y8888  888  888 888   T88b 888       888 888       888 
+            888                                                               
+            888                                                               
+            888                                                               
+-->
 <!DOCTYPE html>
 <html>
 	<head>
@@ -81,7 +95,9 @@ if(isset($_GET['file'])){
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 		<script src="assets/js/tagsinput.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	</head>
+	<?php ob_start("sanitize_output"); ?>
 	<script>
 		var force="";
 	</script>
@@ -92,12 +108,13 @@ if(isset($_GET['file'])){
 			.calert { height: 120px; }
 			.headall { display: none; }
 		}
+		
+		.toast{ z-index:999999; }
 		.secActive {
 			background:#d1ecf1!important;
 			color:#0c5460!important;
 			border-radius:3px;
 		}
-		.toast{ z-index:999999; }
 		.secbtn:hover{
 			background:#282828!important;
 			color:#fff!important;  
@@ -121,15 +138,15 @@ if(isset($_GET['file'])){
 					<?php if(in_array("AssetChat", $allowed_pages)){  ?>
 						<button type="button" onclick="loadChat('0');"data-bs-toggle="modal" data-bs-target="#asset_message_modal" style="border:none;box-shadow:none;margin-top:4px" class="btn-sm btn" title="Asset Chat">
 							<i style="font-size:16px" class="fas fa-comment-dots"></i>
-							<span style="font-size:10px" id="messageCount" class="text-white badge bg-c-pink">0</span>
+							&nbsp;<span style="font-size:10px" id="messageCount" class="text-white badge bg-c-pink">0</span>
 						</button>
 						<?php } ?>
 						<div class="btn-group">
 						
           					<a href="javascript:void(0)" style="border:none;box-shadow:none;text-decoration:none" class="dropsdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-								<i style="font-size:16px;color:#000" class="fas fa-bell"></i>
+								<i style="font-size:16px;color:#000" class="fas fa-bell"></i>&nbsp;
 								<span style="margin-top" id="notificationCount" class="text-white badge bg-c-pink"><?php if($messageText==""){ echo "0"; }else{ echo "1"; } ?></span>
-							</a>
+							</a>&nbsp;
           					<div class="dropdown-menu">
 								<ul style="font-size:12px" id="notificationList"  class="list-group">
 									<li class="list-group-item">No New Notifications</li>
@@ -211,8 +228,8 @@ if(isset($_GET['file'])){
 									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Servers
 								</li>
 							<?php } ?>
-							<?php if(in_array("Versions", $allowed_pages)){  ?>
-								<li onclick="loadSection('Versions');" id="secbtnVersions" class="secbtn" style="width:100%">
+							<?php if(in_array("Downloads", $allowed_pages)){  ?>
+								<li onclick="loadSection('Downloads');" id="secbtnDownloads" class="secbtn" style="width:100%">
 									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Downloads
 								</li>
 							<?php } ?>
@@ -307,9 +324,9 @@ if(isset($_GET['file'])){
 					</ul>
 					<div style="padding:5px;color:#696969;bottom:0" class="footer-copyright text-center">
 						<center>
-							© Copyright <?php echo date('Y');?>,
-							<a style="color:#696969;" target="_blank" href="https://github.com/OpenRMM"> OpenRMM</a><hr>
-							<a style="font-size:12px;cursor:pointer;color:#696969" onclick="loadSection('Versions');"><u>Agent Downloads</u></a>
+							© Copyright <?php echo date('Y');?>,&nbsp;
+							<a style="color:#696969;" target="_blank" href="https://github.com/OpenRMM">OpenRMM</a><hr>
+							<a style="font-size:12px;cursor:pointer;color:#696969" onclick="loadSection('Downloads');"><u>Agent Downloads</u></a>
 						</center>
 					</div>
 				</nav>
@@ -325,18 +342,19 @@ if(isset($_GET['file'])){
 								</b>
 							</h6>
 						</div>
-						<div class="modal-body" style="background-color:#000;color:#fff;font-family: 'Courier New', Courier, monospace;padding:20px;">
-							<div style="max-height:400px;margin-bottom:10px;min-height:100px;overflow:auto;">
-								<div id="terminalResponse" style="color:#fff;font-family:font-family:monospace;">
+						<div class="modal-body" style="height:500px;background-color:#000;color:#fff;font-family: 'Courier New', Courier, monospace;padding:20px;overflow-y:auto;overflow-x:hidden">
+							<div style="margin-bottom:10px;min-height:10px;overflow-y:auto;overflow-x:hidden">
+								<div  style="color:#fff;font-family:font-family:monospace;">
 									<?php echo textOnNull($json['general']['Response'][0]['BuildNumber'], "Microsoft Windows");?>
 									<br/>
 									(c) Microsoft Corporation. All rights reserved.
 									<br/><br/>
 								</div>
+								<p id="terminalResponse" style="color:#fff;font-family:font-family:monospace;"></p>
 							</div>
-							<div style="min-height:50px;">					
-								<?php echo strtoupper($hostname);?>> 
-								<input type="text" id="terminaltxt" style="outline:none;border:none;background:#000;width:300px;color:#fff;font-family:font-family:monospace;">				
+							<div id="cmdtxt" style="min-height:50px;">					
+								<?php echo strtoupper($hostname);?>C:\Windows\System32> 
+								<input type="text" id="terminaltxt" autocomplete="off" style="outline:none;border:none;background:#000;width:300px;color:#fff;font-family:font-family:monospace;">				
 							</div>
 						</div>
 					</div>
@@ -370,7 +388,7 @@ if(isset($_GET['file'])){
 					<footer style="display:none;" class="page-footer font-small black">
 						<div class="footer-copyright text-center">© <?php echo date('Y');?> Copyright
 							<a style="color:#fff;" target="_blank" href="https://github.com/OpenRMM"> OpenRMM</a>
-							<a style="font-size:12px;cursor:pointer;float:left;padding-right:10px;color:#fff" onclick="loadSection('Versions');"><u>Previous Agent Versions</u></a>
+							<a style="font-size:12px;cursor:pointer;float:left;padding-right:10px;color:#fff" onclick="loadSection('Downloads');"><u>Previous Agent Versions</u></a>
 						</div>
 					</footer>
 				</div>
@@ -384,19 +402,26 @@ if(isset($_GET['file'])){
 
 	<script>
 		var computerID = atob(getCookie("ID"));
-		var currentSection = atob(getCookie("section"));
-		var sectionHistoryDate = "latest";
-		$( document ).ready(function() {
-        	//$("#sortable").sortable();
-        	//$("#sortable").disableSelection();
-		});
-		//Load Page
+		var currentSection = atob(getCookie("section"));;
+
 		if (document.cookie.indexOf('section') === -1 ) {
 			setCookie("section",  btoa("Login"), 365);
 		}
-		//Load Pages
+
 		var otherEntry = "";
-		function loadSection(section=currentSection, ID=computerID, date=sectionHistoryDate,other=otherEntry){
+		function loadSection(section=currentSection, ID=computerID, date='',other=otherEntry){
+		$("#terminalResponse").html("");
+		history.replaceState('', 'OpenRMM | Remote Management', '/');
+		var newsection = section;
+		newsection = newsection.replace('Asset_', "Asset - ");
+		newsection = newsection.replace('Service_Desk_', "Service Desk - ");
+		
+		newsection = newsection.replace('General', "Overview");
+		newsection = newsection.replace('Init', "Configuration");
+		newsection = newsection.replaceAll('_', " ");
+		
+		$(document).attr("title", "OpenRMM | " + newsection);
+
 		document.cookie = "section=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		document.cookie = "ID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		var loadSection="";
@@ -419,7 +444,7 @@ if(isset($_GET['file'])){
 		}else{
 			if(section=="Asset_File_Manager" || force=="true"){
 				$(".sidebarComputerName").text("");
-				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>We are getting the latest information for this asset</h5><br><h6>Instead of waiting, would you like to display the outdated assset data?</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460' type='submit'>View Older Asset Information <i class='fas fa-arrow-right'></i></button></form> <center></div></div>");
+				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3><div class='fadein row col-md-6 mx-auto'><div class='card card-md' style='margin-top:100px;padding:20px;width:100%'><center> <h5>We are getting the latest information for this asset</h5><br><h6>Instead of waiting, would you like to display the outdated asset data?</h6><br><form method='post'><input value='true' type='hidden' name='ignore'><input value='"+section+"' type='hidden' name='page'><button class='btn btn-sm btn-warning' style='background:<?php echo $siteSettings['theme']['Color 2']; ?>;border:none;color:#0c5460' type='submit'>View Older Asset Information <i class='fas fa-arrow-right'></i></button></form> <center></div></div>");
 				force="";
 			}else{
 				$(".loadSection").html("<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 3']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 4']; ?>'></div><div class='spinner-grow' style='color:<?php echo $siteSettings['theme']['Color 5']; ?>'></div><div class='spinner-grow text-secondary'></div><div class='spinner-grow text-dark'></div><div class='spinner-grow text-light'></div></center></h3>");
@@ -427,7 +452,7 @@ if(isset($_GET['file'])){
 		
 			$("html, body").animate({ scrollTop: 0 }, "slow"); 
 			$.ajax({
-				url: "includes/loader.php?ID="+btoa(ID)+"&Date="+btoa(date)+"&page="+btoa(section)+"&other="+btoa(other),
+				url: "includes/loader.php?ID="+btoa(ID)+"&page="+btoa(section)+"&other="+btoa(other),
 				timeout: 60000,
 				success: function(data) {
 					$(".loadSection").html(data);
@@ -441,12 +466,12 @@ if(isset($_GET['file'])){
 			$(item).addClass('secActive');
 
 		}
-		if(section == "Servers" || section == "Asset_Portal" || section == "Service_Desk_New_Ticket" || section == "Service_Desk_Ticket" || section == "Service_Desk_Home" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "Technicians" || section == "Customers" || section == "Versions" || section == "Init"){
+		if(section == "Servers" || section == "Asset_Portal" || section == "Service_Desk_New_Ticket" || section == "Service_Desk_Ticket" || section == "Service_Desk_Home" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "Technicians" || section == "Customers" || section == "Downloads" || section == "Init"){
 			$('#sectionList').slideUp(400);
-			$('#navConfig').collapse('show');
+			$('#navConfig').addClass('show')
 		}else if($('#sectionList').css("display")=="none"){
 			$('#sectionList').slideDown(400);
-			$('#navConfig').collapse('hide');
+			$('#navConfig').removeClass('show');
 		}
 		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 			$('#sidebar').removeClass('active');
@@ -462,7 +487,6 @@ if(isset($_GET['file'])){
 			}
 		 if($_SESSION['userid']!=""){ 
 			if($_SESSION['showModal']=="true" && 1==1){
-				//show modal once after login
 				echo 'pageAlert("'.$messageTitle.'", "'.$messageText.'");';
 				$_SESSION['showModal'] = "";
 			}
@@ -497,7 +521,7 @@ if(isset($_GET['file'])){
 			callPage();
 			
 			clearInterval(timer);
-			timer = setInterval(callPage,2000);
+			timer = setInterval(callPage,5000);
 			function callPage(ID2=ID){
 				$.ajax({
 					url: "includes/chat.php?ID="+btoa(ID2),
@@ -518,11 +542,11 @@ if(isset($_GET['file'])){
 			function(data, status){
 				$('#chatDiv2').scrollTop($('#chatDiv2')[0].scrollHeight);
 			});	
-			//refreshTypingStatus();	
+				
 		}
 
 		var textarea = $('#asset_message');
-		var lastTypedTime = new Date(0); // it's 01/01/1970
+		var lastTypedTime = new Date(0); 
 		var typingDelayMillis = 5000;
 
 		function refreshTypingStatus() {
@@ -548,9 +572,15 @@ if(isset($_GET['file'])){
 			lastTypedTime = new Date();
 		}
 
-		setInterval(refreshTypingStatus, 500);
+		setInterval(refreshTypingStatus, 5000);
 		textarea.keypress(updateLastTypedTime);
 		textarea.blur(refreshTypingStatus);
+	
 </script>
-
+<?php  ob_end_flush(); ?>
 </html>
+
+
+
+
+

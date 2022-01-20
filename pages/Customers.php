@@ -104,17 +104,17 @@ $companyCount = mysqli_num_rows($results);
 								<input type="hidden" name="ID" value="<?php echo $company['ID'];?>"/>
 								<?php if($company['active']=="1"){ ?>
 									<button type="button" id="delCompany<?php echo $company['ID']; ?>" onclick="deleteCompany(<?php echo $company['ID']; ?>,'0')" title="Remove <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm">
-										<i class="fas fa-trash"></i>				
+										<i class="fas fa-trash"></i>
 									</button>
 									<button type="button" id="actCompany<?php echo $company['ID']; ?>" onclick="deleteCompany(<?php echo $company['ID']; ?>,'1')" title="Reactivate <?php echo $msp; ?>" style="display:none;margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-success btn-sm">
-										<i class="fas fa-plus"></i>
+										<i class="fas fa-plus"></i>&nbsp;
 									</button>
 								<?php }else{ ?>
 									<button type="button" id="actCompany<?php echo $company['ID']; ?>" onclick="deleteCompany(<?php echo $company['ID']; ?>,'1')" title="Reactivate <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-success btn-sm">
 										<i class="fas fa-plus"></i>
 									</button>
 									<button type="button" id="delCompany<?php echo $company['ID']; ?>" onclick="deleteCompany(<?php echo $company['ID']; ?>,'0')" title="Remove <?php echo $msp; ?>" style="display:none;margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-danger btn-sm">
-										<i class="fas fa-trash"></i>				
+										<i class="fas fa-trash"></i>&nbsp;				
 									</button>
 								<?php }?>								
 								<a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#companyModal" onclick="editCompany('<?php echo $company['ID'];?>','<?php echo crypto('decrypt',$company['name'],$company['hex']);?>','<?php echo crypto('decrypt',$company['address'],$company['hex']);?>','<?php echo (crypto('decrypt',$company['phone'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['email'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['comments'],$company['hex']));?>','<?php echo ucfirst(crypto('decrypt',$company['owner'],$company['hex']));?>')" title="Edit <?php echo $msp; ?>" style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" class="btn btn-dark btn-sm">

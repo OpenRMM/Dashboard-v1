@@ -53,13 +53,17 @@ if($exists == 0){
 		$response = trim(computerDecrypt($result["data_received"]));
 	}else{
 		if($count >= 10){
-			$response = "Response timed out";
+			$response = "Request timed out";
 		}else{
 			$response = "No response";
 		}
 	}
+	
 ?>
-	<pre style="color:#fff;"><?php echo $response;?></pre>
-<?php }else{?>
-	A command has already been sent and the asset has not proccessed your request. Please wait <?php echo (int)$expire_after; ?> seconds before retrying a command.
+	
+	<pre style="overflow:hidden;color:#fff;white-space: pre-wrap;white-space: -moz-pre-wrap;white-space: -pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;"><?php echo $response;?></pre>
+	<script> $("#cmdtxt").show(); $('#terminaltxt').focus();  </script>
+	<?php }else{?>
+	A command has already been sent and the asset has not proccessed your request. Please wait <?php echo (int)$expire_after; ?> seconds before retrying a command.<br><br>
+	<script> $("#cmdtxt").show(); $('#terminaltxt').focus();  </script>
 <?php }?>

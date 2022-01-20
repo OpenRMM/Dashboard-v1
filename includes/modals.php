@@ -36,8 +36,7 @@
 									<div class="col-md-4 form-group">
 										<label for="editUserModal_type">Technician Color</label>
 										<input placeholder="User Color" type="color" name="color" class="form-control" id="editUserModal_color"/>
-									</div>
-								
+									</div>								
 								</div>
 								<br><hr>
 								<div class="row">
@@ -155,6 +154,33 @@
 								</button>
 							</div>
 						</form>
+					</div>
+				</div>
+			</div>
+				<!--------------- Asset reset password Modal ------------->
+				<div id="Asset_Reset_Password_Modal" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h6>
+								<b>
+									Reset Asset Password
+								</b>
+							</h6>
+						</div>
+						<input type="hidden" name="AssetID" value="" id="AssetID"/>
+						<input type="hidden" name="AssetUser" value="" id="AssetUser"/>
+						<div class="modal-body">
+							<p>This will reset the assets password to the one provided.</p>
+							<label>New password:</label>
+							<input required autocomplete="off" type="password" value="" id="AssetPassword" name="password" class="form-control">								
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-sm btn-default" data-bs-dismiss="modal">Cancel</button>
+							<button type="button" onclick="resetAssetPassword();" data-bs-dismiss="modal" style="color:#fff" class="btn btn-sm btn-primary">
+								<i class="fas fa-save"></i> Update
+							</button>
+						</div>					
 					</div>
 				</div>
 			</div>
@@ -288,6 +314,40 @@
 					</div>
 				</div>
 			</div>
+			<!------------- User commands ------------------->
+			<div id="userCommandsModal" class="modal fade" role="dialog">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h6>
+								<b>
+									Create Command
+								</b>
+							</h6>
+						</div>
+						<form method="post">
+							<div class="modal-body">
+								<div class="col-md-12 form-group">
+									<label>Title</label>
+									<input placeholder="ex. Flush DNS" style="resize:vertical" name="title" class="form-control" type="text" placeholder="Title">
+								</div>
+								<div class="col-md-12 form-group">
+									<label>Button Color</label>
+									<input placeholder="Button Color" type="color" name="btnColor" class="form-control"/>
+								</div>	
+								<div class="col-md-12 form-group">
+									<label>Command</label>
+									<textarea placeholder="ex. ipconfig /flushdns" name="customCommand" class="form-control" style="height:150px;resize-x:none;max-height:300px" placeholder="Optional" ></textarea>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-sm btn-default" data-bs-dismiss="modal">Close</button>
+								<button type="submit" class="btn btn-sm btn-primary">Create</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
 			<!------------- Older Data ------------------->
 			<div id="olderDataModal" class="modal fade" role="dialog">
 				<div id="olderDataModalDialog" class="modal-dialog">
@@ -316,7 +376,7 @@
 			<!-------------asset messages ------------------->
 			<div id="asset_message_modal" class="modal fade" role="dialog">
 				<div class="modal-dialog modal-lg">
-					<div class="modal-content">
+					<div class="modal-content" style="overflow:hidden" >
 						<div class="row clearfix">
 							<div  class="col-lg-12">
 								<div class="card chat-app">

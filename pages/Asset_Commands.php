@@ -73,16 +73,37 @@ $hostname = $json['general']['Response'][0]['csname'];
 							<i class="fas fa-fire-alt" style="margin-top:15px"></i><br> Disable Firewall
 							<center>
 						</div>
-						<div  data-bs-dismiss="modal" class="bg-secondary col-md-5 text-white secbtn" style="cursor:pointer;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" onclick="sendCommand('ipconfig /flushdns', 'Clear DNS Cache');">
-							<center>	
-								<i class="fas fa-network-wired" style="margin-top:15px"></i><br> Flush DNS
-							<center>
-						</div>					
+						
 					</div>
+					<br>
+					<h6>User defined commands					
+						<button data-bs-toggle="modal" data-bs-target="#userCommandsModal" style="float:right;padding:8px;border:none;margin-top:-5px" title="Add custom command" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>					
+					</h6>
+					<hr>
+					<div class="row" style="margin-top:10px;margin-left:30px;padding-bottom:10px">
+					<?php
+					$commands = array_slice($_SESSION['customCommands'], -50, 50, true);	
+					$count = 0;
+					foreach(array_reverse($commands) as $item) {
+						$count++;
+						$data = explode("(||)",$item);
+					?>
+						<div data-bs-dismiss="modal" id="btn<?php echo $count; ?>" class="col-md-5 text-white secbtn" style="background-color:<?php echo $data[1]; ?>;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" >
+							<i onclick="removeCommand('<?php echo $count; ?>','');" class="fas fa-times" style="margin-top:8px;cursor:pointer"></i>
+							<center style="cursor:pointer" onclick="sendCommand('<?php echo $data[2]; ?>', 'Run Custom Command');">	
+							<i class="fas fa-terminal"  style="margin-top:0px"></i><br><?php echo $data[0]; ?>
+							<center>
+						</div>
+					<?php
+					}
+					if($count==0){ ?>
+						<center><h6>No commands.</h6></center>
+					<?php } ?>
+				</div>
 			</div>
 		</div>
 	</div>	
-	<div class="col-md-8 " >
+	<div class="col-md-8">
 		<div class="card" style="overflow-x:auto">
 			<div class="card-body">
 				<?php 
@@ -94,7 +115,6 @@ $hostname = $json['general']['Response'][0]['csname'];
 				<thead>
 					<tr style="border-bottom:2px solid #d3d3d3;">
 					<th scope="col">Command</th>
-					<!--<th scope="col">Expire Time</th>-->
 					<th scope="col">Time Sent</th>
 					<th scope="col">Data Received</th>
 					<th scope="col">Status</th>
@@ -112,10 +132,8 @@ $hostname = $json['general']['Response'][0]['csname'];
 						?>
 						<tr>
 						<td title="<?php echo substr($cmd, 0, 400); if(strlen($cmd)>400){echo '...'; } ?>"><b><?php echo substr($cmd, 0, 40); if(strlen($cmd)>40){echo '...'; } ?></b></td>
-						<!--<td><?php echo strtolower($command['expire_after']);?> Minutes</td>-->
 						<td><?php echo $command['time_sent'];?></td>
 						<td title="<?php echo substr($data, 0, 400); if(strlen($data)>400){echo '...'; } ?>"><b><?php echo substr($data, 0, 40); if(strlen($data)>40){echo '...'; } ?></b></td>
-
 							<?php if($command['time_received']!=""){
 										$timer = $command['time_received'];
 								}else{
@@ -137,7 +155,7 @@ $hostname = $json['general']['Response'][0]['csname'];
 					<?php }?>
 					<?php if($count==0){ ?>
 						<tr>
-							<td colspan=30><center><h6>No Commands Found.</h6></center></td>
+							<td colspan=30><center><h6>No commands found.</h6></center></td>
 						</tr>
 					<?php } ?>
 				</tbody>
@@ -165,8 +183,10 @@ $hostname = $json['general']['Response'][0]['csname'];
 	}
 	$(document).ready(function() {
 		$('#<?php echo $_SESSION['userid']; ?>Commands').dataTable( {
+			"order": [],
 			colReorder: true,
 			stateSave: true
+			
 		} );
 	});
 </script>

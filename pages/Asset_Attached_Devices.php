@@ -185,7 +185,6 @@ $online = $results['online'];
 					<h6 style="color:#fff" class="card-title">
 						<?php echo $device['Name'];?>
 					</h6>
-					<!--<p><?php echo $device['Description'];?></p> They All Seem To mAtch Name-->
 				  </div>
 				</div>
 			</div>
@@ -225,7 +224,6 @@ $online = $results['online'];
 					<h6 style="color:#fff" class="card-title">
 						<?php echo $device['Name'];?>
 					</h6>
-					<!--<p><?php echo $device['Description'];?></p> They All Seem To mAtch Name-->
 				  </div>
 				</div>
 			</div>
