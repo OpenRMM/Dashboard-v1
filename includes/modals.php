@@ -56,8 +56,16 @@
 								</div>
 								<hr>
 								<div class="row">
-									<?php if($_SESSION['accountType']=="Admin"){  ?>
-									
+									<div class="col-md-4 form-group">
+										<label>Two Factor Authentication</label><br>
+										<?php if($user['tfa_secret']==""){ ?>
+											<button data-bs-toggle="modal" data-bs-target="#twofaModal" style="width:100%" class="btn btn-success btn-sm" type="button">Enable</button>
+										<?php }else{ ?>
+											<button onclick="disableTFA();" id="disableTFA2" style="width:100%" class="btn btn-danger btn-sm" type="button">Disable</button>
+											<button data-bs-toggle="modal" id="enableTFA" data-bs-target="#twofaModal" class="btn btn-success btn-sm" style="width:100%;display:none" type="button">Enable</button>
+										<?php } ?>
+									</div>
+									<?php if($_SESSION['accountType']=="Admin"){  ?>	
 										<div class="col-md-4 form-group">
 											<label for="editUserModal_type">Access Level</label>
 											<select onChange="update()" required name="accountType" id="accessSelect" class="form-select">
@@ -157,8 +165,56 @@
 					</div>
 				</div>
 			</div>
-				<!--------------- Asset reset password Modal ------------->
-				<div id="Asset_Reset_Password_Modal" class="modal fade" role="dialog">
+			<!--------------- 2FA Modal ------------->
+			<div id="twofaModal" class="modal fade" role="dialog">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h6>
+								<b>
+									Two Factor Authentication
+								</b>
+							</h6>
+						</div>
+						<form id="user" autocomplete="off" method="POST">
+							<input type="hidden" name="version" value="" id="user_ID"/>
+							<div class="modal-body">
+								<p>Would you like to enable Two Factor Authentication?</p>
+								<hr>
+								<ol>
+									<?php
+								if($_SESSION['tfaSecret']==""){
+										$_SESSION['tfaSecret'] = $tfa->createSecret();
+									}
+									?>
+									<li>
+										Scan this QR Code with your preffered authenticator app (ex. Google Authenticator)<br>
+										<img src="<?php echo $tfa->getQRCodeImageAsDataUri($_SESSION['userid'], $_SESSION['tfaSecret']); ?>"><br>
+										<?php echo chunk_split($_SESSION['tfaSecret'], 4, ' '); ?>
+									</li>
+									<?php
+										$code = $tfa->getCode($_SESSION['tfaSecret']);
+									?><br><br>
+									<li>
+										<div class="col-md-6 form-group">
+											<label class="checkbox-inline">Code from Authenticator app:</label>
+											<input id="twofaCode" required min-lenth="6" max-lenth="6" type="text" class="form-control" name="twofaCode" style="margin-right:5px;" value="">	
+										</div>
+									</li>
+								</ol>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-sm btn-default" data-bs-dismiss="modal">Cancel</button>
+								<button type="submit" style="color:#fff" class="btn btn-sm btn-primary">
+									<i class="fas fa-lock"></i>&nbsp; Enable
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<!--------------- Asset reset password Modal ------------->
+			<div id="Asset_Reset_Password_Modal" class="modal fade" role="dialog">
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">

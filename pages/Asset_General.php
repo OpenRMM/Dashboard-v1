@@ -399,7 +399,7 @@ if($alert!=""){ ?>
 			<div class="panel-body" style="z-index:999;border-radius:10px;overflow:hidden;background:#32344a;height:285px;border:#343a40">
 				<div class="rsow">
 					<a target="_blank" href="<?php echo str_replace(".png","",$json['okla_speedtest']['Response'][0]['result']['url']); ?>">
-						<form style="" method="post" action="/">
+						<form method="post" action="/">
 							<?php if($json['okla_speedtest']['Response'][0]['result']['url']!=""){ ?>
 								<center><img width="100%" style="margin-top:0px" height="80%" src="<?php echo $json['okla_speedtest']['Response'][0]['result']['url']; ?>.png"/></center>
 							<?php }else{ ?>

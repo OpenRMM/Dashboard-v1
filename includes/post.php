@@ -457,6 +457,17 @@
 			$activity = "Company: ".$ID.$action;
 			userActivity($activity,$_SESSION['userid']);
 			header("location: /");
+		}		
+		//Disable TFA
+		if($_POST['type'] == "DisableTFA"){
+			if($_SESSION['accountType']=="Admin"){
+				$ID = (int)$_POST['ID'];
+			}else{
+				$ID = $_SESSION['userid'];
+			}
+			$query = "UPDATE users SET tfa_secret='' WHERE ID='".$ID."';";
+			$results = mysqli_query($db, $query);
+			header("location: /");
 		}
 		//Delete User
 		if($_POST['type'] == "DeleteUser"){
@@ -488,6 +499,18 @@
 			userActivity($activity,$_SESSION['userid']);			
 			header("location: /");
 		}
+		if($_POST['twofaCode']!=""){
+			$ID = $_POST['twofaCode'];
+			$tfaSecret = $_SESSION['tfaSecret'];
+			if ($tfa->verifyCode($_SESSION['tfaSecret'], $ID) === true) {
+				$query = "UPDATE users SET tfa_secret='".$tfaSecret."' WHERE ID='".$_SESSION['userid']."';";
+				$results = mysqli_query($db, $query);
+				$_SESSION['sitenotification']="Two Factor Authentication has been enabled";
+			}else{
+				$_SESSION['sitenotification']="Authenticator code did not match";				
+			}
+			header("location: /");
+		}
 		//server status
 		if($_POST['type'] == "serverStatus"){
 			$ID = (int)$_POST['ID'];
@@ -500,8 +523,11 @@
 				$action=' restarted server service';
 			}elseif($active=="stop service"){
 				$action=' stopped server service';
+			}elseif($active=="update service"){
+				$action=' updated server service';
+				$active="update";
 			}else{
-
+				$active="";
 			}
 			MQTTpublish($ID."/Server/Command",'{"userID":'.$_SESSION['userid'].',"payload":"'.$active.'"}',$ID,false);
 			$activity = "Server: ".$ID.$action;
@@ -703,6 +729,35 @@
 			$activity = "Agent ".$ID." updated";
 			userActivity($activity,$_SESSION['userid']);
 		}
+		//2fa verify
+		if(isset($_POST['loginusername'], $_POST['tfaLoginpassword'])){
+			$code = clean($_POST['tfaLoginpassword']);
+			$username = clean($_POST['loginusername']);
+			$query = "SELECT * FROM users where active='1' and username='".$username."'";
+			$results= mysqli_query($db, $query);
+			$data = mysqli_fetch_assoc($results);
+
+			if($tfa->verifyCode($data['tfa_secret'], $code) === true) {
+				$_SESSION['userid']=$data['ID'];
+				$_SESSION['username']=$data['username'];
+				$activity="Logged In";
+				userActivity($activity,$data['ID']);
+				
+				$_SESSION['accountType']= crypto('decrypt', $data['account_type'] , $data['hex']);;
+				$_SESSION['showModal']="true";	
+				$_SESSION['recent']=explode(",",$data['recents']);
+				if($data['recents']==""){ $_SESSION['recent']=array(); }
+				$_SESSION['customCommands']=explode("{|}",$data['Command_Buttons']);
+				if($data['Command_Buttons']==""){ $_SESSION['customCommands']=array(); }
+				$_SESSION['recentTickets']=explode(",",$data['recentTickets']);
+				if($data['recentTickets']==""){ $_SESSION['recentTickets']=array(); }
+				$_SESSION['recentedit']=explode(",",$data['recent_edit']);
+				if($data['recent_edit']==""){ $_SESSION['recentedit']=array(); }
+			}else{
+				$_SESSION['loginMessage'] = "Incorrect Two Factor Authentication Details";
+			}
+			header("location: /");
+		}
 		//login
 		if(isset($_POST['loginusername'], $_POST['password'])){
 			$username = clean($_POST['loginusername']);
@@ -713,7 +768,15 @@
 			$count = mysqli_num_rows($results);
 			$data = mysqli_fetch_assoc($results);
 			$dbPassword= $data['password'];
+			$_SESSION['tfa_pass']="";
 			if(password_verify($password,$dbPassword)) { 
+				if($data['tfa_secret']!=""){
+					$_SESSION['tfa_pass']="false";
+					$_SESSION['loginusername'] = $username;
+				}else{
+					$_SESSION['tfa_pass']="true";
+				}
+				if($_SESSION['tfa_pass']=="true"){
 					$_SESSION['userid']=$data['ID'];
 					$_SESSION['username']=$data['username'];
 					$activity="Logged In";
@@ -729,14 +792,14 @@
 					if($data['recentTickets']==""){ $_SESSION['recentTickets']=array(); }
 					$_SESSION['recentedit']=explode(",",$data['recent_edit']);
 					if($data['recent_edit']==""){ $_SESSION['recentedit']=array(); }
-					
-			    	header("location: /");
-				}else{
-					$_SESSION['loginusername'] = $username;
-
-					$_SESSION['loginMessage'] = "Incorrect Login Details";
-					header("location: /");
 				}
+			    header("location: /");
+			}else{
+				$_SESSION['loginusername'] = $username;
+
+				$_SESSION['loginMessage'] = "Incorrect Login Details";
+				header("location: /");
+			}
 		}
 		//Upload or download new agent file
 		if(isset($_POST['agentFile']) or isset($_POST['companyAgent'])){

@@ -24,7 +24,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mx-auto" style="padding-bottom:20px;padding-top:0px;">
 			
 				<input type="hidden" name="type" value="NewTicket">
-				<div class="card table-card" style="marsgin-top:-20px;padding:30px;border-radius:6px;"> 
+				<div class="card table-card" style="padding:30px;border-radius:6px;"> 
 				<h5 style="display:inline">New Ticket</h5>
 				<br>
 				<div class="row">

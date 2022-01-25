@@ -55,7 +55,7 @@ if($_SERVER['HTTP_X_FORWARDED_FOR'] != $json['general']['Response'][0]['External
 	</div>
 </div>
 <?php if($computerID!="0"){ ?>
-<div id="asset" style="width:100%;backgrdound:#fff;padding:15px;">
+<div id="asset" style="width:100%;padding:15px;">
 	<form method="POST" action="/">
 		<div class="row justify-content-md-center" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 			<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10" style="padding:5px;padding-bottom:20px;padding-top:0px;border-radius:6px;">	
@@ -209,7 +209,7 @@ if($_SERVER['HTTP_X_FORWARDED_FOR'] != $json['general']['Response'][0]['External
 		<form action="/" method="POST">
 			<input type="hidden" name="type" value="NewTicket">
 			<input type="hidden" name="asset" value="<?php echo $computerID; ?>">
-			<div class="card table-card" style="marsgin-top:-20px;padding:30px;border-radius:6px;"> 
+			<div class="card table-card" style="padding:30px;border-radius:6px;"> 
 			<h5 style="display:inline">New Ticket</h5>
 			<br>
 			<div class="row">

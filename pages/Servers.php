@@ -197,6 +197,9 @@ $results2 = mysqli_query($db, $query2);
 			echo $computer['hostname']; ?>
 			<span style="<?php echo $serverStatus_color; ?>;margin-left:20px" class="badge">
 			<?php echo $serverStatus; ?></span> 
+			<?php if($serverStatus=="Online"){ ?>
+				<span onclick="serverStatus('<?php echo $server['ID']; ?>','update service');" class="badge" style="cursor:pointer;font-weight:normal;background:#fff3cd;color:#856404"><i class="fas fa-cloud"></i>&nbsp; Update available</span>
+			<?php } ?>
 		<?php } ?>
 		<hr>
 	</div>
@@ -277,7 +280,7 @@ $results2 = mysqli_query($db, $query2);
 					<div class="panel-heading">
 						<h5 style="padding:7px" class="panel-title">Logs</h5>
 					</div>
-					<div class="panel-body" style="s:285px;">
+					<div class="panel-body">
 						<div class="rsow">
 							<table id="<?php echo $_SESSION['userid']; ?>Servers" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
 								<thead>

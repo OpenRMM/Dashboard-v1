@@ -2,17 +2,21 @@
 	include("config.php");
 	$siteSettings = json_decode($siteSettingsJson, true);
 	require('phpMQTT.php');
+	spl_autoload_register(function ($className) {
+		include_once str_replace(array('RobThree\\Auth', '\\'), array('2fa', '/'), $className) . '.php';
+	});
+	$tfa = new RobThree\Auth\TwoFactorAuth('OpenRMM '.$_SESSION['userid']);
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
 	$excludedPages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Init,Login,Logout,Asset_Alerts,Asset_Commands,Dashboard,Profile,Asset_Edit,Technicians,Customers,Assets,Downloads"; 
-	$allPages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Asset_Agent_Settings,Asset_File_Manager,Init,Asset_Alerts,Customers,Technicians,Assets,Asset_Attached_Devices,Asset_Commands,Dashboard,Asset_Disks,Asset_Edit,Asset_Event_Logs,Asset_General,Login,Logout,Asset_Memory,Asset_Network,Asset_Optional_Features,Asset_Printers,Asset_Processes,Profile,Asset_Programs,Asset_Services,Asset_Users,Downloads";
+	$all_Pages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Asset_Agent_Settings,Asset_File_Manager,Init,Asset_Alerts,Customers,Technicians,Assets,Asset_Attached_Devices,Asset_Commands,Dashboard,Asset_Disks,Asset_Edit,Asset_Event_Logs,Asset_General,Login,Logout,Asset_Memory,Asset_Network,Asset_Optional_Features,Asset_Printers,Asset_Processes,Profile,Asset_Programs,Asset_Services,Asset_Users,Downloads";
 	$adminPages = "Servers,Asset_Agent_Settings,Technicians,Customers";
 	$taskCondtion_max = 5;
 ###########################################################################################################################################
 ######################################################## DEV ONLY DO NOT PASS #############################################################
 ###########################################################################################################################################
 	//Set Timezone
-	date_default_timezone_set("America/Chicago");
+	date_default_timezone_set($siteSettings['Timezone']);
 	if($siteSettings==""){
 		session_write_close();
 		exit("There is a problem with your config.json file");
@@ -21,7 +25,7 @@
 	if(!isset($_SESSION['excludedPages'])){
 		$_SESSION['excludedPages'] = explode(",", $excludedPages);
 	}
-	$allPages = explode(",", $allPages);
+	$allPages = explode(",", $all_Pages);
 	$allAdminPages = explode(",", $adminPages);
 	if(!in_array(basename($_SERVER['SCRIPT_NAME']), $serverPages)){
 		ini_set('session.gc_maxlifetime', 3600);
@@ -88,7 +92,7 @@
     }
 
 	//Get user data
-	$query = "SELECT Command_Buttons,username,nicename,account_type,hex,user_color,allowed_pages,notifications FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+	$query = "SELECT Command_Buttons,username,nicename,account_type,hex,user_color,allowed_pages,notifications,tfa_secret FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	$pages = crypto("decrypt",$user['allowed_pages'],$user['hex']);
@@ -99,7 +103,7 @@
 
 	//redirect standard users
 	function checkAccess($page,$computerID="null"){
-		GLOBAL $allAdminPages,$siteSettings, $db;
+		GLOBAL $allAdminPages,$siteSettings, $db, $allowed_pages;
 		$_SESSION['dbRows']=strtotime(date("Y-m-d H:i:s"));
 		if($_SESSION['userid']==""){ 
 			if($page!="Asset_Portal"){
@@ -116,8 +120,7 @@
 		}else{
 			if($page=="Asset_Portal" and $_SESSION['userid']!=""){
 				return exit("<center><br><br><h5>Sorry, you do not have permission to access this page!</h5><p>If you believe this is an error please contact a site administrator.</p><hr><a href='#' onclick='loadSection(\"Dashboard\");' style='background:#0c5460;color:".$siteSettings['theme']['Color 2']."' class='btn btn-sm'>Back To Dashboard</a></center><div style='height:100vh'>&nbsp;</div>");					
-			}
-			
+			}		
 			if($_SESSION['accountType']=="Standard" or $_SESSION['accountType']==""){
 				if(!in_array($page, $allowed_pages) and $page != "Dashboard" and $page != "Init"){
 					$activity="Technician Attempted To Access: ".str_replace("_"," ",$page);
@@ -137,8 +140,7 @@
 					return exit("
 					<br><center><h4>No Asset Selected</h4><p>To Select An Asset, Please Visit The <a class='text-dark' style='cursor:pointer' onclick='loadSection(\'Assets\');'><u>Assets page</u></a></p></center><hr>");
 				}
-			}
-			
+			}			
 		}
 	}
 	if($siteSettings['theme']['MSP']=="true"){
@@ -561,12 +563,10 @@
 			$type=" by ";
 		}
 		$activity=clean($activity2).$type.ucwords(crypto('decrypt',$user['nicename'],$user['hex']));
-
 		$query = "SELECT * FROM user_activity WHERE user_id='".$user['ID']."' ORDER BY ID DESC LIMIT 1";
 		$count =  mysqli_fetch_assoc(mysqli_query($db, $query));
 		if(crypto('decrypt',$count['activity'],$count['hex'])!=$activity){
 			$active = crypto('encrypt',$activity,$salt);
-
 			$query = "INSERT INTO user_activity (user_id, activity,date,hex) VALUES ('".$user['ID']."','".$active."', '".time()."','".$salt."')";
 			$results = mysqli_query($db, $query);
 		}
@@ -575,7 +575,7 @@
 
 		function computerEncrypt(array $data): string
 		{
-			GLOBAL $passphrase;
+			GLOBAL $siteSettings;
 			$data_json_64 = base64_encode(json_encode($data));
 			$secret_key = hex2bin($siteSettings['agentEncryption']['secret']);
 			$iv = random_bytes(openssl_cipher_iv_length('aes-256-gcm'));
@@ -598,8 +598,8 @@
 			$decrypted_data = openssl_decrypt($encrypted_data, 'aes-256-gcm', $secret_key, OPENSSL_RAW_DATA, $iv, $tag);
 			return json_decode(base64_decode($decrypted_data),True);	
 		}
+		
 		function sanitize_output($buffer) {
-
 			$search = array(
 				'/\>[^\S ]+/s',     // strip whitespaces after tags, except space
 				'/[^\S ]+\</s',     // strip whitespaces before tags, except space

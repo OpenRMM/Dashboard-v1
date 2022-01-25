@@ -47,7 +47,7 @@ if($hostname==""){
 </div>	
 <div class="row" style="margin-bottom:10px;margin-top:20px;border-radius:3px;overflow:hidden;padding:0px;">
 	<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 " style="padding-left:20px;">
-		<div class="card user-card2" style="heigsht:100%;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+		<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
 			<div style="height:45px" class="panel-heading">
 				<h5 class="panel-title">New Assets</h5>
 			</div>			
@@ -87,7 +87,7 @@ if($hostname==""){
 			</div>
 		</div>	
 		<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
-		<div class="card user-card2" style="heigsht:100%;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+		<div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
 			<div style="height:45px" class="panel-heading">
 				<h5 class="panel-title">Recent Tickets</h5>
 			</div>			
@@ -196,10 +196,10 @@ if($hostname==""){
 		$query = "SELECT ID FROM computers where active='1' and online='0'";
 		$assets2 = mysqli_num_rows(mysqli_query($db, $query));	
 	?>
-		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mh-40" style="heidght:260px;">
-			<div class="row" style="heighst:200px">
+		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mh-40">
+			<div class="row">
 				<div class="col-md-4 py-1">
-					<div class="card" style="backgrsound:#35384e">
+					<div class="card">
 						<div style="cursor:pointer;" onclick="loadSection('Technicians');" class="card-body">
 							<canvas data-centerval="" id="chDonut2"></canvas>
 							<h6 style="text-align:center">Technicians</h6>
@@ -207,7 +207,7 @@ if($hostname==""){
 					</div>
 				</div>
 				<div class="col-md-4 py-1">
-					<div class="card" style="bacskground:#35384e">
+					<div class="card">
 						<div style="cursor:pointer;" onclick="loadSection('Customers');" class="card-body">
 							<canvas data-centerval="" id="chDonut1"></canvas>
 							<h6 style="text-align:center"><?php echo $msp."s"; ?></h6>
@@ -215,7 +215,7 @@ if($hostname==""){
 					</div>
 				</div>
 				<div class="col-md-4 py-1">
-					<div class="card" style="bacskground:#35384e">
+					<div class="card">
 						<div style="cursor:pointer;" onclick="loadSection('Assets');"  class="card-body">
 							<canvas data-centerval="" id="chDonut3"></canvas>
 							<h6 style="text-align:center">Asset Status</h6>
@@ -361,15 +361,15 @@ if($hostname==""){
 				</div>					
 			</div>		
 		</div>
-		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mh-40 offset-md-3 offset-lg-3" style="">
-			<div class="row" style="heighst:200px">
+		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mh-40 offset-md-3 offset-lg-3">
+			<div class="row">
 				<div  class="panel-default">
 					<div class="panel-heading">
 						<h5 style="padding:7px" class="panel-title">
 							Recent Activity Feeds
 						</h5>
 					</div>
-					<div  class="panel-body" style="background:#fff;hesight:285px;overflow:auto">
+					<div  class="panel-body" style="background:#fff;overflow:auto">
 						<div class="rosw">
 							<table id="<?php echo $_SESSION['userid']; ?>Activity_Logs" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
 								<thead>

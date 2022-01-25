@@ -24,7 +24,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 	<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-bottom:20px;padding-top:0px;">
 		<form method="post" action="/">
-			<div class="card table-card" id="printTable" style="marsgin-top:-20px;padding:10px;border-radius:6px;"> 
+			<div class="card table-card" id="printTable" style="padding:10px;border-radius:6px;"> 
 				<div styles="float:right;" class="dropdown">
 					<button type="button" class="btn btn-dark dropsdown-toggle btn-sm" style="float:right" data-bs-toggle="dropdown">
 						Actions <i class="fas fa-sort-down"></i>

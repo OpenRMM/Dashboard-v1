@@ -69,7 +69,6 @@ if(!file_exists("config.php") or !$db or $mqttConnect=="timeout" or $result==0){
 <?php 
     exit;
 }
-
 $query = "UPDATE users SET last_login='".time()."' WHERE ID=".$_SESSION['userid'].";";
 $results = mysqli_query($db, $query);
 $_SESSION['computerID'] = (int)base64_decode($_GET['ID']);
@@ -268,3 +267,13 @@ if($_SESSION['userid']!=""){
            
         </script>
 <?php } ?>
+<?php 
+    if($_SESSION['sitenotification']!=""){
+?>
+    <script>
+        toastr.info('<?php echo $_SESSION['sitenotification']; ?>');
+    </script>
+<?php
+    $_SESSION['sitenotification']="";
+    }
+?>

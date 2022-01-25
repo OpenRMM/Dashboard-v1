@@ -291,6 +291,18 @@ function updateCompanyAgent(ID2){
     });
 }
 
+function disableTFA(){ 
+    $.post("index.php", {
+       type: "DisableTFA",
+       ID: $("#editUserModal_ID").val()
+    },
+    function(data, status){
+        $("#disableTFA2").hide();
+        $("#enableTFA").show();
+        toastr.options.progressBar = true;
+        toastr.error('Two Factor Authentication has been disabled');
+    });
+}
 
 function sendChat(){ 
     var ID2 = $("#asset_message_id").val();
@@ -387,6 +399,8 @@ function serverStatus(ID,action){
                 toastr.error('The Selected Server Service Has Been Sent Stop Request');
             }else if(action=="restart service"){
                 toastr.warning('The Selected Server Service Has Been Sent Restart Request');
+            }else if(action=="update service"){
+                toastr.info('The Selected Server Service Has Been Sent Update Request');
             }else{
 
             }     

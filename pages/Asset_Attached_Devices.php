@@ -61,7 +61,7 @@ $online = $results['online'];
 			foreach($monitors as $device){		
 		?>
 			<div class="col-md-2" style="padding:5px;">
-				<div class="card" style="height:80%;paddings:5px;background:#343a40;color:#fff">
+				<div class="card" style="height:80%;background:#343a40;color:#fff">
 				  <div style="text-align:center;color:#fff;margin-top:10px">
 					<h6 style="color:#fff" class="card-title">
 						<?php echo $device['Name'];?>
@@ -101,7 +101,7 @@ $online = $results['online'];
 			foreach($hubs as $hub){	
 		?>
 			<div class="col-md-2" style="padding:3px;">
-				<div class="card" style="height:80%;paddings:5px;background:#343a40;color:#fff">
+				<div class="card" style="height:80%;background:#343a40;color:#fff">
 				  <div style="text-align:center;color:#fff;margin-top:10px">
 					<h6 style="color:#fff" class="card-title">
 						<?php echo $hub['Name'];?>
@@ -140,7 +140,7 @@ $online = $results['online'];
 			foreach($keyboards as $device){	
 		?>
 			<div class="col-md-3" style="padding:5px;">
-				<div class="card" style="height:80%;paddings:5px;background:#343a40;color:#fff">
+				<div class="card" style="height:80%;background:#343a40;color:#fff">
 				  	<div style="text-align:center;color:#fff;margin-top:10px">
 						<h6 style="color:#fff" class="card-title">
 							<b><?php echo $device['Caption'];?></b>
@@ -180,7 +180,7 @@ $online = $results['online'];
 			foreach($pointingDevices as $device){	
 		?>
 			<div class="col-md-3" style="padding:5px;">
-				<div class="card" style="height:80%;paddings:5px;background:#343a40;color:#fff">
+				<div class="card" style="height:80%;background:#343a40;color:#fff">
 				  <div style="text-align:center;color:#fff;margin-top:10px">
 					<h6 style="color:#fff" class="card-title">
 						<?php echo $device['Name'];?>
@@ -219,7 +219,7 @@ $online = $results['online'];
 			foreach($SoundDevices as $device){	
 		?>
 			<div class="col-md-3" style="padding:5px;">
-				<div class="card" style="height:80%;paddings:5px;background:#343a40;color:#fff">
+				<div class="card" style="height:80%;background:#343a40;color:#fff">
 				  <div style="text-align:center;color:#fff;margin-top:10px">
 					<h6 style="color:#fff" class="card-title">
 						<?php echo $device['Name'];?>
@@ -258,7 +258,7 @@ $online = $results['online'];
 			foreach($SerialPorts as $device){	
 		?>
 			<div class="col-md-3" style="padding:5px;">
-				<div class="card" style="height:80%;paddings:5px;background:#343a40;color:#fff">
+				<div class="card" style="height:80%;background:#343a40;color:#fff">
 				  <div style="text-align:center;color:#fff;margin-top:10px">
 					<h6 style="color:#fff" class="card-title">
 						<?php echo $device['DeviceID'];?>

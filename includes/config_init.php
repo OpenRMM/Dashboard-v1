@@ -14,6 +14,7 @@ $siteSettingsJson = '
     "agentEncryption": {
         "secret": "[agentSecret]"
     },
+    "Timezone": "[timezone]",
     "MQTT": {
         "host": "[mqttHost]",
         "username": "[mqttUsername]",

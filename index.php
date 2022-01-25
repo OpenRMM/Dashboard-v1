@@ -133,6 +133,9 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 						<a style="color:#333;font-size:22px;cursor:pointer" onclick="loadSection('<?php if($_SESSION['userid']!=""){ echo "Dashboard"; }else{ echo "Login"; } ?>');" >Open<span style="color:#0c5460">RMM</span></a>
 					</div>
 				</div>
+				<?php if($_SESSION['accountType']=="Admin" and $user['tfa_secret']==""){ ?>
+				<span class="badge" style="background:#f8d7da;color:#721c24;font-weight:normal">As an administrator, we strongly reccommend enabling two factor authentication</span>
+				<?php } ?>
 				<?php if($_SESSION['userid']!=""){ ?>
 					<div style="float:right;">
 					<?php if(in_array("AssetChat", $allowed_pages)){  ?>
@@ -148,7 +151,7 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 								<span style="margin-top" id="notificationCount" class="text-white badge bg-c-pink"><?php if($messageText==""){ echo "0"; }else{ echo "1"; } ?></span>
 							</a>&nbsp;
           					<div class="dropdown-menu">
-								<ul style="font-size:12px" id="notificationList"  class="list-group">
+								<ul style="font-size:12px;" id="notificationList" class="list-group">
 									<li class="list-group-item">No New Notifications</li>
 								</ul>
 							</div>
@@ -344,17 +347,17 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 						</div>
 						<div class="modal-body" style="height:500px;background-color:#000;color:#fff;font-family: 'Courier New', Courier, monospace;padding:20px;overflow-y:auto;overflow-x:hidden">
 							<div style="margin-bottom:10px;min-height:10px;overflow-y:auto;overflow-x:hidden">
-								<div  style="color:#fff;font-family:font-family:monospace;">
+								<div  style="color:#fff;font-family:monospace;">
 									<?php echo textOnNull($json['general']['Response'][0]['BuildNumber'], "Microsoft Windows");?>
 									<br/>
 									(c) Microsoft Corporation. All rights reserved.
 									<br/><br/>
 								</div>
-								<p id="terminalResponse" style="color:#fff;font-family:font-family:monospace;"></p>
+								<p id="terminalResponse" style="color:#fff;font-family:monospace;"></p>
 							</div>
 							<div id="cmdtxt" style="min-height:50px;">					
 								<?php echo strtoupper($hostname);?>C:\Windows\System32> 
-								<input type="text" id="terminaltxt" autocomplete="off" style="outline:none;border:none;background:#000;width:300px;color:#fff;font-family:font-family:monospace;">				
+								<input type="text" id="terminaltxt" autocomplete="off" style="outline:none;border:none;background:#000;width:300px;color:#fff;font-family:monospace;">				
 							</div>
 						</div>
 					</div>

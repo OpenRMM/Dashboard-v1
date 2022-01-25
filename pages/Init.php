@@ -122,7 +122,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                         <div class="form-check" style="border-radius:6px;margin-bottom:10px;padding:10px;padding-left:50px;color:#333;">
                         <b>Agent Encryption</b><br><br>
                         <div style="margin-left:5px" class="form-group float-label-control">                       
-                            <label>Secret Key:</label> <a id="showbtn" style="" href="#" onclick="$('#agentSecret').attr('type', 'text');$('#showbtn').hide();">Show</a>
+                            <label>Secret Key:</label> <a id="showbtn" href="#" onclick="$('#agentSecret').attr('type', 'text');$('#showbtn').hide();">Show</a>
                             <input readonly required type="password" id="agentSecret"  value="<?php echo $siteSettings['agentEncryption']['secret']; ?>" class="form-control" placeholder="">
                         </div> 
                         <hr>
@@ -222,7 +222,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
         
                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-left:20px;">
                 
-                    <div class="card user-card2" style="min-heighst:200px;width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+                    <div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
                         <div class="card-body">
                             <?php if($get[0]=="general" or $get[0]==""){  ?>
                                 <h5>General Settings</h5>
@@ -301,7 +301,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                                                             <label class="form-label" for="customRange2">Update Check Interval</label>
                                                             <div style="margin-top:10px;" class="range">
                                                                 <input stylse="width:160px" class="range-slider__range" type="range" name="defaultUpdateInterval" value="<?php echo (int)$agent_settings["Updates"]['check_interval']; ?>" min="0" max="1000">
-                                                                <span style="background:#6c757d;color:#fff;widsth:120px" class="range-slider__value">0</span>
+                                                                <span style="background:#6c757d;color:#fff;" class="range-slider__value">0</span>
                                                             </div>
                                                         </div>									
                                                     </div>
@@ -310,7 +310,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                                         </div>
                                     </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                            <div class="card table-card" style="margin-top:0px;paddinsg:20px"> 
+                                            <div class="card table-card" style="margin-top:0px;"> 
                                                 <div style="margin-top:-40px" class="card-header"><br>
                                                     <h5>Update Intervals</h5>
                                                     <p>How often would you like the agent to send data?</p>

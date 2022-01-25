@@ -173,7 +173,7 @@ $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 					</div>						
 					<div class="col-sm-4">
 					<?php if($online=="1"){ ?>	
-						<div class="panel panel-default" style="height:auto;color:#fff;color#000;padding:20px;border-radius:6px;margin-bottom:20px;">
+						<div class="panel panel-default" style="height:auto;color:#fff;color:#000;padding:20px;border-radius:6px;margin-bottom:20px;">
 							<div class="panel-heading">
 								<h4 class="panel-title">
 									Agent Status
@@ -191,7 +191,7 @@ $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 							</div>
 						</div>	
 						<?php } ?>
-						<div class="panel panel-default" style="height:auto;color:#fff;color#000;padding:20px;border-radius:6px;margin-bottom:20px;">
+						<div class="panel panel-default" style="height:auto;color:#fff;color:#000;padding:20px;border-radius:6px;margin-bottom:20px;">
 							<div class="panel-heading">
 								<h4 class="panel-title">
 									Agent Configuration

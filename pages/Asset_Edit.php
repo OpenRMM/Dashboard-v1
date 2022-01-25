@@ -47,7 +47,7 @@ $online = $data['online'];
 	</div>
 </div>
 <form method="POST" action="/">
-	<div style="width:100%;backgrdound:#fff;padding:15px;">	
+	<div style="width:100%;padding:15px;">	
 		<div class="row">
 			<div style="padding:20px;border-radius:6px" class="card card-sm col-sm-8">
 				<input type="hidden" name="type" value="EditComputer"/>
@@ -182,7 +182,7 @@ $online = $data['online'];
 					</div>
 				</div>
 				<?php if($_SESSION['accountType']=="Admin"){ ?>
-					<div class="panel panel-default" style="height:auto;color:#fff;color#000;padding:20px;border-radius:6px;margin-bottom:20px;">
+					<div class="panel panel-default" style="height:auto;color:#fff;color:#000;padding:20px;border-radius:6px;margin-bottom:20px;">
 						<center>
 							<a style="width:75%;margin-top:-3px;border:none;" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delModal" href="javascript:void(0)">
 								<i class="fas fa-trash"></i> &nbsp; Delete Asset

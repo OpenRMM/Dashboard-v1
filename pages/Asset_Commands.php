@@ -11,8 +11,8 @@ $online = $computer['online'];
 
 $hostname = $json['general']['Response'][0]['csname'];	
 ?>
-<div class="row" style="">
-	<div style="" class=" col-md-12">
+<div class="row">
+	<div class=" col-md-12">
 		<div class="card" style="padding:20px;margin-bottom:-1px">					
 			<h5 style="color:#0c5460">Commands
 				<div style="float:right;">
@@ -35,8 +35,8 @@ $hostname = $json['general']['Response'][0]['csname'];
 	echo"<br>";
 }
 ?>
-<div class="row" style="">
-	<div style="" class=" col-md-4">
+<div class="row">
+	<div class=" col-md-4">
 		<div class="card">
 			<div class="card-body">
 					<div class="row" style="margin-top:10px;margin-left:30px;padding-bottom:10px">		

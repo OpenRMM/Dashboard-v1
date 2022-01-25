@@ -18,7 +18,7 @@ if($_SESSION['userid']!=""){ ?>
 	
 }	
 ?>
-<div class="row" style="margin-left:-70px;text-align:center;margin-bottom:10px;margin-top:10px;border-radius:3px;overflow:hidden;padding:5px;">
+<div class="row" style="margin-left:-70px;text-align:center;margin-bottom:10px;margin-top:50px;border-radius:3px;padding:5px;">
 	<div style="background:#35384e;margin-bottom:100px" class="sidenav col-xs-3 col-sm-3 col-md-3 col-lg-3">
 		<div class="login-main-text">
 			<h2>Remote Monitoring & Management Platform</h2>
@@ -28,21 +28,26 @@ if($_SESSION['userid']!=""){ ?>
 			servers or endpoints of a client, from a remote location.</p>
 		</div>
 	</div>
-	<div style="padding:5px;margin-top:10%;margin-bottom:100px" class="main col-xs-8 col-sm-8 col-md-8 col-lg-8">			
+	<div style="height:1000px;padding:5px;margin-top:10%;margin-bottom:100px;" class="main col-xs-8 col-sm-8 col-md-8 col-lg-8">			
 		<div class=" col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
 			<div style="margin-top:-100px;padding-bottom:50px">
 				<h2>OpenRMM</h2>
 				<p>Login To Access Our Remote Monitoring & Management Platform.</p>
 			</div>
-			<form method="post" action="/" class="form-signin">
+			<form method="post" action="/" autocomplete="off" class="form-signin">
 				<div style="text-align:left" class="form-label-group">
 					<label  for="inputEmail"><b>Username:</b></label>
-					<input maxlength="25" minlength="4" type="text" value="<?php echo clean($_SESSION['loginusername']); ?>" name="loginusername" id="inputEmail" class="form-control" placeholder="Username" required <?php if($_SESSION['loginusername']==""){ echo"autofocus"; } ?>>
+					<input <?php if($_SESSION['tfa_pass']=="false"){ echo "readonly"; } ?> maxlength="25" minlength="4" type="text" value="<?php echo clean($_SESSION['loginusername']); ?>" name="loginusername" id="inputEmail" class="form-control" placeholder="Username" required <?php if($_SESSION['loginusername']==""){ echo"autofocus"; } ?>>
 				</div>
 				<br>
 				<div style="text-align:left" class="form-label-group">
-					<label for="inputPassword"><b>Password:</b></label>
-					<input <?php if($_SESSION['loginusername']!=""){ echo"autofocus"; } ?> maxlength="25" minlength="4" type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+					<?php if($_SESSION['tfa_pass']=="false"){ ?>
+						<label for="inputPassword"><b>Code from authenticator app (ex. Google Authenticator):</b></label>
+						<input autocomplete="off" <?php if($_SESSION['loginusername']!=""){ echo "autofocus"; } ?> maxlength="25" minlength="4" type="password" name="tfaLoginpassword" id="inputPassword" class="form-control" placeholder="" required>
+					<?php }else{ ?>
+						<label for="inputPassword"><b>Password:</b></label>
+						<input <?php if($_SESSION['loginusername']!=""){ echo"autofocus"; } ?> maxlength="25" minlength="4" type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+					<?php } $_SESSION['tfa_pass']=""; ?>
 				</div>					
 				<br>
 				<button style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#0c5460" class="btn btn-sm btn-block text-uppercase" type="submit">

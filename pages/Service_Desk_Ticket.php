@@ -46,7 +46,7 @@ userActivity($activity,$_SESSION['userid'])
 ?>
 <style>
 	.grid-divider {
-  overflow-x: hidden; //quickfix to hide divider on left side
+  overflow-x: hidden; 
   position: relative;
 }
 
@@ -150,10 +150,10 @@ userActivity($activity,$_SESSION['userid'])
 		</div>
 	</div>
 </div>	
-	<div class="row" style="z-index:1;margin-bottom:10px;margin-top:0px;border-radius:3px;ovesrflow:hidden;padding:0px">
+	<div class="row" style="z-index:1;margin-bottom:10px;margin-top:0px;border-radius:3px;padding:0px">
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="z-index:1;padding-bottom:20px;padding-top:0px;">
 			<form method="post" action="/">
-				<div class="card table-card" id="printTable" style="z-index:1;marsgin-top:-20px;padding:30px;border-radius:6px;"> 
+				<div class="card table-card" id="printTable" style="z-index:1;padding:30px;border-radius:6px;"> 
 					<h4 style="display:inline"><?php echo $ticket['title']; ?>
 						<div styles="float:right;display:inline" class="dropdown">
 							<a href="javascript:void(0)" title="Refresh" onclick="loadSection('Service_Desk_Ticket');" class="btn btn-sm" style="float:right;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
