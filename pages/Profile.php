@@ -19,6 +19,9 @@ if($_SESSION['accountType']=="Standard" & $userID!=$_SESSION['userid']){
 if($userID!=$_SESSION['userid']){
 	$activity="The profile of ".ucwords(crypto('decrypt',$user['nicename'],$user['hex']))." was viewed";
 	userActivity($activity, $_SESSION['userid']);
+	$hideTFA="true";
+}else{
+	$hideTFA="false";
 }
 $settings1 =  explode(",",crypto("decrypt",$user['allowed_pages'],$user['hex'])); 
 $settings = "\'".implode("\', \'",$settings1)."\'";	
@@ -209,6 +212,7 @@ function editUser(ID, username, name, email, phone, type, color, allowed_pages){
 	}
 	$('.settingsCheckbox').prop('checked',false);
 	$("#editUserModal_ID").val(ID);
+	$('#disableTFA2').attr('onClick', 'disableTFA("' + ID + '");');
 	$("#editUserModal_username").val(username);
 	$("#editUserModal_name").val(name);
 	$("#editUserModal_email").val(email);

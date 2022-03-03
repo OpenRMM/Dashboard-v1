@@ -38,8 +38,8 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 					</div>
 				</div>
 				<br>
-				<div style="overflow-x:auto">
-				   <table id="<?php echo $_SESSION['userid']; ?>Assets" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;width:100%" class="table table-hover  table-borderless">				
+				<div style="overflow-x:auto;overflow-y:hidden;padding-bottom:40px">
+				   <table id="<?php echo $_SESSION['userid']; ?>Assets" style="line-height:20px;overflow:idden;font-size:12px;margin-top:8px;font-family:Arial;width:100%" class="table table-hover  table-borderless">				
 							<thead>
 								<tr style="border-bottom:2px solid #d3d3d3;">
 									<th >
@@ -71,6 +71,10 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 									while($result = mysqli_fetch_assoc($results)){
 										$getWMI = array("logical_disk","general");
 										$data = getComputerData($result['ID'], $getWMI);
+										$date = strtotime($data['general_lastUpdate']);
+										if($date < strtotime('-1 days')) {
+											$result['online']="0";
+										}
 										//Determine Warning Level
 										$freeSpace = $data['logical_disk']['Response']['C:']['FreeSpace'];
 										$size = $data['logical_disk']['Response']['C:']['Size'];
@@ -82,6 +86,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 											$pbColor = "#ffa500";
 										}else{ $pbColor = "#03925e"; }
 										$count++;
+										$name = textOnNull(crypto("decrypt", $result['name'],$result['hex']), "not defined");
 										$query2 = "SELECT * FROM companies where active='1' and ID='".$result['company_id']."'";
 										$results2 = mysqli_query($db, $query2);
 										$company = mysqli_fetch_assoc($results2)
@@ -108,13 +113,31 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 												$icon = "desktop";
 											}  
 										?>
-										<span style="color:#000;font-size:12px;cursor:pointer" >
-											<?php if($result['online']=="0") {?>
-												<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
-											<?php }else{?>
-												<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
-											<?php }?>
-											&nbsp;<?php echo textOnNull(strtoupper($data['general']['Response'][0]['csname']),"Unavailable");?>
+										<span style="color:#000;font-size:12px;cursor:pointer">
+											<span class="tooltips tooltipHelper">
+												<?php if($result['online']=="0") {?>
+													<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
+												<?php }else{?>
+													<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
+												<?php }?>
+												&nbsp;<?php echo textOnNull(strtoupper($data['general']['Response'][0]['csname']),"Unavailable");?>
+												<span class="tooltiptext">
+													<div style="padding:5px">
+														<div style='text-align:left;'>
+															<h6><?php echo textOnNull(strtoupper($data['general']['Response'][0]['csname']),"Unavailable");?></h6>
+															<ul style="padding:2px;color:#fff;background:#333" class="list-group">
+																<li style="padding:2px;color:#fff;background:#333" class="list-group-item">Last updated: <?php echo ago($data['general_lastUpdate']);?></li>
+																<?php
+																	$lastBoot = explode(".", $data['general']['Response'][0]['LastBootUpTime'])[0];
+																	$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
+																?>
+																<li style="padding:2px;color:#fff;background:#333" class="list-group-item">Uptime: <?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></</li>
+																<li style="padding:2px;color:#fff;background:#333" class="list-group-item">Client Name: <?php echo $name; ?></li>
+															</ul>
+														</div>
+													</div>
+												</span>
+											</span>
 										</span>
 									</td>
 										<?php

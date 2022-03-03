@@ -123,6 +123,7 @@ $userCount = mysqli_num_rows($results);
 		}
 		$('.settingsCheckbox').prop('checked',false);
 		$("#editUserModal_ID").val(ID);
+		$('#disableTFA2').attr('onClick', 'disableTFA("' + ID + '");');
 		$("#editUserModal_username").val(username);
 		$("#editUserModal_name").val(name);
 		$("#editUserModal_email").val(email);

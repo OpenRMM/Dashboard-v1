@@ -126,7 +126,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                             <input readonly required type="password" id="agentSecret"  value="<?php echo $siteSettings['agentEncryption']['secret']; ?>" class="form-control" placeholder="">
                         </div> 
                         <hr>
-                        <button type="button" style="margin-left:5px" class="btn btn-sm btn-danger" >Regenerate All Keys</button>                        
+                        <button type="button" onclick="resetKeys();" style="margin-left:5px" class="btn btn-sm btn-danger" >Regenerate All Keys</button>                        
                         </div>
                     </div>
                 </div>

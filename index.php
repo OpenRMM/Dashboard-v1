@@ -59,13 +59,15 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 	
 
 		<!--- Bootstap --->
+		
+		
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"/>
 		<link rel="stylesheet" href="assets/css/tagsinput.css"/>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   	
-
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.2/umd/popper.min.js" integrity="sha512-aDciVjp+txtxTJWsp8aRwttA0vR2sJMk/73ZT7ExuEHv7I5E6iyyobpFOlEFkq59mWW8ToYGuVZFnwhwIUisKA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 			
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/trumbowyg.min.js"></script>
@@ -130,12 +132,14 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 						<i style="font-size:16px" class="fas fa-align-left"></i>
 					</button>		
 					<div style="display:inline-block;">
-						<a style="color:#333;font-size:22px;cursor:pointer" onclick="loadSection('<?php if($_SESSION['userid']!=""){ echo "Dashboard"; }else{ echo "Login"; } ?>');" >Open<span style="color:#0c5460">RMM</span></a>
+						<a class="tooltips" style="color:#333;font-size:22px;cursor:pointer;text-decoration:none" onclick="loadSection('<?php if($_SESSION['userid']!=""){ echo "Dashboard"; }else{ echo "Login"; } ?>');" >Open<span style="color:#0c5460">RMM</span>
+							<span class="tooltiptext">Back to Dashboard</span>
+						</a>	
 					</div>
 				</div>
-				<?php if($_SESSION['accountType']=="Admin" and $user['tfa_secret']==""){ ?>
-				<span class="badge" style="background:#f8d7da;color:#721c24;font-weight:normal">As an administrator, we strongly reccommend enabling two factor authentication</span>
-				<?php } ?>
+				<!--
+				<span onclick="loadSection('Profile');" class="badge" style="background:#f8d7da;color:#721c24;font-weight:normal;cursor:pointer">badge text</span>
+				-->			
 				<?php if($_SESSION['userid']!=""){ ?>
 					<div style="float:right;">
 					<?php if(in_array("AssetChat", $allowed_pages)){  ?>
@@ -146,7 +150,7 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 						<?php } ?>
 						<div class="btn-group">
 						
-          					<a href="javascript:void(0)" style="border:none;box-shadow:none;text-decoration:none" class="dropsdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          					<a href="javascript:void(0)" style="border:none;box-shadow:none;text-decoration:none" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 								<i style="font-size:16px;color:#000" class="fas fa-bell"></i>&nbsp;
 								<span style="margin-top" id="notificationCount" class="text-white badge bg-c-pink"><?php if($messageText==""){ echo "0"; }else{ echo "1"; } ?></span>
 							</a>&nbsp;
@@ -155,10 +159,11 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 									<li class="list-group-item">No New Notifications</li>
 								</ul>
 							</div>
+							
 						</div>
 						<div class="btn-group">
 							&nbsp;
-							<a href="javascript:void(0)" class="dropsdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							<a title="Create New..." href="javascript:void(0)" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 								<i style="font-size:16px;color:#000" class="fas fa-plus"></i>
 							</a>
           					<div class="dropdown-menu">
@@ -208,7 +213,7 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 							<i class="fas fa-home"></i>&nbsp;&nbsp;&nbsp; Dashboard
 						</li>
 						<li onclick="loadSection('Assets');" id="secbtnAssets" class="secbtn">
-							<i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Assets <span id="assetCount" title="Assets Online" style="background:#696969;float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$assetCount; ?></span>
+							<i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; Assets <span id="assetCount" title="Total Assets" style="background:#696969;float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$assetCount; ?></span>
 						</li>
 						<?php if($siteSettings['Service_Desk']=="Enabled"){ ?>
 						<?php if(in_array("Service_Desk_Home", $allowed_pages)){  ?>
@@ -363,15 +368,20 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 					</div>
 				</div>
 			</div>
-			<!-- Page Content -->
-			<div id="content" class="containerLeft" style="margin-left:1;margin-top:15px;width:100%;">
-				<div id="refreshAlert" style="display:none;text-align:center" class="alert alert-warning">					
-				</div>	
+			<!-- Page Content -->		
+			<div id="content" class="containerLeft" style="margin-left:1;margin-top:15px;width:100%;">				
+				<?php if($_SESSION['accountType']=="Admin" and $user['tfa_secret']==""){ ?>
+					<div style="cursor:pointer;margin-left:-10px;margin-bottom:0px" onclick="loadSection('Profile');" class="alert alert-danger" role="alert">
+						Since you are an administrator, we strongly reccommend enabling two factor authentication
+					</div>
+				<?php } ?>			
+				<div id="refreshAlert" style="display:none;text-align:center" class="alert alert-warning"></div>	
 				<div id="alertDiv" style="padding:10px" class="row">			
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top:20px;">
 						<script>
 							var older_data_modal = "<center><h3 style='margin-top:40px;'><div class='spinner-grow text-muted'></div><div class='spinner-grow' style='color:#0c5460'></div></h3></center>";
 						</script>
+	
 						<div class="loadSection">
 							<!------ Loads main data from jquery ------>
 							<center>
@@ -578,7 +588,13 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 		setInterval(refreshTypingStatus, 5000);
 		textarea.keypress(updateLastTypedTime);
 		textarea.blur(refreshTypingStatus);
-	
+		window.resizeTo(300, 1000);
+</script>
+<script>
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
 </script>
 <?php  ob_end_flush(); ?>
 </html>

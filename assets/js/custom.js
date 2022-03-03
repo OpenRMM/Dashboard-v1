@@ -290,11 +290,20 @@ function updateCompanyAgent(ID2){
         toastr.info('The update request has been sent to each agent. Please allow up to 15 minutes for the update to complete.');
     });
 }
-
-function disableTFA(){ 
+function resetKeys(){ 
+    if(confirm("Are you sure you would like to reset all the keys for your website? This could result in data loss.")){
+        $.post("index.php", {
+        type: "resetKeys"
+        },
+        function(data, status){            
+            location.reload();
+        });
+    }
+}
+function disableTFA(ID){ 
     $.post("index.php", {
        type: "DisableTFA",
-       ID: $("#editUserModal_ID").val()
+       ID: ID
     },
     function(data, status){
         $("#disableTFA2").hide();

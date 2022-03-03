@@ -680,3 +680,33 @@ body {
     Width:100%;
     padding:15px; 
 }
+/* Tooltip container */
+.tooltipHelper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Tooltip text */
+  .tooltips .tooltiptext {
+    visibility: hidden;
+    background-color: #35384e;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    font-size:12px;
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 999999;
+    width: 200px;
+    top: 100%;
+    left: 50%;
+    margin-left: -50px; /* Use half of the width (120/2 = 60), to center the tooltip */
+  }
+  .tooltiptext:hover {
+    display:none;
+  }
+  /* Show the tooltip text when you mouse over the tooltip container */
+  .tooltips:hover .tooltiptext {
+    visibility: visible;
+  }

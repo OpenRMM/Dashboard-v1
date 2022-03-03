@@ -8,7 +8,10 @@ $computer = mysqli_fetch_assoc($results);
 
 $json = getComputerData($computerID, array("general"));
 $online = $computer['online'];
-
+$date = strtotime($json['general_lastUpdate']);
+if($date < strtotime('-1 days')) {
+	$online="0";
+}
 $hostname = $json['general']['Response'][0]['csname'];	
 ?>
 <div class="row">
@@ -133,7 +136,7 @@ $hostname = $json['general']['Response'][0]['csname'];
 						<tr>
 						<td title="<?php echo substr($cmd, 0, 400); if(strlen($cmd)>400){echo '...'; } ?>"><b><?php echo substr($cmd, 0, 40); if(strlen($cmd)>40){echo '...'; } ?></b></td>
 						<td><?php echo $command['time_sent'];?></td>
-						<td title="<?php echo substr($data, 0, 400); if(strlen($data)>400){echo '...'; } ?>"><b><?php echo substr($data, 0, 40); if(strlen($data)>40){echo '...'; } ?></b></td>
+						<td title="<?php echo substr($data, 0, 400); if(strlen($data)>400){echo '...'; } ?>"><b><?php echo textOnNull(substr($data, 0, 40),"no data received"); if(strlen($data)>40){echo '...'; } ?></b></td>
 							<?php if($command['time_received']!=""){
 										$timer = $command['time_received'];
 								}else{

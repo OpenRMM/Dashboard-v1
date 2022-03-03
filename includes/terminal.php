@@ -60,10 +60,10 @@ if($exists == 0){
 	}
 	
 ?>
-	
 	<pre style="overflow:hidden;color:#fff;white-space: pre-wrap;white-space: -moz-pre-wrap;white-space: -pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;"><?php echo $response;?></pre>
 	<script> $("#cmdtxt").show(); $('#terminaltxt').focus();  </script>
 	<?php }else{?>
-	A command has already been sent and the asset has not proccessed your request. Please wait <?php echo (int)$expire_after; ?> seconds before retrying a command.<br><br>
+		<pre style="overflow:hidden;color:#fff;white-space: pre-wrap;white-space: -moz-pre-wrap;white-space: -pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;">A command has already been sent and the asset has not proccessed your request. Please wait <?php echo (int)$expire_after; ?> seconds before retrying a command.
+		</pre>
 	<script> $("#cmdtxt").show(); $('#terminaltxt').focus();  </script>
 <?php }?>

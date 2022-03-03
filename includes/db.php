@@ -5,7 +5,8 @@
 	spl_autoload_register(function ($className) {
 		include_once str_replace(array('RobThree\\Auth', '\\'), array('2fa', '/'), $className) . '.php';
 	});
-	$tfa = new RobThree\Auth\TwoFactorAuth('OpenRMM '.$_SESSION['userid']);
+	
+	
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
 	$excludedPages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Init,Login,Logout,Asset_Alerts,Asset_Commands,Dashboard,Profile,Asset_Edit,Technicians,Customers,Assets,Downloads"; 
@@ -92,14 +93,17 @@
     }
 
 	//Get user data
-	$query = "SELECT Command_Buttons,username,nicename,account_type,hex,user_color,allowed_pages,notifications,tfa_secret FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+	$query = "SELECT email,Command_Buttons,username,nicename,account_type,hex,user_color,allowed_pages,notifications,tfa_secret FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
 	$results = mysqli_query($db, $query);
 	$user = mysqli_fetch_assoc($results);
 	$pages = crypto("decrypt",$user['allowed_pages'],$user['hex']);
+	$email = crypto("decrypt",$user['email'],$user['hex']);
 	$allowed_pages = explode(",",$pages);
 	$username=$user['username'];
 	$cmdButtons = $user['Command_Buttons'];
 	$_SESSION['notifications']= explode("||",$user['notifications']);
+
+	$tfa = new RobThree\Auth\TwoFactorAuth('OpenRMM');
 
 	//redirect standard users
 	function checkAccess($page,$computerID="null"){

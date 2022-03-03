@@ -16,6 +16,10 @@ foreach(array_reverse($recent) as $item) {
 	$data = mysqli_fetch_assoc($results);
 	if($data['ID']==""){ continue; }
 	$json = getComputerData($data['ID'], array("general"));
+	$date = strtotime($json['general_lastUpdate']);
+	if($date < strtotime('-1 days')) {
+		$data['online']="0";
+	}
 	$hostname =  $json['general']['Response'][0]['csname'];
 	$count++;
 	

@@ -31,7 +31,10 @@ if (in_array( $computerID, $_SESSION['recent'])){
 	}
 }
 $online = $result['online'];
-
+$date = strtotime($json['general_lastUpdate']);
+if($date < strtotime('-1 days')) {
+	$online="0";
+}
 //ex. 10-3=7
 $used2 = $json['general']['Response'][0]['Totalphysicalmemory'] - $json['general']['Response'][0]['FreePhysicalMemory'];
 
@@ -55,17 +58,33 @@ if($cpuUsage==""){
 $activity = "Asset ".textOnNull($json['general']['Response'][0]['csname'],"Unavailable")." viewed";
 userActivity($activity,$_SESSION['userid']);
 //print_r(base64_encode($json['screenshot_1']));
+if($online=="0"){
+	$color="#696969";
+}else{
+	$color="green";
+}
+$icons = array("desktop","server","laptop","tablet","allinone","other");
+	if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
+		$icon = strtolower(str_replace("-","",$result['computer_type']));
+		if($icon=="allinone")$icon="tv";
+		if($icon=="tablet")$icon="tablet-alt";
+		if($icon=="other")$icon="microchip";
+	}else{
+		$icon = "desktop";
+	}  
 ?>
 <style>
 	.dataTables_info {margin-top:40px; }
 </style>
 <div style="padding:20px;margin-bottom:-1px;" class="card col-md-12">
-	<h5 title="ID: <?php echo $computerID; ?>" style="color:#0c5460">Overview of <?php echo textOnNull($json['general']['Response'][0]['csname'],"Unavailable"); ?>	
-		<center style="display:inline;margin-left:50px;">
+	<div class="tooltips" style="margin-top:13px;position:absolute;display:inline;float:left"><i style="font-size:30px;color:<?php echo $color; ?>" class="fas fa-<?php echo $icon; ?>"></i><span style="width:100px;margin-left:-50px" class="tooltiptext">Agent is Online</span></div>
+	<h5 title="ID: <?php echo $computerID; ?>" style="margin-left:50px;color:#0c5460;display:inline;font-size:18px">Overview of <?php echo textOnNull($json['general']['Response'][0]['csname'],"Unavailable"); ?>	
+		<center style="display:inline;margin-left:20px;">
 			<?php $alertCount = count($json['Alerts']);?>
 			<?php if($alertCount > 0){?>
-				<button onclick="computerAlertsModal('This PC','<?php echo $json['Alerts_raw'];?>');" data-bs-toggle="modal" data-bs-target="#computerAlerts"  class="btn btn-sm btn-danger">	
-					<i title="<?php echo $alertCount;?> Issues" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+				<button title="" onclick="computerAlertsModal('This PC','<?php echo $json['Alerts_raw'];?>');" data-bs-toggle="modal" data-bs-target="#computerAlerts" class="tooltips tooltipHelper btn btn-sm btn-danger">	
+					<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+					<span class="tooltiptext" style="margin-top:2px;background:#eb3422;width:100px;margin-left:-50px"><?php echo $alertCount;?> Issues</span>
 				</button>
 			<?php } ?>
 		</center>

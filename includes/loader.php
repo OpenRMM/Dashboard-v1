@@ -3,6 +3,8 @@
 ?>
 <script>
 <?php 
+$hideTFA="true";
+$_SESSION['customCommands']="";
 $query = "SELECT * FROM servers where active='1' ORDER BY ID ASC";
 $results = mysqli_query($db, $query);
 $resultCount = mysqli_num_rows($results);
@@ -161,7 +163,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
                         MQTTpublish($_SESSION['computerID']."/Commands/get_network_adapters",$message,getSalt(20),$retain);
                         MQTTpublish($_SESSION['computerID']."/Commands/get_printers",$message,getSalt(20),$retain);
                         MQTTpublish($_SESSION['computerID']."/Commands/get_users",$message,getSalt(20),$retain);
-                        MQTTpublish($_SESSION['computerID']."/Commands/get_pnp_entitys",$message,getSalt(20),$retain);
+                        MQTTpublish($_SESSION['computerID']."/Commands/get_pnp_entities",$message,getSalt(20),$retain);
                         MQTTpublish($_SESSION['computerID']."/Commands/get_physical_memory",$message,getSalt(20),$retain);
                         MQTTpublish($_SESSION['computerID']."/Commands/get_filesystem",'{"userID":'.$_SESSION['userid'].',"data":"C:/"}',getSalt(20),$retain);
                         MQTTpublish($_SESSION['computerID']."/Commands/get_event_logs",'{"userID":'.$_SESSION['userid'].',"data":"Application"}',getSalt(20),$retain);
@@ -239,7 +241,7 @@ if(in_array($_SESSION['page'], $_SESSION['excludedPages']))
     }
     $query = "SELECT ID FROM tickets where active='1' and status<>'Closed'";
     $ticketCount = mysqli_num_rows(mysqli_query($db, $query));
-    $query = "SELECT ID FROM computers where active='1' and online='1'";
+    $query = "SELECT ID FROM computers where active='1'";
     $assetCount = mysqli_num_rows(mysqli_query($db, $query));
 
     $query = "SELECT  * FROM asset_messages WHERE chat_viewed='0' and userid='0'";

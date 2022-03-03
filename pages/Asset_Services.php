@@ -6,7 +6,10 @@ $json = getComputerData($computerID, array("services"));
 $query = "SELECT online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
-
+$date = strtotime($json['general_lastUpdate']);
+if($date < strtotime('-1 days')) {
+	$online="0";
+}
 $services = $json['services']['Response'];
 $error = $json['services_error'];
 ?>

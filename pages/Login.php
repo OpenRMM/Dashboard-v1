@@ -28,15 +28,16 @@ if($_SESSION['userid']!=""){ ?>
 			servers or endpoints of a client, from a remote location.</p>
 		</div>
 	</div>
-	<div style="height:1000px;padding:5px;margin-top:10%;margin-bottom:100px;" class="main col-xs-8 col-sm-8 col-md-8 col-lg-8">			
-		<div class=" col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
-			<div style="margin-top:-100px;padding-bottom:50px">
-				<h2>OpenRMM</h2>
-				<p>Login To Access Our Remote Monitoring & Management Platform.</p>
-			</div>
+	<div style="height:1000px;padding:40px;margin-top:10%;margin-bottom:100px;" class="main col-xs-8 col-sm-8 col-md-8 col-lg-8">			
+		<div style="padding:10px;" class="col-xs-6 col-sm-6 col-md-6 col-lg-6 shadow p-3 mb-5 bg-body rounded">
+			
 			<form method="post" action="/" autocomplete="off" class="form-signin">
+				<div style="margin-top:-100px;padding-bottom:50px">
+					<h2>OpenRMM</h2>
+					<p>Login To Access Our Remote Monitoring & Management Platform.</p>
+				</div>
 				<div style="text-align:left" class="form-label-group">
-					<label  for="inputEmail"><b>Username:</b></label>
+					<label for="inputEmail"><b>Username:</b></label>
 					<input <?php if($_SESSION['tfa_pass']=="false"){ echo "readonly"; } ?> maxlength="25" minlength="4" type="text" value="<?php echo clean($_SESSION['loginusername']); ?>" name="loginusername" id="inputEmail" class="form-control" placeholder="Username" required <?php if($_SESSION['loginusername']==""){ echo"autofocus"; } ?>>
 				</div>
 				<br>
@@ -47,12 +48,16 @@ if($_SESSION['userid']!=""){ ?>
 					<?php }else{ ?>
 						<label for="inputPassword"><b>Password:</b></label>
 						<input <?php if($_SESSION['loginusername']!=""){ echo"autofocus"; } ?> maxlength="25" minlength="4" type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+						<div style='margin-left:5px;padding-top:10px;font-size:12px;' class="tooltips tooltipHelper">Forgot Password?
+							<span class="tooltiptext">Contact Your System Administrator To Reset Your Password</span>
+						</div>
 					<?php } $_SESSION['tfa_pass']=""; ?>
 				</div>					
 				<br>
-				<button style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#0c5460" class="btn btn-sm btn-block text-uppercase" type="submit">
+				<button style="background:<?php echo $siteSettings['theme']['Color 2']; ?>;color:#0c5460;float:right;" class="btn btn-sm btn-block text-uppercase" type="submit">
 				 Sign in &nbsp;<i class="fas fa-sign-in-alt"></i>
 				</button>
+				<br><br>
 			</form>
 		</div>
 	</div>

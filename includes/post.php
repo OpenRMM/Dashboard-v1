@@ -869,22 +869,22 @@
 
 		//needs tested, then combined and strings need cleaned
 		if($_POST['fs_act_type']=="rename"){
-			$path = $_POST['filepath'];
-			$filename = $_POST['fileFolder'];
+			$path = str_replace("/","\\",$_POST['filePath']);
+			$filename = str_replace("/","\\",$_POST['fileFolder']);
 			$id = (int)$_POST['ID'];
 			$commands = "rename ".$filename." ".$path;
 			MQTTpublish($id."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"commandID": "'.$insertID.'","data":"'.$commands.'"}',$id,false);
 		}
 		if($_POST['fs_act_type']=="move"){ 
-			$path = $_POST['filepath'];
-			$filename = $_POST['fileFolder'];
+			$path = str_replace("/","\\",$_POST['filePath']);
+			$filename = str_replace("/","\\",$_POST['fileFolder']);
 			$id = (int)$_POST['ID'];
 			$commands = "move ".$filename." ".$path;
 			MQTTpublish($id."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"commandID": "'.$insertID.'","data":"'.$commands.'"}',$id,false);
 		}
 		if($_POST['fs_act_type']=="copy"){
-			$path = $_POST['filepath'];
-			$filename = $_POST['fileFolder'];
+			$path = str_replace("/","\\",$_POST['filePath']);
+			$filename = str_replace("/","\\",$_POST['fileFolder']);
 			$id = (int)$_POST['ID'];
 			$commands = "copy ".$filename." ".$path;
 			MQTTpublish($id."/Commands/CMD",'{"userID":'.$_SESSION['userid'].',"commandID": "'.$insertID.'","data":"'.$commands.'"}',$id,false);

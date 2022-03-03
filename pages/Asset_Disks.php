@@ -11,7 +11,10 @@ $json = getComputerData($result['ID'], array("mapped_logical_disk", "logical_dis
 $query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
-
+$date = strtotime($json['general_lastUpdate']);
+if($date < strtotime('-1 days')) {
+	$online="0";
+}
 $mappedDisks = $json['mapped_logical_disk']['Response'];
 $disks = $json['logical_disk']['Response'];
 $shared = $json['shared_drives']['Response'];

@@ -281,8 +281,8 @@ $results2 = mysqli_query($db, $query2);
 						<h5 style="padding:7px" class="panel-title">Logs</h5>
 					</div>
 					<div class="panel-body">
-						<div class="rsow">
-							<table id="<?php echo $_SESSION['userid']; ?>Servers" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
+						<div style="overflow-x:auto">
+							<table id="<?php echo $_SESSION['userid']; ?>Servers" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;overflow:hidden" class="table table-hover table-borderless">
 								<thead>
 									<tr>
 										<th scope="col">Event</th>

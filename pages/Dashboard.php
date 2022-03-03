@@ -63,6 +63,10 @@ if($hostname==""){
 						while($result = mysqli_fetch_assoc($results)){
 							$getWMI = array("general");
 							$data = getComputerData($result['ID'], $getWMI);
+							$date = strtotime($data['general_lastUpdate']);
+							if($date < strtotime('-1 days')) {
+								$result['online']="0";
+							}
 							$count++;
 							$icons = array("desktop","server","laptop","tablet","allinone","other");
 							if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
@@ -75,12 +79,32 @@ if($hostname==""){
 							}  
 					?>
 					<li onclick="loadSection('Asset_General', '<?php echo $result['ID']; ?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
-						<?php if($result['online']=="0") {?>
-							<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
-						<?php }else{?>
-							<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
-						<?php }?>
-						&nbsp;&nbsp;<?php echo textOnNull($data['general']['Response'][0]['csname'],"Unavailable"); ?>
+						<span style="font-size:14px;cursor:pointer">
+							<span class="tooltips tooltipHelper">
+								<?php if($result['online']=="0") {?>
+									<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
+								<?php }else{?>
+									<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
+								<?php }?>
+								&nbsp;<?php echo textOnNull(strtoupper($data['general']['Response'][0]['csname']),"Unavailable");?>
+								<span class="tooltiptext">
+									<div style="padding:5px">
+										<div style='text-align:left;'>
+											<h6><?php echo textOnNull(strtoupper($data['general']['Response'][0]['csname']),"Unavailable");?></h6>
+											<ul style="padding:2px;color:#fff;background:#333" class="list-group">
+												<li style="padding:2px;color:#fff;background:#333" class="list-group-item">Last updated: <?php echo ago($data['general_lastUpdate']);?></li>
+												<?php
+													$lastBoot = explode(".", $data['general']['Response'][0]['LastBootUpTime'])[0];
+													$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
+												?>
+												<li style="padding:2px;color:#fff;background:#333" class="list-group-item">Uptime: <?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></</li>
+												<li style="padding:2px;color:#fff;background:#333" class="list-group-item">Client Name: <?php echo $name; ?></li>
+											</ul>
+										</div>
+									</div>
+								</span>
+							</span>
+						</span>
 					</li>
 					<?php }  ?>
 				</ul>

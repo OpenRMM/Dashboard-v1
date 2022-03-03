@@ -7,9 +7,12 @@ $results = mysqli_query($db, $query);
 $data = mysqli_fetch_assoc($results);
 
 $online = $data['online'];
-
 $getWMI = array("agent_settings","general");
 $json = getComputerData($computerID, $getWMI);
+$date = strtotime($json['general_lastUpdate']);
+if($date < strtotime('-1 days')) {
+	$online="0";
+}
 $agent_settings = $json['agent_settings']['Response'];
 $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 ?>

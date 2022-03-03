@@ -7,6 +7,10 @@ $json = getComputerData($computerID, array("usbhub", "desktop_monitor", "keyboar
 $query = "SELECT  online, ID FROM computers WHERE ID='".$computerID."' LIMIT 1";
 $results = mysqli_fetch_assoc(mysqli_query($db, $query));
 $online = $results['online'];
+$date = strtotime($json['general_lastUpdate']);
+if($date < strtotime('-1 days')) {
+	$online="0";
+}
 ?>
 <div style="padding:20px;margin-bottom:-1px;" class="card">
 	<div class="row" style="padding:15px;">

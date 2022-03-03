@@ -303,6 +303,11 @@ userActivity($activity,$_SESSION['userid'])
 								$query = "SELECT online, ID, company_id, name, phone, email,hex, computer_type FROM computers WHERE ID='".$ticket['computer_id']."' LIMIT 1";
 								$results = mysqli_query($db, $query);
 								$result = mysqli_fetch_assoc($results);
+								$date = strtotime($json['general_lastUpdate']);
+								if($date < strtotime('-1 days')) {
+									$result['online']="0";
+								}
+								$name = textOnNull(crypto("decrypt", $result['name'],$result['hex']), "not defined");
 								if($result['ID']!=""){
 									$icons = array("desktop","server","laptop","tablet","allinone","other");
 									if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
@@ -315,12 +320,32 @@ userActivity($activity,$_SESSION['userid'])
 									} 
 							?>
 							<li onclick="loadSection('Asset_General', '<?php echo $result['ID']; ?>');$('.sidebarComputerName').text('<?php echo textOnNull(strtoupper($hostname),'Unavailable');?>');" class="list-group-item secbtn" style="text-align:left;cursor:pointer;">
-								<?php if($result['online']=="0") {?>
-									<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
-								<?php }else{?>
-									<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
-								<?php }?>
-								&nbsp;&nbsp;<?php echo $hostname; ?>
+								<span style="font-size:14px;cursor:pointer">
+									<span class="tooltips tooltipHelper">
+										<?php if($result['online']=="0") {?>
+											<i class="fas fa-<?php echo $icon;?>" style="color:#666;font-size:12px;" title="Offline"></i>
+										<?php }else{?>
+											<i class="fas fa-<?php echo $icon;?>" style="color:green;font-size:12px;" title="Online"></i>
+										<?php }?>
+										&nbsp;<?php echo textOnNull(strtoupper($json['general']['Response'][0]['csname']),"Unavailable");?>
+										<span class="tooltiptext">
+											<div style="padding:5px">
+												<div style='text-align:left;'>
+													<h6><?php echo textOnNull(strtoupper($json['general']['Response'][0]['csname']),"Unavailable");?></h6>
+													<ul style="padding:2px;color:#fff;background:#333" class="list-group">
+														<li style="padding:2px;color:#fff;background:#333" class="list-group-item">Last updated: <?php echo ago($json['general_lastUpdate']);?></li>
+														<?php
+															$lastBoot = explode(".", $json['general']['Response'][0]['LastBootUpTime'])[0];
+															$cleanDate = date("m/d/Y h:i A", strtotime($lastBoot));
+														?>
+														<li style="padding:2px;color:#fff;background:#333" class="list-group-item">Uptime: <?php if($lastBoot!=""){ echo str_replace(" ago", "", textOnNull(ago($lastBoot), "N/A")); }else{ echo"N/A"; }?></</li>
+														<li style="padding:2px;color:#fff;background:#333" class="list-group-item">Client Name: <?php echo $name; ?></li>
+													</ul>
+												</div>
+											</div>
+										</span>
+									</span>
+								</span>
 							</li>
 							<?php }else{ echo "<center><h6>This ticket does not include an asset</h6></center>"; } ?>
 						</ul>

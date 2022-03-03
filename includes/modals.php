@@ -56,15 +56,25 @@
 								</div>
 								<hr>
 								<div class="row">
-									<div class="col-md-4 form-group">
-										<label>Two Factor Authentication</label><br>
-										<?php if($user['tfa_secret']==""){ ?>
-											<button data-bs-toggle="modal" data-bs-target="#twofaModal" style="width:100%" class="btn btn-success btn-sm" type="button">Enable</button>
-										<?php }else{ ?>
-											<button onclick="disableTFA();" id="disableTFA2" style="width:100%" class="btn btn-danger btn-sm" type="button">Disable</button>
-											<button data-bs-toggle="modal" id="enableTFA" data-bs-target="#twofaModal" class="btn btn-success btn-sm" style="width:100%;display:none" type="button">Enable</button>
-										<?php } ?>
-									</div>
+									
+										<div class="col-md-4 form-group">
+											<label>Two Factor Authentication</label><br>
+											<?php if($user['tfa_secret']==""){ ?>
+												<?php if($hideTFA=="false"){ ?>
+													<button data-bs-toggle="modal" data-bs-target="#twofaModal" style="width:100%" class="btn btn-success btn-sm" type="button">Enable</button>
+												<?php }else{
+													echo "<p style='color:red;margin-left:10px;margin-top:10px' id='enableTFA'>2FA disabled</p>";
+												}?>
+											<?php }else{ ?>
+												<button id="disableTFA2" style="width:100%" class="btn btn-danger btn-sm" type="button">Disable</button>
+												<?php if($hideTFA=="false"){ ?>
+													<button data-bs-toggle="modal" id="enableTFA" data-bs-target="#twofaModal" class="btn btn-success btn-sm" style="width:100%;display:none" type="button">Enable</button>
+												<?php }else{
+													echo "<p style='display:none;color:red;margin-left:10px;margin-top:30px' id='enableTFA'>2FA disabled</p>";
+												} ?>
+											<?php } ?>
+										</div>
+									
 									<?php if($_SESSION['accountType']=="Admin"){  ?>	
 										<div class="col-md-4 form-group">
 											<label for="editUserModal_type">Access Level</label>
@@ -165,6 +175,7 @@
 					</div>
 				</div>
 			</div>
+			<?php if($user['tfa_secret']==""){ ?>
 			<!--------------- 2FA Modal ------------->
 			<div id="twofaModal" class="modal fade" role="dialog">
 				<div class="modal-dialog modal-lg">
@@ -189,7 +200,7 @@
 									?>
 									<li>
 										Scan this QR Code with your preffered authenticator app (ex. Google Authenticator)<br>
-										<img src="<?php echo $tfa->getQRCodeImageAsDataUri($_SESSION['userid'], $_SESSION['tfaSecret']); ?>"><br>
+										<img src="<?php echo $tfa->getQRCodeImageAsDataUri($email, $_SESSION['tfaSecret']); ?>"><br>
 										<?php echo chunk_split($_SESSION['tfaSecret'], 4, ' '); ?>
 									</li>
 									<?php
@@ -213,6 +224,7 @@
 					</div>
 				</div>
 			</div>
+			<?php } ?>
 			<!--------------- Asset reset password Modal ------------->
 			<div id="Asset_Reset_Password_Modal" class="modal fade" role="dialog">
 				<div class="modal-dialog">
