@@ -39,7 +39,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 				</div>
 				<br>
 				<div style="overflow-x:auto;overflow-y:hidden;padding-bottom:40px">
-				   <table id="<?php echo $_SESSION['userid']; ?>Assets" style="line-height:20px;overflow:idden;font-size:12px;margin-top:8px;font-family:Arial;width:100%" class="table table-hover  table-borderless">				
+				   <table id="<?php echo $_SESSION['userid']; ?>Assets" style="line-height:20px;overflow:idden;font-size:12px;margin-top:8px;font-family:Arial;width:100%" class="table-striped table table-hover  table-borderless">				
 							<thead>
 								<tr style="border-bottom:2px solid #d3d3d3;">
 									<th >
@@ -249,11 +249,11 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 						<div class="row justify-content-center m-t-10 b-t-default m-l-0 m-r-0">
 							<div style="cursor:pointer;padding:7px;border-radius:4px" onclick="$('input[type=search]').val('Online'); $('input[type=search]').trigger('keyup');" class="col m-t-15 secbtn">
 								<h6 class="text-muted"><b>Online</b></h6>
-								<h6><?php echo $assets1; ?> Asset</h6>
+								<h6><?php echo $assets1; ?> Assets</h6>
 							</div>
 							<div style="cursor:pointer;padding:7px;border-radius:4px" onclick="$('input[type=search]').val('Offline'); $('input[type=search]').trigger('keyup');" class="col m-t-15 secbtn">
 								<h6 class="text-muted"><b>Offline</b></h6>
-								<h6><?php echo $assets2; ?> Asset</h6>
+								<h6><?php echo $assets2; ?> Assets</h6>
 							</div>
 						</div>
 					</div>

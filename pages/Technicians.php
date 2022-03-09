@@ -11,7 +11,7 @@ $userCount = mysqli_num_rows($results);
 		<button href="javascript:void(0)" title="Refresh" onclick="loadSection('Technicians');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:<?php echo $siteSettings['theme']['Color 2'];?>;">
 			<i class="fas fa-sync"></i>
 		</button>
-		<button onclick="$('#userform').trigger('reset');$('.settingsCheckbox').prop('checked', true);$('#AssetAgentSettings').prop('checked', false);$('#AssetEdit').prop('checked', false);" type="button" style="margin:5px;background:#0ac282;;float:right;color:#fff" data-bs-toggle="modal" data-bs-target="#userModal" class="btn-sm btn btn-light" title="Add User">
+		<button onclick="$('#TFAMSG').show();$('#TFA').hide();$('#userform').trigger('reset');$('.settingsCheckbox').prop('checked', true);$('#AssetAgentSettings').prop('checked', false);$('#AssetEdit').prop('checked', false);uncheckAll();" type="button" style="margin:5px;background:#0ac282;;float:right;color:#fff" data-bs-toggle="modal" data-bs-target="#userModal" class="btn-sm btn btn-light" title="Add User">
 			 <i class="fas fa-plus"></i> Add Technician
 		</button>
 	</h5>	
@@ -34,7 +34,7 @@ $userCount = mysqli_num_rows($results);
 			</div>
 		</div>
 	<div style="padding:10px;overflow-x:auto">	
-		<table id="<?php echo $_SESSION['userid']; ?>Technicians" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">
+		<table id="<?php echo $_SESSION['userid']; ?>Technicians" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table-striped table table-hover table-borderless">
 			<thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">
 					<th scope="col">ID</th>
@@ -45,7 +45,7 @@ $userCount = mysqli_num_rows($results);
 					<th scope="col">Last Seen</th>
 					<th scope="col">Account Type</th>
 					<th scope="col">Status</th>
-					<th scope="col"></th>
+					<th scope="col">Actions</th>
 				</tr>
 		  </thead>
 		  <tbody>
@@ -65,7 +65,7 @@ $userCount = mysqli_num_rows($results);
 				<tr>
 					<td><?php echo $user['ID'];?></td>
 					<td>
-						<a style="font-size:12px" href="javascript:void(0)" onclick="loadSection('Profile','<?php echo $user['ID']; ?>');">
+						<a style="font-size:12px;text-decoration:none" href="javascript:void(0)" onclick="loadSection('Profile','<?php echo $user['ID']; ?>');">
 						<?php
 							list($first, $last) = explode(' ', ucwords(crypto('decrypt',$user['nicename'],$user['hex'])), 2);
 							$name = strtoupper("$first[0]{$last[0]}"); 

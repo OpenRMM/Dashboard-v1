@@ -50,7 +50,7 @@ if($date < strtotime('-1 days')) {
 	<div class="row" style="padding:15px;">	
 		<div class="col-md-12" style="overflow-x:auto;">
 	
-			<table id="<?php echo $_SESSION['userid']; ?>Users" style="line-height:10px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
+			<table id="<?php echo $_SESSION['userid']; ?>Users" style="line-height:10px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table-striped table table-hover table-borderless">
 				<thead>
 					<tr style="border-bottom:2px solid #d3d3d3;">
 						<th>Name</th>

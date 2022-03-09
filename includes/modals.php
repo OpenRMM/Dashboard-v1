@@ -35,7 +35,7 @@
 									</div>
 									<div class="col-md-4 form-group">
 										<label for="editUserModal_type">Technician Color</label>
-										<input placeholder="User Color" type="color" name="color" class="form-control" id="editUserModal_color"/>
+										<input placeholder="User Color" type="color" name="color" style="height:62%" class="form-control" id="editUserModal_color"/>
 									</div>								
 								</div>
 								<br><hr>
@@ -61,17 +61,24 @@
 											<label>Two Factor Authentication</label><br>
 											<?php if($user['tfa_secret']==""){ ?>
 												<?php if($hideTFA=="false"){ ?>
-													<button data-bs-toggle="modal" data-bs-target="#twofaModal" style="width:100%" class="btn btn-success btn-sm" type="button">Enable</button>
+													<div id="TFA">
+														<button data-bs-toggle="modal" id="enableTFA" data-bs-target="#twofaModal" style="width:100%" class="btn btn-success btn-sm" type="button">Enable</button>
+													</div>
+													<p style='display:none;color:red;margin-left:10px;margin-top:10px' id='TFAMSG'>2FA disabled</p>
 												<?php }else{
 													echo "<p style='color:red;margin-left:10px;margin-top:10px' id='enableTFA'>2FA disabled</p>";
 												}?>
 											<?php }else{ ?>
-												<button id="disableTFA2" style="width:100%" class="btn btn-danger btn-sm" type="button">Disable</button>
+												<div id="TFA">
+													<button id="disableTFA2" style="width:100%" class="btn btn-danger btn-sm" type="button">Disable</button>
+												</div>
 												<?php if($hideTFA=="false"){ ?>
-													<button data-bs-toggle="modal" id="enableTFA" data-bs-target="#twofaModal" class="btn btn-success btn-sm" style="width:100%;display:none" type="button">Enable</button>
+													<button data-bs-toggle="modal" id="enableTFA" data-bs-target="#twofaModal" class="btn btn-success btn-sm" style="width:100%;display:none" type="button">Enable</button>													
+													<p style='display:none;color:red;margin-left:10px;margin-top:10px' id='TFAMSG'>2FA disabled</p>
 												<?php }else{
-													echo "<p style='display:none;color:red;margin-left:10px;margin-top:30px' id='enableTFA'>2FA disabled</p>";
+													echo "<p style='display:none;color:red;margin-left:10px;margin-top:10px' id='TFAMSG'>2FA disabled</p>";
 												} ?>
+												
 											<?php } ?>
 										</div>
 									
@@ -88,7 +95,12 @@
 								<?php if($_SESSION['accountType']=="Admin"){ ?>
 								<div id="allowed_pages" class="col-md-12 m-auto form-group">
 									<hr>
-									<h6 style="color:#35384e">Allowed Pages</h6>
+									<h6 style="color:#35384e">Allowed Pages 
+										<small>
+											<a id="checkToggle" style="cursor:pointer;margin-left:20px;color:#01a9ac" onclick="checkAll();">Check all</a>
+											<a id="uncheckToggle" style="display:none;cursor:pointer;margin-left:20px;color:#01a9ac" onclick="uncheckAll();">Uncheck all</a>
+										</small>
+									</h6>
 										<div style="margin-top:20px;margin-left:10px" class="row">
 											<div class="col-md-3 form-group">
 												<label class="checkbox-inline">
@@ -175,7 +187,7 @@
 					</div>
 				</div>
 			</div>
-			<?php if($user['tfa_secret']==""){ ?>
+			<?php //if($user['tfa_secret']==""){ ?>
 			<!--------------- 2FA Modal ------------->
 			<div id="twofaModal" class="modal fade" role="dialog">
 				<div class="modal-dialog modal-lg">
@@ -224,7 +236,7 @@
 					</div>
 				</div>
 			</div>
-			<?php } ?>
+			<?php //} ?>
 			<!--------------- Asset reset password Modal ------------->
 			<div id="Asset_Reset_Password_Modal" class="modal fade" role="dialog">
 				<div class="modal-dialog">

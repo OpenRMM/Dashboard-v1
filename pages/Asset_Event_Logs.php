@@ -56,26 +56,34 @@ $error = $json["event_log_".$getEvent."_error"];
 				<form style="margin-bottom:-10px" method="POST" action="/" style="display:inline">
 					<ul class="nav nsv-tabs">
 						<?php if($getEvent=="application"){ $style="background:#333;color:#fff;"; }else{ $style="background:#f3f3f3;color:#333;"; } ?>
-						<li style="<?php echo $style; ?>padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
-							<a onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','application');" href="javascript:void(0)" <?php if($getEvent=="application"){ echo 'class="text-white"'; } ?> data-bs-toggle="tab">Application Logs</a>
-						</li>
+						<a style="text-decoration:none;" onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','application');" href="javascript:void(0)" <?php if($getEvent=="application"){ echo 'class="text-white"'; } ?> data-bs-toggle="tab">
+							<li style="<?php echo $style; ?>padding:5px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
+								Application Logs
+							</li>
+						</a>
 						<?php if($getEvent=="security"){ $style="background:#333;color:#fff;"; }else{ $style="background:#f3f3f3;color:#333;"; } ?>
-						<li style="<?php echo $style; ?>padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
-							<a onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','security');" href="javascript:void(0)" <?php if($getEvent=="security"){ echo 'class="text-white"'; } ?> data-bs-toggle="tab">Security Logs</a>
-						</li>
+						<a style="text-decoration:none;" onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','security');" href="javascript:void(0)" <?php if($getEvent=="security"){ echo 'class="text-white"'; } ?> data-bs-toggle="tab">
+							<li style="<?php echo $style; ?>padding:5px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
+								Security Logs
+							</li>
+						</a>
 						<?php if($getEvent=="system"){ $style="background:#333;color:#fff;"; }else{ $style="background:#f3f3f3;color:#333;"; } ?>
-						<li style="<?php echo $style; ?>padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
-							<a onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','system');" href="javascript:void(0)" <?php if($getEvent=="system"){ echo 'class="text-white"'; } ?> data-bs-toggle="tab">System Logs</a>
-						</li>
+						<a style="text-decoration:none;" onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','system');" href="javascript:void(0)" <?php if($getEvent=="system"){ echo 'class="text-white"'; } ?> data-bs-toggle="tab">
+							<li style="<?php echo $style; ?>padding:5px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
+								System Logs
+							</li>
+						</a>
 						<?php if($getEvent=="setup"){ $style="background:#333;color:#fff;"; }else{ $style="background:#f3f3f3;color:#333;"; } ?>
-						<li style="<?php echo $style; ?>padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
-							<a onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','setup');" href="javascript:void(0)" <?php if($getEvent=="setup"){ echo 'class="text-white"'; } ?> data-bs-toggle="tab">Setup Logs</a>
-						</li>
+						<a style="text-decoration:none;" onclick="loadSection('Asset_Event_Logs', '<?php echo $computerID; ?>','latest','setup');" href="javascript:void(0)" <?php if($getEvent=="setup"){ echo 'class="text-white"'; } ?> data-bs-toggle="tab">
+							<li style="<?php echo $style; ?>padding:5px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class=" active">
+								Setup Logs
+							</li>
+						</a>
 					</ul>
 				</form>
 			</div>
 			<div class="tab-contsent p3s0" style="padding:0px;margin-top:5px;overflow:auto">
-				<table id="<?php echo $_SESSION['userid']; ?>Event_logs" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
+				<table id="<?php echo $_SESSION['userid']; ?>Event_logs" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table-striped table table-hover  table-borderless">
 					<thead>
 						<tr style="border-bottom:2px solid #d3d3d3;">
 							<th scope="col">Source</th>

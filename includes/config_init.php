@@ -32,8 +32,8 @@ $siteSettingsJson = '
     "Alert Settings": {
         "Memory": {
             "Total": {
-                "Danger": 3,
-                "Warning": 4
+                "Danger": 85,
+                "Warning": 70
             },
             "Free": {
                 "Danger": 500,

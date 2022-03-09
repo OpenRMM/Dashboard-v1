@@ -9,8 +9,8 @@
 	
 	//The max amount of entries for user activity, lowering the number deletes the old entries
 	$userActivityLimit = 50;
-	$excludedPages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Init,Login,Logout,Asset_Alerts,Asset_Commands,Dashboard,Profile,Asset_Edit,Technicians,Customers,Assets,Downloads"; 
-	$all_Pages = "Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Asset_Agent_Settings,Asset_File_Manager,Init,Asset_Alerts,Customers,Technicians,Assets,Asset_Attached_Devices,Asset_Commands,Dashboard,Asset_Disks,Asset_Edit,Asset_Event_Logs,Asset_General,Login,Logout,Asset_Memory,Asset_Network,Asset_Optional_Features,Asset_Printers,Asset_Processes,Profile,Asset_Programs,Asset_Services,Asset_Users,Downloads";
+	$excludedPages = "Reports,Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Init,Login,Logout,Asset_Alerts,Asset_Commands,Dashboard,Profile,Asset_Edit,Technicians,Customers,Assets,Downloads"; 
+	$all_Pages = "Reports,Servers,Asset_Portal,Service_Desk_New_Ticket,Service_Desk_Ticket,Service_Desk_Home,Asset_Agent_Settings,Asset_File_Manager,Init,Asset_Alerts,Customers,Technicians,Assets,Asset_Attached_Devices,Asset_Commands,Dashboard,Asset_Disks,Asset_Edit,Asset_Event_Logs,Asset_General,Login,Logout,Asset_Memory,Asset_Network,Asset_Optional_Features,Asset_Printers,Asset_Processes,Profile,Asset_Programs,Asset_Services,Asset_Users,Downloads";
 	$adminPages = "Servers,Asset_Agent_Settings,Technicians,Customers";
 	$taskCondtion_max = 5;
 ###########################################################################################################################################

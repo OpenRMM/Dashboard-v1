@@ -50,7 +50,7 @@ $error = $json['processes_error'];
 }
 ?>
 <div style="overflow-x:auto;padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;">
-	<table id="<?php echo $_SESSION['userid']; ?>Processes" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
+	<table id="<?php echo $_SESSION['userid']; ?>Processes" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table-striped table table-hover table-borderless">
 		<thead>
 		<tr style="border-bottom:2px solid #d3d3d3;">
 			<th scope="col">#</th>
@@ -76,7 +76,7 @@ $error = $json['processes_error'];
 				<td><?php echo textOnNull($proc['PID'], "N/A");?></td>
 				<td>
 				<button style="margin-top:-2px;padding:8px;padding-top:6px;padding-bottom:6px;border:none;" onclick='sendCommand("taskkill /F /PID <?php echo $proc["PID"]; ?>", "Kill <?php echo $proc["Name"]; ?> Proccess");' title="End <?php echo $proc['Name']; ?> process?" class="btn btn-danger btn-sm">
-					<i style="font-size:12px;" class="fa fa-times"></i>
+					<i style="font-size:15px;" class="fa fa-times"></i>
 				</button>
 				</td>
 			</tr>

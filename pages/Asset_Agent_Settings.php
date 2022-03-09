@@ -31,23 +31,32 @@ $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
 	 $('html, body').animate({ scrollTop: $(document).height() }, 1200);
 </script>
 <?php } ?>
-<div class="card">
+<div style="padding:20px;margin-bottom:-1px;" class="card">
 	<div class="row" style="padding:15px;">
 		<div class="col-md-9">
-			<h5 title="ID: <?php echo $computerID; ?>" style="color:#0c5460">Editing Agent: <span style="color:#333"><?php echo $hostname; ?></span>
-				<br>
-				<p>
-					Here You Fine Tune The Configuation Options For This Particular Agent.
-				</p>
+			<h5 title="ID: <?php echo $computerID; ?>" style="color:#0c5460">
+				Editing Agent: <span style="color:#333"><?php echo $hostname; ?>
 			</h5>
+			<span style="font-size:12px;color:#666;">
+			Here You Fine Tune The Configuation Options For This Particular Agent.
+			</span>
 		</div>
-		<div class="col-md-3" style="text-align:right;">
+		<div style="text-align:right;" class="col-md-3">
 			<button title="Refresh" onclick="loadSection('Asset_Agent_Settings');" class="btn btn-sm" style="float:right;margin:5px;color:#0c5460;background:#d1ecf1;">
 				<i class="fas fa-sync"></i>
 			</button>
 		</div>
 	</div>
 </div>
+<?php if($online=="0"){ ?>
+	<div  style="border-radius: 0px 0px 4px 4px;" class="alert alert-danger" role="alert">
+		<i class="fas fa-ban"></i>&nbsp;&nbsp;&nbsp;This Agent is offline		
+	</div>
+<?php 
+}else{
+	echo"<br>";
+}
+?>
 <div class="Asset_Agent-FormHead">
 	<form method="POST" action="/">
 		<div class="row" style="margin-bottom:10px;margin-top:0px;border-radius:3px;overflow:hidden;padding:0px">

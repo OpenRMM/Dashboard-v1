@@ -34,7 +34,7 @@ $companyCount = mysqli_num_rows($results);
 		</div>
 	</div>
 	<div style="padding:10px;overflow-x:auto">
-		<table id="<?php echo $_SESSION['userid']; ?>Customers" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">
+		<table id="<?php echo $_SESSION['userid']; ?>Customers" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table-striped table table-hover table-borderless">
 			<thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">
 					<th scope="col">ID</th>
@@ -43,7 +43,7 @@ $companyCount = mysqli_num_rows($results);
 					<th scope="col">Phone</th>
 					<th scope="col">Email</th>
 					<th scope="col">Comments</th>
-					<th scope="col"></th>
+					<th scope="col">Actions</th>
 				</tr>
 			</thead>
 			<tbody>

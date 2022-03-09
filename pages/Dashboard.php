@@ -67,6 +67,7 @@ if($hostname==""){
 							if($date < strtotime('-1 days')) {
 								$result['online']="0";
 							}
+							$name = textOnNull(crypto("decrypt", $result['name'],$result['hex']), "not defined");
 							$count++;
 							$icons = array("desktop","server","laptop","tablet","allinone","other");
 							if(in_array(strtolower(str_replace("-","",$result['computer_type'])), $icons)){
@@ -298,13 +299,13 @@ if($hostname==""){
 					<div id="Alerts" class="tab-pane fade-in active">
 						<button data-bs-toggle="modal" data-bs-target="#editAlert" onclick="$('#alertCompany').show();$('#alertID').val('');" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</button><hr>
 						<p>Configure alerts for all assets or assets within a certain <?php echo strtolower($msp); ?></p>
-						<table class="table table-hover table-borderless" id="datatable">
+						<table class="table table-hover table-borderless table-striped" id="datatable">
 							<tr>
 								
 								<th>Name</th>
 								<th >Details</th>
 								<th><?php echo $msp; ?></th>
-								<th style="float:right">Actions</th>
+								<th>Actions</th>
 							</tr>
 							<?php
 							$count=0;
@@ -328,7 +329,7 @@ if($hostname==""){
 								<td><?php echo $alert['name']; ?></td>
 								<td>If <b><?php echo $details['json']['Details']['Condition']."</b> ".$details['json']['Details']['Comparison']." ".$details['json']['Details']['Value']; ?></td>
 								<td><?php echo $company; ?></td>
-								<td style="float:right">
+								<td>
 									<button type="button" onclick="deleteAlert('<?php echo $alert['ID']; ?>')" title="Delete Alert" style="margin-top:-2px;padding:12px;padding-top:8px;padding-bottom:8px;border:none;" class="btn btn-danger btn-sm">
 										<i class="fas fa-trash"></i>
 									</button>									
@@ -344,7 +345,7 @@ if($hostname==""){
 					</div>
 					<div id="Tasks" class="tab-pane fade">
 						<button data-bs-toggle="modal" data-bs-target="#editTrigger" class="btn btn-sm btn-warning"><i class="fas fa-plus"></i> &nbsp;Add Task</button><hr>
-						<table class="table table-hover table-borderless" id="datatable">
+						<table class="table table-hover table-borderless table-striped" id="datatable">
 							<tr>
 								<th>Name</th>
 								<th>Last run</td>
@@ -395,10 +396,12 @@ if($hostname==""){
 					</div>
 					<div  class="panel-body" style="background:#fff;overflow:auto">
 						<div class="rosw">
-							<table id="<?php echo $_SESSION['userid']; ?>Activity_Logs" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;" class="table table-hover table-borderless">
+							<table id="<?php echo $_SESSION['userid']; ?>Activity_Logs" style="font-size:14px;margin-top:0px;font-family:Arial;" class="table-striped table table-hover table-borderless">
 								<thead>
 									<tr>
-										<th scope="col">Event</th>			  
+										<th scope="col">Event</th>
+										<th scope="col">Date</th>
+										<th style="display:none" scope="col">Simple Date</th>			  
 									</tr>
 								</thead>
 								<tbody>			
@@ -413,7 +416,9 @@ if($hostname==""){
 															
 									?>
 										<tr>
-											<td><?php echo crypto('decrypt',$activity['activity'],$activity['hex']); ?> (<?php echo ago(date("m/d/y\ h:i",$activity['date'])); ?>)</td>				
+											<td><?php echo crypto('decrypt',$activity['activity'],$activity['hex']); ?></td>	
+											<td style="display:none" ><?php echo (date("m/d/y\ h:i",$activity['date'])); ?></td>
+											<td><?php echo ago(date("m/d/y\ h:i",$activity['date'])); ?></td>				
 										</tr>
 										<?php }
 										if($count==0){?>
@@ -441,7 +446,7 @@ if($hostname==""){
 	});
 	$('#<?php echo $_SESSION['userid']; ?>Activity_Logs').dataTable( {
 		"paging": true,
-		"order": [],
+		"order": [[ 1, "desc" ]],
 		stateSave: true,
 		colReorder: true,
 		"language": {

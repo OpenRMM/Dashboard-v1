@@ -300,6 +300,16 @@ function resetKeys(){
         });
     }
 }
+function checkAll(){    
+    $('.settingsCheckbox').prop('checked', true);
+    $('#uncheckToggle').show();
+    $('#checkToggle').hide();
+}
+function uncheckAll(){    
+    $('.settingsCheckbox').prop('checked', false);
+    $('#checkToggle').show();
+    $('#uncheckToggle').hide();
+}
 function disableTFA(ID){ 
     $.post("index.php", {
        type: "DisableTFA",

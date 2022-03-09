@@ -50,7 +50,7 @@ $error = $json['network_adapters_error'];
 <div class="col-md-12" style="padding:5px;">
 	<div class="card" style="overflow-x:auto;height:95%;background:#fff;padding:10px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;">
 	  <div>
-		<table id="<?php echo $_SESSION['userid']; ?>Network" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover dataTable table-borderless">
+		<table id="<?php echo $_SESSION['userid']; ?>Network" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table-striped table table-hover dataTable table-borderless">
 			<thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">
 					<th>Description</th>

@@ -63,9 +63,9 @@ $results2 = mysqli_query($db, $query2);
 					$size2 = $ram['total'];
 					$used2 = $ram['used'];
 					$usedPct2 = round(($used2/$size2) * 100);
-					if($usedPct2 > $siteSettings['Alert Settings']['Memory']['Danger'] ){
+					if($usedPct2 > $siteSettings['Alert Settings']['Memory']['Total']['Danger'] ){
 						$pbColor2 = "red";
-					}elseif($usedPct2 > $siteSettings['Alert Settings']['Memory']['Warning']){
+					}elseif($usedPct2 > $siteSettings['Alert Settings']['Memory']['Total']['Warning']){
 						$pbColor2 = "#ffa500";
 					}else{ $pbColor2 = "#03925e"; }
 
@@ -253,7 +253,6 @@ $results2 = mysqli_query($db, $query2);
 								}else{	
 									$uptime = ago(date("Y-m-d h:i:sa", strtotime($uptime)));
 								}
-								
 							?>
 								<li class="list-group-item" style="padding:6px"><b>Uptime: </b><?php echo str_replace("ago","",$uptime); ?></li>	
 								<?php
@@ -269,7 +268,6 @@ $results2 = mysqli_query($db, $query2);
 								<li class="list-group-item" style="padding:6px"><b>MySQL Server: </b><?php echo textOnNull($asset['mysql_server'],"N/A"); ?></li>
 								<li class="list-group-item" style="padding:6px"><b>MQTT Server: </b><?php echo textOnNull($asset['mqtt_server'],"N/A"); ?></li>
 								<li class="list-group-item" style="padding:6px"><b>Operating System: </b><?php echo textOnNull($asset['os'],"N/A"); ?></li>
-
 							</ul>
 						</div>
 					</div>
@@ -282,7 +280,7 @@ $results2 = mysqli_query($db, $query2);
 					</div>
 					<div class="panel-body">
 						<div style="overflow-x:auto">
-							<table id="<?php echo $_SESSION['userid']; ?>Servers" style="line-height:10px;;font-size:14px;margin-top:0px;font-family:Arial;overflow:hidden" class="table table-hover table-borderless">
+							<table id="<?php echo $_SESSION['userid']; ?>Servers" style="font-size:14px;margin-top:0px;font-family:Arial;overflow:hidden" class="table-striped table table-hover table-borderless">
 								<thead>
 									<tr>
 										<th scope="col">Event</th>

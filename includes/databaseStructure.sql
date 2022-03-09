@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 05, 2022 at 09:25 AM
+-- Generation Time: Mar 04, 2022 at 10:17 AM
 -- Server version: 10.3.29-MariaDB
 -- PHP Version: 7.2.29
 
@@ -68,10 +68,10 @@ CREATE TABLE `changelog` (
   `ID` int(11) NOT NULL,
   `computer_id` int(11) NOT NULL,
   `computer_data_name` varchar(50) NOT NULL,
-  `computer_data_key` varchar(250) NOT NULL,
+  `computer_data_key` varchar(500) NOT NULL,
   `old_value` text NOT NULL DEFAULT '',
   `new_value` text NOT NULL,
-  `change_type` varchar(25) NOT NULL DEFAULT '',
+  `change_type` varchar(15) NOT NULL DEFAULT '',
   `date_added` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -248,16 +248,17 @@ CREATE TABLE `users` (
   `user_color` varchar(8) NOT NULL DEFAULT '',
   `username` varchar(25) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `tfa_secret` text NOT NULL,
   `email` varchar(100) NOT NULL DEFAULT '',
   `phone` varchar(400) NOT NULL DEFAULT '',
   `notes` varchar(400) NOT NULL DEFAULT '',
+  `Command_Buttons` text NOT NULL DEFAULT '',
   `last_login` varchar(15) NOT NULL DEFAULT '',
   `allowed_pages` text NOT NULL DEFAULT '',
   `recents` longtext NOT NULL DEFAULT '',
   `notifications` text NOT NULL DEFAULT '',
   `recentTickets` text NOT NULL DEFAULT '',
   `recent_edit` longtext NOT NULL DEFAULT '',
-  `alert_settings` varchar(255) NOT NULL DEFAULT '''''',
   `hex` varchar(200) NOT NULL,
   `active` int(2) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -293,7 +294,8 @@ ALTER TABLE `alerts`
 -- Indexes for table `asset_messages`
 --
 ALTER TABLE `asset_messages`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `userid` (`userid`);
 
 --
 -- Indexes for table `changelog`

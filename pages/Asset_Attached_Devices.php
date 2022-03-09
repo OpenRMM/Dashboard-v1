@@ -297,7 +297,7 @@ if($date < strtotime('-1 days')) {
 		</div>
 	</div>
 	<div style="margin-left:20px;overflow-x:auto;padding:10px;background:#fff;border-radius:6px;box-shadow:rgba(0, 0, 0, 0.13) 0px 0px 11px 0px;margin-top:20px;">
-		<table id="<?php echo $_SESSION['userid']; ?>Attached_Devices" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover  table-borderless">
+		<table id="<?php echo $_SESSION['userid']; ?>Attached_Devices" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table-striped table table-hover  table-borderless">
 			<thead>
 				<tr style="border-bottom:2px solid #d3d3d3;">
 				<th scope="col">#</th>

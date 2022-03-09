@@ -158,8 +158,7 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 								<ul style="font-size:12px;" id="notificationList" class="list-group">
 									<li class="list-group-item">No New Notifications</li>
 								</ul>
-							</div>
-							
+							</div>							
 						</div>
 						<div class="btn-group">
 							&nbsp;
@@ -175,7 +174,7 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 									<?php } 
 									if($_SESSION['accountType']=="Admin"){ ?>
 										<li style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#companyModal" class="list-group-item secbtn">Add New <?php echo $msp; ?></li>
-										<li style="cursor:pointer"  data-bs-toggle="modal" data-bs-target="#userModal" class="list-group-item secbtn">Add New Technician</li>
+										<li style="cursor:pointer"  onclick="uncheckAll();$('#TFAMSG').show();$('#TFA').hide();" data-bs-toggle="modal" data-bs-target="#userModal" class="list-group-item secbtn">Add New Technician</li>
 									<?php } ?>
 								</ul>
 							</div>
@@ -241,6 +240,11 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Downloads
 								</li>
 							<?php } ?>
+							<?php if(in_array("Reports", $allowed_pages)){  ?>
+								<li onclick="loadSection('Reports');" id="secbtnReports" class="secbtn" style="width:100%">
+									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Reports
+								</li>
+							<?php } ?>
 						</ul>
 						<hr style="background:#dedede" >
 						<div id="sectionList" style="display:none;">
@@ -263,7 +267,7 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 								<i class="fas fa-terminal"></i>&nbsp;&nbsp;&nbsp; Commands
 							</li>
 							<?php } ?>
-							<?php if(in_array("Asset_Event_logs", $allowed_pages)){  ?>
+							<?php if(in_array("Asset_Event_Logs", $allowed_pages)){  ?>
 							<li onclick="loadSection('Asset_Event_Logs');" id="secbtnAsset_Event_Logs" class="secbtn">
 								<i class="fas fa-file-code"></i>&nbsp;&nbsp;&nbsp; Event Logs
 							</li>
@@ -479,7 +483,7 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 			$(item).addClass('secActive');
 
 		}
-		if(section == "Servers" || section == "Asset_Portal" || section == "Service_Desk_New_Ticket" || section == "Service_Desk_Ticket" || section == "Service_Desk_Home" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "Technicians" || section == "Customers" || section == "Downloads" || section == "Init"){
+		if(section == "Reports" || section == "Servers" || section == "Asset_Portal" || section == "Service_Desk_New_Ticket" || section == "Service_Desk_Ticket" || section == "Service_Desk_Home" || section == "Profile" || section == "Assets" || section == "Dashboard" || section == "Technicians" || section == "Customers" || section == "Downloads" || section == "Init"){
 			$('#sectionList').slideUp(400);
 			$('#navConfig').addClass('show')
 		}else if($('#sectionList').css("display")=="none"){

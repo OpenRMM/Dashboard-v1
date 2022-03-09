@@ -29,12 +29,12 @@ if($date < strtotime('-1 days')) {
 				<i class="fas fa-bell-slash"></i>&nbsp;&nbsp;&nbsp;Alerts have been turned off for this asset		
 			</div>
 		<?php } ?>
-		<table class="table table-hover table-borderless" id="<?php echo $_SESSION['userid']; ?>Alerts">
+		<table class="table table-hover table-borderless table-striped" id="<?php echo $_SESSION['userid']; ?>Alerts">
 			<tr>
 				<th>Name</th>
 				<th >Alert Details</th>
 				<th>Current Value</th>
-				<th style="float:right">Actions</th>
+				<th>Actions</th>
 			</tr>
 			<?php
 			$count=0;
@@ -106,7 +106,7 @@ if($date < strtotime('-1 days')) {
 				<td><?php echo $alert['name']; ?></td>
 				<td>If <b><?php echo $details['json']['Details']['Condition']."</b> ".$details['json']['Details']['Comparison']." ".$details['json']['Details']['Value']; ?></td>
 				<td><?php echo textOnNull($currentValue,"unknown"); ?></td>
-				<td style="float:right">
+				<td>
 					<form action="/" method="post" style="display:inline;">
 						<input type="hidden" value="delAlert" name="type">
 						<input type="hidden" value="<?php echo $alert['ID'];?>" name="ID">

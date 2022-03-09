@@ -114,7 +114,7 @@ $hostname = $json['general']['Response'][0]['csname'];
 					$results = mysqli_query($db, $query);
 					$commandCount = mysqli_num_rows($results);
 				?>
-				<table id="<?php echo $_SESSION['userid']; ?>Commands" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table table-hover table-borderless">				
+				<table id="<?php echo $_SESSION['userid']; ?>Commands" style="line-height:20px;overflow:hidden;font-size:12px;margin-top:8px;font-family:Arial;" class="table-striped table table-hover table-borderless">				
 				<thead>
 					<tr style="border-bottom:2px solid #d3d3d3;">
 					<th scope="col">Command</th>
