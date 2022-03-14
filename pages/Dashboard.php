@@ -42,7 +42,7 @@ if($hostname==""){
 			<i class="fas fa-sync"></i>
 		</button>
 		<br>
-		<span style="font-size:14px;color:#999"><?php echo welcome().", ".$user['username']."!"; ?></span>
+		<span style="font-size:14px;color:#999"><?php echo welcome().", ".ucwords($user['username'])."!"; ?></span>
 	</h5>
 </div>	
 <div class="row" style="margin-bottom:10px;margin-top:20px;border-radius:3px;overflow:hidden;padding:0px;">
@@ -349,7 +349,7 @@ if($hostname==""){
 							<tr>
 								<th>Name</th>
 								<th>Last run</td>
-								<th style="float:right"></th>
+								<th>Actions</th>
 							</tr>
 							<?php
 							$count=0;
@@ -362,7 +362,7 @@ if($hostname==""){
 							<tr id="task<?php echo $task['ID']; ?>">
 								<td><?php echo $task['name']; ?></td>
 								<td><?php echo $last_run; ?></td>
-								<td style="float:right">
+								<td>
 									<form action="/" method="post" style="display:inline;">
 										<input type="hidden" value="<?php echo $task['ID'];?>" name="ID">
 										<input type="hidden" value="startTask" name="type">

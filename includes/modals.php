@@ -264,6 +264,39 @@
 					</div>
 				</div>
 			</div>
+				<!--------------- Asset reset password Modal ------------->
+				<div id="reportRetentionModal" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h6>
+								<b>
+									Configure Report Retention Period
+								</b>
+							</h6>
+						</div>
+						<input type="hidden" name="AssetID" value="" id="AssetID"/>
+						<input type="hidden" name="AssetUser" value="" id="AssetUser"/>
+						<div class="modal-body">
+							<center>
+								
+								<div style="width:400px;" class="input-group mb-3">
+									<p style="display:inline;margin-top:15px;padding-right:10px">Maintain last </p>
+									<input style="width:10px;height:35px;margin-top:9px" required autocomplete="off" type="number" value="30" id="AssetPassword" name="password" class="form-control">
+									<span style="height:35px;margin-top:9px" class="input-group-text">days</span>
+									<p style="display:inline;margin-top:15px;padding-left:10px">Reports</p>
+								</div>
+							</center>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-sm btn-default" data-bs-dismiss="modal">Cancel</button>
+							<button type="button" onclick="re5setAssetPassword();" data-bs-dismiss="modal" style="color:#fff" class="btn btn-sm btn-primary">
+								<i class="fas fa-save"></i> Update
+							</button>
+						</div>					
+					</div>
+				</div>
+			</div>
 			<!--------------- Note Modal ------------->
 			<div id="noteModal" class="modal fade" role="dialog">
 				<div class="modal-dialog">
@@ -396,7 +429,7 @@
 			</div>
 			<!------------- User commands ------------------->
 			<div id="userCommandsModal" class="modal fade" role="dialog">
-				<div class="modal-dialog modal-sm">
+				<div class="modal-dialog modal-md">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h6>
@@ -407,11 +440,11 @@
 						</div>
 						<form method="post">
 							<div class="modal-body">
-								<div class="col-md-12 form-group">
+								<div class="col-md-6 form-group">
 									<label>Title</label>
 									<input placeholder="ex. Flush DNS" style="resize:vertical" name="title" class="form-control" type="text" placeholder="Title">
 								</div>
-								<div class="col-md-12 form-group">
+								<div class="col-md-6 form-group">
 									<label>Button Color</label>
 									<input placeholder="Button Color" type="color" name="btnColor" class="form-control"/>
 								</div>	
@@ -422,7 +455,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-sm btn-default" data-bs-dismiss="modal">Close</button>
-								<button type="submit" class="btn btn-sm btn-primary">Create</button>
+								<button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save"></i>&nbsp;Create</button>
 							</div>
 						</form>
 					</div>
@@ -571,9 +604,6 @@
                                                 <button type="button" style="margin-left:10px" id="addButton" class="btn btn-sm btn-success"><i class="fa fa-plus"></i></button>
                                             </td>
 										</tr>
-                                           
-                                       
-									
 									</tbody>
 								</table>
 								<hr>
@@ -591,6 +621,7 @@
 												<select required class="form-select" name="taskAct1">
 													<option value="Log">Add to Log</option>
 													<option value="Command">Send Command</option>
+													<option value="Ticket">Create Ticket</option>
 													<option value="Send Notification">Send Notification</option>
                                                     <option value="Send Alert To User">Send Alert To User</option>
                                                     <option value="Shutdown Asset">Shutdown Asset</option>
@@ -686,6 +717,84 @@
 							<div class="modal-footer">	
 								<button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal">Close</button>
 								<button type="submit" class="btn btn-primary btn-sm" >Create Alert</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>	
+			<!-- new report -->
+            <div class="modal fade in" id="editReport" tabinsdex="-1" role="dialog" aria-hidden="true" >
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" >Create New Report</h5>
+						</div>
+						<form method="post">
+							<div class="modal-body">
+								<h6>Report Name</h6><hr>
+								<input maxlength="30" required type="text" class="form-control" name="name">
+								<br>
+                                <div id="reportCompany">
+                                    <h6><?php echo $msp; ?></h6>
+									<hr>
+                                    <select  name="reportCompany" class="form-select">
+                                        <option value="0">All <?php echo $msp."s"; ?></option>
+                                        <?php
+                                            $query = "SELECT ID, name,hex FROM companies WHERE active='1' ORDER BY ID ASC";
+                                            $results = mysqli_query($db, $query);
+                                            while($result = mysqli_fetch_assoc($results)){ ?>
+                                                <option value='<?php echo $result['ID'];?>'><?php echo crypto('decrypt',$result['name'],$result['hex']);?></option>
+                                        <?php }?>
+                                    
+                                    </select>
+                                    <br>
+                                </div>
+								<h6>Condition</h6>
+								<table class="table">
+									<tbody id="TextBoxesGroup">
+										<tr>
+											<th scope="row" style="vertical-align:middle;">IF</th>
+											<td>
+												<input type="hidden" value="newReport" name="type">
+                                                <input type="hidden" value="" id="reportID" name="ID">
+												<select required class="form-select" style="width:23%;display:inline-block;" name="reportCondition">
+													<option value="Total Alert Count">Total Alert Count</option>
+													<option value="Total Ram/Memory">Total Ram/Memory</option>
+													<option value="Available Disk Space">Available Disk Space</option>
+													<option value="Total Disk Space">Total Disk Space</option>
+													<option value="Domain">Domain</option>
+													<option value="Public IP Address">Public IP Address</option>
+													<option value="Antivirus">Antivirus</option>
+													<option value="Agent Version">Agent Version</option>
+													<option value="Total User Accounts">User Accounts</option>
+													<option value="<?php echo $msp; ?> Name"><?php echo $msp; ?> Name</option>
+													<option value="Agent Comes Online">Agents Online</option>
+													<option value="Agent Goes Offline">Agents Offline</option>
+													<option value="Windows Activation">Windows Activation</option>
+													<option value="Local IP Address">Local IP Addresses</option>
+												</select>
+												<select class="form-select" required style="width:20%;display:inline-block;" name="reportComparison">
+													<option value="=">Equals</option>
+													<option value="!=">Not Equal</option>
+													<option value=">">Greater than</option>
+													<option value="<">Less than</option>
+													<option value=">=">Greater than or equals</option>
+													<option value="<=">Less than equals</option>
+													<option value="contain">Contains</option>
+													<option value="notcontain">Does not Contain</option>
+												</select>
+												<input type="text" required placeholder="Value" class="form-control" style="width:47%;display:inline-block;" name="reportValue">     
+                                            </td>
+										</tr>
+									</tbody>
+								</table>
+								<h6>Report Columns</h6>	
+								<hr>
+								none
+							</div>
+							<div class="modal-footer">	
+								<button type="button" class="btn btn-default btn-sm" data-bs-dismiss="modal">Close</button>
+								<button type="submit" class="btn btn-primary btn-sm" >Create Report</button>
 							</div>
 						</form>
 					</div>

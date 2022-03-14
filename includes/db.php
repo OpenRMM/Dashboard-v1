@@ -47,62 +47,62 @@
 		session_name($session_name);
 		session_start();
 	}
-
-	//Connect to MQTT
-	$MQTTserver = $siteSettings['MQTT']['host'];
-	$MQTTport = $siteSettings['MQTT']['port'];
-	$MQTTusername = $siteSettings['MQTT']['username']; 
-	$MQTTpassword = $siteSettings['MQTT']['password']; 
-	//MQTT Subscribe
-	function MQTTpublish($topic,$message,$computerID,$retain){
-		global $MQTTserver, $MQTTport, $MQTTusername, $MQTTpassword, $mqttConnect;;
-		$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $computerID);
-		if ($mqtt->connect_auto(true, NULL, $MQTTusername, $MQTTpassword)) {
-			$mqtt->publish($topic, $message, 1, $retain);
-			$mqtt->close();
-		} else {
-			$mqttConnect="timeout";
-			return "Time out!\n";
+	if($siteSettings!=""){
+		//Connect to MQTT
+		$MQTTserver = $siteSettings['MQTT']['host'];
+		$MQTTport = $siteSettings['MQTT']['port'];
+		$MQTTusername = $siteSettings['MQTT']['username']; 
+		$MQTTpassword = $siteSettings['MQTT']['password']; 
+		//MQTT Subscribe
+		function MQTTpublish($topic,$message,$computerID,$retain){
+			global $MQTTserver, $MQTTport, $MQTTusername, $MQTTpassword, $mqttConnect;;
+			$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $computerID);
+			if ($mqtt->connect_auto(true, NULL, $MQTTusername, $MQTTpassword)) {
+				$mqtt->publish($topic, $message, 1, $retain);
+				$mqtt->close();
+			} else {
+				$mqttConnect="timeout";
+				return "Time out!\n";
+			}
 		}
-	}
-	$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $computerID);
-	if ($mqtt->connect_auto(true, NULL, $MQTTusername, $MQTTpassword)) { }else{
-		$mqttConnect="timeout";
-	}
+		$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $computerID);
+		if ($mqtt->connect_auto(true, NULL, $MQTTusername, $MQTTpassword)) { }else{
+			$mqttConnect="timeout";
+		}
 
-	//Connect to DB
-	$db = mysqli_connect($siteSettings['MySQL']['host'], $siteSettings['MySQL']['username'], $siteSettings['MySQL']['password'], $siteSettings['MySQL']['database']);
-	if(!$db and file_exists("config.php")){
-		//exit("<center><h3 style='color:maroon;'>An error has occured. Please try again in a few moments.</h3><a href='#' onclick='location.reload();'>Retry</a><hr></center>");
+		//Connect to DB
+		$db = mysqli_connect($siteSettings['MySQL']['host'], $siteSettings['MySQL']['username'], $siteSettings['MySQL']['password'], $siteSettings['MySQL']['database']);
+		if(!$db and file_exists("config.php")){
+			//exit("<center><h3 style='color:maroon;'>An error has occured. Please try again in a few moments.</h3><a href='#' onclick='location.reload();'>Retry</a><hr></center>");
+		}
+		mysqli_set_charset($db, 'utf8mb4');
+		if($createDatabase=="true"){
+			$templine = '';
+			$lines = file("databaseStructure.sql");
+			foreach ($lines as $line)
+			{
+				if (substr($line, 0, 2) == '--' || $line == '')
+					continue;
+				$templine .= $line;
+				if (substr(trim($line), -1, 1) == ';')
+				{
+					mysqli_query($db, $templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysqli_error($db) . '<br /><br />');
+					$templine = '';
+				}
+			}
+		}
+
+		//Get user data
+		$query = "SELECT email,Command_Buttons,username,nicename,account_type,hex,user_color,allowed_pages,notifications,tfa_secret FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
+		$results = mysqli_query($db, $query);
+		$user = mysqli_fetch_assoc($results);
+		$pages = crypto("decrypt",$user['allowed_pages'],$user['hex']);
+		$email = crypto("decrypt",$user['email'],$user['hex']);
+		$allowed_pages = explode(",",$pages);
+		$username=$user['username'];
+		$cmdButtons = $user['Command_Buttons'];
+		$_SESSION['notifications']= explode("||",$user['notifications']);
 	}
-	mysqli_set_charset($db, 'utf8mb4');
-    if($createDatabase=="true"){
-        $templine = '';
-        $lines = file("databaseStructure.sql");
-        foreach ($lines as $line)
-        {
-            if (substr($line, 0, 2) == '--' || $line == '')
-                continue;
-            $templine .= $line;
-            if (substr(trim($line), -1, 1) == ';')
-            {
-                mysqli_query($db, $templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysqli_error($db) . '<br /><br />');
-                $templine = '';
-            }
-        }
-    }
-
-	//Get user data
-	$query = "SELECT email,Command_Buttons,username,nicename,account_type,hex,user_color,allowed_pages,notifications,tfa_secret FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
-	$results = mysqli_query($db, $query);
-	$user = mysqli_fetch_assoc($results);
-	$pages = crypto("decrypt",$user['allowed_pages'],$user['hex']);
-	$email = crypto("decrypt",$user['email'],$user['hex']);
-	$allowed_pages = explode(",",$pages);
-	$username=$user['username'];
-	$cmdButtons = $user['Command_Buttons'];
-	$_SESSION['notifications']= explode("||",$user['notifications']);
-
 	$tfa = new RobThree\Auth\TwoFactorAuth('OpenRMM');
 
 	//redirect standard users

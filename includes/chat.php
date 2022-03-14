@@ -15,7 +15,11 @@ if($_SESSION['userid']!=""){
         $query2 = "SELECT * FROM asset_messages WHERE computer_id='".$activity['ID']."' and chat_viewed='0' and userid='0' ORDER BY ID ASC";
         $results2 = mysqli_query($db, $query2);
         $Count = mysqli_num_rows($results2);
-
+        $json = getComputerData($activity['ID'], array("general"));
+        $date = strtotime($json['general_lastUpdate']);
+        if($date < strtotime('-1 days')) {
+            $activity['online']="0";
+        }
         if($activity['online']=="1"){
             $online="online";
         }else{
@@ -24,7 +28,7 @@ if($_SESSION['userid']!=""){
         if($Count==0){
             //continue;
         }
-        $json = getComputerData($activity['ID'], array("general"));
+       
         $hostname = textOnNull($json['general']['Response'][0]['csname'],"Unavailable");
         if($computerID==$activity['ID']){
             $active="secActive";

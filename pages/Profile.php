@@ -122,6 +122,9 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 										$results = mysqli_query($db, $query);
 										$userCount = mysqli_num_rows($results);
 										while($activity = mysqli_fetch_assoc($results)){
+											if(crypto('decrypt',$activity['activity'],$activity['hex']) ==""){
+												continue;
+											}
 											$count++;																
 										?>
 											<tr>
@@ -136,9 +139,6 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 								</table>
 							</div>	
 						</div>
-						<div id="tab2" class="tab-pane"></div>
-						<div id="tab3" class="tab-pane"></div>
-						<div id="tab4" class="tab-pane"></div>
 					</div>
 				</div>
 			</div>

@@ -18,7 +18,7 @@ if(isset($_GET['file'])){
 		$_SESSION['excludedPages'] = explode(",",$excludedPages); //use this to clear pages if an error occurs
 	}
 	if(isset($_POST)){
-		$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+		$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$_SESSION['updateIgnore'] = $_POST['ignore'];
 		if($_SESSION['updateIgnore']=="true"){
 			$_SESSION['count']="0";
@@ -27,9 +27,7 @@ if(isset($_GET['file'])){
 			header("location: /");
 		}
 		include("includes/post.php");	
-	}
-	
-	
+	}	
 ?>
 <!--
 	
@@ -190,7 +188,7 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 		<div class="wrapper">
 			<!-- Sidebar -->
 			<?php if($_SESSION['userid']!=""){ ?>
-				<nav style="background:#343a40;z-index:99998;padding-bottom:5%" id="sidebar">
+				<nav style="background:#343a40;z-index:99998;padding-bottom:5%" class="shadow" id="sidebar">
 					<ul class="list-unstyled components" style="padding:20px;margin-top:25px;">
 						<div style="text-align:left;width:100%">
 							<a style="cursor:pointer" onclick="loadSection('Profile','<?php echo $_SESSION['userid']; ?>');">
@@ -220,6 +218,11 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 							<i class="fa fa-ticket-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Service Desk <span id="ticketCount" title="Active Tickets" style="background:#696969;float:right;margin-top:3px;" class="badge badge-secondary"><?php echo (int)$ticketCountAll; ?></span>
 						</li>
 						<?php } } ?>
+						<?php if(in_array("Reports", $allowed_pages)){  ?>
+							<li onclick="loadSection('Reports');" id="secbtnReports" class="secbtn" style="width:100%">
+								<i class="fas fa-chart-area"></i>&nbsp;&nbsp;&nbsp;Reports
+							</li>
+						<?php } ?>
 						<li class="secbtn">
 							<h6 style="color:#d3d3d3" data-bs-toggle="collapse" data-bs-target="#navConfig"><i class="fa fa-cog" aria-hidden="true"></i>&nbsp;&nbsp;Configuration <i class="fa fa-angle-down" aria-hidden="true"></i></h6>
 						</li>
@@ -238,11 +241,6 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 							<?php if(in_array("Downloads", $allowed_pages)){  ?>
 								<li onclick="loadSection('Downloads');" id="secbtnDownloads" class="secbtn" style="width:100%">
 									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Downloads
-								</li>
-							<?php } ?>
-							<?php if(in_array("Reports", $allowed_pages)){  ?>
-								<li onclick="loadSection('Reports');" id="secbtnReports" class="secbtn" style="width:100%">
-									<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Reports
 								</li>
 							<?php } ?>
 						</ul>

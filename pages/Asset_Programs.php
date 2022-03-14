@@ -73,7 +73,6 @@ $error = $json['products_error'];
 				if(trim($program['Name']) == ""){
 					continue;
 				}
-
 				if($search!=""){
 					if(stripos($program['Name'], $search) !== false){ }else{ continue; }
 				}
@@ -83,7 +82,7 @@ $error = $json['products_error'];
 			  <th scope="row"><?php echo $count;?></th>
 			  <td><?php echo $program['Caption'];?></td>
 			  <td><?php echo $program['Vendor'];?></td>
-			  <td><?php echo date("m/d/Y", strtotime($program['InstallDate']));?></td>
+			  <!--<td><?php echo $program['InstallDate'];?></td>--><td>unknown</td>
 			</tr>
 			<?php }
 				if($count == 0){ ?>

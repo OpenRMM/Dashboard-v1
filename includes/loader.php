@@ -4,7 +4,7 @@
 <script>
 <?php 
 $hideTFA="true";
-$_SESSION['customCommands']="";
+
 $query = "SELECT * FROM servers where active='1' ORDER BY ID ASC";
 $results = mysqli_query($db, $query);
 $resultCount = mysqli_num_rows($results);

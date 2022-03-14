@@ -1,5 +1,5 @@
 <?php
-        if($_POST['type'] == "AddNewUser"){  //this can prblem be replaced for the add/edit user script
+        if($_POST['type'] == "AddNewUser"){  //this can probably be replaced for the add/edit user script. this is part of init
             $salt = getSalt(40);
             $username = clean($_POST['username']);
             $password = clean($_POST['password']);
@@ -7,11 +7,15 @@
             $query = "INSERT INTO users (nicename, accountType, username, password, hex) VALUES ('".$username."','Admin','".$username."', '".$encryptedPassword."', '".$salt."')";
             $results = mysqli_query($db, $query);
             $_SESSION['excludedPages'] = explode(",",$excludedPages);
-            // echo mysqli_error($db);exit;
-            // echo '<script>window.onload = function() { pageAlert("User Settings", "User settings changed successfully.","Success"); };</script>';
             header("location: /");
         }
-		
+		//removecustom command
+		if($_POST['type'] == "removeCommand"){
+			$data = clean($_POST['command']);
+			if (($key = array_search($data, $_SESSION['customCommands'])) !== false) {
+				unset($_SESSION['customCommands'][$key]);
+			}
+		}
 		//custom command
 		if(isset($_POST['customCommand'])){
 			if($cmdButtons==""){ $_SESSION['customCommands']=array(); }else{
@@ -20,20 +24,20 @@
 			$title = clean($_POST['title']);
 			$color = clean($_POST['btnColor']);
 			$command = clean($_POST['customCommand']);
-			$data = $title."(||)".$color."(||)".$command;
+			$data = $title."(--)".$color."(--)".$command;
 			if (in_array( $data, $_SESSION['customCommands'])){
 				if (($key = array_search($data, $_SESSION['customCommands'])) !== false) {
 					unset($_SESSION['customCommands'][$key]);
 				}
 				array_push($_SESSION['customCommands'], $data);
-				$query = "UPDATE users SET Command_Buttons='".implode("{|}", $_SESSION['customCommands'])."' WHERE ID=".$_SESSION['userid'].";";
+				$query = "UPDATE users SET Command_Buttons='".implode("{--}", $_SESSION['customCommands'])."' WHERE ID=".$_SESSION['userid'].";";
 				$results = mysqli_query($db, $query);
 			}else{
 				if(end($_SESSION['customCommands']) != $data){
 				
 					array_push($_SESSION['customCommands'], $data);
 				
-					$query = "UPDATE users SET Command_Buttons='".implode("{|}", $_SESSION['customCommands'])."' WHERE ID=".$_SESSION['userid'].";";
+					$query = "UPDATE users SET Command_Buttons='".implode("{--}", $_SESSION['customCommands'])."' WHERE ID=".$_SESSION['userid'].";";
 					$results = mysqli_query($db, $query);
 				}
 			}
@@ -77,6 +81,36 @@
             unlink("includes/config.php");
             $_SESSION['excludedPages'] = explode(",",$excludedPages);
             file_put_contents("includes/config.php","<?php \$siteSettingsJson = '".$data."';");
+			$sql = "CREATE DATABASE IF NOT EXISTS ". $mysqlDatabase .";";
+			mysqli_query($db,$sql);
+
+		
+			$sql = "CREATE DATABASE ".$mysqlDatabase;
+			if (mysqli_query($db,$sql) === TRUE) {
+				echo "Database created successfully";
+			} else {
+				echo "Error creating database: ";
+			}
+			$filename="includes/databaseStructure.sql";
+			$templine = '';
+			$lines = file($filename);
+			// Loop through each line
+			foreach ($lines as $line)
+			{
+				// Skip it if it's a comment
+				if (substr($line, 0, 2) == '--' || $line == '')
+					continue;
+
+				// Add this line to the current segment
+				$templine .= $line;
+				// If it has a semicolon at the end, it's the end of the query
+				if (substr(trim($line), -1, 1) == ';')
+				{
+					mysqli_query($db,$templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysqli_error($db) . '<br /><br />');
+					$templine = '';
+				}
+			}
+			
             header("location: /");
         }
         //edit asset
@@ -786,7 +820,7 @@
 					$_SESSION['showModal']="true";	
 					$_SESSION['recent']=explode(",",$data['recents']);
 					if($data['recents']==""){ $_SESSION['recent']=array(); }
-					$_SESSION['customCommands']=explode("{|}",$data['Command_Buttons']);
+					$_SESSION['customCommands']=explode("{--}",$data['Command_Buttons']);
 					if($data['Command_Buttons']==""){ $_SESSION['customCommands']=array(); }
 					$_SESSION['recentTickets']=explode(",",$data['recentTickets']);
 					if($data['recentTickets']==""){ $_SESSION['recentTickets']=array(); }

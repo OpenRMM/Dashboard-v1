@@ -85,16 +85,17 @@ $hostname = $json['general']['Response'][0]['csname'];
 					<hr>
 					<div class="row" style="margin-top:10px;margin-left:30px;padding-bottom:10px">
 					<?php
-					$commands = array_slice($_SESSION['customCommands'], -50, 50, true);	
+					
+					$commands =$_SESSION['customCommands'];	
 					$count = 0;
 					foreach(array_reverse($commands) as $item) {
 						$count++;
-						$data = explode("(||)",$item);
+						$data = explode("(--)",$item);
 					?>
 						<div data-bs-dismiss="modal" id="btn<?php echo $count; ?>" class="col-md-5 text-white secbtn" style="background-color:<?php echo $data[1]; ?>;display:inline;margin-top:10px;width:45%;border:none;border-radius:5px;margin-left:0px;margin-right:10px;height:80px;" >
-							<i onclick="removeCommand('<?php echo $count; ?>','');" class="fas fa-times" style="margin-top:8px;cursor:pointer"></i>
+							<i onclick="removeCommand('<?php echo $count; ?>','<?php echo $data[0]."(--)".$data[1]."(--)".$data[2]; ?>');" class="fas fa-times" style="margin-top:8px;cursor:pointer"></i>
 							<center style="cursor:pointer" onclick="sendCommand('<?php echo $data[2]; ?>', 'Run Custom Command');">	
-							<i class="fas fa-terminal"  style="margin-top:0px"></i><br><?php echo $data[0]; ?>
+								<i class="fas fa-terminal" style="margin-top:0px"></i><br><?php echo $data[0]; ?>
 							<center>
 						</div>
 					<?php
