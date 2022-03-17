@@ -125,7 +125,7 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 	<body style="background-color:#E8E8E8;height:100%; position: relative;min-height: 100vh;">
 		<div style="z-index:99999;padding:5px;background-color:#fff;color:#fff;text-align:center;padding-top:4px;padding-left:20px;position:fixed;top:0px;width:100%;box-shadow: 0 0 11px rgba(0,0,0,0.13);">
 			<h5>
-				<div style="float:left;">
+				<div style="float:left;display:inline">
 					<button type="button" style="display:inline-block;margin-top:2px;border:none;box-shadow:none" class="btn-sm sidebarCollapse btn" title="Show/Hide Sidebar">
 						<i style="font-size:16px" class="fas fa-align-left"></i>
 					</button>		
@@ -137,7 +137,7 @@ Y88b. .d88P 888 d88P Y8b.     888  888 888  T88b  888   "   888 888   "   888
 				</div>
 				<!--
 				<span onclick="loadSection('Profile');" class="badge" style="background:#f8d7da;color:#721c24;font-weight:normal;cursor:pointer">badge text</span>
-				-->			
+				-->	
 				<?php if($_SESSION['userid']!=""){ ?>
 					<div style="float:right;">
 					<?php if(in_array("AssetChat", $allowed_pages)){  ?>

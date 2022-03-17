@@ -202,46 +202,48 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                     <?php } ?>
                         <li onclick="loadSection('Init','','','profile');" style="cursor:pointer;<?php if($get[0]=="profile"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
                             User Settings
+                        </li>	
+                        <li onclick="loadSection('Init','','','software');" style="cursor:pointer;<?php if($get[0]=="software"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+                            Software Inventory
+                        </li>
+                        <li onclick="loadSection('Init','','','script');" style="cursor:pointer;<?php if($get[0]=="script"){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+                            Script Inventory
                         </li>					
                     </ul>
                 </div>	
                 <?php if($get[0]=="agent"){ ?>
-                <div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
-                    <div style="height:auto" class="panel-heading">
-                        <h5 style="font-size:14px;" class="panel-title">
-                            Default configurations per <?php echo strtolower($msp); ?> 
-                        <hr>
-                            <p style="padding:3px;font-size:13px"> 
-                                Select a <?php echo strtolower($msp); ?> to edit its default agent configuration. 
-                                <span style="color:red">
-                                    Changes here will not affect existing assets.
-                                </span>
-                            </p>
-                        </h5>
-                    </div>
-                    <ul class="list-group">
-                        <li onclick="loadSection('Init','','','agent|');" style="cursor:pointer;<?php if($get[1]==""){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
-                            Base Defaults
-                        </li>
-                        <?php
-                            $query = "SELECT ID, name,hex FROM companies WHERE active='1' ORDER BY ID ASC";
-                            $results = mysqli_query($db, $query);
-                            while($result = mysqli_fetch_assoc($results)){ 
-                                if($result['ID']==$company['ID']){continue;}		
-                        ?>
-                            <li onclick="loadSection('Init','','','agent|<?php echo $result['ID']; ?>');" style="cursor:pointer;<?php if($get[1]==$result['ID']){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
-                                <?php echo crypto('decrypt',$result['name'],$result['hex']);?>
+                    <div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
+                        <div style="height:auto" class="panel-heading">
+                            <h5 style="font-size:14px;" class="panel-title">
+                                Default configurations per <?php echo strtolower($msp); ?> 
+                            <hr>
+                                <p style="padding:3px;font-size:13px"> 
+                                    Select a <?php echo strtolower($msp); ?> to edit its default agent configuration. 
+                                    <span style="color:red">
+                                        Changes here will not affect existing assets.
+                                    </span>
+                                </p>
+                            </h5>
+                        </div>
+                        <ul class="list-group">
+                            <li onclick="loadSection('Init','','','agent|');" style="cursor:pointer;<?php if($get[1]==""){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+                                Base Defaults
                             </li>
-                        <?php }?>			
-                    </ul>
-                </div>
+                            <?php
+                                $query = "SELECT ID, name,hex FROM companies WHERE active='1' ORDER BY ID ASC";
+                                $results = mysqli_query($db, $query);
+                                while($result = mysqli_fetch_assoc($results)){ 
+                                    if($result['ID']==$company['ID']){continue;}		
+                            ?>
+                                <li onclick="loadSection('Init','','','agent|<?php echo $result['ID']; ?>');" style="cursor:pointer;<?php if($get[1]==$result['ID']){echo "background:#343a40;color:#fff";} ?>" class="list-group-item secbtn">
+                                    <?php echo crypto('decrypt',$result['name'],$result['hex']);?>
+                                </li>
+                            <?php }?>			
+                        </ul>
+                    </div>
                 <?php } ?>
             </div>
-                
-                    
-        
                 <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9" style="padding-left:20px;">
-                
                     <div class="card user-card2" style="width:100%;box-shadow:rgba(69, 90, 100, 0.08) 0px 1px 20px 0px;">
                         <div class="card-body">
                             <?php if($get[0]=="general" or $get[0]==""){  ?>
@@ -254,13 +256,16 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                                     echo " | ".crypto('decrypt',$data['name'],$data['hex']);
                                 }?>
                                 </h5>
+                            <?php }elseif($get[0]=="software"){ ?>
+                                <h5>Software Inventory</h5>
+                            <?php }elseif($get[0]=="script"){ ?>
+                                <h5>Script Inventory</h5>
                             <?php }else{ ?>                    
                                 <h5>User Settings</h5>
                             <?php } ?>
                             </div>
                         </div>
-                            <?php if($get[0]=="profile"){  ?>
-                            
+                            <?php if($get[0]=="profile"){  ?>                     
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                             <div class="card table-card" style="margin-top:0px;padding:20px"> 
@@ -272,6 +277,32 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                                              </div> 
                                         </div>
                                     </div>
+                            <?php } ?>
+                            <?php if($get[0]=="software"){  ?>                            
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <div class="card table-card" style="margin-top:0px;padding:20px"> 
+                                            <div style="margin-left:50px;margin-top:0px" class="row ">							
+                                                <div style="padding:20px;border-radius:6px" class=" col-sm-12">     
+                                                    <center><h6>No Settings Yet</h6></center>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div>
+                            <?php } ?>
+                            <?php if($get[0]=="script"){  ?>                            
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <div class="card table-card" style="margin-top:0px;padding:20px"> 
+                                            <div style="margin-left:50px;margin-top:0px" class="row ">							
+                                                <div style="padding:20px;border-radius:6px" class=" col-sm-12">     
+                                                    <center><h6>No Settings Yet</h6></center>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div>
                             <?php } ?>
                            
                             <?php if($get[0]=="agent"){  
@@ -418,7 +449,6 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
     </div>
 </form>
 <?php } ?>
-
 <?php if($results==0){ ?> 
     <div id="pageAlert" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">

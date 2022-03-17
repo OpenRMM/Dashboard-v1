@@ -285,18 +285,18 @@ if($hostname==""){
 			<div style="padding:15px" class="card">
 				<div class="tab-block">
 					<ul class="nav nav-pills">
-						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
-							<a data-bs-toggle="pill" class="nav-link active" data-bs-toggle="tab" href="#Alerts">Alerts</a>
+					<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
+							<a data-bs-toggle="pill" class="nav-link active" data-bs-toggle="tab" href="#Tasks">Tasks</a>
 						</li>
 						<li style="padding:5px;padding-bottom:10px;border-radius:3px;margin-left:5px;width:120px;text-align:center" class="nav-item">
-							<a data-bs-toggle="pill" class="nav-link" data-bs-toggle="tab" href="#Tasks">Tasks</a>
+							<a data-bs-toggle="pill" class="nav-link" data-bs-toggle="tab" href="#Alerts">Alerts</a>
 						</li>
 					</ul>
 				</div>
 			
 				<div class="tab-content" style="padding-top:10px;overflow:hidden" >
 					
-					<div id="Alerts" class="tab-pane fade-in active">
+					<div id="Alerts" class="tab-pane fade-in">
 						<button data-bs-toggle="modal" data-bs-target="#editAlert" onclick="$('#alertCompany').show();$('#alertID').val('');" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> &nbsp;Add Alert</button><hr>
 						<p>Configure alerts for all assets or assets within a certain <?php echo strtolower($msp); ?></p>
 						<table class="table table-hover table-borderless table-striped" id="datatable">
@@ -343,12 +343,13 @@ if($hostname==""){
 						<?php }?>
 						</table>
 					</div>
-					<div id="Tasks" class="tab-pane fade">
+					<div id="Tasks" class="tab-pane fade-in active">
 						<button data-bs-toggle="modal" data-bs-target="#editTrigger" class="btn btn-sm btn-warning"><i class="fas fa-plus"></i> &nbsp;Add Task</button><hr>
 						<table class="table table-hover table-borderless table-striped" id="datatable">
 							<tr>
 								<th>Name</th>
 								<th>Last run</td>
+								<th>Creator</td>
 								<th>Actions</th>
 							</tr>
 							<?php
@@ -358,10 +359,14 @@ if($hostname==""){
 							while($task = mysqli_fetch_assoc($results)){
 								$count++;
 								if($task['last_run']!=""){ $last_run=$task['last_run'];}else{ $last_run="Never";}
+								$query = "SELECT * FROM users WHERE ID='".$task['user_id']."' ORDER BY ID ASC";
+								$results = mysqli_query($db, $query);
+								$user = mysqli_fetch_assoc($results);
 							?>
 							<tr id="task<?php echo $task['ID']; ?>">
 								<td><?php echo $task['name']; ?></td>
 								<td><?php echo $last_run; ?></td>
+								<td style="cursor:pointer" onclick="loadSection('Profile','<?php echo $user['ID']; ?>');"><?php echo ucwords(crypto("decrypt",$user['nicename'],$user['hex'])); ?></td>
 								<td>
 									<form action="/" method="post" style="display:inline;">
 										<input type="hidden" value="<?php echo $task['ID'];?>" name="ID">
