@@ -20,7 +20,11 @@ if($_SESSION['accountType']!="Admin"){
     }
     */
 }
-
+if($MQTTserver=="" or $MQTTport=="" or $MQTTusername=="" or $MQTTpassword==""){
+    $mqttConnect="timeout";
+}else{
+    $mqttConnect="connected";  
+}
 if(!$db or $mqttConnect=="timeout" or $results==0){ 
     $show=true;
 }else{
@@ -119,29 +123,30 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                         </div>		
                     </div>
                 </div>  
-                <?php if(!$show){  ?>
-                <div class="col-sm-3 mx-auto">
-                    <div style="height:100%" class="shadow panel panel-default">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">
-                                Encryption
-                            </h4>
-                        </div>
-                        <div  class="panel-body">
-                            <div class="form-check" style="border-radius:6px;margin-bottom:10px;padding:10px;padding-left:10px;color:#333;">
-                            <b>Agent Encryption</b><br><br>
-                            <div style="margin-left:5px" class="form-group float-label-control">                       
-                                <label>Secret Key:</label> <a id="showbtn" href="#" onclick="$('#agentSecret').attr('type', 'text');$('#showbtn').hide();">Show</a>
-                                <input readonly required type="password" id="agentSecret"  value="<?php echo $siteSettings['agentEncryption']['secret']; ?>" class="form-control" placeholder="">
-                            </div> 
-                            
-                            <button type="button" onclick="resetKeys();" style="margin-left:5px" class="btn btn-sm btn-danger" >Regenerate All Keys</button>                        
+                <?php if($show==false){ ?>  
+                    <div class="col-sm-3 mx-auto">
+                        <div style="height:100%" class="shadow panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    Encryption
+                                </h4>
+                            </div>
+                            <div  class="panel-body">
+                                <div class="form-check" style="border-radius:6px;margin-bottom:10px;padding:10px;padding-left:10px;color:#333;">
+                                <b>Agent Encryption</b><br><br>
+                                <div style="margin-left:5px" class="form-group float-label-control">                       
+                                    <label>Secret Key:</label> <a id="showbtn" href="#" onclick="$('#agentSecret').attr('type', 'text');$('#showbtn').hide();">Show</a>
+                                    <input readonly required type="password" id="agentSecret"  value="<?php echo $siteSettings['agentEncryption']['secret']; ?>" class="form-control" placeholder="">
+                                </div> 
+                                
+                                <button type="button" onclick="resetKeys();" style="margin-left:5px" class="btn btn-sm btn-danger" >Regenerate All Keys</button>                        
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>	
-                <div class="col-sm-3 mx-auto">
-                <? }else{ ?>	  
+                    </div>	
+                    <div class="col-sm-3 mx-auto">
+                <?php } ?>
+                <?php if($show==true){  ?>
                     <div class="col-sm-6 mx-auto">
                 <?php } ?>
                     <div style="height:100%" class="shadow panel panel-default">
@@ -154,7 +159,7 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                                 <div class="form-check" style="border-radius:6px;margin-bottom:10px;padding:10px;padding-left:10px;color:#333;">
                                     <ul class="list-group">
                                         <li class="secbtn list-group-item"><b>Database: </b><?php if(!$db){ echo "<span style='color:red'>Cannot connect to database</span>"; }else{ echo "<span style='color:green'>Connected</span>"; } ?></li>
-                                        <li class="secbtn list-group-item"><b>MQTT Broker: </b><?php if($mqttConnect=="timeout"){ echo "<span style='color:red'>Cannot connect to broker</span>"; }else{ echo "<span style='color:green'>Connected</span>"; } ?></li>
+                                        <li class="secbtn list-group-item"><b>MQTT Broker: </b><?php if($mqttConnect=="timeout"){ echo "<span style='color:red'>Not Configured</span>"; }else{ echo "<span style='color:green'>Connected</span>"; } ?></li>
                                         <li class="secbtn list-group-item"><b>User Count: </b> <?php if($results==0){ echo "<span style='color:red'>0</span>"; }else{ echo "<span style='color:green'>1 or more</span>"; } ?></li>
                                     </ul>
                                     
@@ -467,11 +472,11 @@ if(!$db or $mqttConnect=="timeout" or $results==0){
                             </p>
                         <div class="form-group float-label-control">
                             <label>Username:</label>
-                            <input required type="text" name="username" value="" class="form-control" placeholder="">
+                            <input required type="text" name="firstusername" value="" class="form-control" placeholder="">
                         </div>
                         <div class="form-group float-label-control">
                             <label>Password:</label>
-                            <input required type="password" name="password" value="" class="form-control" placeholder="">
+                            <input required type="password" name="firstpassword" value="" class="form-control" placeholder="">
                         </div>
                     </div>
                     <div class="modal-footer">

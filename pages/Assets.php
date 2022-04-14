@@ -177,7 +177,7 @@ $assets2 = mysqli_num_rows(mysqli_query($db, $query));
 							<?php }?>
 							<?php  if($count==0){ ?>
 								<tr>
-									<td colspan=9>
+									<td colspan=12>
 										<center>
 											<h6>No assets to display.</h6>
 										</center>

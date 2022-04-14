@@ -172,6 +172,11 @@ $results2 = mysqli_query($db, $query2);
 					</td>
 				</tr>	
 			<?php }?>
+			<?php if($count==0){ ?>
+				<tr>
+					<td colspan=9><center>No data available in table</center></td>
+				</tr>
+			<?php } ?>
 		    </tbody>
 		</table>
 	</div>	

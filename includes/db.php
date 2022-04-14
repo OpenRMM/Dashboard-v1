@@ -18,9 +18,9 @@
 ###########################################################################################################################################
 	//Set Timezone
 	date_default_timezone_set($siteSettings['Timezone']);
-	if($siteSettings==""){
+	if($siteSettings=="" and file_exists("config.php")){
 		session_write_close();
-		exit("There is a problem with your config.json file");
+		exit("There is a problem with your config file");
 	}
 	$serverPages = array("cron.php", "LoadHistorical.php");
 	if(!isset($_SESSION['excludedPages'])){
@@ -47,12 +47,11 @@
 		session_name($session_name);
 		session_start();
 	}
-	if($siteSettings!=""){
-		//Connect to MQTT
-		$MQTTserver = $siteSettings['MQTT']['host'];
-		$MQTTport = $siteSettings['MQTT']['port'];
-		$MQTTusername = $siteSettings['MQTT']['username']; 
-		$MQTTpassword = $siteSettings['MQTT']['password']; 
+	$MQTTserver = $siteSettings['MQTT']['host'];
+	$MQTTport = $siteSettings['MQTT']['port'];
+	$MQTTusername = $siteSettings['MQTT']['username']; 
+	$MQTTpassword = $siteSettings['MQTT']['password']; 
+	if($siteSettings!=""){			
 		//MQTT Subscribe
 		function MQTTpublish($topic,$message,$computerID,$retain){
 			global $MQTTserver, $MQTTport, $MQTTusername, $MQTTpassword, $mqttConnect;;
@@ -65,6 +64,7 @@
 				return "Time out!\n";
 			}
 		}
+		//Connect to MQTT	
 		$mqtt = new Bluerhinos\phpMQTT($MQTTserver, $MQTTport, $computerID);
 		if ($mqtt->connect_auto(true, NULL, $MQTTusername, $MQTTpassword)) { }else{
 			$mqttConnect="timeout";
@@ -73,10 +73,10 @@
 		//Connect to DB
 		$db = mysqli_connect($siteSettings['MySQL']['host'], $siteSettings['MySQL']['username'], $siteSettings['MySQL']['password'], $siteSettings['MySQL']['database']);
 		if(!$db and file_exists("config.php")){
-			//exit("<center><h3 style='color:maroon;'>An error has occured. Please try again in a few moments.</h3><a href='#' onclick='location.reload();'>Retry</a><hr></center>");
+			exit("<center><h3 style='color:maroon;'>An error has occured. Please try again in a few moments.</h3><a href='#' onclick='location.reload();'>Retry</a><hr></center>");
 		}
 		mysqli_set_charset($db, 'utf8mb4');
-		if($createDatabase=="true"){
+		/* if($createDatabase=="traue"){
 			$templine = '';
 			$lines = file("databaseStructure.sql");
 			foreach ($lines as $line)
@@ -90,7 +90,7 @@
 					$templine = '';
 				}
 			}
-		}
+		} */
 
 		//Get user data
 		$query = "SELECT email,Command_Buttons,username,nicename,account_type,hex,user_color,allowed_pages,notifications,tfa_secret FROM users WHERE ID='".$_SESSION['userid']."' LIMIT 1";
@@ -160,9 +160,9 @@
 		$general = mysqli_fetch_assoc($results);
 		return $general;
 	}
-	
-	$siteSettings['general'] = loadGeneralFromDB();
-	
+	if($siteSettings!=""){
+		$siteSettings['general'] = loadGeneralFromDB();
+	}
 	//Function to aggrigate data from pc
 	function getComputerData($ID, $fields = array("*")){
 		global $db, $siteSettings;

@@ -14,7 +14,7 @@ while($computer = mysqli_fetch_assoc($results)){
         $count++;
     }
 }
-if($resultCount==$count){
+if($resultCount==$count and $_SESSION['userid']!=""){
  ?>
      toastr.remove()
      toastr.error('All OpenRMM Servers are offline. Assets will not be able to send or recieve new data.');

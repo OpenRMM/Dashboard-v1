@@ -150,10 +150,10 @@ $settings = "\'".implode("\', \'",$settings1)."\'";
 					<div class="panel-body pb5">              
 					<ul class="list-group">
 						<li class="list-group-item">
-							<a style="text-decoration:none" href="mailto:<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>"><?php echo textOnNull(crypto('decrypt', $user['email'], $user['hex']),"No Phone Number"); ?></a>
+							<a style="text-decoration:none" href="mailto:<?php echo crypto('decrypt', $user['email'], $user['hex']); ?>"><?php echo textOnNull(crypto('decrypt', $user['email'], $user['hex']),"No Email Address"); ?></a>
 						</li>
 						<li class="list-group-item">
-							<a style="text-decoration:none" href="tel:<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>"><?php echo textOnNull(phone(crypto('decrypt', $user['phone'], $user['hex'])),"No Phone"); ?></a>
+							<a style="text-decoration:none" href="tel:<?php echo crypto('decrypt', $user['phone'], $user['hex']); ?>"><?php echo textOnNull(phone(crypto('decrypt', $user['phone'], $user['hex'])),"No Phone Number"); ?></a>
 						</li>
 					</ul>
 					</div>

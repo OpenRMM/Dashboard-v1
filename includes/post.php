@@ -1,13 +1,23 @@
 <?php
-        if($_POST['type'] == "AddNewUser"){  //this can probably be replaced for the add/edit user script. this is part of init
+		//Init first user creation
+        if($_POST['type'] == "AddNewUser"){ 
             $salt = getSalt(40);
-            $username = clean($_POST['username']);
-            $password = clean($_POST['password']);
-            $encryptedPassword = crypto('encrypt', $password, $salt);
-            $query = "INSERT INTO users (nicename, accountType, username, password, hex) VALUES ('".$username."','Admin','".$username."', '".$encryptedPassword."', '".$salt."')";
+            $username = clean($_POST['firstusername']);
+            $password = clean($_POST['firstpassword']);
+            $encryptedPassword = password_hash($password, PASSWORD_DEFAULT);
+			$type = crypto('encrypt', "Admin", $salt);
+			$settings =  crypto('encrypt', implode(",",$allPages).",AssetChat", $salt);
+			$nicename = crypto('encrypt', $username, $salt);
+            $query = "INSERT INTO users (allowed_pages,nicename, account_type, username, password, hex,user_color) VALUES ('".$settings."','".$nicename."','".$type."','".$username."', '".$encryptedPassword."', '".$salt."','#000000')";
             $results = mysqli_query($db, $query);
             $_SESSION['excludedPages'] = explode(",",$excludedPages);
-            header("location: /");
+			$_SESSION['page'] = "Login";
+			?>
+				<script> 
+					setCookie("section", btoa("Login"), 365);	
+				</script>
+			<?php
+            header("location: /?page=Login");
         }
 		//removecustom command
 		if($_POST['type'] == "removeCommand"){
@@ -87,9 +97,9 @@
 		
 			$sql = "CREATE DATABASE ".$mysqlDatabase;
 			if (mysqli_query($db,$sql) === TRUE) {
-				echo "Database created successfully";
+				//echo "Database created successfully";
 			} else {
-				echo "Error creating database: ";
+				//echo "Error creating database: ";
 			}
 			$filename="includes/databaseStructure.sql";
 			$templine = '';
@@ -106,7 +116,7 @@
 				// If it has a semicolon at the end, it's the end of the query
 				if (substr(trim($line), -1, 1) == ';')
 				{
-					mysqli_query($db,$templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysqli_error($db) . '<br /><br />');
+					mysqli_query($db,$templine);
 					$templine = '';
 				}
 			}

@@ -107,7 +107,14 @@ if($hostname==""){
 							</span>
 						</span>
 					</li>
-					<?php }  ?>
+					<?php 
+						} 
+						if($count==0){
+						?>
+							<li class="list-group-item" style="text-align:left;">No Recently Added Assets</li>						
+						<?php
+						}
+					?>
 				</ul>
 			</div>
 		</div>	
@@ -131,7 +138,14 @@ if($hostname==""){
 						<i class="fas fa-ticket-alt" style="color:#666;font-size:12px;" title="Ticket"></i>
 						&nbsp;&nbsp;<?php echo $result['title']; ?>
 					</li>
-					<?php }  ?>
+					<?php 
+						} 
+						if($count==0){
+						?>
+							<li class="list-group-item" style="text-align:left;">No Recently Created Tickets</li>						
+						<?php
+						}
+					?>	
 				</ul>
 			</div>
 		</div>
@@ -211,15 +225,18 @@ if($hostname==""){
 		}
 		//users
 		$query = "SELECT ID FROM users where active='1'";
-		$users1 = mysqli_num_rows(mysqli_query($db, $query));
+		$users1 = (int)mysqli_num_rows(mysqli_query($db, $query));
 		$query = "SELECT ID FROM users where active='0'";
-		$users2 = mysqli_num_rows(mysqli_query($db, $query));
+		$users2 = (int)mysqli_num_rows(mysqli_query($db, $query));
 
 		//assets
 		$query = "SELECT ID FROM computers where active='1' and online='1'";
-		$assets1 = mysqli_num_rows(mysqli_query($db, $query));
+		$assets1 = (int)mysqli_num_rows(mysqli_query($db, $query));
 		$query = "SELECT ID FROM computers where active='1' and online='0'";
-		$assets2 = mysqli_num_rows(mysqli_query($db, $query));	
+		$assets2 = (int)mysqli_num_rows(mysqli_query($db, $query));	
+		if($assets2==0){
+			$assets2=100;
+		}
 	?>
 		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mh-40">
 			<div class="row">

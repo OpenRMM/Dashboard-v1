@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.7
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 04, 2022 at 10:17 AM
--- Server version: 10.3.29-MariaDB
--- PHP Version: 7.2.29
+-- Generation Time: Apr 14, 2022 at 04:54 PM
+-- Server version: 10.3.34-MariaDB-0ubuntu0.20.04.1
+-- PHP Version: 7.3.33-1+focal
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -248,7 +247,7 @@ CREATE TABLE `users` (
   `user_color` varchar(8) NOT NULL DEFAULT '',
   `username` varchar(25) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `tfa_secret` text NOT NULL,
+  `tfa_secret` text NOT NULL DEFAULT '',
   `email` varchar(100) NOT NULL DEFAULT '',
   `phone` varchar(400) NOT NULL DEFAULT '',
   `notes` varchar(400) NOT NULL DEFAULT '',
