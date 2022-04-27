@@ -111,7 +111,7 @@ if($hostname==""){
 						} 
 						if($count==0){
 						?>
-							<li class="list-group-item" style="text-align:left;">No Recently Added Assets</li>						
+							<li class="list-group-item" style="text-align:left;">No recently added assets</li>						
 						<?php
 						}
 					?>
@@ -142,7 +142,7 @@ if($hostname==""){
 						} 
 						if($count==0){
 						?>
-							<li class="list-group-item" style="text-align:left;">No Recently Created Tickets</li>						
+							<li class="list-group-item" style="text-align:left;">No recently created tickets</li>						
 						<?php
 						}
 					?>	
