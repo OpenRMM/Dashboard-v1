@@ -1,6 +1,6 @@
 OpenRMM
 =================================================================================
-<h1>This project has been moved to a private repo<h1><hr>
+<h1>This project has been moved to a private repo</h1><hr>
   <p>We may go public again in the future. This repo is now depreciated as the project has been rewritten from the ground up.<p>
   <hr><br>
 An Open source RMM that puts local control and privacy first. Perfect to run on a Raspberry Pi or a local server.
